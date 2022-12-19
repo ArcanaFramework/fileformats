@@ -1,0 +1,82 @@
+[build-system]
+requires = ["flit_scm"]
+build-backend = "flit_scm:buildapi"
+
+[project]
+name = "fileformats"
+description = "Python classes corresponding to different file formats for use in type hinting"
+readme = "README.rst"
+requires-python = ">=3.8"
+dependencies = [
+]
+license = {file = "LICENSE"}
+authors = [
+    {name = "Thomas G. Close", email = "thomas.close@sydney.edu.au"},
+]
+maintainers = [
+    {name = "Thomas G. Close", email = "thomas.close@sydney.edu.au"},
+]
+keywords = [
+    "file formats",
+    "data",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering",
+]
+dynamic = ["version"]
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "pre-commit",
+    "codespell",
+    "flake8",
+    "flake8-pyproject",
+]
+test = [
+    "pytest >=6.2.5",
+]
+# Aliases
+tests = ["fileformats[test]"]
+all = ["fileformats[dev,test]"]
+
+[project.urls]
+repository = "https://github.com/ArcanaFramework/fileformats"
+
+
+[tool.flit.module]
+name = "xnat_checks"
+
+[tool.flit.sdist]
+exclude = [".gitignore"]
+
+[tool.setuptools_scm]
+write_to = "xnat_checks/_version.py"
+
+[tool.black]
+target-version = ['py37', 'py38']
+exclude = "xnat_checks/_version.py"
+
+[tool.codespell]
+ignore-words = ".codespell-ignorewords"
+
+[tool.flake8]
+doctests = true
+per-file-ignores = [
+    "__init__.py:F401"
+]
+max-line-length = 88
+select = "C,E,F,W,B,B950"
+extend-ignore = ['E203', 'E501', 'E129']
