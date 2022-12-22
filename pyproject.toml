@@ -50,7 +50,7 @@ test = [
 ]
 
 [project.urls]
-repository = "https://github.com/ArcanaFramework/fileformats"
+repository = "https://github.com/ArcanaFramework/fileformats-core"
 
 
 [tool.flit.module]

@@ -8,7 +8,13 @@ FileFormats
 ..  :target: http://arcana.readthedocs.io/en/latest/?badge=latest
 ..   :alt: Documentation Status
 
+Fileformats provides Python classes for representing different file formats
+for use in type hinting and input validation in data workflows. Converters between
+equivalent formats are also typically written using the `Pydra <https://pydra.readthedocs.io>`__
+dataflow engine are also typically provided.
 
+This package only provides the core base classes, which define the structure that
+extension classes should adhere to.
 
 
 Quick Installation
@@ -16,8 +22,7 @@ Quick Installation
 
 This extension can be installed for Python 3 using *pip*::
 
-    $ pip3 install fileformats
-
+    $ pip3 install fileformats-core
 
 
 License
