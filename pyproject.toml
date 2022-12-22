@@ -3,18 +3,18 @@ requires = ["flit_scm"]
 build-backend = "flit_scm:buildapi"
 
 [project]
-name = "fileformats"
-description = "Python classes corresponding to different file formats for use in type hinting"
+name = "fileformats-core"
+description = "Core classes for representing different file formats in Python classes for use in type hinting in data workflows"
 readme = "README.rst"
 requires-python = ">=3.8"
 dependencies = [
 ]
 license = {file = "LICENSE"}
 authors = [
-    {name = "Thomas G. Close", email = "thomas.close@sydney.edu.au"},
+    {name = "Thomas G. Close", email = "tom.g.close@gmail.com"},
 ]
 maintainers = [
-    {name = "Thomas G. Close", email = "thomas.close@sydney.edu.au"},
+    {name = "Thomas G. Close", email = "tom.g.close@gmail.com"},
 ]
 keywords = [
     "file formats",
@@ -48,26 +48,23 @@ dev = [
 test = [
     "pytest >=6.2.5",
 ]
-# Aliases
-tests = ["fileformats[test]"]
-all = ["fileformats[dev,test]"]
 
 [project.urls]
 repository = "https://github.com/ArcanaFramework/fileformats"
 
 
 [tool.flit.module]
-name = "xnat_checks"
+name = "fileformats.core"
 
 [tool.flit.sdist]
 exclude = [".gitignore"]
 
 [tool.setuptools_scm]
-write_to = "xnat_checks/_version.py"
+write_to = "fileformats/core/_version.py"
 
 [tool.black]
-target-version = ['py37', 'py38']
-exclude = "xnat_checks/_version.py"
+target-version = ['py38']
+exclude = "fileformats/core/_version.py"
 
 [tool.codespell]
 ignore-words = ".codespell-ignorewords"
