@@ -21,4 +21,4 @@ __pycache__
 *.egg-info
 ~*
 /.venv
-/xnat_checks/_version.py
+/fileformats/core/_version.py
