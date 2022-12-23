@@ -8,7 +8,7 @@ from abc import ABCMeta, abstractmethod
 import attrs
 from attrs.converters import optional
 from pydra.engine.core import LazyField, Workflow
-from arcana.core.utils.misc import (
+from .utils import (
     func_task,
     path2varname,
     classproperty,
@@ -135,9 +135,7 @@ class DataType(metaclass=ABCMeta):
 
     def _check_part_of_row(self):
         if self.row is None:
-            raise RuntimeError(
-                f"Cannot 'get' {self} as it is not part of a dataset"
-            )
+            raise RuntimeError(f"Cannot 'get' {self} as it is not part of a dataset")
 
     @classmethod
     def class_name(cls):
