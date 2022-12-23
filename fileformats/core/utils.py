@@ -4,7 +4,7 @@ from pydra.engine.specs import BaseSpec, SpecInfo
 
 # Tools imported from Arcana, will remove again once file-formats and "cells"
 # have been split
-CONVERTER_ANNOTATIONS = "__arcana_converter__"
+CONVERTER_ANNOTATIONS = "__fileformats_converter__"
 HASH_CHUNK_SIZE = 2**20  # 1MB in calc. checksums to avoid mem. issues
 
 

@@ -32,7 +32,7 @@ def absolute_paths_dict(dct):
     return {n: absolute_path(p) for n, p in dict(dct).items()}
 
 
-logger = logging.getLogger("arcana")
+logger = logging.getLogger("fileformats")
 
 
 @attrs.define

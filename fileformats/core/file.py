@@ -14,7 +14,7 @@ from .exceptions import (
 from .base import FileGroup, absolute_path, absolute_paths_dict
 
 
-logger = logging.getLogger("arcana")
+logger = logging.getLogger("fileformats")
 
 
 @attrs.define
