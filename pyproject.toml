@@ -9,7 +9,6 @@ readme = "README.rst"
 requires-python = ">=3.8"
 dependencies = [
     "attrs>=22.1.0",
-    "pydra>=0.20",
 ]
 license = {file = "LICENSE"}
 authors = [
@@ -49,6 +48,10 @@ dev = [
 ]
 test = [
     "pytest >=6.2.5",
+]
+
+converters = [
+    "pydra >= 0.20.0"
 ]
 
 [project.urls]

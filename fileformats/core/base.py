@@ -20,6 +20,7 @@ from .exceptions import (
     DataNotDerivedYetError,
     FileFormatError,
     FileFormatConversionError,
+    FilePathsNotSetException,
 )
 from .quality import DataQuality  # @ignore reshadowedImports
 
@@ -235,7 +236,7 @@ class FileGroup(DataType, metaclass=ABCMeta):
     def fs_paths(self):
         """All base paths (i.e. not nested within directories) in the file group"""
         if self.fs_path is None:
-            raise RuntimeError(
+            raise FilePathsNotSetException(
                 f"Attempting to access file path of {self} before it is set"
             )
         return [self.fs_path]

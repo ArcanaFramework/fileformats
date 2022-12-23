@@ -1,5 +1,3 @@
-
-
 class FileFormatError(Exception):
     pass
 
@@ -19,4 +17,8 @@ class DataNotDerivedYetError(NamedError):
 
 
 class NameError(NamedError):
+    pass
+
+
+class FilePathsNotSetException(Exception):
     pass
