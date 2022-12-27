@@ -4,6 +4,12 @@ FileFormats
 ..    :target: https://github.com/arcanaframework/fileformats-core/actions/workflows/tests.yml
 .. .. image:: https://codecov.io/gh/arcanaframework/fileformats-core/branch/main/graph/badge.svg?token=UIS0OGPST7
 ..    :target: https://codecov.io/gh/arcanaframework/fileformats-core
+.. image:: https://img.shields.io/pypi/pyversions/fileformats-core.svg
+   :target: https://pypi.python.org/pypi/fileformats-core/
+   :alt: Supported Python versions
+.. image:: https://img.shields.io/pypi/v/fileformats-core.svg
+   :target: https://pypi.python.org/pypi/fileformats-core/
+   :alt: Latest Version
 
 Fileformats provides Python classes for representing different file formats
 for use in type hinting and input validation in data workflows. Converters between
