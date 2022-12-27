@@ -1,12 +1,9 @@
 FileFormats
 ===========
-.. .. image:: https://github.com/arcanaframework/arcana-xnat/actions/workflows/tests.yml/badge.svg
-..    :target: https://github.com/arcanaframework/arcana-xnat/actions/workflows/tests.yml
-.. .. image:: https://codecov.io/gh/arcanaframework/arcana-xnat/branch/main/graph/badge.svg?token=UIS0OGPST7
-..    :target: https://codecov.io/gh/arcanaframework/arcana-xnat
-.. .. image:: https://readthedocs.org/projects/arcana/badge/?version=latest
-..  :target: http://arcana.readthedocs.io/en/latest/?badge=latest
-..   :alt: Documentation Status
+.. .. image:: https://github.com/arcanaframework/fileformats-core/actions/workflows/tests.yml/badge.svg
+..    :target: https://github.com/arcanaframework/fileformats-core/actions/workflows/tests.yml
+.. .. image:: https://codecov.io/gh/arcanaframework/fileformats-core/branch/main/graph/badge.svg?token=UIS0OGPST7
+..    :target: https://codecov.io/gh/arcanaframework/fileformats-core
 
 Fileformats provides Python classes for representing different file formats
 for use in type hinting and input validation in data workflows. Converters between
