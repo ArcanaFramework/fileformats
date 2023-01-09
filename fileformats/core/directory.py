@@ -9,11 +9,11 @@ import attrs
 from .exceptions import (
     FileFormatError,
 )
-from .base import FileGroup, absolute_path
+from .base import FileSet, absolute_path
 
 
 @attrs.define
-class BaseDirectory(FileGroup):
+class BaseDirectory(FileSet):
 
     is_dir = True
     content_types = ()  # By default, don't check contents for any types
@@ -38,10 +38,10 @@ class BaseDirectory(FileGroup):
 
     @classmethod
     def contents_match(cls, path: Path):
-        from arcana.core.data.row import UnresolvedFileGroup
+        from arcana.core.data.row import UnresolvedFileSet
 
         path = Path(path)  # Ensure a Path object not a string
-        contents = UnresolvedFileGroup.from_paths(path, path.iterdir())
+        contents = UnresolvedFileSet.from_paths(path, path.iterdir())
         for content_type in cls.content_types:
             resolved = False
             for unresolved in contents:

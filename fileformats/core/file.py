@@ -11,14 +11,14 @@ from attrs.converters import optional
 from .exceptions import (
     FileFormatError,
 )
-from .base import FileGroup, absolute_path, absolute_paths_dict
+from .base import FileSet, absolute_path, absolute_paths_dict
 
 
 logger = logging.getLogger("fileformats")
 
 
 @attrs.define
-class BaseFile(FileGroup):
+class BaseFile(FileSet):
 
     is_dir = False
 
@@ -111,7 +111,7 @@ class WithSideCars(BaseFile):
         if side_cars:
             if self.fs_path is None:
                 raise RuntimeError(
-                    "Auxiliary files can only be provided to a FileGroup "
+                    "Auxiliary files can only be provided to a FileSet "
                     f"of '{self.path}' ({side_cars}) if the local path is "
                     "as well"
                 )
@@ -206,7 +206,7 @@ class WithSideCars(BaseFile):
         Parameters
         ----------
         primary_path : str
-            Path to the primary file in the file_group
+            Path to the primary file in the fileset
 
         Returns
         -------

@@ -54,11 +54,11 @@ class DataType(metaclass=ABCMeta):
         scans with the same series description (e.g. multiple BOLD or T1w
         scans) in the same imaging sessions.
     quality : str
-        The quality label assigned to the file_group (e.g. as is saved on XNAT)
+        The quality label assigned to the fileset (e.g. as is saved on XNAT)
     row : DataRow
         The data row within a dataset that the file-group belongs to
     exists : bool
-        Whether the file_group exists or is just a placeholder for a sink
+        Whether the fileset exists or is just a placeholder for a sink
     provenance : Provenance | None
         The provenance for the pipeline that generated the file-group,
         if applicable
@@ -144,9 +144,9 @@ class DataType(metaclass=ABCMeta):
 
 
 @attrs.define
-class FileGroup(DataType, metaclass=ABCMeta):
+class FileSet(DataType, metaclass=ABCMeta):
     """
-    A representation of a file_group within the dataset.
+    A representation of a fileset within the dataset.
 
     Parameters
     ----------
@@ -160,21 +160,21 @@ class FileGroup(DataType, metaclass=ABCMeta):
         scans with the same series description (e.g. multiple BOLD or T1w
         scans) in the same imaging sessions.
     quality : str
-        The quality label assigned to the file_group (e.g. as is saved on XNAT)
+        The quality label assigned to the fileset (e.g. as is saved on XNAT)
     row : DataRow
         The data row within a dataset that the file-group belongs to
     exists : bool
-        Whether the file_group exists or is just a placeholder for a sink
+        Whether the fileset exists or is just a placeholder for a sink
     provenance : Provenance | None
         The provenance for the pipeline that generated the file-group,
         if applicable
     fs_path : str | None
         Path to the primary file or directory on the local file system
     side_cars : ty.Dict[str, str] | None
-        Additional files in the file_group. Keys should match corresponding
+        Additional files in the fileset. Keys should match corresponding
         side_cars dictionary in format.
     checksums : ty.Dict[str, str]
-        A checksums of all files within the file_group in a dictionary sorted
+        A checksums of all files within the fileset in a dictionary sorted
         bys relative file name_paths
     """
 
@@ -203,7 +203,7 @@ class FileGroup(DataType, metaclass=ABCMeta):
         if assume_exists:
             self.exists = True
         self._check_part_of_row()
-        fs_paths = self.row.dataset.store.get_file_group_paths(self)
+        fs_paths = self.row.dataset.store.get_fileset_paths(self)
         self.exists = True
         self.set_fs_paths(fs_paths)
         self.validate_file_paths()
@@ -223,7 +223,7 @@ class FileGroup(DataType, metaclass=ABCMeta):
         cpy = copy(self)
         cpy.exists = True
         cpy.set_fs_paths(fs_paths)
-        cache_paths = self.row.dataset.store.put_file_group_paths(self, cpy.fs_paths)
+        cache_paths = self.row.dataset.store.put_fileset_paths(self, cpy.fs_paths)
         # Set the paths to the cached files
         self.exists = True
         self.set_fs_paths(cache_paths)
@@ -308,15 +308,15 @@ class FileGroup(DataType, metaclass=ABCMeta):
 
     def contents_equal(self, other, **kwargs):
         """
-        Test the equality of the file_group contents with another file_group.
-        If the file_group's format implements a 'contents_equal' method than
+        Test the equality of the fileset contents with another fileset.
+        If the fileset's format implements a 'contents_equal' method than
         that is used to determine the equality, otherwise a straight comparison
         of the checksums is used.
 
         Parameters
         ----------
-        other : FileGroup
-            The other file_group to compare to
+        other : FileSet
+            The other fileset to compare to
         """
         self._check_exists()
         other._check_exists()
@@ -328,13 +328,13 @@ class FileGroup(DataType, metaclass=ABCMeta):
 
         Parameters
         ----------
-        unresolved : UnresolvedFileGroup
+        unresolved : UnresolvedFileSet
             A file group loaded from a repository that has not been resolved to
             a specific datatype yet
 
         Returns
         -------
-        FileGroup
+        FileSet
             The resolved file-group object
 
         Raises
@@ -381,7 +381,7 @@ class FileGroup(DataType, metaclass=ABCMeta):
 
     @classmethod
     def from_fs_paths(cls, *fs_paths: ty.List[Path], path=None):
-        """Create a FileGroup object from a set of file-system paths
+        """Create a FileSet object from a set of file-system paths
 
         Parameters
         ----------
@@ -395,7 +395,7 @@ class FileGroup(DataType, metaclass=ABCMeta):
 
         Returns
         -------
-        FileGroup
+        FileSet
             The created file-group
         """
         if path is None:
@@ -466,7 +466,7 @@ class FileGroup(DataType, metaclass=ABCMeta):
             raise FileFormatError(msg)
 
     def convert_to(self, to_format, **kwargs):
-        """Convert the FileGroup to a new datatype
+        """Convert the FileSet to a new datatype
 
         Parameters
         ----------
@@ -477,7 +477,7 @@ class FileGroup(DataType, metaclass=ABCMeta):
 
         Returns
         -------
-        FileGroup
+        FileSet
             the converted file-group
         """
         task = to_format.converter_task(
@@ -514,11 +514,11 @@ class FileGroup(DataType, metaclass=ABCMeta):
         wf.add(
             func_task(
                 access_paths,
-                in_fields=[("from_format", type), ("file_group", from_format)],
+                in_fields=[("from_format", type), ("fileset", from_format)],
                 out_fields=[(i, Path) for i in from_format.fs_names()],
                 # name='extract',
                 from_format=from_format,
-                file_group=wf.lzin.to_convert,
+                fileset=wf.lzin.to_convert,
             )
         )
 
@@ -637,14 +637,14 @@ class FileGroup(DataType, metaclass=ABCMeta):
         return {str(Path(k).relative_to(base_path)): v for k, v in checksums.items()}
 
     @classmethod
-    def access_contents_task(cls, file_group_lf: LazyField):
+    def access_contents_task(cls, fileset_lf: LazyField):
         """Access the fs paths of the file group"""
 
     @classmethod
     def from_fs_path(cls, fs_path):
-        file_group = cls(path=Path(fs_path).stem)
-        file_group.set_fs_paths([fs_path])
-        return file_group
+        fileset = cls(path=Path(fs_path).stem)
+        fileset.set_fs_paths([fs_path])
+        return fileset
 
     @classmethod
     def append_ext(cls, path: Path):
@@ -657,29 +657,27 @@ class FileGroup(DataType, metaclass=ABCMeta):
         return [""]
 
 
-def access_paths(from_format, file_group):
+def access_paths(from_format, fileset):
     """Copies files into the CWD renaming so the basenames match
     except for extensions"""
     logger.debug(
         "Extracting paths from %s (%s format) before conversion",
-        file_group,
+        fileset,
         from_format,
     )
-    cpy = file_group.copy_to(path2varname(file_group.path), symlink=True)
+    cpy = fileset.copy_to(path2varname(fileset.path), symlink=True)
     return cpy.fs_paths if len(cpy.fs_paths) > 1 else cpy.fs_path
 
 
-def encapsulate_paths(
-    to_format: type, to_convert: FileGroup, **fs_paths: ty.List[Path]
-):
+def encapsulate_paths(to_format: type, to_convert: FileSet, **fs_paths: ty.List[Path]):
     """Copies files into the CWD renaming so the basenames match
     except for extensions"""
     logger.debug(
         "Encapsulating %s into %s format after conversion", fs_paths, to_format
     )
-    file_group = to_format(to_convert.path + "_" + to_format.class_name())
-    file_group.set_fs_paths(fs_paths.values())
-    return file_group
+    fileset = to_format(to_convert.path + "_" + to_format.class_name())
+    fileset.set_fs_paths(fs_paths.values())
+    return fileset
 
 
 @attrs.define
@@ -738,7 +736,7 @@ class Field(DataType):
 
     def get_checksums(self):
         """
-        For duck-typing with file_groups in checksum management. Instead of a
+        For duck-typing with filesets in checksum management. Instead of a
         checksum, just the value of the field is used
         """
         return self.value
