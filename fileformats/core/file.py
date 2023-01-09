@@ -29,7 +29,7 @@ class BaseFile(FileSet):
         self.fs_path = fs_path
 
     def all_file_paths(self):
-        """The paths of all nested files within the file-group"""
+        """The paths of all nested files within the file-set"""
         if self.fs_path is None:
             raise RuntimeError(
                 f"Attempting to access file paths of {self} before they are set"
@@ -37,13 +37,13 @@ class BaseFile(FileSet):
         return self.fs_paths
 
     def copy_to(self, fs_path: str or Path, symlink: bool = False):
-        """Copies the file-group to the new path, with auxiliary files saved
+        """Copies the file-set to the new path, with auxiliary files saved
         alongside the primary-file path.
 
         Parameters
         ----------
         path : str
-            Path to save the file-group to excluding file extensions
+            Path to save the file-set to excluding file extensions
         symlink : bool
             Use symbolic links instead of copying files to new location
 
@@ -94,7 +94,7 @@ class BaseFile(FileSet):
 
 @attrs.define
 class WithSideCars(BaseFile):
-    """Base class for file-groups with a primary file and several header or
+    """Base class for file-sets with a primary file and several header or
     side car files
     """
 
@@ -173,13 +173,13 @@ class WithSideCars(BaseFile):
         return self.side_cars[name]
 
     def copy_to(self, fs_path: str or Path, symlink: bool = False):
-        """Copies the file-group to the new path, with auxiliary files saved
+        """Copies the file-set to the new path, with auxiliary files saved
         alongside the primary-file path.
 
         Parameters
         ----------
         fs_path : str or Path
-            Path to save the file-group to excluding file extensions
+            Path to save the file-set to excluding file extensions
         symlink : bool
             Use symbolic links instead of copying files to new location
         """

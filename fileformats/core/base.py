@@ -4,25 +4,20 @@ import typing as ty
 from copy import copy
 import hashlib
 import logging
-from abc import ABCMeta, abstractmethod
 import attrs
 from attrs.converters import optional
 from pydra.engine.core import LazyField, Workflow
 from .utils import (
     func_task,
     path2varname,
-    classproperty,
     CONVERTER_ANNOTATIONS,
     HASH_CHUNK_SIZE,
 )
 from .exceptions import (
-    NameError,
-    DataNotDerivedYetError,
     FileFormatError,
     FileFormatConversionError,
     FilePathsNotSetException,
 )
-from .quality import DataQuality  # @ignore reshadowedImports
 
 
 def absolute_path(path):
@@ -37,10 +32,9 @@ logger = logging.getLogger("fileformats")
 
 
 @attrs.define
-class DataType(metaclass=ABCMeta):
+class FileSet:
     """
-    A representation of an atomic data item within a dataset. Subclassed to define
-    different data file/directory formats and fields
+    Generic representation of a collection of files related to a single data resource
 
     Parameters
     ----------
@@ -48,7 +42,7 @@ class DataType(metaclass=ABCMeta):
         The name_path to the relative location of the file set, i.e. excluding
         information about which row in the data tree it belongs to
     order : int | None
-        The order in which the file-group appears in the row it belongs to
+        The order in which the file-set appears in the row it belongs to
         (starting at 0). Typically corresponds to the acquisition order for
         scans within an imaging session. Can be used to distinguish between
         scans with the same series description (e.g. multiple BOLD or T1w
@@ -56,117 +50,11 @@ class DataType(metaclass=ABCMeta):
     quality : str
         The quality label assigned to the fileset (e.g. as is saved on XNAT)
     row : DataRow
-        The data row within a dataset that the file-group belongs to
+        The data row within a dataset that the file-set belongs to
     exists : bool
         Whether the fileset exists or is just a placeholder for a sink
     provenance : Provenance | None
-        The provenance for the pipeline that generated the file-group,
-        if applicable
-    """
-
-    path: str = attrs.field()
-    uri: str = attrs.field(default=None)
-    order: int = attrs.field(default=None)
-    quality: DataQuality = attrs.field(default=DataQuality.usable)
-    exists: bool = attrs.field(default=True)
-    provenance: ty.Dict[str, ty.Any] = attrs.field(default=None)
-    row: ty.Any = attrs.field(default=None)
-
-    SUBPACKAGE = "data"
-
-    @abstractmethod
-    def get(self, assume_exists=False):
-        """Pulls data from the store (if remote) and caches locally
-
-        Parameters
-        ----------
-        assume_exists: bool
-            If set, checks to see whether the item exists are skipped (used
-            to pull data after a successful workflow run)
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def put(self, value):
-        """Updates the value of the item in the store to the provided value,
-        pushing remotely if necessary.
-
-        Parameters
-        ----------
-        value : ty.Any
-            The value to update
-        """
-        raise NotImplementedError
-
-    @classproperty
-    def desc(cls):
-        """Descriptive name that can be overridden in subclasses
-
-        Returns
-        -------
-        _type_
-            _description_
-        """
-        return cls.__name__.lower()
-
-    @property
-    def recorded_checksums(self):
-        if self.provenance is None:
-            return None
-        else:
-            return self.provenance.outputs[self.name_path]
-
-    @provenance.validator
-    def check_provenance(self, _, provenance):
-        "Checks that the data item path is present in the provenance"
-        if provenance is not None:
-            if self.path not in provenance.outputs:
-                raise NameError(
-                    self.path,
-                    f"{self.path} was not found in outputs "
-                    f"{provenance.outputs.keys()} of provenance provenance "
-                    f"{provenance}",
-                )
-
-    def _check_exists(self):
-        if not self.exists:
-            raise DataNotDerivedYetError(
-                self.path, f"Cannot access {self} as it hasn't been derived yet"
-            )
-
-    def _check_part_of_row(self):
-        if self.row is None:
-            raise RuntimeError(f"Cannot 'get' {self} as it is not part of a dataset")
-
-    @classmethod
-    def class_name(cls):
-        return cls.__name__.lower()
-
-
-@attrs.define
-class FileSet(DataType, metaclass=ABCMeta):
-    """
-    A representation of a set of files within the dataset.
-
-    Parameters
-    ----------
-    name_path : str
-        The name_path to the relative location of the file set, i.e. excluding
-        information about which row in the data tree it belongs to
-    order : int | None
-        The order in which the file-group appears in the row it belongs to
-        (starting at 0). Typically corresponds to the acquisition order for
-        scans within an imaging session. Can be used to distinguish between
-        scans with the same series description (e.g. multiple BOLD or T1w
-        scans) in the same imaging sessions.
-    quality : str
-        The quality label assigned to the fileset (e.g. as is saved on XNAT)
-    row : DataRow
-        The data row within a dataset that the file-group belongs to
-    exists : bool
-        Whether the fileset exists or is just a placeholder for a sink
-    provenance : Provenance | None
-        The provenance for the pipeline that generated the file-group,
+        The provenance for the pipeline that generated the file-set,
         if applicable
     fs_path : str | None
         Path to the primary file or directory on the local file system
@@ -218,7 +106,7 @@ class FileSet(DataType, metaclass=ABCMeta):
                 f"Cannot put more than one directory, {dir_paths_str}, as part "
                 f"of the same file set {self}"
             )
-        # Make a copy of the file-group to validate the local paths and auto-gen
+        # Make a copy of the file-set to validate the local paths and auto-gen
         # any defaults before they are pushed to the store
         cpy = copy(self)
         cpy.exists = True
@@ -335,7 +223,7 @@ class FileSet(DataType, metaclass=ABCMeta):
         Returns
         -------
         FileSet
-            The resolved file-group object
+            The resolved file-set object
 
         Raises
         ------
@@ -345,7 +233,7 @@ class FileSet(DataType, metaclass=ABCMeta):
             raised
         """
         # Perform matching based on resource names in multi-datatype
-        # file-group
+        # file-set
         if unresolved.uris is not None:
             item = None
             for format_name, uri in unresolved.uris.items():
@@ -362,7 +250,6 @@ class FileSet(DataType, metaclass=ABCMeta):
             item.set_fs_paths(unresolved.file_paths)
         return item
 
-    @abstractmethod
     def set_fs_paths(self, fs_paths: ty.List[Path]):
         """Set the file paths of the file set
 
@@ -390,13 +277,13 @@ class FileSet(DataType, metaclass=ABCMeta):
             file set from. Note that not all paths need to be set if
             they are not relevant.
         path : str, optional
-            the location of the file-group relative to the node it (will)
+            the location of the file-set relative to the node it (will)
             belong to. Defaults to
 
         Returns
         -------
         FileSet
-            The created file-group
+            The created file-set
         """
         if path is None:
             path = fs_paths[0].stem
@@ -471,14 +358,14 @@ class FileSet(DataType, metaclass=ABCMeta):
         Parameters
         ----------
         to_format : type
-            the file-group datatype to convert to
+            the file-set datatype to convert to
         **kwargs
             args to pass to the conversion process
 
         Returns
         -------
         FileSet
-            the converted file-group
+            the converted file-set
         """
         task = to_format.converter_task(
             from_format=type(self), name="converter", **kwargs
@@ -494,7 +381,7 @@ class FileSet(DataType, metaclass=ABCMeta):
         Parameters
         ----------
         from_format : type
-            the file-group class to convert from
+            the file-set class to convert from
         taks_name: str
             the name for the converter task
         **kwargs: dict[str, ty.Any]
@@ -505,12 +392,12 @@ class FileSet(DataType, metaclass=ABCMeta):
         Workflow
             Pydra workflow to perform the conversion with an input called
             'to_convert' and an output called 'converted', which take and
-            produce file-groups in `from_format` and `cls` types respectively.
+            produce file-sets in `from_format` and `cls` types respectively.
         """
 
         wf = Workflow(name=name, input_spec=["to_convert"])
 
-        # Get row to extract paths from file-group lazy field
+        # Get row to extract paths from file-set lazy field
         wf.add(
             func_task(
                 access_paths,
@@ -680,63 +567,63 @@ def encapsulate_paths(to_format: type, to_convert: FileSet, **fs_paths: ty.List[
     return fileset
 
 
-@attrs.define
-class Field(DataType):
-    """
-    A representation of a value field in the dataset.
+# @attrs.define
+# class Field(DataType):
+#     """
+#     A representation of a value field in the dataset.
 
-    Parameters
-    ----------
-    name_path : str
-        The name_path to the relative location of the field, i.e. excluding
-        information about which row in the data tree it belongs to
-    derived : bool
-        Whether or not the value belongs in the derived session or not
-    row : DataRow
-        The data row that the field belongs to
-    exists : bool
-        Whether the field exists or is just a placeholder for a sink
-    provenance : Provenance | None
-        The provenance for the pipeline that generated the field,
-        if applicable
-    """
+#     Parameters
+#     ----------
+#     name_path : str
+#         The name_path to the relative location of the field, i.e. excluding
+#         information about which row in the data tree it belongs to
+#     derived : bool
+#         Whether or not the value belongs in the derived session or not
+#     row : DataRow
+#         The data row that the field belongs to
+#     exists : bool
+#         Whether the field exists or is just a placeholder for a sink
+#     provenance : Provenance | None
+#         The provenance for the pipeline that generated the field,
+#         if applicable
+#     """
 
-    value: ty.Any = None
+#     value: ty.Any = None
 
-    def get(self, assume_exists=False):
-        if not assume_exists:
-            self._check_exists()
-        self._check_part_of_row()
-        self.value = self.row.dataset.store.get_field_value(self)
+#     def get(self, assume_exists=False):
+#         if not assume_exists:
+#             self._check_exists()
+#         self._check_part_of_row()
+#         self.value = self.row.dataset.store.get_field_value(self)
 
-    def put(self, value):
-        self._check_part_of_row()
-        self.row.dataset.store.put_field_value(self, self.format(value))
-        self.exists = True
+#     def put(self, value):
+#         self._check_part_of_row()
+#         self.row.dataset.store.put_field_value(self, self.format(value))
+#         self.exists = True
 
-    def __int__(self):
-        return int(self.value)
+#     def __int__(self):
+#         return int(self.value)
 
-    def __float__(self):
-        return float(self.value)
+#     def __float__(self):
+#         return float(self.value)
 
-    def __str__(self):
-        if self.datatype.__args__:  # Sequence type
-            val = "[" + ",".join(self._to_str(v) for v in self.value) + "]"
-        else:
-            val = self._to_str(self.value)
-        return val
+#     def __str__(self):
+#         if self.datatype.__args__:  # Sequence type
+#             val = "[" + ",".join(self._to_str(v) for v in self.value) + "]"
+#         else:
+#             val = self._to_str(self.value)
+#         return val
 
-    def _to_str(self, val):
-        if self.datatype is str:
-            val = '"{}"'.format(val)
-        else:
-            val = str(val)
-        return val
+#     def _to_str(self, val):
+#         if self.datatype is str:
+#             val = '"{}"'.format(val)
+#         else:
+#             val = str(val)
+#         return val
 
-    def get_checksums(self):
-        """
-        For duck-typing with filesets in checksum management. Instead of a
-        checksum, just the value of the field is used
-        """
-        return self.value
+#     def get_checksums(self):
+#         """
+#         For duck-typing with filesets in checksum management. Instead of a
+#         checksum, just the value of the field is used
+#         """
+#         return self.value

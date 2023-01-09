@@ -70,13 +70,13 @@ class BaseDirectory(FileSet):
         )
 
     def copy_to(self, fs_path: str, symlink: bool = False):
-        """Copies the file-group to the new path, with auxiliary files saved
+        """Copies the file-set to the new path, with auxiliary files saved
         alongside the primary-file path.
 
         Parameters
         ----------
         fs_path : str
-            Path to save the file-group to excluding file extensions
+            Path to save the file-set to excluding file extensions
         symlink : bool
             Use symbolic links instead of copying files to new location
         """
