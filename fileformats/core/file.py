@@ -140,13 +140,13 @@ class WithSideCars(BaseFile):
 
     @classmethod
     def fs_names(cls):
-        """Return names for each top-level file-system path in the file group,
+        """Return names for each top-level file-system path in the file set,
         used when generating Pydra task interfaces.
 
         Returns
         -------
         tuple[str]
-            sequence of names for top-level file-system paths in the file group"""
+            sequence of names for top-level file-system paths in the file set"""
         return super().fs_names() + cls.side_car_exts
 
     def set_fs_paths(self, paths: ty.List[Path]):

@@ -45,7 +45,7 @@ class DataType(metaclass=ABCMeta):
     Parameters
     ----------
     name_path : str
-        The name_path to the relative location of the file group, i.e. excluding
+        The name_path to the relative location of the file set, i.e. excluding
         information about which row in the data tree it belongs to
     order : int | None
         The order in which the file-group appears in the row it belongs to
@@ -146,12 +146,12 @@ class DataType(metaclass=ABCMeta):
 @attrs.define
 class FileSet(DataType, metaclass=ABCMeta):
     """
-    A representation of a fileset within the dataset.
+    A representation of a set of files within the dataset.
 
     Parameters
     ----------
     name_path : str
-        The name_path to the relative location of the file group, i.e. excluding
+        The name_path to the relative location of the file set, i.e. excluding
         information about which row in the data tree it belongs to
     order : int | None
         The order in which the file-group appears in the row it belongs to
@@ -195,7 +195,7 @@ class FileSet(DataType, metaclass=ABCMeta):
                 )
             if not self.exists:
                 raise RuntimeError(
-                    "Attempting to set a path to a file group that hasn't "
+                    "Attempting to set a path to a file set that hasn't "
                     f"been derived yet ({fs_path})"
                 )
 
@@ -216,7 +216,7 @@ class FileSet(DataType, metaclass=ABCMeta):
             dir_paths_str = "', '".join(str(p) for p in dir_paths)
             raise FileFormatError(
                 f"Cannot put more than one directory, {dir_paths_str}, as part "
-                f"of the same file group {self}"
+                f"of the same file set {self}"
             )
         # Make a copy of the file-group to validate the local paths and auto-gen
         # any defaults before they are pushed to the store
@@ -234,7 +234,7 @@ class FileSet(DataType, metaclass=ABCMeta):
 
     @property
     def fs_paths(self):
-        """All base paths (i.e. not nested within directories) in the file group"""
+        """All base paths (i.e. not nested within directories) in the file set"""
         if self.fs_path is None:
             raise FilePathsNotSetException(
                 f"Attempting to access file path of {self} before it is set"
@@ -243,13 +243,13 @@ class FileSet(DataType, metaclass=ABCMeta):
 
     @classmethod
     def fs_names(cls):
-        """Return names for each top-level file-system path in the file group,
+        """Return names for each top-level file-system path in the file set,
         used when generating Pydra task interfaces.
 
         Returns
         -------
         tuple[str]
-            sequence of names for top-level file-system paths in the file group"""
+            sequence of names for top-level file-system paths in the file set"""
         return ("fs_path",)
 
     @classmethod
@@ -324,12 +324,12 @@ class FileSet(DataType, metaclass=ABCMeta):
 
     @classmethod
     def resolve(cls, unresolved):
-        """Resolve file group loaded from a repository to the specific datatype
+        """Resolve file set loaded from a repository to the specific datatype
 
         Parameters
         ----------
         unresolved : UnresolvedFileSet
-            A file group loaded from a repository that has not been resolved to
+            A file set loaded from a repository that has not been resolved to
             a specific datatype yet
 
         Returns
@@ -364,13 +364,13 @@ class FileSet(DataType, metaclass=ABCMeta):
 
     @abstractmethod
     def set_fs_paths(self, fs_paths: ty.List[Path]):
-        """Set the file paths of the file group
+        """Set the file paths of the file set
 
         Parameters
         ----------
         fs_paths : list[Path]
             The candidate paths from which to set the paths of the
-            file group from. Note that not all paths need to be set if
+            file set from. Note that not all paths need to be set if
             they are not relevant.
 
         Raises
@@ -387,7 +387,7 @@ class FileSet(DataType, metaclass=ABCMeta):
         ----------
         fs_paths : list[Path]
             The candidate paths from which to set the paths of the
-            file group from. Note that not all paths need to be set if
+            file set from. Note that not all paths need to be set if
             they are not relevant.
         path : str, optional
             the location of the file-group relative to the node it (will)
@@ -435,7 +435,7 @@ class FileSet(DataType, metaclass=ABCMeta):
             paths_str = ", ".join(str(p) for p in paths)
             raise FileFormatError(
                 f"No matching files with '{ext}' extension found in "
-                f"file group {paths_str}"
+                f"file set {paths_str}"
             )
         elif len(matches) > 1:
             matches_str = ", ".join(str(p) for p in matches)
@@ -538,7 +538,7 @@ class FileSet(DataType, metaclass=ABCMeta):
         #     lf.name = 'converter'
         wf.add(converter)
 
-        # Encapsulate output paths from converter back into a file group object
+        # Encapsulate output paths from converter back into a file set object
         to_encapsulate = dict(zip(cls.fs_names(), output_lfs))
 
         logger.debug("Paths to encapsulate are:\n%s", to_encapsulate)
@@ -638,7 +638,7 @@ class FileSet(DataType, metaclass=ABCMeta):
 
     @classmethod
     def access_contents_task(cls, fileset_lf: LazyField):
-        """Access the fs paths of the file group"""
+        """Access the fs paths of the file set"""
 
     @classmethod
     def from_fs_path(cls, fs_path):
