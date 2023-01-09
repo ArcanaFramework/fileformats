@@ -66,10 +66,7 @@ class FileSet:
         bys relative file name_paths
     """
 
-    ext = None  # to be overridden by file-format specific classes
-
     fs_path: str = attrs.field(default=None, converter=optional(absolute_path))
-    _checksums: ty.Dict[str, str] = attrs.field(default=None, repr=False, init=False)
     # Alternative names for the file format, empty by default overridden in
     # sub-classes where necessary
     alternative_names = ()
