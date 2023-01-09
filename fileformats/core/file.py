@@ -22,21 +22,21 @@ class BaseFile(FileSet):
 
     is_dir = False
 
-    def set_fs_paths(self, fs_paths: ty.List[Path]):
-        self._check_paths_exist(fs_paths)
-        fs_path = absolute_path(self.matches_ext(*fs_paths))
+    def set_fspaths(self, fspaths: ty.List[Path]):
+        self._check_paths_exist(fspaths)
+        fspath = absolute_path(self.matches_ext(*fspaths))
         self.exists = True
-        self.fs_path = fs_path
+        self.fspath = fspath
 
     def all_file_paths(self):
         """The paths of all nested files within the file-set"""
-        if self.fs_path is None:
+        if self.fspath is None:
             raise RuntimeError(
                 f"Attempting to access file paths of {self} before they are set"
             )
-        return self.fs_paths
+        return self.fspaths
 
-    def copy_to(self, fs_path: str or Path, symlink: bool = False):
+    def copy_to(self, fspath: str or Path, symlink: bool = False):
         """Copies the file-set to the new path, with auxiliary files saved
         alongside the primary-file path.
 
@@ -56,10 +56,10 @@ class BaseFile(FileSet):
             copy_file = os.symlink
         else:
             copy_file = shutil.copyfile
-        dest_path = Path(str(fs_path) + "." + self.ext)
-        copy_file(self.fs_path, dest_path)
+        dest_path = Path(str(fspath) + "." + self.ext)
+        copy_file(self.fspath, dest_path)
         cpy = copy(self)
-        cpy.set_fs_paths([dest_path])
+        cpy.set_fspaths([dest_path])
         return cpy
 
     @classmethod
@@ -102,14 +102,14 @@ class WithSideCars(BaseFile):
 
     @side_cars.default
     def default_side_cars(self):
-        if self.fs_path is None:
+        if self.fspath is None:
             return {}
-        return self.default_side_car_paths(self.fs_path)
+        return self.default_side_car_paths(self.fspath)
 
     @side_cars.validator
     def validate_side_cars(self, _, side_cars):
         if side_cars:
-            if self.fs_path is None:
+            if self.fspath is None:
                 raise RuntimeError(
                     "Auxiliary files can only be provided to a FileSet "
                     f"of '{self.path}' ({side_cars}) if the local path is "
@@ -149,12 +149,12 @@ class WithSideCars(BaseFile):
             sequence of names for top-level file-system paths in the file set"""
         return super().fs_names() + cls.side_car_exts
 
-    def set_fs_paths(self, paths: ty.List[Path]):
-        super().set_fs_paths(paths)
+    def set_fspaths(self, paths: ty.List[Path]):
+        super().set_fspaths(paths)
         to_assign = set(Path(p) for p in paths)
-        to_assign.remove(self.fs_path)
+        to_assign.remove(self.fspath)
         # Begin with default side_car paths and override if provided
-        default_side_cars = self.default_side_car_paths(self.fs_path)
+        default_side_cars = self.default_side_car_paths(self.fspath)
         for sc_ext in self.side_car_exts:
             try:
                 matched = self.side_cars[sc_ext] = absolute_path(
@@ -166,19 +166,19 @@ class WithSideCars(BaseFile):
                 to_assign.remove(matched)
 
     @property
-    def fs_paths(self):
-        return chain(super().fs_paths, self.side_cars.values())
+    def fspaths(self):
+        return chain(super().fspaths, self.side_cars.values())
 
     def side_car(self, name):
         return self.side_cars[name]
 
-    def copy_to(self, fs_path: str or Path, symlink: bool = False):
+    def copy_to(self, fspath: str or Path, symlink: bool = False):
         """Copies the file-set to the new path, with auxiliary files saved
         alongside the primary-file path.
 
         Parameters
         ----------
-        fs_path : str or Path
+        fspath : str or Path
             Path to save the file-set to excluding file extensions
         symlink : bool
             Use symbolic links instead of copying files to new location
@@ -187,13 +187,13 @@ class WithSideCars(BaseFile):
             copy_file = os.symlink
         else:
             copy_file = shutil.copyfile
-        dest_path = Path(str(fs_path) + "." + self.ext)
-        copy_file(self.fs_path, dest_path)
+        dest_path = Path(str(fspath) + "." + self.ext)
+        copy_file(self.fspath, dest_path)
         dest_side_cars = self.default_side_car_paths(dest_path)
         for sc_ext, sc_path in self.side_cars.items():
             copy_file(sc_path, dest_side_cars[sc_ext])
         cpy = copy(self)
-        cpy.set_fs_paths([dest_path] + list(dest_side_cars.values()))
+        cpy.set_fspaths([dest_path] + list(dest_side_cars.values()))
         return cpy
 
     @classmethod
@@ -276,7 +276,7 @@ class WithSideCars(BaseFile):
         dict[str, str]
             The checksum dict with file paths generalised"""
         if base_path is None:
-            base_path = self.fs_path
+            base_path = self.fspath
         generalised = {}
         fs_name_dict = {
             self.matches_ext(*checksums.keys(), ext=e): e for e in self.side_car_exts

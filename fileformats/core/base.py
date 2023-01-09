@@ -56,7 +56,7 @@ class FileSet:
     provenance : Provenance | None
         The provenance for the pipeline that generated the file-set,
         if applicable
-    fs_path : str | None
+    fspath : str | None
         Path to the primary file or directory on the local file system
     side_cars : ty.Dict[str, str] | None
         Additional files in the fileset. Keys should match corresponding
@@ -66,37 +66,37 @@ class FileSet:
         bys relative file name_paths
     """
 
-    fs_path: str = attrs.field(default=None, converter=optional(absolute_path))
+    fspath: str = attrs.field(default=None, converter=optional(absolute_path))
     # Alternative names for the file format, empty by default overridden in
     # sub-classes where necessary
     alternative_names = ()
 
-    @fs_path.validator
-    def validate_fs_path(self, _, fs_path):
-        if fs_path is not None:
-            if not fs_path.exists:
+    @fspath.validator
+    def validate_fspath(self, _, fspath):
+        if fspath is not None:
+            if not fspath.exists:
                 raise RuntimeError(
-                    "Attempting to set a path that doesn't exist " f"({fs_path})"
+                    "Attempting to set a path that doesn't exist " f"({fspath})"
                 )
             if not self.exists:
                 raise RuntimeError(
                     "Attempting to set a path to a file set that hasn't "
-                    f"been derived yet ({fs_path})"
+                    f"been derived yet ({fspath})"
                 )
 
     def get(self, assume_exists=False):
         if assume_exists:
             self.exists = True
         self._check_part_of_row()
-        fs_paths = self.row.dataset.store.get_fileset_paths(self)
+        fspaths = self.row.dataset.store.get_fileset_paths(self)
         self.exists = True
-        self.set_fs_paths(fs_paths)
+        self.set_fspaths(fspaths)
         self.validate_file_paths()
 
-    def put(self, *fs_paths):
+    def put(self, *fspaths):
         self._check_part_of_row()
-        fs_paths = [Path(p) for p in fs_paths]
-        dir_paths = list(p for p in fs_paths if p.is_dir())
+        fspaths = [Path(p) for p in fspaths]
+        dir_paths = list(p for p in fspaths if p.is_dir())
         if len(dir_paths) > 1:
             dir_paths_str = "', '".join(str(p) for p in dir_paths)
             raise FileFormatError(
@@ -107,24 +107,24 @@ class FileSet:
         # any defaults before they are pushed to the store
         cpy = copy(self)
         cpy.exists = True
-        cpy.set_fs_paths(fs_paths)
-        cache_paths = self.row.dataset.store.put_fileset_paths(self, cpy.fs_paths)
+        cpy.set_fspaths(fspaths)
+        cache_paths = self.row.dataset.store.put_fileset_paths(self, cpy.fspaths)
         # Set the paths to the cached files
         self.exists = True
-        self.set_fs_paths(cache_paths)
+        self.set_fspaths(cache_paths)
         self.validate_file_paths()
         # Save provenance
         if self.provenance:
             self.row.dataset.store.put_provenance(self)
 
     @property
-    def fs_paths(self):
+    def fspaths(self):
         """All base paths (i.e. not nested within directories) in the file set"""
-        if self.fs_path is None:
+        if self.fspath is None:
             raise FilePathsNotSetException(
                 f"Attempting to access file path of {self} before it is set"
             )
-        return [self.fs_path]
+        return [self.fspath]
 
     @classmethod
     def fs_names(cls):
@@ -135,7 +135,7 @@ class FileSet:
         -------
         tuple[str]
             sequence of names for top-level file-system paths in the file set"""
-        return ("fs_path",)
+        return ("fspath",)
 
     @classmethod
     def matches_format_name(cls, name: str):
@@ -160,7 +160,7 @@ class FileSet:
 
     @property
     def value(self):
-        return str(self.fs_path)
+        return str(self.fspath)
 
     @property
     def checksums(self):
@@ -205,7 +205,7 @@ class FileSet:
         """
         self._check_exists()
         other._check_exists()
-        return self.checksums[self.fs_path.name] == other.checksums[other.fs_path.name]
+        return self.checksums[self.fspath.name] == other.checksums[other.fspath.name]
 
     @classmethod
     def resolve(cls, unresolved):
@@ -244,15 +244,15 @@ class FileSet:
                 )
         else:
             item = cls(**unresolved.item_kwargs)
-            item.set_fs_paths(unresolved.file_paths)
+            item.set_fspaths(unresolved.file_paths)
         return item
 
-    def set_fs_paths(self, fs_paths: ty.List[Path]):
+    def set_fspaths(self, fspaths: ty.List[Path]):
         """Set the file paths of the file set
 
         Parameters
         ----------
-        fs_paths : list[Path]
+        fspaths : list[Path]
             The candidate paths from which to set the paths of the
             file set from. Note that not all paths need to be set if
             they are not relevant.
@@ -264,12 +264,12 @@ class FileSet:
         """
 
     @classmethod
-    def from_fs_paths(cls, *fs_paths: ty.List[Path], path=None):
+    def from_fspaths(cls, *fspaths: ty.List[Path], path=None):
         """Create a FileSet object from a set of file-system paths
 
         Parameters
         ----------
-        fs_paths : list[Path]
+        fspaths : list[Path]
             The candidate paths from which to set the paths of the
             file set from. Note that not all paths need to be set if
             they are not relevant.
@@ -283,9 +283,9 @@ class FileSet:
             The created file-set
         """
         if path is None:
-            path = fs_paths[0].stem
+            path = fspaths[0].stem
         obj = cls(path)
-        obj.set_fs_paths(fs_paths)
+        obj.set_fspaths(fspaths)
         return obj
 
     @classmethod
@@ -332,21 +332,21 @@ class FileSet:
         attrs.validate(self)
         self.exists = True
 
-    def _check_paths_exist(self, fs_paths: ty.List[Path]):
-        if missing := [p for p in fs_paths if not p or not Path(p).exists()]:
+    def _check_paths_exist(self, fspaths: ty.List[Path]):
+        if missing := [p for p in fspaths if not p or not Path(p).exists()]:
             missing_str = "\n".join(str(p) for p in missing)
-            all_str = "\n".join(str(p) for p in fs_paths)
+            all_str = "\n".join(str(p) for p in fspaths)
             msg = (
                 f"The following file system paths provided to {self} do not "
                 f"exist:\n{missing_str}\n\nFrom full list:\n{all_str}"
             )
-            for fs_path in missing:
-                if fs_path:
-                    if fs_path.parent.exists():
+            for fspath in missing:
+                if fspath:
+                    if fspath.parent.exists():
                         msg += (
-                            f"\n\nFiles in the directory '{str(fs_path.parent)}' are:\n"
+                            f"\n\nFiles in the directory '{str(fspath.parent)}' are:\n"
                         )
-                        msg += "\n".join(str(p) for p in fs_path.parent.iterdir())
+                        msg += "\n".join(str(p) for p in fspath.parent.iterdir())
             raise FileFormatError(msg)
 
     def convert_to(self, to_format, **kwargs):
@@ -517,7 +517,7 @@ class FileSet:
         dict[str, str]
             The checksum dict with file paths generalised"""
         if base_path is None:
-            base_path = self.fs_path
+            base_path = self.fspath
         return {str(Path(k).relative_to(base_path)): v for k, v in checksums.items()}
 
     @classmethod
@@ -525,9 +525,9 @@ class FileSet:
         """Access the fs paths of the file set"""
 
     @classmethod
-    def from_fs_path(cls, fs_path):
-        fileset = cls(path=Path(fs_path).stem)
-        fileset.set_fs_paths([fs_path])
+    def from_fspath(cls, fspath):
+        fileset = cls(path=Path(fspath).stem)
+        fileset.set_fspaths([fspath])
         return fileset
 
     @classmethod
@@ -550,17 +550,15 @@ def access_paths(from_format, fileset):
         from_format,
     )
     cpy = fileset.copy_to(path2varname(fileset.path), symlink=True)
-    return cpy.fs_paths if len(cpy.fs_paths) > 1 else cpy.fs_path
+    return cpy.fspaths if len(cpy.fspaths) > 1 else cpy.fspath
 
 
-def encapsulate_paths(to_format: type, to_convert: FileSet, **fs_paths: ty.List[Path]):
+def encapsulate_paths(to_format: type, to_convert: FileSet, **fspaths: ty.List[Path]):
     """Copies files into the CWD renaming so the basenames match
     except for extensions"""
-    logger.debug(
-        "Encapsulating %s into %s format after conversion", fs_paths, to_format
-    )
+    logger.debug("Encapsulating %s into %s format after conversion", fspaths, to_format)
     fileset = to_format(to_convert.path + "_" + to_format.class_name())
-    fileset.set_fs_paths(fs_paths.values())
+    fileset.set_fspaths(fspaths.values())
     return fileset
 
 
