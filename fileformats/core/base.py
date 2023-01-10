@@ -1,339 +1,55 @@
 from __future__ import annotations
-from pathlib import Path
+import os
+import shutil
 import typing as ty
-from copy import copy
-import hashlib
+from pathlib import Path
+import operator
 import logging
 import attrs
-from attrs.converters import optional
-from pydra.engine.core import LazyField, Workflow
-from .utils import (
-    func_task,
-    path2varname,
-    CONVERTER_ANNOTATIONS,
-    HASH_CHUNK_SIZE,
-)
-from .exceptions import (
-    FileFormatError,
-    FileFormatConversionError,
-    FilePathsNotSetException,
-)
+from .exceptions import FileFormatError, FileFormatConversionError
+from .mark import required
 
 
-def absolute_path(path):
-    return Path(path).absolute()
-
-
-def absolute_paths_dict(dct):
-    return {n: absolute_path(p) for n, p in dict(dct).items()}
-
+# Tools imported from Arcana, will remove again once file-formats and "cells"
+# have been split
+REQUIRED_ANNOTATION = "__fileformats_required__"
+CHECK_ANNOTATION = "__fileformats_check__"
 
 logger = logging.getLogger("fileformats")
+
+
+def fspaths_converter(fspaths):
+    """Ensures fs-paths are a set of pathlib.Path"""
+    if isinstance(fspaths, str):
+        fspaths = [fspaths]
+    return set((Path(p) if isinstance(p, str) else p).absolute() for p in fspaths)
 
 
 @attrs.define
 class FileSet:
     """
-    Generic representation of a collection of files related to a single data resource
+    The base class for all format types within the fileformats package. A generic
+    representation of a collection of files related to a single data resource. A
+    file-set can be a single file or directory or a collection thereof, such as a
+    primary file with a "side-car" header.
 
     Parameters
     ----------
-    name_path : str
-        The name_path to the relative location of the file set, i.e. excluding
-        information about which row in the data tree it belongs to
-    order : int | None
-        The order in which the file-set appears in the row it belongs to
-        (starting at 0). Typically corresponds to the acquisition order for
-        scans within an imaging session. Can be used to distinguish between
-        scans with the same series description (e.g. multiple BOLD or T1w
-        scans) in the same imaging sessions.
-    quality : str
-        The quality label assigned to the fileset (e.g. as is saved on XNAT)
-    row : DataRow
-        The data row within a dataset that the file-set belongs to
-    exists : bool
-        Whether the fileset exists or is just a placeholder for a sink
-    provenance : Provenance | None
-        The provenance for the pipeline that generated the file-set,
-        if applicable
-    fspath : str | None
-        Path to the primary file or directory on the local file system
-    side_cars : ty.Dict[str, str] | None
-        Additional files in the fileset. Keys should match corresponding
-        side_cars dictionary in format.
-    checksums : ty.Dict[str, str]
-        A checksums of all files within the fileset in a dictionary sorted
-        bys relative file name_paths
+    fspaths : set[Path]
+        a set of file-system paths pointing to all the resources in the file-set
+    checks : bool
+        whether to run in-depth "checks" to verify the file format
     """
 
-    fspath: str = attrs.field(default=None, converter=optional(absolute_path))
-    # Alternative names for the file format, empty by default overridden in
-    # sub-classes where necessary
-    alternative_names = ()
+    fspaths: set[Path] = attrs.field(default=None, converter=fspaths_converter)
+    checks: bool = attrs.field(default=False, kw_only=True)
 
-    @fspath.validator
-    def validate_fspath(self, _, fspath):
-        if fspath is not None:
-            if not fspath.exists:
-                raise RuntimeError(
-                    "Attempting to set a path that doesn't exist " f"({fspath})"
-                )
-            if not self.exists:
-                raise RuntimeError(
-                    "Attempting to set a path to a file set that hasn't "
-                    f"been derived yet ({fspath})"
-                )
+    # Create slot to hold converters registered by @converter decorator
+    converters = None
 
-    def get(self, assume_exists=False):
-        if assume_exists:
-            self.exists = True
-        self._check_part_of_row()
-        fspaths = self.row.dataset.store.get_fileset_paths(self)
-        self.exists = True
-        self.set_fspaths(fspaths)
-        self.validate_file_paths()
-
-    def put(self, *fspaths):
-        self._check_part_of_row()
-        fspaths = [Path(p) for p in fspaths]
-        dir_paths = list(p for p in fspaths if p.is_dir())
-        if len(dir_paths) > 1:
-            dir_paths_str = "', '".join(str(p) for p in dir_paths)
-            raise FileFormatError(
-                f"Cannot put more than one directory, {dir_paths_str}, as part "
-                f"of the same file set {self}"
-            )
-        # Make a copy of the file-set to validate the local paths and auto-gen
-        # any defaults before they are pushed to the store
-        cpy = copy(self)
-        cpy.exists = True
-        cpy.set_fspaths(fspaths)
-        cache_paths = self.row.dataset.store.put_fileset_paths(self, cpy.fspaths)
-        # Set the paths to the cached files
-        self.exists = True
-        self.set_fspaths(cache_paths)
-        self.validate_file_paths()
-        # Save provenance
-        if self.provenance:
-            self.row.dataset.store.put_provenance(self)
-
-    @property
-    def fspaths(self):
-        """All base paths (i.e. not nested within directories) in the file set"""
-        if self.fspath is None:
-            raise FilePathsNotSetException(
-                f"Attempting to access file path of {self} before it is set"
-            )
-        return [self.fspath]
-
-    @classmethod
-    def fs_names(cls):
-        """Return names for each top-level file-system path in the file set,
-        used when generating Pydra task interfaces.
-
-        Returns
-        -------
-        tuple[str]
-            sequence of names for top-level file-system paths in the file set"""
-        return ("fspath",)
-
-    @classmethod
-    def matches_format_name(cls, name: str):
-        """Checks to see whether the provided name is a valid name for the
-        file format. Alternative names can be provided for format-specific
-        subclasses, or this method can be overridden. Matches are case
-        insensitive.
-
-        Parameters
-        ----------
-        name : str
-            Name to match
-
-        Returns
-        -------
-        bool
-            whether or not the name matches the datatype
-        """
-        return name.lower() in [
-            n.lower() for n in (cls.class_name(),) + cls.alternative_names
-        ]
-
-    @property
-    def value(self):
-        return str(self.fspath)
-
-    @property
-    def checksums(self):
-        if self._checksums is None:
-            self.get_checksums()
-        return self._checksums
-
-    def get_checksums(self, force_calculate=False):
-        self._check_exists()
-        # Load checksums from store (e.g. via API)
-        if self.row is not None and not force_calculate:
-            self._checksums = self.row.dataset.store.get_checksums(self)
-        # If the store cannot calculate the checksums do them manually
-        else:
-            self._checksums = self.calculate_checksums()
-
-    def calculate_checksums(self):
-        self._check_exists()
-        checksums = {}
-        for fpath in self.all_file_paths():
-            fhash = hashlib.md5()
-            with open(fpath, "rb") as f:
-                # Calculate hash in chunks so we don't run out of memory for
-                # large files.
-                for chunk in iter(lambda: f.read(HASH_CHUNK_SIZE), b""):
-                    fhash.update(chunk)
-            checksums[fpath] = fhash.hexdigest()
-        checksums = self.generalise_checksum_keys(checksums)
-        return checksums
-
-    def contents_equal(self, other, **kwargs):
-        """
-        Test the equality of the fileset contents with another fileset.
-        If the fileset's format implements a 'contents_equal' method than
-        that is used to determine the equality, otherwise a straight comparison
-        of the checksums is used.
-
-        Parameters
-        ----------
-        other : FileSet
-            The other fileset to compare to
-        """
-        self._check_exists()
-        other._check_exists()
-        return self.checksums[self.fspath.name] == other.checksums[other.fspath.name]
-
-    @classmethod
-    def resolve(cls, unresolved):
-        """Resolve file set loaded from a repository to the specific datatype
-
-        Parameters
-        ----------
-        unresolved : UnresolvedFileSet
-            A file set loaded from a repository that has not been resolved to
-            a specific datatype yet
-
-        Returns
-        -------
-        FileSet
-            The resolved file-set object
-
-        Raises
-        ------
-        ArcanaUnresolvableFormatException
-            If there doesn't exist a unique resolution from the unresolved file
-            group to the given datatype, then an FileFormatError should be
-            raised
-        """
-        # Perform matching based on resource names in multi-datatype
-        # file-set
-        if unresolved.uris is not None:
-            item = None
-            for format_name, uri in unresolved.uris.items():
-                if cls.matches_format_name(format_name):
-                    item = cls(uri=uri, **unresolved.item_kwargs)
-            if item is None:
-                raise FileFormatError(
-                    f"Could not file a matching resource in {unresolved.path} for"
-                    f" the given datatype ({cls.class_name()}), found "
-                    "('{}')".format("', '".join(unresolved.uris))
-                )
-        else:
-            item = cls(**unresolved.item_kwargs)
-            item.set_fspaths(unresolved.file_paths)
-        return item
-
-    def set_fspaths(self, fspaths: ty.List[Path]):
-        """Set the file paths of the file set
-
-        Parameters
-        ----------
-        fspaths : list[Path]
-            The candidate paths from which to set the paths of the
-            file set from. Note that not all paths need to be set if
-            they are not relevant.
-
-        Raises
-        ------
-        FileFormatError
-            is raised if the required the paths cannot be set from the provided
-        """
-
-    @classmethod
-    def from_fspaths(cls, *fspaths: ty.List[Path], path=None):
-        """Create a FileSet object from a set of file-system paths
-
-        Parameters
-        ----------
-        fspaths : list[Path]
-            The candidate paths from which to set the paths of the
-            file set from. Note that not all paths need to be set if
-            they are not relevant.
-        path : str, optional
-            the location of the file-set relative to the node it (will)
-            belong to. Defaults to
-
-        Returns
-        -------
-        FileSet
-            The created file-set
-        """
-        if path is None:
-            path = fspaths[0].stem
-        obj = cls(path)
-        obj.set_fspaths(fspaths)
-        return obj
-
-    @classmethod
-    def matches_ext(cls, *paths, ext=None):
-        """Returns the path out of the candidates provided that matches the
-        given extension (by default the extension of the class)
-
-        Parameters
-        ----------
-        *paths: list[Path]
-            The paths to select from
-        ext: str or None
-            the extension to match (defaults to 'ext' attribute of class)
-
-        Returns
-        -------
-        Path
-            the matching path
-
-        Raises
-        ------
-        FileFormatError
-            When no paths match or more than one path matches the given extension"""
-        if ext is None:
-            ext = cls.ext
-        if ext:
-            matches = [str(p) for p in paths if str(p).endswith("." + ext)]
-        else:
-            matches = paths
-        if not matches:
-            paths_str = ", ".join(str(p) for p in paths)
-            raise FileFormatError(
-                f"No matching files with '{ext}' extension found in "
-                f"file set {paths_str}"
-            )
-        elif len(matches) > 1:
-            matches_str = ", ".join(str(p) for p in matches)
-            raise FileFormatError(
-                f"Multiple files with '{ext}' extension found in : {matches_str}"
-            )
-        return str(matches[0])
-
-    def validate_file_paths(self):
-        attrs.validate(self)
-        self.exists = True
-
-    def _check_paths_exist(self, fspaths: ty.List[Path]):
-        if missing := [p for p in fspaths if not p or not Path(p).exists()]:
+    @fspaths.validator
+    def validate_fspaths(self, _, fspaths):
+        if missing := [p for p in fspaths if not p or not p.exists()]:
             missing_str = "\n".join(str(p) for p in missing)
             all_str = "\n".join(str(p) for p in fspaths)
             msg = (
@@ -348,218 +64,543 @@ class FileSet:
                         )
                         msg += "\n".join(str(p) for p in fspath.parent.iterdir())
             raise FileFormatError(msg)
+        for attr in dir(self):
+            if REQUIRED_ANNOTATION in attr.__annotations__:
+                check_property(self, attr, attr.__annotations__[REQUIRED_ANNOTATION])
+            if self.checks and CHECK_ANNOTATION in attr.__annotations__:
+                check_property(self, attr, attr.__annotations__[CHECK_ANNOTATION])
 
-    def convert_to(self, to_format, **kwargs):
-        """Convert the FileSet to a new datatype
+    def __iter__(self):
+        return iter(self.fspaths)
+
+    def copy_to(self, parent: Path, stem: str = None, symlink: bool = False):
+        """Copies the file-set to the new path, with auxiliary files saved
+        alongside the primary-file path.
 
         Parameters
         ----------
-        to_format : type
-            the file-set datatype to convert to
+        parent : str
+            Path to the parent directory to save the file-set
+        stem: str, optional
+            the file name excluding file extensions, to give the files/dirs in the parent
+            directory, by default the original file name is used
+        symlink : bool, optional
+            Use symbolic links instead of copying files to new location, false by default
+        """
+        parent = Path(parent)  # ensure a Path not a string
+        if symlink:
+            copy_dir = copy_file = os.symlink
+        else:
+            copy_dir = shutil.copytree
+            copy_file = shutil.copyfile
+        new_paths = []
+        for fspath in self.fspaths:
+            new_fname = stem + ".".join(fspath.suffixes) if stem else fspath.name
+            new_path = parent / new_fname
+            if fspath.is_dir():
+                copy_dir(fspath, new_path)
+            else:
+                copy_file(fspath, new_path)
+            new_paths.append(new_path)
+        return type(self)(new_paths)
+
+    @classmethod
+    def select_by_ext(cls, fspaths: set[Path], ext: str) -> Path:
+        """Selects a single path from a set of file-system paths based on the file
+        extension
+
+        Parameters
+        ----------
+        fspaths : set[Path]
+            the file-system paths to select from
+        ext : str
+            the file extension to select
+
+        Returns
+        -------
+        Path
+            the selected file-system path that matches the extension
+
+        Raises
+        ------
+        FileFormatError
+            if no paths match the extension
+        FileFormatError
+            if more than one paths matches the extension
+        """
+        matches = cls.matching_ext(fspaths, ext)
+        if not matches:
+            paths_str = ", ".join(str(p) for p in fspaths)
+            raise FileFormatError(
+                f"No matching files with '{ext}' extension found in "
+                f"file set {paths_str}"
+            )
+        elif len(matches) > 1:
+            matches_str = ", ".join(str(p) for p in matches)
+            raise FileFormatError(
+                f"Multiple files with '{ext}' extension found in : {matches_str}"
+            )
+        return matches[0]
+
+    @classmethod
+    def matching_ext(cls, fspaths: set[Path], ext: str):
+        """Returns the paths out of the candidates provided that matches the
+        given extension (by default the extension of the class)
+
+        Parameters
+        ----------
+        fspaths: list[Path]
+            The paths to select from
+        ext: str or None
+            the extension to match (defaults to 'ext' attribute of class)
+
+        Returns
+        -------
+        list[Path]
+            the matching paths
+
+        Raises
+        ------
+        FileFormatError
+            When no paths match or more than one path matches the given extension"""
+        return [str(p) for p in fspaths if str(p).endswith(ext)]
+
+    @classmethod
+    def convert(cls, fileset, **kwargs):
+        """Convert a given file-set into the format specified by the class
+
+        Parameters
+        ----------
+        fileset : FileSet
+            the file-set object to convert
         **kwargs
             args to pass to the conversion process
 
         Returns
         -------
         FileSet
-            the converted file-set
+            the file-set converted into the type of the current class
         """
-        task = to_format.converter_task(
-            from_format=type(self), name="converter", **kwargs
-        )
-        task.inputs.to_convert = self
-        result = task(plugin="serial")
-        return result.output.converted
+        task = cls.converter(source_format=type(fileset))
+        # Make unique, yet somewhat recognisable task name
+        task_name = f"{type(fileset).__name__}_to_{cls.__name__}_{hash(fileset)}"
+        return cls(task(name=task_name, in_file=fileset, **kwargs).output.out_file)
 
     @classmethod
-    def converter_task(cls, from_format, name, **kwargs):
-        """Adds a converter row to a workflow
+    def converter(cls, source_format: type) -> type:
+        """Finds a converter that converts from the source format type
+        into the format specified by the class
 
         Parameters
         ----------
-        from_format : type
-            the file-set class to convert from
-        taks_name: str
-            the name for the converter task
-        **kwargs: dict[str, ty.Any]
-            keyword arguments passed through to the converter
+        source_format : type
+            the format to convert from
 
         Returns
         -------
-        Workflow
-            Pydra workflow to perform the conversion with an input called
-            'to_convert' and an output called 'converted', which take and
-            produce file-sets in `from_format` and `cls` types respectively.
-        """
-
-        wf = Workflow(name=name, input_spec=["to_convert"])
-
-        # Get row to extract paths from file-set lazy field
-        wf.add(
-            func_task(
-                access_paths,
-                in_fields=[("from_format", type), ("fileset", from_format)],
-                out_fields=[(i, Path) for i in from_format.fs_names()],
-                # name='extract',
-                from_format=from_format,
-                fileset=wf.lzin.to_convert,
-            )
-        )
-
-        # Aggregate converter inputs and combine with fixed keyword args
-        conv_inputs = {
-            n: getattr(wf.access_paths.lzout, n) for n in from_format.fs_names()
-        }
-        conv_inputs.update(kwargs)
-        # Create converter node
-        converter, output_lfs = cls.find_converter(from_format)(**conv_inputs)
-        # If there is only one output lazy field, place it in a tuple so it can
-        # be zipped with cls.fs_names()
-        if isinstance(output_lfs, LazyField):
-            output_lfs = (output_lfs,)
-        # converter.name = 'converter'
-        # for lf in output_lfs:
-        #     lf.name = 'converter'
-        wf.add(converter)
-
-        # Encapsulate output paths from converter back into a file set object
-        to_encapsulate = dict(zip(cls.fs_names(), output_lfs))
-
-        logger.debug("Paths to encapsulate are:\n%s", to_encapsulate)
-
-        wf.add(
-            func_task(
-                encapsulate_paths,
-                in_fields=[("to_format", type), ("to_convert", from_format)]
-                + [(o, ty.Union[str, Path]) for o in cls.fs_names()],
-                out_fields=[("converted", cls)],
-                # name='encapsulate',
-                to_format=cls,
-                to_convert=wf.lzin.to_convert,
-                **to_encapsulate,
-            )
-        )
-
-        wf.set_output(("converted", wf.encapsulate_paths.lzout.converted))
-
-        return wf
-
-    @classmethod
-    def find_converter(cls, from_format):
-        """Selects the converter method from the given datatype. Will select the
-        most specific conversion.
-
-        Parameters
-        ----------
-        from_format : type
-            The datatype type to convert from
-
-        Returns
-        -------
-        function or NoneType
-            The bound method that adds rows to a given workflow if conversion is required
-            and None if no conversion is required
+        pydra.engine.Task
+            a pydra task or workflow that performs the conversion
 
         Raises
         ------
         FileFormatConversionError
             _description_
+        FileFormatConversionError
+            _description_
         """
-        if from_format is cls or issubclass(from_format, cls):
-            return None  # No conversion is required
         converter = None
-        for attr_name in dir(cls):
-            meth = getattr(cls, attr_name)
+        # Walk back through method-resolution order of base classes to try to find a
+        # valid converter
+        for klass in cls.mro():
+            converters = klass.__dict__.get("converters")
+            if converters is None:
+                continue
             try:
-                converts_from = meth.__annotations__[CONVERTER_ANNOTATIONS]
-            except (AttributeError, KeyError):
-                pass
-            else:
-                if from_format is converts_from or issubclass(
-                    from_format, converts_from
-                ):
-                    if converter:
-                        prev_converts_from = converter.__annotations__[
-                            CONVERTER_ANNOTATIONS
-                        ]
-                        if issubclass(converts_from, prev_converts_from):
-                            converter = meth
-                        elif not issubclass(prev_converts_from, converts_from):
-                            raise FileFormatConversionError(
-                                f"Ambiguous converters between {from_format} "
-                                f"and {cls}: {converter} and {meth}. Please "
-                                f"define a specific converter from {from_format} "
-                                f"(i.e. instead of from {prev_converts_from} "
-                                f"and {converts_from} respectively)"
-                            )
-                    else:
-                        converter = meth
-        if converter is None:
+                converter = converters[source_format]
+            except KeyError:  # check to see whether there are converters from a base class
+                available = []
+                for frmt, converter in converters.items():
+                    if issubclass(source_format, frmt):
+                        available.append(converter)
+                if len(available) > 1:
+                    raise FileFormatConversionError(
+                        f"Ambiguous converters found between {cls.__name__} and "
+                        f"{source_format.__name__}, {available}"
+                    )
+                elif available:
+                    converter = available[0]
+            if converter:
+                break
+        if not converter:
             raise FileFormatConversionError(
-                f"No datatype converters are defined from {from_format} to {cls}"
+                f"Could not find converter between {source_format.__name__} and "
+                f"{cls.__name__} formats"
             )
         return converter
 
-    def generalise_checksum_keys(
-        self, checksums: ty.Dict[str, str], base_path: Path = None
+    @classmethod
+    def include_adjacents(
+        cls,
+        fspaths: set[Path],
+        duplicate_ext: bool = False,
+        multipart_ext: bool = False,
     ):
-        """Generalises the paths used for the file paths in a checksum dictionary
-        so that they are the same irrespective of that the top-level file-system
-        paths are
+        """Adds any "adjacent files", i.e. any files with the same stem but different
+        extension, if that suffix isn't already present in the existing fspaths
 
         Parameters
         ----------
-        checksums: dict[str, str]
-            The checksum dict mapping relative file paths to checksums
+        fspaths : list[Path]
+            the paths to find the suffies
+        duplicate_ext : bool, optional
+            whether to include adjacent files if there is already a file with the same
+            extension in the file set
+        multipart_ext : bool, optional
+            whether to treat paths with multiple "." as having one long suffix,
+            e.g. "image.nii.gz"
+        """
+        # Create a copy of the fspaths provided
+        fspaths = set(fspaths)
+
+        def splitext(fspath):
+            if multipart_ext:
+                ext = ".".join(fspath.suffixes)
+                stem = fspath.name[: -len(ext)]
+            else:
+                stem = fspath.stem
+                ext = fspath.suffix
+            return stem, ext
+
+        for fspath in list(fspaths):
+            stem = splitext(fspath)[0]
+            for neighbour in fspaths.parent.iterdir():
+                neigh_stem, neigh_ext = splitext(neighbour)
+                if neigh_stem == stem:
+                    if duplicate_ext or neigh_ext not in (
+                        splitext(p)[-1] for p in fspaths
+                    ):
+                        fspaths.add(neighbour)
+        return fspaths
+
+    @classmethod
+    def with_adjacents(
+        cls,
+        fspaths: set[Path],
+        duplicate_ext: bool = False,
+        multipart_ext: bool = False,
+        **kwargs,
+    ):
+        """Factory method to create a file-set with adjacent files included
+
+        Parameters
+        ----------
+        fspaths : list[Path]
+            the paths to find the suffies
+        duplicate_ext : bool, optional
+            whether to include adjacent files if there is already a file with the same
+            extension in the file set
+        multipart_ext : bool, optional
+            whether to treat paths with multiple "." as having one long suffix,
+            e.g. "image.nii.gz"
+        **kwargs
+            keyword arguments passed on to file-set __init__
+        """
+        return cls(
+            cls.include_adjacents(
+                fspaths=fspaths,
+                multipart_ext=multipart_ext,
+                duplicate_ext=duplicate_ext,
+            ),
+            **kwargs,
+        )
+
+
+@attrs.define
+class File(FileSet):
+    """Generic file type"""
+
+    ext = ""
+
+    @required
+    @property
+    def fspath(self):
+        fspath = self.select_by_ext(self.fspaths, self.ext)
+        if not fspath.is_file():
+            raise FileFormatError(
+                f'Path that matches extension "{self.ext}", {fspath}, is not a file'
+            )
+        return fspath
+
+    def __str__(self):
+        return str(self.fspath)
+
+    @classmethod
+    def copy_ext(cls, old_path: Path, new_path: Path):
+        """Copy extension from the old path to the new path, ensuring that all
+        of the extension is used (e.g. 'my.gz' instead of 'gz')
+
+        Parameters
+        ----------
+        old_path: Path or str
+            The path from which to copy the extension from
+        new_path: Path or str
+            The path to append the extension to
 
         Returns
         -------
-        dict[str, str]
-            The checksum dict with file paths generalised"""
-        if base_path is None:
-            base_path = self.fspath
-        return {str(Path(k).relative_to(base_path)): v for k, v in checksums.items()}
+        Path
+            The new path with the copied extension
+        """
+        if not cls.matching_ext(old_path, cls.ext):
+            raise FileFormatError(
+                f"Extension of old path ('{str(old_path)}') does not match that "
+                f"of file, '{cls.ext}'"
+            )
+        suffix = "." + cls.ext if cls.ext is not None else old_path.suffix
+        return Path(new_path).with_suffix(suffix)
+
+
+@attrs.define
+class Directory(FileSet):
+    """Generic directory type"""
+
+    content_types = ()
 
     @classmethod
-    def access_contents_task(cls, fileset_lf: LazyField):
-        """Access the fs paths of the file set"""
+    def __class_getitem__(cls, *content_types):
+        content_type_str = "_".join(t.__name__ for t in content_types)
+        return type(
+            name=f"{cls.__name__}_containing_{content_type_str}",
+            bases=(cls,),
+            dict={"content_types": content_types},
+        )
 
-    @classmethod
-    def from_fspath(cls, fspath):
-        fileset = cls(path=Path(fspath).stem)
-        fileset.set_fspaths([fspath])
-        return fileset
+    @required
+    @property
+    def fspath(self):
+        dirs = [p for p in self.fspaths if p.is_dir()]
+        if not dirs:
+            raise FileFormatError(f"No directory paths provided {self}")
+        elif len(dirs) > 1:
+            raise FileFormatError(
+                f"More than one directory path provided {dirs} to {self}"
+            )
+        fspath = dirs[0]
+        missing = []
+        for content_type in self.content_types:
+            match = False
+            for p in fspath.iterdir():
+                try:
+                    content_type(p)
+                except FileFormatError:
+                    continue
+                else:
+                    match = True
+                    break
+            if not match:
+                missing.append(content_type)
+        if missing:
+            raise FileFormatError(
+                f"Did not find matches for {missing} content types in {self}"
+            )
 
-    @classmethod
-    def append_ext(cls, path: Path):
-        if path.ext is not None:
-            path = path.with_suffix(cls.ext)
-        return path
-
-    @classmethod
-    def all_exts(cls):
-        return [""]
+    def __str__(self):
+        return str(self.fspath)
 
 
-def access_paths(from_format, fileset):
-    """Copies files into the CWD renaming so the basenames match
-    except for extensions"""
-    logger.debug(
-        "Extracting paths from %s (%s format) before conversion",
-        fileset,
-        from_format,
-    )
-    cpy = fileset.copy_to(path2varname(fileset.path), symlink=True)
-    return cpy.fspaths if len(cpy.fspaths) > 1 else cpy.fspath
+def check_property(fileset: FileSet, name: str, checks: dict[str, ty.Any]):
+    """Check the value of a property of the file-set to ensure it meets the given
+    criteria
+
+    Parameters
+    ----------
+    fileset : FileSet
+        the file-set to check
+    name : str
+        name of the property to check
+    checks : dict[str, ty.Any]
+        checks to run against the value of the property
+
+    Raises
+    ------
+    FileFormatError
+        If the value of the property fails to meet any of the checks
+    """
+    value = getattr(fileset, name)
+    failed = []
+    for op, operand in checks.items():
+        if not getattr(operator, op)(value, operand):
+            failed.append(
+                f"Value of '{name}' property ({value}) is not {op}: {operand}"
+            )
+    if failed:
+        raise FileFormatError(f"Check of {fileset} failed:\n" + "\n".join(failed))
+
+    # @classmethod
+    # def find_converter(cls, from_format):
+    #     """Selects the converter method from the given datatype. Will select the
+    #     most specific conversion.
+
+    #     Parameters
+    #     ----------
+    #     from_format : type
+    #         The datatype type to convert from
+
+    #     Returns
+    #     -------
+    #     function or NoneType
+    #         The bound method that adds rows to a given workflow if conversion is required
+    #         and None if no conversion is required
+
+    #     Raises
+    #     ------
+    #     FileFormatConversionError
+    #         _description_
+    #     """
+    #     if from_format is cls or issubclass(from_format, cls):
+    #         return None  # No conversion is required
+    #     converter = None
+    #     for attr_name in dir(cls):
+    #         meth = getattr(cls, attr_name)
+    #         try:
+    #             converts_from = meth.__annotations__[CONVERTER_ANNOTATIONS]
+    #         except (AttributeError, KeyError):
+    #             pass
+    #         else:
+    #             if from_format is converts_from or issubclass(
+    #                 from_format, converts_from
+    #             ):
+    #                 if converter:
+    #                     prev_converts_from = converter.__annotations__[
+    #                         CONVERTER_ANNOTATIONS
+    #                     ]
+    #                     if issubclass(converts_from, prev_converts_from):
+    #                         converter = meth
+    #                     elif not issubclass(prev_converts_from, converts_from):
+    #                         raise FileFormatConversionError(
+    #                             f"Ambiguous converters between {from_format} "
+    #                             f"and {cls}: {converter} and {meth}. Please "
+    #                             f"define a specific converter from {from_format} "
+    #                             f"(i.e. instead of from {prev_converts_from} "
+    #                             f"and {converts_from} respectively)"
+    #                         )
+    #                 else:
+    #                     converter = meth
+    #     if converter is None:
+    #         raise FileFormatConversionError(
+    #             f"No datatype converters are defined from {from_format} to {cls}"
+    #         )
+    #     return converter
+
+    # @classmethod
+    # def access_contents_task(cls, fileset_lf: LazyField):
+    #     """Access the fs paths of the file set"""
+
+    # @classmethod
+    # def from_fspath(cls, fspath):
+    #     fileset = cls(path=Path(fspath).stem)
+    #     fileset.set_fspaths([fspath])
+    #     return fileset
+
+    # @classmethod
+    # def append_ext(cls, path: Path):
+    #     if path.ext is not None:
+    #         path = path.with_suffix(cls.ext)
+    #     return path
+
+    # @classmethod
+    # def converter_task(cls, from_format, name, **kwargs):
+    #     """Adds a converter row to a workflow
+
+    #     Parameters
+    #     ----------
+    #     from_format : type
+    #         the file-set class to convert from
+    #     taks_name: str
+    #         the name for the converter task
+    #     **kwargs: dict[str, ty.Any]
+    #         keyword arguments passed through to the converter
+
+    #     Returns
+    #     -------
+    #     Workflow
+    #         Pydra workflow to perform the conversion with an input called
+    #         'to_convert' and an output called 'converted', which take and
+    #         produce file-sets in `from_format` and `cls` types respectively.
+    #     """
+
+    #     wf = Workflow(name=name, input_spec=["to_convert"])
+
+    #     # Get row to extract paths from file-set lazy field
+    #     wf.add(
+    #         func_task(
+    #             access_paths,
+    #             in_fields=[("from_format", type), ("fileset", from_format)],
+    #             out_fields=[(i, Path) for i in from_format.fs_names()],
+    #             # name='extract',
+    #             from_format=from_format,
+    #             fileset=wf.lzin.to_convert,
+    #         )
+    #     )
+
+    #     # Aggregate converter inputs and combine with fixed keyword args
+    #     conv_inputs = {
+    #         n: getattr(wf.access_paths.lzout, n) for n in from_format.fs_names()
+    #     }
+    #     conv_inputs.update(kwargs)
+    #     # Create converter node
+    #     converter, output_lfs = cls.find_converter(from_format)(**conv_inputs)
+    #     # If there is only one output lazy field, place it in a tuple so it can
+    #     # be zipped with cls.fs_names()
+    #     if isinstance(output_lfs, LazyField):
+    #         output_lfs = (output_lfs,)
+    #     # converter.name = 'converter'
+    #     # for lf in output_lfs:
+    #     #     lf.name = 'converter'
+    #     wf.add(converter)
+
+    #     # Encapsulate output paths from converter back into a file set object
+    #     to_encapsulate = dict(zip(cls.fs_names(), output_lfs))
+
+    #     logger.debug("Paths to encapsulate are:\n%s", to_encapsulate)
+
+    #     wf.add(
+    #         func_task(
+    #             encapsulate_paths,
+    #             in_fields=[("to_format", type), ("to_convert", from_format)]
+    #             + [(o, ty.Union[str, Path]) for o in cls.fs_names()],
+    #             out_fields=[("converted", cls)],
+    #             # name='encapsulate',
+    #             to_format=cls,
+    #             to_convert=wf.lzin.to_convert,
+    #             **to_encapsulate,
+    #         )
+    #     )
+
+    #     wf.set_output(("converted", wf.encapsulate_paths.lzout.converted))
+
+    #     return wf
 
 
-def encapsulate_paths(to_format: type, to_convert: FileSet, **fspaths: ty.List[Path]):
-    """Copies files into the CWD renaming so the basenames match
-    except for extensions"""
-    logger.debug("Encapsulating %s into %s format after conversion", fspaths, to_format)
-    fileset = to_format(to_convert.path + "_" + to_format.class_name())
-    fileset.set_fspaths(fspaths.values())
-    return fileset
+# def access_paths(from_format, fileset):
+#     """Copies files into the CWD renaming so the basenames match
+#     except for extensions"""
+#     logger.debug(
+#         "Extracting paths from %s (%s format) before conversion",
+#         fileset,
+#         from_format,
+#     )
+#     cpy = fileset.copy_to(path2varname(fileset.path), symlink=True)
+#     return cpy.fspaths if len(cpy.fspaths) > 1 else cpy.fspath
+
+
+# def encapsulate_paths(to_format: type, to_convert: FileSet, **fspaths: ty.List[Path]):
+#     """Copies files into the CWD renaming so the basenames match
+#     except for extensions"""
+#     logger.debug("Encapsulating %s into %s format after conversion", fspaths, to_format)
+#     fileset = to_format(to_convert.path + "_" + to_format.class_name())
+#     fileset.set_fspaths(fspaths.values())
+#     return fileset
 
 
 # @attrs.define
