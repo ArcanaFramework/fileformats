@@ -83,7 +83,7 @@ class Directory(FileSet):
             match = False
             for p in fspath.iterdir():
                 try:
-                    content_type.with_adjacents([p], checks=self.checks)
+                    content_type.with_adjacents([p])
                 except FormatMismatchError:
                     continue
                 else:

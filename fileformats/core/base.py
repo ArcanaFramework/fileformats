@@ -6,7 +6,7 @@ from pathlib import Path
 import operator
 import logging
 import attrs
-from .exceptions import FormatMismatchError, FormatConversionError
+from .exceptions import FileFormatsError, FormatMismatchError, FormatConversionError
 
 
 # Tools imported from Arcana, will remove again once file-formats and "cells"
@@ -25,6 +25,42 @@ def fspaths_converter(fspaths):
 
 
 @attrs.define
+class Metadata:
+
+    loaded: dict = attrs.field(factory=dict, converter=dict)
+    _fileset = attrs.field(default=None, init=False)
+
+    def __getitem__(self, key):
+        try:
+            return self.loaded[key]
+        except KeyError:
+            self.load()
+        return self.loaded[key]
+
+    def load(self, overwrite=False):
+        try:
+            read_dict = self._fileset.read_metadata()
+        except NotImplementedError:
+            pass
+        else:
+            if not overwrite:
+                if mismatching := [
+                    k
+                    for k in set(self.loaded) & set(read_dict)
+                    if self.loaded[k] != read_dict[k]
+                ]:
+                    raise FileFormatsError(
+                        "Mismatch in values between loaded and read metadata values, "
+                        "use 'load(overwrite=True)' to overwrite:\n"
+                        + "\n".join(
+                            f"{k}: loaded={self.loaded[k]}, read={read_dict[k]}"
+                            for k in mismatching
+                        )
+                    )
+            self.loaded.update(read_dict)
+
+
+@attrs.define
 class FileSet:
     """
     The base class for all format types within the fileformats package. A generic
@@ -37,19 +73,21 @@ class FileSet:
     fspaths : set[Path]
         a set of file-system paths pointing to all the resources in the file-set
     metadata : dict[str, Any]
-        metadata that exists outside of the file-set itself. Will be augmented by
-        metadata contained within the files if the `read_metadata` method is implemented
-        in a subclass
+        any metadata that exists outside of the file-set itself. This metadata will be
+        augmented by metadata contained within the files if the `read_metadata` method
+        is implemented in the file-set subclass
     checks : bool
         whether to run in-depth "checks" to verify the file format
     """
 
     fspaths: set[Path] = attrs.field(default=None, converter=fspaths_converter)
-    _metadata: dict[str, ty.Any] = attrs.field(factory=dict, kw_only=True)
-    checks: bool = attrs.field(default=False, kw_only=True)
+    metadata: Metadata = attrs.field(factory=dict, converter=Metadata, kw_only=True)
 
     # Create slot to hold converters registered by @converter decorator
     converters = None
+
+    def __attrs_post_init__(self):
+        self.metadata._fileset = self
 
     @fspaths.validator
     def validate_fspaths(self, _, fspaths):
@@ -77,24 +115,54 @@ class FileSet:
                     pass
                 else:
                     self._check_property(self, attr_name, required)
+
+    def check(self):
+        """Run all checks over the fileset to see whether it matches the specified format
+
+        Raises
+        ------
+        FormatMismatchError
+            if a check fails then a FormatMismatchError will be raised
+        """
+        for attr_name in dir(type(self)):
+            klass_attr = getattr(type(self), attr_name)
+            try:
+                klass_attr.__annotations__[CHECK_ANNOTATION]
+            except (AttributeError, KeyError):
+                pass
             else:
-                try:
-                    klass_attr.__annotations__[CHECK_ANNOTATION]
-                except (AttributeError, KeyError):
-                    pass
-                else:
-                    if self.checks:
-                        if not getattr(self, attr_name)():
-                            raise FormatMismatchError(
-                                f"'{attr_name}' format check failed for {repr(self)} "
-                            )
+                if not getattr(self, attr_name)():
+                    raise FormatMismatchError(
+                        f"'{attr_name}' format check failed for {repr(self)} "
+                    )
 
     def __iter__(self):
         return iter(self.fspaths)
 
-    @property
-    def metadata(self):
-        raise NotImplementedError
+    @classmethod
+    def matches(cls, fspaths: set[Path], checks: bool = True) -> bool:
+        """Checks whether the given paths match the format specified by the class
+
+        Parameters
+        ----------
+        fspaths : set[Path]
+            the paths to check whether they match the given format
+        checks: bool, optional
+            whether to run non-essential checks to determine whether the format matches,
+            by default True
+
+        Returns
+        -------
+        bool
+        """
+        try:
+            fileset = cls(fspaths)
+            if checks:
+                fileset.check()
+        except FormatMismatchError:
+            return False
+        else:
+            return True
 
     def copy_to(self, parent: Path, stem: str = None, symlink: bool = False):
         """Copies the file-set to the new path, with auxiliary files saved
@@ -308,8 +376,6 @@ class FileSet:
     def with_adjacents(
         cls,
         fspaths: set[Path],
-        duplicate_ext: bool = False,
-        multipart_ext: bool = False,
         **kwargs,
     ):
         """Factory method to create a file-set with adjacent files included
@@ -327,37 +393,7 @@ class FileSet:
         **kwargs
             keyword arguments passed on to file-set __init__
         """
-        return cls(
-            cls.include_adjacents(
-                fspaths=fspaths,
-                multipart_ext=multipart_ext,
-                duplicate_ext=duplicate_ext,
-            ),
-            **kwargs,
-        )
-
-    @classmethod
-    def matches(cls, fspaths: set[Path], checks: bool = True) -> bool:
-        """Checks whether the given paths match the format specified by the class
-
-        Parameters
-        ----------
-        fspaths : set[Path]
-            the paths to check whether they match the given format
-        checks: bool, optional
-            whether to run non-essential checks to determine whether the format matches,
-            by default True
-
-        Returns
-        -------
-        bool
-        """
-        try:
-            cls(fspaths, checks=checks)
-        except FormatMismatchError:
-            return False
-        else:
-            return True
+        return cls(cls.include_adjacents(fspaths=fspaths, **kwargs))
 
     @classmethod
     def _check_property(cls, fileset: FileSet, name: str, checks: dict[str, ty.Any]):
@@ -395,7 +431,7 @@ class FileSet:
                 f"Check of {fileset} failed:\n" + "\n".join(failed)
             )
 
-    def read_metadata(self, overwrite=False):
+    def read_metadata(self):
         """Can be overridden in subclasses to update metadata to explicitly provided
         in the init method"""
         raise NotImplementedError

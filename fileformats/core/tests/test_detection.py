@@ -43,7 +43,6 @@ def test_init_args(work_dir):
     fspath = work_dir / "test.txt"
     write_test_file(fspath)
     File([fspath])
-    File([fspath], checks=True)
     with pytest.raises(TypeError):
         File(fspath, fspath)
 
