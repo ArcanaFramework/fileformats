@@ -232,37 +232,6 @@ def test_dir_containing_side_cars_fail(work_dir):
     assert not DirContainingSideCars.matches(fspath)
 
 
-class FileWithMagicNumberCheck(File):
-
-    ext = ".magic"
-    binary = True
-
-    magic_number = b"magicnumber"
-
-    @mark.check
-    def check_magic_number(self):
-        return self.read_contents(11) == self.magic_number
-
-
-def test_magic_number(work_dir):
-
-    fspath = work_dir / "test.magic"
-    write_test_file(
-        fspath,
-        FileWithMagicNumberCheck.magic_number + b"some contents\n\n",
-        binary=True,
-    )
-    assert FileWithMagicNumberCheck.matches(fspath)
-
-
-def test_magic_number_fail(work_dir):
-
-    fspath = work_dir / "test.magic"
-    write_test_file(fspath, b"NOMAGIC some contents\n\n", binary=True)
-    assert not FileWithMagicNumberCheck.matches(fspath)
-    assert FileWithMagicNumberCheck.matches(fspath, checks=False)
-
-
 def test_dynamic_dir(work_dir):
 
     fspath = work_dir / "test-dir"

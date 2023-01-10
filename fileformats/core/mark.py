@@ -1,7 +1,6 @@
 from __future__ import annotations
 import inspect
-import operator
-from .base import FileSet, REQUIRED_ANNOTATION, CHECK_ANNOTATION
+from .base import FileSet, REQUIRED_ANNOTATION, CHECK_ANNOTATION, REQUIRED_CHECK_OPS
 from .exceptions import FormatConversionError
 
 
@@ -23,13 +22,18 @@ def required(prop=None, **checks):
         binary operators in the "operators" module, and values are the second operand
         to pass to the operator (the value of the property will be the first operand)
     """
-    for op in checks:
-        if not hasattr(operator, op):
-            raise RuntimeError(
-                f'Check {op} does not correspond to an operator in the "operator" module'
-            )
-    prop.fget.__annotations__[REQUIRED_ANNOTATION] = checks
-    return prop
+
+    def decorator(prop):
+        for op in checks:
+            if op not in REQUIRED_CHECK_OPS:
+                raise RuntimeError(
+                    f"Check {op} does not correspond to a valid operator "
+                    f"{list(REQUIRED_CHECK_OPS)}"
+                )
+        prop.fget.__annotations__[REQUIRED_ANNOTATION] = checks
+        return prop
+
+    return decorator if prop is None else decorator(prop)
 
 
 def check(method):

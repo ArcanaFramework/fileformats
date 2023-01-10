@@ -11,7 +11,3 @@ class FormatMismatchError(FileFormatsError):
 
 class FormatConversionError(FileFormatsError):
     "No converters exist between formats"
-
-
-# class FilePathsNotSetException(FileFormatError):
-#     pass

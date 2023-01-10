@@ -1,7 +1,6 @@
 from __future__ import annotations
 import os
 import shutil
-import typing as ty
 from pathlib import Path
 import operator
 import logging
@@ -13,6 +12,22 @@ from .exceptions import FileFormatsError, FormatMismatchError, FormatConversionE
 # have been split
 REQUIRED_ANNOTATION = "__fileformats_required__"
 CHECK_ANNOTATION = "__fileformats_check__"
+
+
+# Ops that can be used to quickly check the value of required properties
+REQUIRED_CHECK_OPS = {
+    "eq": operator.eq,
+    "lt": operator.lt,
+    "gt": operator.gt,
+    "ge": operator.ge,
+    "le": operator.le,
+    "ne": operator.ne,
+    "is_": operator.is_,
+    "in_": lambda x, s: x in s,
+    "not_in": lambda x, s: x not in s,
+    "issubclass": issubclass,
+    "isinstance": isinstance,
+}
 
 logger = logging.getLogger("fileformats")
 
@@ -30,6 +45,9 @@ class Metadata:
     loaded: dict = attrs.field(factory=dict, converter=dict)
     _fileset = attrs.field(default=None, init=False)
 
+    def __iter__(self):
+        raise NotImplementedError
+
     def __getitem__(self, key):
         try:
             return self.loaded[key]
@@ -38,26 +56,23 @@ class Metadata:
         return self.loaded[key]
 
     def load(self, overwrite=False):
-        try:
-            read_dict = self._fileset.read_metadata()
-        except NotImplementedError:
-            pass
-        else:
+        if hasattr(self._fileset, "load_metadata"):
+            loaded_dict = self._fileset.load_metadata()
             if not overwrite:
                 if mismatching := [
                     k
-                    for k in set(self.loaded) & set(read_dict)
-                    if self.loaded[k] != read_dict[k]
+                    for k in set(self.loaded) & set(loaded_dict)
+                    if self.loaded[k] != loaded_dict[k]
                 ]:
                     raise FileFormatsError(
-                        "Mismatch in values between loaded and read metadata values, "
+                        "Mismatch in values between loaded and loaded metadata values, "
                         "use 'load(overwrite=True)' to overwrite:\n"
                         + "\n".join(
-                            f"{k}: loaded={self.loaded[k]}, read={read_dict[k]}"
+                            f"{k}: loaded={self.loaded[k]}, loaded={loaded_dict[k]}"
                             for k in mismatching
                         )
                     )
-            self.loaded.update(read_dict)
+            self.loaded.update(loaded_dict)
 
 
 @attrs.define
@@ -74,7 +89,7 @@ class FileSet:
         a set of file-system paths pointing to all the resources in the file-set
     metadata : dict[str, Any]
         any metadata that exists outside of the file-set itself. This metadata will be
-        augmented by metadata contained within the files if the `read_metadata` method
+        augmented by metadata contained within the files if the `load_metadata` method
         is implemented in the file-set subclass
     checks : bool
         whether to run in-depth "checks" to verify the file format
@@ -106,41 +121,27 @@ class FileSet:
                         )
                         msg += "\n".join(str(p) for p in fspath.parent.iterdir())
             raise FileNotFoundError(msg)
-        for attr_name in dir(type(self)):
-            klass_attr = getattr(type(self), attr_name)
-            if isinstance(klass_attr, property):
-                try:
-                    required = klass_attr.fget.__annotations__[REQUIRED_ANNOTATION]
-                except KeyError:
-                    pass
-                else:
-                    self._check_property(self, attr_name, required)
+        # Loop through all attributes and find the ones marked "required"
+        for prop in self.required_properties():
+            self._check_property(self, prop)
 
-    def check(self):
-        """Run all checks over the fileset to see whether it matches the specified format
+    def validate(self):
+        """Run all checks over the file-set to see whether it matches the specified format
 
         Raises
         ------
         FormatMismatchError
             if a check fails then a FormatMismatchError will be raised
         """
-        for attr_name in dir(type(self)):
-            klass_attr = getattr(type(self), attr_name)
-            try:
-                klass_attr.__annotations__[CHECK_ANNOTATION]
-            except (AttributeError, KeyError):
-                pass
-            else:
-                if not getattr(self, attr_name)():
-                    raise FormatMismatchError(
-                        f"'{attr_name}' format check failed for {repr(self)} "
-                    )
+        # Loop through all attributes and find methods marked by CHECK_ANNOTATION
+        for check in self.checks():
+            getattr(self, check)()
 
     def __iter__(self):
         return iter(self.fspaths)
 
     @classmethod
-    def matches(cls, fspaths: set[Path], checks: bool = True) -> bool:
+    def matches(cls, fspaths: set[Path], validate: bool = True) -> bool:
         """Checks whether the given paths match the format specified by the class
 
         Parameters
@@ -157,16 +158,55 @@ class FileSet:
         """
         try:
             fileset = cls(fspaths)
-            if checks:
-                fileset.check()
+            if validate:
+                fileset.validate()
         except FormatMismatchError:
             return False
         else:
             return True
 
-    def copy_to(self, parent: Path, stem: str = None, symlink: bool = False):
-        """Copies the file-set to the new path, with auxiliary files saved
-        alongside the primary-file path.
+    @classmethod
+    def required_properties(cls):
+        """Find all properties required to treat file-set as being in the format specified
+        by the class
+
+        Returns
+        -------
+        iter(str)
+            an iterator over all properties names marked as "required"
+        """
+        for attr_name in dir(cls):
+            klass_attr = getattr(cls, attr_name)
+            if isinstance(klass_attr, property):
+                try:
+                    klass_attr.fget.__annotations__[REQUIRED_ANNOTATION]
+                except KeyError:
+                    pass
+                else:
+                    yield attr_name
+
+    @classmethod
+    def checks(cls):
+        """Find all methods used to check the validity of the file format
+
+        Returns
+        -------
+        iter(str)
+            an iterator over all method names marked as a "check"
+        """
+        # Loop through all attributes and find methods marked by CHECK_ANNOTATION
+        for attr_name in dir(cls):
+            klass_attr = getattr(cls, attr_name)
+            try:
+                klass_attr.__annotations__[CHECK_ANNOTATION]
+            except (AttributeError, KeyError):
+                pass
+            else:
+                yield attr_name
+
+    def copy(self, dest_dir: Path, stem: str = None, symlink: bool = False):
+        """Copies the file-set to a new directory, optionally renaming the files
+        to have consistent name-stems.
 
         Parameters
         ----------
@@ -178,7 +218,7 @@ class FileSet:
         symlink : bool, optional
             Use symbolic links instead of copying files to new location, false by default
         """
-        parent = Path(parent)  # ensure a Path not a string
+        dest_dir = Path(dest_dir)  # ensure a Path not a string
         if symlink:
             copy_dir = copy_file = os.symlink
         else:
@@ -187,7 +227,7 @@ class FileSet:
         new_paths = []
         for fspath in self.fspaths:
             new_fname = stem + ".".join(fspath.suffixes) if stem else fspath.name
-            new_path = parent / new_fname
+            new_path = dest_dir / new_fname
             if fspath.is_dir():
                 copy_dir(fspath, new_path)
             else:
@@ -393,10 +433,11 @@ class FileSet:
         **kwargs
             keyword arguments passed on to file-set __init__
         """
+        fspaths = fspaths_converter(fspaths)
         return cls(cls.include_adjacents(fspaths=fspaths, **kwargs))
 
     @classmethod
-    def _check_property(cls, fileset: FileSet, name: str, checks: dict[str, ty.Any]):
+    def _check_property(cls, fileset: FileSet, name: str):
         """Check the value of a property of the file-set to ensure it meets the given
         criteria
 
@@ -416,9 +457,9 @@ class FileSet:
         """
         value = getattr(fileset, name)
         failed = []
-        if checks:
+        if checks := getattr(cls, name).fget.__annotations__[REQUIRED_ANNOTATION]:
             for op, operand in checks.items():
-                if not getattr(operator, op)(value, operand):
+                if REQUIRED_CHECK_OPS[op](value, operand):
                     failed.append(
                         f"Value of '{name}' property ({value}) is not {op}: {operand}"
                     )
@@ -430,11 +471,6 @@ class FileSet:
             raise FormatMismatchError(
                 f"Check of {fileset} failed:\n" + "\n".join(failed)
             )
-
-    def read_metadata(self):
-        """Can be overridden in subclasses to update metadata to explicitly provided
-        in the init method"""
-        raise NotImplementedError
 
     # @classmethod
     # def find_converter(cls, from_format):
