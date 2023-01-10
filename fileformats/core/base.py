@@ -56,6 +56,7 @@ class Metadata:
         return self.loaded[key]
 
     def load(self, overwrite=False):
+        assert self._fileset is not None
         if hasattr(self._fileset, "load_metadata"):
             loaded_dict = self._fileset.load_metadata()
             if not overwrite:
@@ -103,6 +104,9 @@ class FileSet:
 
     def __attrs_post_init__(self):
         self.metadata._fileset = self
+        # Loop through all attributes and find the ones marked "required"
+        for prop in self.required_properties():
+            self._check_property(self, prop)
 
     @fspaths.validator
     def validate_fspaths(self, _, fspaths):
@@ -121,9 +125,6 @@ class FileSet:
                         )
                         msg += "\n".join(str(p) for p in fspath.parent.iterdir())
             raise FileNotFoundError(msg)
-        # Loop through all attributes and find the ones marked "required"
-        for prop in self.required_properties():
-            self._check_property(self, prop)
 
     def validate(self):
         """Run all checks over the file-set to see whether it matches the specified format
@@ -373,7 +374,7 @@ class FileSet:
         cls,
         fspaths: set[Path],
         duplicate_ext: bool = False,
-        multipart_ext: bool = False,
+        multipart_ext: bool = True,
     ) -> set[Path]:
         """Adds any "adjacent files", i.e. any files with the same stem but different
         extension, if that suffix isn't already present in the existing fspaths
@@ -459,7 +460,7 @@ class FileSet:
         failed = []
         if checks := getattr(cls, name).fget.__annotations__[REQUIRED_ANNOTATION]:
             for op, operand in checks.items():
-                if REQUIRED_CHECK_OPS[op](value, operand):
+                if not REQUIRED_CHECK_OPS[op](value, operand):
                     failed.append(
                         f"Value of '{name}' property ({value}) is not {op}: {operand}"
                     )

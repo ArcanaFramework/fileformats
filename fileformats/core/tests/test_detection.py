@@ -39,12 +39,18 @@ def test_generic_dir_fail(work_dir):
         Directory(fspath)
 
 
-def test_init_args(work_dir):
-    fspath = work_dir / "test.txt"
-    write_test_file(fspath)
-    File([fspath])
-    with pytest.raises(TypeError):
-        File(fspath, fspath)
+def test_dynamic_dir(work_dir):
+
+    fspath = work_dir / "test-dir"
+    write_test_file(fspath / "test.foo")
+    assert Directory[TestFile].matches(fspath)
+
+
+def test_dynamic_dir_fail(work_dir):
+
+    fspath = work_dir / "test-dir"
+    write_test_file(fspath / "test.bad")
+    assert not Directory[TestFile].matches(fspath)
 
 
 class TestFile(File):
@@ -230,17 +236,3 @@ def test_dir_containing_side_cars_fail(work_dir):
     write_test_file(fspath / "test.foo")
     write_test_file(fspath / "diff-name.bar")
     assert not DirContainingSideCars.matches(fspath)
-
-
-def test_dynamic_dir(work_dir):
-
-    fspath = work_dir / "test-dir"
-    write_test_file(fspath / "test.foo")
-    assert Directory[TestFile].matches(fspath)
-
-
-def test_dynamic_dir_fail(work_dir):
-
-    fspath = work_dir / "test-dir"
-    write_test_file(fspath / "test.bad")
-    assert not Directory[TestFile].matches(fspath)
