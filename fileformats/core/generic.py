@@ -15,7 +15,7 @@ class File(FileSet):
     @mark.required
     @property
     def fspath(self):
-        fspath = self.select_by_ext(self.fspaths, self.ext)
+        fspath = self.select_by_ext(self.ext)
         if not fspath.is_file():
             raise FormatMismatchError(
                 f'Path that matches extension "{self.ext}", {fspath}, is not a file in '
@@ -50,6 +50,10 @@ class File(FileSet):
             )
         suffix = "." + cls.ext if cls.ext is not None else old_path.suffix
         return Path(new_path).with_suffix(suffix)
+
+    @property
+    def contents(self):
+        return self.read_contents()
 
     def read_contents(self, size=None):
         with open(self.fspath, "rb" if self.binary else "r") as f:

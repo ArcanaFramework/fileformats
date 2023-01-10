@@ -8,13 +8,13 @@ from .exceptions import FormatConversionError
 __all__ = ["required", "check", "converter"]
 
 
-def required(property=None, **checks):
+def required(prop=None, **checks):
     """Decorator that flags a property of a file-set as being required for the format
     specified by the class.
 
     Parameters
     ----------
-    property : property, optional
+    prop : property, optional
         the property to decorate, if provided the decorator is assumed to wrap the
         property directly, otherwise a wrapping decorator is returned instead
     **checks: dict[str, Any]
@@ -23,25 +23,26 @@ def required(property=None, **checks):
         binary operators in the "operators" module, and values are the second operand
         to pass to the operator (the value of the property will be the first operand)
     """
-    return _property_check_decorator(property, checks, REQUIRED_ANNOTATION)
+    for op in checks:
+        if not hasattr(operator, op):
+            raise RuntimeError(
+                f'Check {op} does not correspond to an operator in the "operator" module'
+            )
+    prop.fget.__annotations__[REQUIRED_ANNOTATION] = checks
+    return prop
 
 
-def check(property=None, **checks):
-    """Decorator that flags a property of a file-set as being required for the format
-    specified by the class if the "checks" flag of the file-set has been set to true
+def check(method):
+    """Decorator that flags a method as being a special boolean method that needs to
+    return True for the format to be considered a match
 
     Parameters
     ----------
-    property : property, optional
-        the property to decorate, if provided the decorator is assumed to wrap the
-        property directly, otherwise a wrapping decorator is returned instead
-    **checks: dict[str, Any]
-        checks to run against the value of the property to determine whether the
-        file-set is in the format specified by the class. Keys should correspond to
-        binary operators in the "operators" module, and values are the second operand
-        to pass to the operator (the value of the property will be the first operand)
+    method : Function
+        the method to mark as a check
     """
-    return _property_check_decorator(property, checks, CHECK_ANNOTATION)
+    method.__annotations__[CHECK_ANNOTATION] = None
+    return method
 
 
 def converter(
@@ -115,13 +116,3 @@ def converter(
         return task_spec
 
     return decorator if task_spec is None else decorator(task_spec)
-
-
-def _property_check_decorator(prop, checks, annotation):
-    for op in checks:
-        if not hasattr(operator, op):
-            raise RuntimeError(
-                f'Check {op} does not correspond to an operator in the "operator" module'
-            )
-    prop.fget.__annotations__[annotation] = checks
-    return prop

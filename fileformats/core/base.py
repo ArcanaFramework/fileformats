@@ -64,22 +64,25 @@ class FileSet:
                         msg += "\n".join(str(p) for p in fspath.parent.iterdir())
             raise FileNotFoundError(msg)
         for attr_name in dir(type(self)):
-            attr = getattr(type(self), attr_name)
-            if isinstance(attr, property):
-                annotations = attr.fget.__annotations__
+            klass_attr = getattr(type(self), attr_name)
+            if isinstance(klass_attr, property):
                 try:
-                    required = annotations[REQUIRED_ANNOTATION]
+                    required = klass_attr.fget.__annotations__[REQUIRED_ANNOTATION]
                 except KeyError:
                     pass
                 else:
                     check_property(self, attr_name, required)
+            else:
                 try:
-                    to_check = annotations[CHECK_ANNOTATION]
-                except KeyError:
+                    klass_attr.__annotations__[CHECK_ANNOTATION]
+                except (AttributeError, KeyError):
                     pass
                 else:
                     if self.checks:
-                        check_property(self, attr_name, to_check)
+                        if not getattr(self, attr_name)():
+                            raise FormatMismatchError(
+                                f"'{attr_name}' format check failed for {repr(self)} "
+                            )
 
     def __iter__(self):
         return iter(self.fspaths)
@@ -115,8 +118,7 @@ class FileSet:
             new_paths.append(new_path)
         return type(self)(new_paths)
 
-    @classmethod
-    def select_by_ext(cls, fspaths: set[Path], ext: str) -> Path:
+    def select_by_ext(self, ext: str) -> Path:
         """Selects a single path from a set of file-system paths based on the file
         extension
 
@@ -139,9 +141,9 @@ class FileSet:
         FileFormatError
             if more than one paths matches the extension
         """
-        matches = cls.matching_ext(fspaths, ext)
+        matches = self.matching_ext(self.fspaths, ext)
         if not matches:
-            paths_str = ", ".join(str(p) for p in fspaths)
+            paths_str = ", ".join(str(p) for p in self.fspaths)
             raise FormatMismatchError(
                 f"No matching files with '{ext}' extension found in "
                 f"file set {paths_str}"

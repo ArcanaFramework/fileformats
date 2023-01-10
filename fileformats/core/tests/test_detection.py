@@ -155,7 +155,7 @@ class FileWithSideCar(File):
     @mark.required
     @property
     def bar(self):
-        return self.select_by_ext(self.fspaths, ext=".bar")
+        return self.select_by_ext(".bar")
 
 
 def test_side_car(work_dir):
@@ -221,3 +221,34 @@ def test_dir_containing_side_cars_fail(work_dir):
     write_test_file(fspath / "test.foo")
     write_test_file(fspath / "diff-name.bar")
     assert not DirContainingSideCars.matches(fspath)
+
+
+class FileWithMagicNumberCheck(File):
+
+    ext = ".magic"
+    binary = True
+
+    MAGIC_NUMBER = b"magicnumber"
+
+    @mark.check
+    def check_magic_number(self):
+        return self.read_contents(11) == self.MAGIC_NUMBER
+
+
+def test_magic_number(work_dir):
+
+    fspath = work_dir / "test.magic"
+    write_test_file(
+        fspath,
+        FileWithMagicNumberCheck.MAGIC_NUMBER + b"some contents\n\n",
+        binary=True,
+    )
+    assert FileWithMagicNumberCheck.matches(fspath, checks=True)
+
+
+def test_magic_number_fail(work_dir):
+
+    fspath = work_dir / "test.magic"
+    write_test_file(fspath, b"NOMAGIC some contents\n\n", binary=True)
+    assert not FileWithMagicNumberCheck.matches(fspath, checks=True)
+    assert FileWithMagicNumberCheck.matches(fspath, checks=False)
