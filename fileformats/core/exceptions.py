@@ -1,13 +1,17 @@
 from __future__ import annotations
 
 
-class FileFormatError(Exception):
-    pass
+class FileFormatsError(RuntimeError):
+    "Base exception class"
 
 
-class FileFormatConversionError(Exception):
+class FormatMismatchError(FileFormatsError):
+    "File formats don't match"
+
+
+class FormatConversionError(FileFormatsError):
     "No converters exist between formats"
 
 
-class FilePathsNotSetException(Exception):
-    pass
+# class FilePathsNotSetException(FileFormatError):
+#     pass

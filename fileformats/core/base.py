@@ -6,8 +6,7 @@ from pathlib import Path
 import operator
 import logging
 import attrs
-from .exceptions import FileFormatError, FileFormatConversionError
-from .mark import required
+from .exceptions import FormatMismatchError, FormatConversionError
 
 
 # Tools imported from Arcana, will remove again once file-formats and "cells"
@@ -20,7 +19,7 @@ logger = logging.getLogger("fileformats")
 
 def fspaths_converter(fspaths):
     """Ensures fs-paths are a set of pathlib.Path"""
-    if isinstance(fspaths, str):
+    if isinstance(fspaths, (str, Path, bytes)):
         fspaths = [fspaths]
     return set((Path(p) if isinstance(p, str) else p).absolute() for p in fspaths)
 
@@ -63,12 +62,24 @@ class FileSet:
                             f"\n\nFiles in the directory '{str(fspath.parent)}' are:\n"
                         )
                         msg += "\n".join(str(p) for p in fspath.parent.iterdir())
-            raise FileFormatError(msg)
-        for attr in dir(self):
-            if REQUIRED_ANNOTATION in attr.__annotations__:
-                check_property(self, attr, attr.__annotations__[REQUIRED_ANNOTATION])
-            if self.checks and CHECK_ANNOTATION in attr.__annotations__:
-                check_property(self, attr, attr.__annotations__[CHECK_ANNOTATION])
+            raise FileNotFoundError(msg)
+        for attr_name in dir(type(self)):
+            attr = getattr(type(self), attr_name)
+            if isinstance(attr, property):
+                annotations = attr.fget.__annotations__
+                try:
+                    required = annotations[REQUIRED_ANNOTATION]
+                except KeyError:
+                    pass
+                else:
+                    check_property(self, attr_name, required)
+                try:
+                    to_check = annotations[CHECK_ANNOTATION]
+                except KeyError:
+                    pass
+                else:
+                    if self.checks:
+                        check_property(self, attr_name, to_check)
 
     def __iter__(self):
         return iter(self.fspaths)
@@ -131,19 +142,19 @@ class FileSet:
         matches = cls.matching_ext(fspaths, ext)
         if not matches:
             paths_str = ", ".join(str(p) for p in fspaths)
-            raise FileFormatError(
+            raise FormatMismatchError(
                 f"No matching files with '{ext}' extension found in "
                 f"file set {paths_str}"
             )
         elif len(matches) > 1:
             matches_str = ", ".join(str(p) for p in matches)
-            raise FileFormatError(
+            raise FormatMismatchError(
                 f"Multiple files with '{ext}' extension found in : {matches_str}"
             )
         return matches[0]
 
     @classmethod
-    def matching_ext(cls, fspaths: set[Path], ext: str):
+    def matching_ext(cls, fspaths: set[Path], ext: str) -> list[Path]:
         """Returns the paths out of the candidates provided that matches the
         given extension (by default the extension of the class)
 
@@ -163,7 +174,7 @@ class FileSet:
         ------
         FileFormatError
             When no paths match or more than one path matches the given extension"""
-        return [str(p) for p in fspaths if str(p).endswith(ext)]
+        return [p for p in fspaths if str(p).endswith(ext)]
 
     @classmethod
     def convert(cls, fileset, **kwargs):
@@ -223,7 +234,7 @@ class FileSet:
                     if issubclass(source_format, frmt):
                         available.append(converter)
                 if len(available) > 1:
-                    raise FileFormatConversionError(
+                    raise FormatConversionError(
                         f"Ambiguous converters found between {cls.__name__} and "
                         f"{source_format.__name__}, {available}"
                     )
@@ -232,7 +243,7 @@ class FileSet:
             if converter:
                 break
         if not converter:
-            raise FileFormatConversionError(
+            raise FormatConversionError(
                 f"Could not find converter between {source_format.__name__} and "
                 f"{cls.__name__} formats"
             )
@@ -244,7 +255,7 @@ class FileSet:
         fspaths: set[Path],
         duplicate_ext: bool = False,
         multipart_ext: bool = False,
-    ):
+    ) -> set[Path]:
         """Adds any "adjacent files", i.e. any files with the same stem but different
         extension, if that suffix isn't already present in the existing fspaths
 
@@ -273,7 +284,7 @@ class FileSet:
 
         for fspath in list(fspaths):
             stem = splitext(fspath)[0]
-            for neighbour in fspaths.parent.iterdir():
+            for neighbour in fspath.parent.iterdir():
                 neigh_stem, neigh_ext = splitext(neighbour)
                 if neigh_stem == stem:
                     if duplicate_ext or neigh_ext not in (
@@ -314,98 +325,25 @@ class FileSet:
             **kwargs,
         )
 
-
-@attrs.define
-class File(FileSet):
-    """Generic file type"""
-
-    ext = ""
-
-    @required
-    @property
-    def fspath(self):
-        fspath = self.select_by_ext(self.fspaths, self.ext)
-        if not fspath.is_file():
-            raise FileFormatError(
-                f'Path that matches extension "{self.ext}", {fspath}, is not a file'
-            )
-        return fspath
-
-    def __str__(self):
-        return str(self.fspath)
-
     @classmethod
-    def copy_ext(cls, old_path: Path, new_path: Path):
-        """Copy extension from the old path to the new path, ensuring that all
-        of the extension is used (e.g. 'my.gz' instead of 'gz')
+    def matches(cls, fspaths: set[Path], **kwargs) -> bool:
+        """Checks whether the given paths match the format specified by the class
 
         Parameters
         ----------
-        old_path: Path or str
-            The path from which to copy the extension from
-        new_path: Path or str
-            The path to append the extension to
+        fspaths : set[Path]
+            _description_
 
         Returns
         -------
-        Path
-            The new path with the copied extension
+        bool
         """
-        if not cls.matching_ext(old_path, cls.ext):
-            raise FileFormatError(
-                f"Extension of old path ('{str(old_path)}') does not match that "
-                f"of file, '{cls.ext}'"
-            )
-        suffix = "." + cls.ext if cls.ext is not None else old_path.suffix
-        return Path(new_path).with_suffix(suffix)
-
-
-@attrs.define
-class Directory(FileSet):
-    """Generic directory type"""
-
-    content_types = ()
-
-    @classmethod
-    def __class_getitem__(cls, *content_types):
-        content_type_str = "_".join(t.__name__ for t in content_types)
-        return type(
-            name=f"{cls.__name__}_containing_{content_type_str}",
-            bases=(cls,),
-            dict={"content_types": content_types},
-        )
-
-    @required
-    @property
-    def fspath(self):
-        dirs = [p for p in self.fspaths if p.is_dir()]
-        if not dirs:
-            raise FileFormatError(f"No directory paths provided {self}")
-        elif len(dirs) > 1:
-            raise FileFormatError(
-                f"More than one directory path provided {dirs} to {self}"
-            )
-        fspath = dirs[0]
-        missing = []
-        for content_type in self.content_types:
-            match = False
-            for p in fspath.iterdir():
-                try:
-                    content_type(p)
-                except FileFormatError:
-                    continue
-                else:
-                    match = True
-                    break
-            if not match:
-                missing.append(content_type)
-        if missing:
-            raise FileFormatError(
-                f"Did not find matches for {missing} content types in {self}"
-            )
-
-    def __str__(self):
-        return str(self.fspath)
+        try:
+            cls(fspaths, **kwargs)
+        except FormatMismatchError:
+            return False
+        else:
+            return True
 
 
 def check_property(fileset: FileSet, name: str, checks: dict[str, ty.Any]):
@@ -428,13 +366,16 @@ def check_property(fileset: FileSet, name: str, checks: dict[str, ty.Any]):
     """
     value = getattr(fileset, name)
     failed = []
-    for op, operand in checks.items():
-        if not getattr(operator, op)(value, operand):
-            failed.append(
-                f"Value of '{name}' property ({value}) is not {op}: {operand}"
-            )
+    if checks:
+        for op, operand in checks.items():
+            if not getattr(operator, op)(value, operand):
+                failed.append(
+                    f"Value of '{name}' property ({value}) is not {op}: {operand}"
+                )
+    else:
+        assert value is not None, f"'{name}' property of {fileset} should not be None"
     if failed:
-        raise FileFormatError(f"Check of {fileset} failed:\n" + "\n".join(failed))
+        raise FormatMismatchError(f"Check of {fileset} failed:\n" + "\n".join(failed))
 
     # @classmethod
     # def find_converter(cls, from_format):

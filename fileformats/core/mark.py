@@ -2,7 +2,7 @@ from __future__ import annotations
 import inspect
 import operator
 from .base import FileSet, REQUIRED_ANNOTATION, CHECK_ANNOTATION
-from .exceptions import FileFormatError
+from .exceptions import FormatConversionError
 
 
 __all__ = ["required", "check", "converter"]
@@ -89,7 +89,7 @@ def converter(
         else:
             target = target_format
         if not issubclass(target, FileSet):
-            raise FileFormatError(
+            raise FormatConversionError(
                 f"Target file format {target.__name__} is not of sub-class of "
                 "FileSet"
             )
@@ -106,7 +106,7 @@ def converter(
             src_file = inspect.getsourcefile(converters[source])
             src_line = inspect.getsourcelines(converters[source])[-1]
             msg += f" (defined at line {src_line} of {src_file})"
-            raise FileFormatError(msg)
+            raise FormatConversionError(msg)
         if in_file != "in_file" or out_file != "out_file":
             from .converter import ConverterWrapper
 
@@ -117,10 +117,11 @@ def converter(
     return decorator if task_spec is None else decorator(task_spec)
 
 
-def _property_check_decorator(property, checks, annotation):
+def _property_check_decorator(prop, checks, annotation):
     for op in checks:
         if not hasattr(operator, op):
             raise RuntimeError(
                 f'Check {op} does not correspond to an operator in the "operator" module'
             )
-    property.__annotations__[annotation] = checks
+    prop.fget.__annotations__[annotation] = checks
+    return prop
