@@ -36,11 +36,16 @@ class FileSet:
     ----------
     fspaths : set[Path]
         a set of file-system paths pointing to all the resources in the file-set
+    metadata : dict[str, Any]
+        metadata that exists outside of the file-set itself. Will be augmented by
+        metadata contained within the files if the `read_metadata` method is implemented
+        in a subclass
     checks : bool
         whether to run in-depth "checks" to verify the file format
     """
 
     fspaths: set[Path] = attrs.field(default=None, converter=fspaths_converter)
+    _metadata: dict[str, ty.Any] = attrs.field(factory=dict, kw_only=True)
     checks: bool = attrs.field(default=False, kw_only=True)
 
     # Create slot to hold converters registered by @converter decorator
@@ -71,7 +76,7 @@ class FileSet:
                 except KeyError:
                     pass
                 else:
-                    check_property(self, attr_name, required)
+                    self._check_property(self, attr_name, required)
             else:
                 try:
                     klass_attr.__annotations__[CHECK_ANNOTATION]
@@ -86,6 +91,10 @@ class FileSet:
 
     def __iter__(self):
         return iter(self.fspaths)
+
+    @property
+    def metadata(self):
+        raise NotImplementedError
 
     def copy_to(self, parent: Path, stem: str = None, symlink: bool = False):
         """Copies the file-set to the new path, with auxiliary files saved
@@ -328,56 +337,68 @@ class FileSet:
         )
 
     @classmethod
-    def matches(cls, fspaths: set[Path], **kwargs) -> bool:
+    def matches(cls, fspaths: set[Path], checks: bool = True) -> bool:
         """Checks whether the given paths match the format specified by the class
 
         Parameters
         ----------
         fspaths : set[Path]
-            _description_
+            the paths to check whether they match the given format
+        checks: bool, optional
+            whether to run non-essential checks to determine whether the format matches,
+            by default True
 
         Returns
         -------
         bool
         """
         try:
-            cls(fspaths, **kwargs)
+            cls(fspaths, checks=checks)
         except FormatMismatchError:
             return False
         else:
             return True
 
+    @classmethod
+    def _check_property(cls, fileset: FileSet, name: str, checks: dict[str, ty.Any]):
+        """Check the value of a property of the file-set to ensure it meets the given
+        criteria
 
-def check_property(fileset: FileSet, name: str, checks: dict[str, ty.Any]):
-    """Check the value of a property of the file-set to ensure it meets the given
-    criteria
+        Parameters
+        ----------
+        fileset : FileSet
+            the file-set to check
+        name : str
+            name of the property to check
+        checks : dict[str, ty.Any]
+            checks to run against the value of the property
 
-    Parameters
-    ----------
-    fileset : FileSet
-        the file-set to check
-    name : str
-        name of the property to check
-    checks : dict[str, ty.Any]
-        checks to run against the value of the property
+        Raises
+        ------
+        FileFormatError
+            If the value of the property fails to meet any of the checks
+        """
+        value = getattr(fileset, name)
+        failed = []
+        if checks:
+            for op, operand in checks.items():
+                if not getattr(operator, op)(value, operand):
+                    failed.append(
+                        f"Value of '{name}' property ({value}) is not {op}: {operand}"
+                    )
+        else:
+            assert (
+                value is not None
+            ), f"'{name}' property of {fileset} should not be None"
+        if failed:
+            raise FormatMismatchError(
+                f"Check of {fileset} failed:\n" + "\n".join(failed)
+            )
 
-    Raises
-    ------
-    FileFormatError
-        If the value of the property fails to meet any of the checks
-    """
-    value = getattr(fileset, name)
-    failed = []
-    if checks:
-        for op, operand in checks.items():
-            if not getattr(operator, op)(value, operand):
-                failed.append(
-                    f"Value of '{name}' property ({value}) is not {op}: {operand}"
-                )
-    else:
-        assert value is not None, f"'{name}' property of {fileset} should not be None"
-    if failed:
-        raise FormatMismatchError(f"Check of {fileset} failed:\n" + "\n".join(failed))
+    def read_metadata(self, overwrite=False):
+        """Can be overridden in subclasses to update metadata to explicitly provided
+        in the init method"""
+        raise NotImplementedError
 
     # @classmethod
     # def find_converter(cls, from_format):

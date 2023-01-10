@@ -102,9 +102,9 @@ class Directory(FileSet):
         """Set the content types for a newly created dynamically type"""
         content_type_str = "_".join(t.__name__ for t in content_types)
         return type(
-            name=f"{cls.__name__}_containing_{content_type_str}",
-            bases=(cls,),
-            dict={"content_types": content_types},
+            f"{cls.__name__}_containing_{content_type_str}",
+            (cls,),
+            {"content_types": content_types},
         )
 
     def __str__(self):

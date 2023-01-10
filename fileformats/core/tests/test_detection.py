@@ -11,6 +11,7 @@ def test_generic_file(work_dir):
     write_test_file(fspath)
     file = File(fspath)
     assert file.fspath == fspath
+    assert str(file) == str(fspath)
 
 
 def test_generic_file_fail(work_dir):
@@ -27,6 +28,7 @@ def test_generic_dir(work_dir):
     fspath.mkdir()
     d = Directory(fspath)
     assert d.fspath == fspath
+    assert str(d) == str(fspath)
 
 
 def test_generic_dir_fail(work_dir):
@@ -46,7 +48,7 @@ def test_init_args(work_dir):
         File(fspath, fspath)
 
 
-class TestFileFormat(File):
+class TestFile(File):
 
     ext = ".foo"
 
@@ -55,26 +57,34 @@ def test_file_ext(work_dir):
 
     fspath = work_dir / "test.foo"
     write_test_file(fspath)
-    assert TestFileFormat.matches(fspath)
+    assert TestFile.matches(fspath)
 
 
 def test_file_ext_fail(work_dir):
 
     fspath = work_dir / "test.bad"
     write_test_file(fspath)
-    assert not TestFileFormat.matches(fspath)
+    assert not TestFile.matches(fspath)
 
 
 def test_single_of_double_ext(work_dir):
 
     fspath = work_dir / "test.bar.foo"
     write_test_file(fspath)
-    assert TestFileFormat.matches(fspath)
+    assert TestFile.matches(fspath)
 
 
-class TestDirFormat(Directory):
+def test_file_cast(work_dir):
 
-    content_types = (TestFileFormat,)
+    fspath = work_dir / "test.foo"
+    write_test_file(fspath)
+    file = TestFile(fspath)
+    assert File(file).fspath == fspath
+
+
+class TestDir(Directory):
+
+    content_types = (TestFile,)
 
 
 def test_dir_contents(work_dir):
@@ -83,7 +93,7 @@ def test_dir_contents(work_dir):
     write_test_file(fspath / "test.foo")
     write_test_file(fspath / "test2.foo")
     write_test_file(fspath / "text.txt")
-    assert TestDirFormat.matches(fspath)
+    assert TestDir.matches(fspath)
 
 
 def test_dir_contents_fail(work_dir):
@@ -92,7 +102,7 @@ def test_dir_contents_fail(work_dir):
     write_test_file(fspath / "test.bad")
     write_test_file(fspath / "test.zip")
     write_test_file(fspath / "text.txt")
-    assert not TestDirFormat.matches(fspath)
+    assert not TestDir.matches(fspath)
 
 
 class DoubleExtFileFormat(File):
@@ -114,7 +124,7 @@ def test_double_ext_fail(work_dir):
 
 class NestedDirFormat(Directory):
 
-    content_types = (TestFileFormat, DoubleExtFileFormat, TestDirFormat)
+    content_types = (TestFile, DoubleExtFileFormat, TestDir)
 
 
 def test_nested_directories(work_dir):
@@ -228,11 +238,11 @@ class FileWithMagicNumberCheck(File):
     ext = ".magic"
     binary = True
 
-    MAGIC_NUMBER = b"magicnumber"
+    magic_number = b"magicnumber"
 
     @mark.check
     def check_magic_number(self):
-        return self.read_contents(11) == self.MAGIC_NUMBER
+        return self.read_contents(11) == self.magic_number
 
 
 def test_magic_number(work_dir):
@@ -240,15 +250,29 @@ def test_magic_number(work_dir):
     fspath = work_dir / "test.magic"
     write_test_file(
         fspath,
-        FileWithMagicNumberCheck.MAGIC_NUMBER + b"some contents\n\n",
+        FileWithMagicNumberCheck.magic_number + b"some contents\n\n",
         binary=True,
     )
-    assert FileWithMagicNumberCheck.matches(fspath, checks=True)
+    assert FileWithMagicNumberCheck.matches(fspath)
 
 
 def test_magic_number_fail(work_dir):
 
     fspath = work_dir / "test.magic"
     write_test_file(fspath, b"NOMAGIC some contents\n\n", binary=True)
-    assert not FileWithMagicNumberCheck.matches(fspath, checks=True)
+    assert not FileWithMagicNumberCheck.matches(fspath)
     assert FileWithMagicNumberCheck.matches(fspath, checks=False)
+
+
+def test_dynamic_dir(work_dir):
+
+    fspath = work_dir / "test-dir"
+    write_test_file(fspath / "test.foo")
+    assert Directory[TestFile].matches(fspath)
+
+
+def test_dynamic_dir_fail(work_dir):
+
+    fspath = work_dir / "test-dir"
+    write_test_file(fspath / "test.bad")
+    assert not Directory[TestFile].matches(fspath)
