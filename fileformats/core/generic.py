@@ -10,6 +10,7 @@ class File(FileSet):
     """Generic file type"""
 
     ext = ""
+    binary = False
 
     @mark.required
     @property
@@ -50,6 +51,11 @@ class File(FileSet):
         suffix = "." + cls.ext if cls.ext is not None else old_path.suffix
         return Path(new_path).with_suffix(suffix)
 
+    def read_contents(self, size=None):
+        with open(self.fspath, "rb" if self.binary else "r") as f:
+            contents = f.read(size)
+        return contents
+
 
 @attrs.define
 class Directory(FileSet):
@@ -73,7 +79,7 @@ class Directory(FileSet):
             match = False
             for p in fspath.iterdir():
                 try:
-                    content_type(p)
+                    content_type.with_adjacents([p], checks=self.checks)
                 except FormatMismatchError:
                     continue
                 else:

@@ -199,3 +199,25 @@ def test_side_car_fail2(work_dir):
     fspath = work_dir / "test.bad"
     write_test_file(fspath)
     assert not FileWithSideCar.matches(fspath)
+
+
+class DirContainingSideCars(Directory):
+
+    content_types = (FileWithSideCar,)
+
+
+def test_dir_containing_side_cars(work_dir):
+
+    fspath = work_dir / "test-dir"
+    write_test_file(fspath / "test.foo")
+    write_test_file(fspath / "test.bar")
+    write_test_file(fspath / "text.txt")
+    assert DirContainingSideCars.matches(fspath)
+
+
+def test_dir_containing_side_cars_fail(work_dir):
+
+    fspath = work_dir / "test-dir"
+    write_test_file(fspath / "test.foo")
+    write_test_file(fspath / "diff-name.bar")
+    assert not DirContainingSideCars.matches(fspath)
