@@ -48,7 +48,8 @@ def test_missing_files(work_dir):
     fspath = work_dir / "test.tst"
     write_test_file(fspath)
     with pytest.raises(FileNotFoundError):
-        TestFile([fspath, work_dir / "missing1.txt", work_dir / "missing2.txt"])
+        file = TestFile([fspath, work_dir / "missing1.txt", work_dir / "missing2.txt"])
+        raise Exception(file.fspaths)
 
 
 class ImageWithInlineHeader(File):

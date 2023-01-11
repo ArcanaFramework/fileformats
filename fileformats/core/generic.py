@@ -4,6 +4,7 @@ import attrs
 from .base import FileSet
 from .exceptions import FormatMismatchError
 from . import mark
+from .utils import splitext
 
 
 @attrs.define
@@ -44,12 +45,12 @@ class File(FileSet):
         Path
             The new path with the copied extension
         """
-        if not cls.matching_ext(old_path, cls.ext):
+        if not cls.matching_ext([old_path], cls.ext):
             raise FormatMismatchError(
                 f"Extension of old path ('{str(old_path)}') does not match that "
                 f"of file, '{cls.ext}'"
             )
-        suffix = "." + cls.ext if cls.ext is not None else old_path.suffix
+        suffix = cls.ext if cls.ext else splitext(old_path, multi=True)[-1]
         return Path(new_path).with_suffix(suffix)
 
     @property
@@ -60,6 +61,12 @@ class File(FileSet):
         with open(self.fspath, "rb" if self.binary else "r") as f:
             contents = f.read(size)
         return contents
+
+    def required_paths(self):
+        for prop_name in self.required_properties():
+            prop = getattr(self, prop_name)
+            if prop in self.fspaths:
+                yield prop
 
 
 @attrs.define
@@ -97,6 +104,20 @@ class Directory(FileSet):
                 f"Did not find matches for {missing} content types in {repr(self)}"
             )
         return fspath
+
+    @property
+    def contents(self):
+        for content_type in self.content_types:
+            for p in self.fspath.iterdir():
+                try:
+                    yield content_type.with_adjacents([p])
+                except FormatMismatchError:
+                    continue
+
+    @mark.check
+    def validate_contents(self):
+        for content in self.contents:
+            content.validate()
 
     @classmethod
     def __class_getitem__(cls, *content_types):

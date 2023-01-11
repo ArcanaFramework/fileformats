@@ -56,3 +56,10 @@ def test_copy_symlink(work_dir):
     assert cpy.fspath.name == "x.foo"
     assert cpy.header.fspath.parent == dest_dir
     assert cpy.header.fspath.name == "y.bar"
+
+
+def test_copy_ext(work_dir):
+    assert (
+        File.copy_ext(work_dir / "x.foo.bar", work_dir / "y") == work_dir / "y.foo.bar"
+    )
+    assert Bar.copy_ext(work_dir / "x.foo.bar", work_dir / "y") == work_dir / "y.bar"

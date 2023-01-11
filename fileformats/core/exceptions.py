@@ -5,9 +5,9 @@ class FileFormatsError(RuntimeError):
     "Base exception class"
 
 
-class FormatMismatchError(FileFormatsError):
+class FormatMismatchError(RuntimeError):
     "File formats don't match"
 
 
-class FormatConversionError(FileFormatsError):
+class FormatConversionError(RuntimeError):
     "No converters exist between formats"

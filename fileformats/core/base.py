@@ -5,6 +5,7 @@ from pathlib import Path
 import operator
 import logging
 import attrs
+from .utils import splitext
 from .exceptions import FileFormatsError, FormatMismatchError, FormatConversionError
 
 
@@ -104,7 +105,7 @@ class FileSet:
 
     def __attrs_post_init__(self):
         self.metadata._fileset = self
-        # Loop through all attributes and find the ones marked "required"
+        # Check required properties
         for prop in self.required_properties():
             self._check_property(self, prop)
 
@@ -393,22 +394,13 @@ class FileSet:
         # Create a copy of the fspaths provided
         fspaths = set(fspaths)
 
-        def splitext(fspath):
-            if multipart_ext:
-                ext = ".".join(fspath.suffixes)
-                stem = fspath.name[: -len(ext)]
-            else:
-                stem = fspath.stem
-                ext = fspath.suffix
-            return stem, ext
-
         for fspath in list(fspaths):
-            stem = splitext(fspath)[0]
+            stem = splitext(fspath, multi=multipart_ext)[0]
             for neighbour in fspath.parent.iterdir():
-                neigh_stem, neigh_ext = splitext(neighbour)
+                neigh_stem, neigh_ext = splitext(neighbour, multi=multipart_ext)
                 if neigh_stem == stem:
                     if duplicate_ext or neigh_ext not in (
-                        splitext(p)[-1] for p in fspaths
+                        splitext(p, multi=multipart_ext)[-1] for p in fspaths
                     ):
                         fspaths.add(neighbour)
         return fspaths
