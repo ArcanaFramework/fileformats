@@ -5,7 +5,7 @@ from pathlib import Path
 import operator
 import logging
 import attrs
-from .utils import splitext
+from .utils import splitext, to_mime
 from .exceptions import FileFormatsError, FormatMismatchError, FormatConversionError
 
 
@@ -141,6 +141,10 @@ class FileSet:
 
     def __iter__(self):
         return iter(self.fspaths)
+
+    @classmethod
+    def mime(self):
+        return to_mime(type(self))
 
     @classmethod
     def matches(cls, fspaths: set[Path], validate: bool = True) -> bool:
