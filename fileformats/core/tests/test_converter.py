@@ -61,7 +61,8 @@ def foo_bar_converter(Foo, Bar, work_dir):
 def baz_bar_converter(Baz, Bar, work_dir):
     @mark.converter(out_file="out")
     @pydra.mark.task
-    def baz_bar_converter_(in_file: Baz) -> Bar:
+    @pydra.mark.annotation({"return": {"out", Bar}})
+    def baz_bar_converter_(in_file: Baz):
         assert in_file
         return write_test_file(work_dir / "bar.bar", in_file.contents)
 
