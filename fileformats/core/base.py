@@ -317,7 +317,7 @@ class FileSet:
         # Make unique, yet somewhat recognisable task name
         task_name = f"{type(fileset).__name__}_to_{cls.__name__}_{id(fileset)}"
         task = task_spec(name=task_name, in_file=fileset, **kwargs)
-        result = task()
+        result = task(plugin="serial")
         return cls(result.output.out_file)
 
     @classmethod

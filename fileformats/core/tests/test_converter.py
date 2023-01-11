@@ -58,6 +58,17 @@ def foo_bar_converter(Foo, Bar, work_dir):
 
 
 @pytest.fixture
+def baz_bar_converter(Baz, Bar, work_dir):
+    @mark.converter(out_file="out")
+    @pydra.mark.task
+    def baz_bar_converter_(in_file: Baz) -> Bar:
+        assert in_file
+        return write_test_file(work_dir / "bar.bar", in_file.contents)
+
+    return baz_bar_converter_
+
+
+@pytest.fixture
 def FooQuxConverter(Foo, Qux, work_dir):
     from pydra.engine import specs
     from pydra import ShellCommandTask
@@ -155,3 +166,14 @@ def test_convert_shellcmd(Foo, Qux, FooQuxConverter, work_dir):
     qux = Qux.convert(foo)
     assert type(qux) is Qux
     assert qux.contents == foo.contents
+
+
+@pytest.mark.skipif(pydra is None, reason="Pydra could not be imported")
+def test_convert_mapped_conversion(Baz, Bar, baz_bar_converter, work_dir):
+
+    fspath = work_dir / "test.baz"
+    write_test_file(fspath)
+    baz = Baz(fspath)
+    bar = Bar.convert(baz)
+    assert type(bar) is Bar
+    assert bar.contents == baz.contents

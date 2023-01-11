@@ -17,8 +17,9 @@ class ConverterWrapper:
     def __call__(self, name=None, **kwargs):
         if name is None:
             name = f"{self.task.__name__}_wrapper"
-        wf = Workflow(name=name, lzin=["in_file"] + list(kwargs))
-        kwargs[self.in_file] = wf.lzin.in_file
-        wf.add(self.task_spec(name="task", **kwargs))
+        wf = Workflow(
+            name=name, input_spec=list(set(["in_file"] + list(kwargs))), **kwargs
+        )
+        wf.add(self.task_spec(name="task", **{self.in_file: wf.lzin.in_file}))
         wf.set_output([("out_file", getattr(wf.task.lzout, self.out_file))])
         return wf
