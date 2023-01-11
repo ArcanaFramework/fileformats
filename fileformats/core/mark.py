@@ -82,16 +82,16 @@ def converter(
     def decorator(task_spec):
         if source_format is None or target_format is None:
             task = task_spec()
-            if source_format is None:
-                inputs_dict = attrs.fields_dict(type(task.inputs))
-                source = inputs_dict[in_file].type
-            else:
-                source = source_format
-            if target_format is None:
-                outputs_dict = attrs.fields_dict(make_klass(task.output_spec))
-                target = target = outputs_dict[out_file].type
-            else:
-                target = target_format
+        if source_format is None:
+            inputs_dict = attrs.fields_dict(type(task.inputs))
+            source = inputs_dict[in_file].type
+        else:
+            source = source_format
+        if target_format is None:
+            outputs_dict = attrs.fields_dict(make_klass(task.output_spec))
+            target = outputs_dict[out_file].type
+        else:
+            target = target_format
         if not issubclass(target, FileSet):
             raise FormatConversionError(
                 f"Target file format {target.__name__} is not of sub-class of "

@@ -313,10 +313,12 @@ class FileSet:
         FileSet
             the file-set converted into the type of the current class
         """
-        task = cls.find_converter(source_format=type(fileset))
+        task_spec = cls.find_converter(source_format=type(fileset))
         # Make unique, yet somewhat recognisable task name
-        task_name = f"{type(fileset).__name__}_to_{cls.__name__}_{hash(fileset)}"
-        return cls(task(name=task_name, in_file=fileset, **kwargs).output.out_file)
+        task_name = f"{type(fileset).__name__}_to_{cls.__name__}_{id(fileset)}"
+        task = task_spec(name=task_name, in_file=fileset, **kwargs)
+        result = task()
+        return cls(result.output.out_file)
 
     @classmethod
     def find_converter(cls, source_format: type) -> type:

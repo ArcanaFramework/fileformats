@@ -1,4 +1,5 @@
 from __future__ import annotations
+import os
 from pathlib import Path
 import attrs
 from .base import FileSet
@@ -8,11 +9,12 @@ from .utils import splitext
 
 
 @attrs.define
-class File(FileSet):
+class File(FileSet, os.PathLike):
     """Generic file type"""
 
     ext = ""
     binary = False
+    is_dir = False
 
     @mark.required
     @property
@@ -68,12 +70,16 @@ class File(FileSet):
             if prop in self.fspaths:
                 yield prop
 
+    def __fspath__(self):
+        return str(self)
+
 
 @attrs.define
-class Directory(FileSet):
+class Directory(FileSet, os.PathLike):
     """Generic directory type"""
 
     content_types = ()
+    is_dir = True
 
     @mark.required
     @property
@@ -131,3 +137,6 @@ class Directory(FileSet):
 
     def __str__(self):
         return str(self.fspath)
+
+    def __fspath__(self):
+        return str(self)
