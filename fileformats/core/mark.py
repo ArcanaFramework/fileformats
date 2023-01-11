@@ -1,5 +1,6 @@
 from __future__ import annotations
 import inspect
+import attrs
 from .base import FileSet, REQUIRED_ANNOTATION, CHECK_ANNOTATION, REQUIRED_CHECK_OPS
 from .exceptions import FormatConversionError
 
@@ -54,7 +55,7 @@ def converter(
     source_format=None,
     target_format=None,
     in_file="in_file",
-    out_file=None,
+    out_file="out_file",
 ):
     """Decorator that registers a task as a converter between a source and target format
     pair
@@ -76,47 +77,43 @@ def converter(
     """
     # Note if explicit value for out_file isn't provided note it so we can also try
     # "out"
-    if out_file is None:
-        default_out = True
-        out_file = "out_file"
+    from pydra.engine.helpers import make_klass
 
     def decorator(task_spec):
-        task = task_spec()
-        source = getattr(task, in_file).type if source_format is None else source_format
-        if target_format is None:
-            try:
-                target = getattr(task, out_file).type
-            except AttributeError:
-                if default_out:
-                    target = getattr(task, "out").type
-                else:
-                    raise
-        else:
-            target = target_format
+        if source_format is None or target_format is None:
+            task = task_spec()
+            if source_format is None:
+                inputs_dict = attrs.fields_dict(type(task.inputs))
+                source = inputs_dict[in_file].type
+            else:
+                source = source_format
+            if target_format is None:
+                outputs_dict = attrs.fields_dict(make_klass(task.output_spec))
+                target = target = outputs_dict[out_file].type
+            else:
+                target = target_format
         if not issubclass(target, FileSet):
             raise FormatConversionError(
                 f"Target file format {target.__name__} is not of sub-class of "
                 "FileSet"
             )
-        # Get "converters" dictionary of class
-        try:
-            converters = target.__dict__["converters"]
-        except KeyError:
-            converters = target.__dict__["converters"] = {}
-        if source in converters:
+        # Ensure "converters" is defined in target class not of superclass
+        if "converters" not in target.__dict__:
+            target.converters = {}
+        if source in target.converters:
             msg = (
                 f"There is already a converter registered between {source.__name__} "
-                f"and {target.__name__}: {converters[source]}"
+                f"and {target.__name__}: {target.converters[source]}"
             )
-            src_file = inspect.getsourcefile(converters[source])
-            src_line = inspect.getsourcelines(converters[source])[-1]
+            src_file = inspect.getsourcefile(target.converters[source])
+            src_line = inspect.getsourcelines(target.converters[source])[-1]
             msg += f" (defined at line {src_line} of {src_file})"
             raise FormatConversionError(msg)
         if in_file != "in_file" or out_file != "out_file":
             from .converter import ConverterWrapper
 
             task_spec = ConverterWrapper(task_spec, in_file=in_file, out_file=out_file)
-        converters[source] = task_spec
+        target.converters[source] = task_spec
         return task_spec
 
     return decorator if task_spec is None else decorator(task_spec)

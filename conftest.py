@@ -44,3 +44,4 @@ def write_test_file(
     fpath.parent.mkdir(exist_ok=True, parents=True)
     with open(fpath, "wb" if binary else "w") as f:
         f.write(contents)
+    return fpath
