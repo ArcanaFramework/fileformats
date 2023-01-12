@@ -3,12 +3,13 @@ requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [project]
-name = "fileformats-core"
-description = "Base classes and mixins to build class representations of file-formats for use in type hinting in data workflows"
+name = "fileformats-text"
+description = "Classes for representing different file formats in Python classes for use in type hinting in data workflows"
 readme = "README.rst"
 requires-python = ">=3.8"
 dependencies = [
     "attrs>=22.1.0",
+    "fileformats-core",
 ]
 license = {file = "LICENSE"}
 authors = [
@@ -65,24 +66,15 @@ source = "vcs"
 raw-options = { root = ".." }
 
 [tool.hatch.build.hooks.vcs]
-version-file = "fileformats/core/_version.py"
+version-file = "fileformats/text/_version.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["fileformats"]
-include-only = ["fileformats/core"]
-
-# [tool.flit.module]
-# name = "fileformats.core"
-
-# [tool.flit.sdist]
-# exclude = [".gitignore"]
-
-# [tool.setuptools_scm]
-# write_to = "fileformats/core/_version.py"
+include-only = ["fileformats/text"]
 
 [tool.black]
 target-version = ['py38']
-exclude = "fileformats/core/_version.py"
+exclude = "fileformats/text/_version.py"
 
 [tool.codespell]
 ignore-words = ".codespell-ignorewords"

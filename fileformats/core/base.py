@@ -144,7 +144,15 @@ class FileSet:
 
     @classmethod
     def mime(self):
-        return to_mime(type(self))
+        """Returns an official MIME type representation of the format, if applicable,
+        otherwise a conventional MIME type "extension" of the form "application/x-***"""
+        return to_mime(type(self), iana=True)
+
+    @classmethod
+    def mimelike(self):
+        """Returns a "MIME-like" representation, but with a direct mapping between the
+        file-type and the fileformats namespace extension it belongs to"""
+        return to_mime(type(self), iana=False)
 
     @classmethod
     def matches(cls, fspaths: set[Path], validate: bool = True) -> bool:
