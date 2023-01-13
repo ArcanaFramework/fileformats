@@ -1,4 +1,5 @@
 from fileformats.core import File
+from fileformats.archive import Zip
 from fileformats.core.mixin import WithMagic
 
 
@@ -22,9 +23,7 @@ class Msword(Document):
     iana = "application/msword"
 
 
-class MswordX(Document):
-
-    magic = 0x504B0304
-    binary = True
+class MswordX(Zip, Document):
+    ext = ".docx"
 
     iana = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"

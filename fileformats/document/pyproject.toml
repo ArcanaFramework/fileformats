@@ -3,13 +3,14 @@ requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [project]
-name = "fileformats-application"
+name = "fileformats-document"
 description = "Classes for representing different file formats in Python classes for use in type hinting in data workflows"
 readme = "README.rst"
 requires-python = ">=3.8"
 dependencies = [
     "attrs>=22.1.0",
     "fileformats-core",
+    "fileformats-archive",
 ]
 license = {file = "LICENSE"}
 authors = [
@@ -66,16 +67,16 @@ source = "vcs"
 raw-options = { root = ".." }
 
 [tool.hatch.build.hooks.vcs]
-version-file = "fileformats/application/_version.py"
+version-file = "fileformats/document/_version.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["fileformats"]
-include-only = ["fileformats/application"]
+include-only = ["fileformats/document"]
 
 
 [tool.black]
 target-version = ['py38']
-exclude = "fileformats/application/_version.py"
+exclude = "fileformats/document/_version.py"
 
 [tool.codespell]
 ignore-words = ".codespell-ignorewords"

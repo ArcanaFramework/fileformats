@@ -10,7 +10,7 @@ from pydra.engine.specs import MultiOutputObj, File, Directory
 from fileformats.core.base import FileSet
 from fileformats.core.utils import set_cwd
 from fileformats.core import mark
-from fileformats.application import Zip, Tar, Tar_Gzip
+from fileformats.archive import Zip, Tar, Tar_Gzip
 
 
 TAR_COMPRESSION_TYPES = ["", "gz", "bz2", "xz"]
@@ -75,6 +75,7 @@ def create_tar(
 
 
 @mark.converter(source_format=Tar, target_format=FileSet)
+@mark.converter(source_format=Tar_Gzip, target_format=FileSet)
 @pydra.mark.task
 @pydra.mark.annotate({"return": {"out_file": MultiOutputObj}})
 def extract_tar(
@@ -99,7 +100,9 @@ def extract_tar(
     return [os.path.join(extract_dir, f) for f in os.listdir(extract_dir)]
 
 
-@mark.converter(compression=zipfile.ZIP_DEFLATED)
+@mark.converter(
+    source_format=FileSet, target_format=Zip, compression=zipfile.ZIP_DEFLATED
+)
 @pydra.mark.task
 @pydra.mark.annotate(
     {
@@ -174,6 +177,9 @@ def create_zip(
     return out_file
 
 
+@mark.converter(
+    source_format=Zip, target_format=FileSet, compression=zipfile.ZIP_DEFLATED
+)
 @pydra.mark.task
 @pydra.mark.annotate({"return": {"out_file": MultiOutputObj}})
 def extract_zip(in_file: File, extract_dir: Directory):
