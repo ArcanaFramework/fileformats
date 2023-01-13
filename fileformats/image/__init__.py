@@ -1,3 +1,4 @@
+from _version import __version__
 from fileformats.core.generic import File
 
 

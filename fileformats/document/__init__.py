@@ -1,3 +1,4 @@
+from _version import __version__
 from fileformats.core import File
 from fileformats.archive import Zip
 from fileformats.core.mixin import WithMagic
