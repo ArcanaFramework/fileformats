@@ -5,12 +5,12 @@ build-backend = "hatchling.build"
 [project]
 name = "fileformats-core"
 description = "Base classes and mixins to build class representations of file-formats for use in type hinting in data workflows"
-readme = "README.rst"
+readme = "../../README.rst"
 requires-python = ">=3.8"
 dependencies = [
     "attrs>=22.1.0",
 ]
-license = {file = "LICENSE"}
+license = {file = "../../LICENSE"}
 authors = [
     {name = "Thomas G. Close", email = "tom.g.close@gmail.com"},
 ]
@@ -62,10 +62,10 @@ repository = "https://github.com/ArcanaFramework/fileformats"
 
 [tool.hatch.version]
 source = "vcs"
-raw-options = { root = ".." }
+raw-options = { root = "../.." }
 
 [tool.hatch.build.hooks.vcs]
-version-file = "fileformats/core/_version.py"
+version-file = "_version.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["fileformats"]
