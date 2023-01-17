@@ -25,8 +25,19 @@ Quick Installation
 
 This extension can be installed for Python 3 using *pip*::
 
-    $ pip3 install fileformats-core
+    $ pip3 install fileformats
 
+which will install the ``core``, and standard fileformat namespaces, ``archive``,
+``document``, ``image``, ``numeric``, ``text`` sub-packages within the umbrella
+``fileformats`` namespace package.
+
+Developer Installation
+----------------------
+
+To install developer copies of each of the namespace sub-packages, you will need to
+install each of them explicitly with
+
+    $ pip3 install -e /path/to/repo/fileformats/*[test]
 
 License
 -------

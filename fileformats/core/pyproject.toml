@@ -71,18 +71,9 @@ version-file = "_version.py"
 packages = ["fileformats"]
 include-only = ["fileformats/core"]
 
-# [tool.flit.module]
-# name = "fileformats.core"
-
-# [tool.flit.sdist]
-# exclude = [".gitignore"]
-
-# [tool.setuptools_scm]
-# write_to = "fileformats/core/_version.py"
-
 [tool.black]
 target-version = ['py38']
-exclude = "fileformats/core/_version.py"
+exclude = "_version.py"
 
 [tool.codespell]
 ignore-words = ".codespell-ignorewords"
