@@ -99,7 +99,7 @@ class Directory(FileSet, os.PathLike):
             match = False
             for p in fspath.iterdir():
                 try:
-                    content_type.with_adjacents([p])
+                    content_type.from_path([p])
                 except FormatMismatchError:
                     continue
                 else:
@@ -118,7 +118,7 @@ class Directory(FileSet, os.PathLike):
         for content_type in self.content_types:
             for p in self.fspath.iterdir():
                 try:
-                    yield content_type.with_adjacents([p])
+                    yield content_type.from_path([p])
                 except FormatMismatchError:
                     continue
 

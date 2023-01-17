@@ -437,7 +437,7 @@ class FileSet:
         return fspaths
 
     @classmethod
-    def with_adjacents(
+    def from_path(
         cls,
         fspaths: set[Path],
         **kwargs,

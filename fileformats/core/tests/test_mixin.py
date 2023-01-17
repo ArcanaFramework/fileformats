@@ -67,7 +67,7 @@ def test_with_separate_header(work_dir):
         "dims": "10,10,20",
     }
     write_test_file(hdr_fspath, "\n".join(f"{k}:{v}" for k, v in hdr.items()))
-    file = FileWithSeparateHeader.with_adjacents(fspath)
+    file = FileWithSeparateHeader.from_path(fspath)
     file.validate()
     assert file.metadata.loaded == hdr
 
