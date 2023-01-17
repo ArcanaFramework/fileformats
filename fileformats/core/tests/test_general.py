@@ -85,10 +85,15 @@ def test_header_overwrite(work_dir):
 
 
 class YFile(ImageWithInlineHeader):
-    @mark.required(gt=10)
+    @mark.required
     @property
     def y(self):
         return self.metadata["y"]
+
+    @mark.check
+    def y_value(self):
+        if self.y <= 10:
+            raise FormatMismatchError(f"'y' property is not > 10 ({self.y})")
 
 
 def test_required_check_op(work_dir):

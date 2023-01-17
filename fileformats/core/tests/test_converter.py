@@ -1,3 +1,4 @@
+import attrs
 import pytest
 from fileformats.core.generic import File
 from fileformats.core import mark
@@ -127,7 +128,9 @@ def test_get_converter_functask(Foo, Bar, foo_bar_converter, work_dir):
 
     fspath = work_dir / "test.foo"
     write_test_file(fspath)
-    assert Bar.get_converter(Foo) == foo_bar_converter
+    assert attrs.asdict(Bar.get_converter(Foo).inputs) == attrs.asdict(
+        foo_bar_converter(name="Foo__to_Bar_").inputs
+    )
 
 
 @pytest.mark.skipif(pydra is None, reason="Pydra could not be imported")
@@ -135,7 +138,9 @@ def test_get_converter_shellcmd(Foo, Qux, FooQuxConverter, work_dir):
 
     fspath = work_dir / "test.foo"
     write_test_file(fspath)
-    assert Qux.get_converter(Foo) == FooQuxConverter
+    assert attrs.asdict(Qux.get_converter(Foo).inputs) == attrs.asdict(
+        FooQuxConverter(name="Foo__to_Qux_").inputs
+    )
 
 
 @pytest.mark.skipif(pydra is None, reason="Pydra could not be imported")

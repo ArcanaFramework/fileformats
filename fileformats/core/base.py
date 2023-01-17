@@ -2,7 +2,6 @@ from __future__ import annotations
 import os
 import shutil
 from pathlib import Path
-import operator
 import logging
 import attrs
 from .utils import splitext, to_mime
@@ -14,21 +13,6 @@ from .exceptions import FileFormatsError, FormatMismatchError, FormatConversionE
 REQUIRED_ANNOTATION = "__fileformats_required__"
 CHECK_ANNOTATION = "__fileformats_check__"
 
-
-# Ops that can be used to quickly check the value of required properties
-REQUIRED_CHECK_OPS = {
-    "eq": operator.eq,
-    "lt": operator.lt,
-    "gt": operator.gt,
-    "ge": operator.ge,
-    "le": operator.le,
-    "ne": operator.ne,
-    "is_": operator.is_,
-    "in_": lambda x, s: x in s,
-    "not_in": lambda x, s: x not in s,
-    "issubclass": issubclass,
-    "isinstance": isinstance,
-}
 
 logger = logging.getLogger("fileformats")
 
