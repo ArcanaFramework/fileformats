@@ -427,8 +427,8 @@ class FileSet:
         fspaths: set[Path],
         **kwargs,
     ):
-        """Factory method to create a file-set object of the calling with adjacent files
-        included
+        """Factory method to create a file-set object with all the secondary files
+        that inferred/referenced from the primary fspath included in the file-set paths.
 
         Parameters
         ----------

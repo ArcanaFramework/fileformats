@@ -7,7 +7,6 @@ from pathlib import Path
 import attrs
 import pydra.mark
 import pydra.engine.specs
-from fileformats.core.base import FileSet
 from fileformats.core.generic import File, Directory
 from fileformats.core.utils import set_cwd
 from fileformats.core import mark
@@ -155,8 +154,10 @@ def _create_tar(
     return out_file
 
 
-@mark.converter(source_format=Tar, target_format=FileSet)
-@mark.converter(source_format=Tar_Gzip, target_format=FileSet)
+@mark.converter(source_format=Tar, target_format=File)
+@mark.converter(source_format=Tar_Gzip, target_format=File)
+@mark.converter(source_format=Tar, target_format=Directory)
+@mark.converter(source_format=Tar_Gzip, target_format=Directory)
 @pydra.mark.task
 @pydra.mark.annotate({"return": {"out_file": pydra.engine.specs.MultiOutputObj}})
 def extract_tar(
@@ -292,8 +293,9 @@ def _create_zip(
     return out_file
 
 
+@mark.converter(source_format=Zip, target_format=File, compression=zipfile.ZIP_DEFLATED)
 @mark.converter(
-    source_format=Zip, target_format=FileSet, compression=zipfile.ZIP_DEFLATED
+    source_format=Zip, target_format=Directory, compression=zipfile.ZIP_DEFLATED
 )
 @pydra.mark.task
 @pydra.mark.annotate({"return": {"out_file": pydra.engine.specs.MultiOutputObj}})
