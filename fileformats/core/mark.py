@@ -91,7 +91,7 @@ def converter(
                 f"Target file format {target.__name__} is not of sub-class of "
                 "FileSet"
             )
-        # Ensure "converters" is defined in target class not of superclass
+        # Ensure "converters" dict is defined in the target class and not in a superclass
         if "converters" not in target.__dict__:
             target.converters = {}
         if source in target.converters:

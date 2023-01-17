@@ -352,35 +352,36 @@ class FileSet:
             _description_
         """
         converter_tuple = None
-        # Walk back through method-resolution order of base classes to try to find a
-        # valid converter
-        for klass in cls.mro():
-            converters = klass.__dict__.get("converters")
-            if converters is None:
-                continue
-            try:
-                converter_tuple = converters[source_format]
-            except KeyError:  # check to see whether there are converters from a base class
-                available = []
-                for frmt, converter in converters.items():
-                    if issubclass(source_format, frmt):
-                        available.append(converter)
-                if len(available) > 1:
-                    raise FormatConversionError(
-                        f"Ambiguous converters found between {cls.__name__} and "
-                        f"{source_format.__name__}, {available}"
-                    )
-                elif available:
-                    converter_tuple = available[0]
-            if converter_tuple:
-                break
-        if not converter_tuple:
+        # Only access converters to the specific class, not superclasses (which may not
+        # be able to convert to the specific type)
+        try:
+            converters = cls.__dict__["converters"]
+        except KeyError:
             raise FormatConversionError(
-                f"Could not find converter between {source_format.__name__} and "
-                f"{cls.__name__} formats"
+                f"No converters specified to {cls} format (trying to find one from "
+                f"{source_format}"
             )
+        try:
+            converter_tuple = converters[source_format]
+        except KeyError:  # check to see whether there are converters from a base class
+            available = []
+            for frmt, converter in converters.items():
+                if issubclass(source_format, frmt):
+                    available.append(converter)
+            if len(available) > 1:
+                raise FormatConversionError(
+                    f"Ambiguous converters found between {cls.__name__} and "
+                    f"{source_format.__name__}, {available}"
+                )
+            elif not available:
+                raise FormatConversionError(
+                    f"Could not find converter between {source_format.__name__} and "
+                    f"{cls.__name__} formats"
+                )
+            else:
+                converter_tuple = available[0]
         converter, conv_kwargs = converter_tuple
-        # Make unique, yet somewhat recognisable task name
+        # Make recognisable default task name
         if task_name is None:
             task_name = f"{source_format.__name__}_to_{cls.__name__}"
         return converter(name=task_name, **conv_kwargs)
@@ -426,7 +427,8 @@ class FileSet:
         fspaths: set[Path],
         **kwargs,
     ):
-        """Factory method to create a file-set with adjacent files included
+        """Factory method to create a file-set object of the calling with adjacent files
+        included
 
         Parameters
         ----------
@@ -438,8 +440,6 @@ class FileSet:
         multipart_ext : bool, optional
             whether to treat paths with multiple "." as having one long suffix,
             e.g. "image.nii.gz"
-        **kwargs
-            keyword arguments passed on to file-set __init__
         """
         fspaths = fspaths_converter(fspaths)
         return cls(cls.include_adjacents(fspaths=fspaths, **kwargs))
