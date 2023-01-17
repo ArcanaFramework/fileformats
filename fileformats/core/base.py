@@ -100,8 +100,9 @@ class FileSet:
     fspaths: set[Path] = attrs.field(default=None, converter=fspaths_converter)
     metadata: Metadata = attrs.field(factory=dict, converter=Metadata, kw_only=True)
 
-    # Create slot to hold converters registered by @converter decorator
-    converters = None
+    # Store converters registered by @converter decorator that convert to FileSet
+    # NB: each class will have its own version of this dictionary
+    converters = {}
 
     def __attrs_post_init__(self):
         self.metadata._fileset = self
@@ -249,7 +250,7 @@ class FileSet:
             new_paths.append(new_path)
         return type(self)(new_paths)
 
-    def select_by_ext(self, ext: str) -> Path:
+    def select_by_ext(self, fileformat: type = None) -> Path:
         """Selects a single path from a set of file-system paths based on the file
         extension
 
@@ -272,22 +273,28 @@ class FileSet:
         FileFormatError
             if more than one paths matches the extension
         """
-        matches = self.matching_ext(self.fspaths, ext)
+        if fileformat is None:
+            fileformat = type(self)
+        exts = [fileformat.ext]
+        try:
+            exts.extend(fileformat.alternate_exts)
+        except AttributeError:
+            pass
+        matches = self.matching_exts(self.fspaths, exts)
         if not matches:
             paths_str = ", ".join(str(p) for p in self.fspaths)
             raise FormatMismatchError(
-                f"No matching files with '{ext}' extension found in "
-                f"file set {paths_str}"
+                f"No matching files with extensions in {exts} in file set {paths_str}"
             )
         elif len(matches) > 1:
             matches_str = ", ".join(str(p) for p in matches)
             raise FormatMismatchError(
-                f"Multiple files with '{ext}' extension found in : {matches_str}"
+                f"Multiple files with {exts} extensions found in : {matches_str}"
             )
         return matches[0]
 
     @classmethod
-    def matching_ext(cls, fspaths: set[Path], ext: str) -> list[Path]:
+    def matching_exts(cls, fspaths: set[Path], exts: list[str]) -> list[Path]:
         """Returns the paths out of the candidates provided that matches the
         given extension (by default the extension of the class)
 
@@ -295,8 +302,8 @@ class FileSet:
         ----------
         fspaths: list[Path]
             The paths to select from
-        ext: str or None
-            the extension to match (defaults to 'ext' attribute of class)
+        ext: list[str]
+            the extensions to match
 
         Returns
         -------
@@ -307,16 +314,20 @@ class FileSet:
         ------
         FileFormatError
             When no paths match or more than one path matches the given extension"""
-        return [p for p in fspaths if str(p).endswith(ext)]
+        return [p for p in fspaths if any(str(p).endswith(e) for e in exts)]
 
     @classmethod
-    def convert(cls, fileset, **kwargs):
+    def convert(cls, fileset, plugin="serial", task_name=None, **kwargs):
         """Convert a given file-set into the format specified by the class
 
         Parameters
         ----------
         fileset : FileSet
             the file-set object to convert
+        plugin : str
+            the "execution plugin" used to run the conversion task
+        task_name : str
+            the name given to the converter task
         **kwargs
             args to pass to the conversion process
 
@@ -325,26 +336,28 @@ class FileSet:
         FileSet
             the file-set converted into the type of the current class
         """
-        task_spec = cls.find_converter(source_format=type(fileset))
         # Make unique, yet somewhat recognisable task name
-        task_name = f"{type(fileset).__name__}_to_{cls.__name__}_{id(fileset)}"
-        task = task_spec(name=task_name, in_file=fileset, **kwargs)
-        result = task(plugin="serial")
+        if task_name is None:
+            task_name = f"{type(fileset).__name__}_to_{cls.__name__}_{id(fileset)}"
+        task = cls.get_converter(source_format=type(fileset), task_name=task_name)
+        result = task(in_file=fileset, plugin=plugin, **kwargs)
         return cls(result.output.out_file)
 
     @classmethod
-    def find_converter(cls, source_format: type) -> type:
-        """Finds a converter that converts from the source format type
+    def get_converter(cls, source_format: type, task_name=None):
+        """Get a converter that converts from the source format type
         into the format specified by the class
 
         Parameters
         ----------
         source_format : type
             the format to convert from
+        task_name : str
+            the name given to the converter task
 
         Returns
         -------
-        pydra.engine.Task
+        pydra.engine.TaskBase
             a pydra task or workflow that performs the conversion
 
         Raises
@@ -354,7 +367,7 @@ class FileSet:
         FileFormatConversionError
             _description_
         """
-        converter = None
+        converter_tuple = None
         # Walk back through method-resolution order of base classes to try to find a
         # valid converter
         for klass in cls.mro():
@@ -362,7 +375,7 @@ class FileSet:
             if converters is None:
                 continue
             try:
-                converter = converters[source_format]
+                converter_tuple = converters[source_format]
             except KeyError:  # check to see whether there are converters from a base class
                 available = []
                 for frmt, converter in converters.items():
@@ -374,15 +387,19 @@ class FileSet:
                         f"{source_format.__name__}, {available}"
                     )
                 elif available:
-                    converter = available[0]
-            if converter:
+                    converter_tuple = available[0]
+            if converter_tuple:
                 break
-        if not converter:
+        if not converter_tuple:
             raise FormatConversionError(
                 f"Could not find converter between {source_format.__name__} and "
                 f"{cls.__name__} formats"
             )
-        return converter
+        converter, conv_kwargs = converter_tuple
+        # Make unique, yet somewhat recognisable task name
+        if task_name is None:
+            task_name = f"{source_format.__name__}_to_{cls.__name__}"
+        return converter(name=task_name, **conv_kwargs)
 
     @classmethod
     def include_adjacents(
@@ -480,7 +497,7 @@ class FileSet:
             )
 
     # @classmethod
-    # def find_converter(cls, from_format):
+    # def get_converter(cls, from_format):
     #     """Selects the converter method from the given datatype. Will select the
     #     most specific conversion.
 
@@ -592,7 +609,7 @@ class FileSet:
     #     }
     #     conv_inputs.update(kwargs)
     #     # Create converter node
-    #     converter, output_lfs = cls.find_converter(from_format)(**conv_inputs)
+    #     converter, output_lfs = cls.get_converter(from_format)(**conv_inputs)
     #     # If there is only one output lazy field, place it in a tuple so it can
     #     # be zipped with cls.fs_names()
     #     if isinstance(output_lfs, LazyField):

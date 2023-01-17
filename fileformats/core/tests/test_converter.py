@@ -123,28 +123,28 @@ def FooQuxConverter(Foo, Qux, work_dir):
 
 
 @pytest.mark.skipif(pydra is None, reason="Pydra could not be imported")
-def test_find_converter_functask(Foo, Bar, foo_bar_converter, work_dir):
+def test_get_converter_functask(Foo, Bar, foo_bar_converter, work_dir):
 
     fspath = work_dir / "test.foo"
     write_test_file(fspath)
-    assert Bar.find_converter(Foo) == foo_bar_converter
+    assert Bar.get_converter(Foo) == foo_bar_converter
 
 
 @pytest.mark.skipif(pydra is None, reason="Pydra could not be imported")
-def test_find_converter_shellcmd(Foo, Qux, FooQuxConverter, work_dir):
+def test_get_converter_shellcmd(Foo, Qux, FooQuxConverter, work_dir):
 
     fspath = work_dir / "test.foo"
     write_test_file(fspath)
-    assert Qux.find_converter(Foo) == FooQuxConverter
+    assert Qux.get_converter(Foo) == FooQuxConverter
 
 
 @pytest.mark.skipif(pydra is None, reason="Pydra could not be imported")
-def test_find_converter_fail(Foo, Baz, foo_bar_converter, work_dir):
+def test_get_converter_fail(Foo, Baz, foo_bar_converter, work_dir):
 
     fspath = work_dir / "test.foo"
     write_test_file(fspath)
     with pytest.raises(FormatConversionError):
-        Baz.find_converter(Foo)
+        Baz.get_converter(Foo)
 
 
 @pytest.mark.skipif(pydra is None, reason="Pydra could not be imported")

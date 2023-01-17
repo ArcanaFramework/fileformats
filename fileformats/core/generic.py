@@ -19,11 +19,11 @@ class File(FileSet, os.PathLike):
     @mark.required
     @property
     def fspath(self):
-        fspath = self.select_by_ext(self.ext)
+        fspath = self.select_by_ext()
         if not fspath.is_file():
             raise FormatMismatchError(
-                f'Path that matches extension "{self.ext}", {fspath}, is not a file in '
-                f"{repr(self)}"
+                f'Path that matches extension of "{type(self)}", {fspath}, is not a '
+                "file in {repr(self)}"
             )
         return fspath
 
@@ -47,7 +47,7 @@ class File(FileSet, os.PathLike):
         Path
             The new path with the copied extension
         """
-        if not cls.matching_ext([old_path], cls.ext):
+        if not cls.matching_exts([old_path], [cls.ext]):
             raise FormatMismatchError(
                 f"Extension of old path ('{str(old_path)}') does not match that "
                 f"of file, '{cls.ext}'"

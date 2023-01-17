@@ -18,11 +18,21 @@ class WithMagic:
 
     @mark.check
     def check_magic(self):
-        read_magic = self.read_contents(len(self.magic))
-        if read_magic != self.magic:
+        if self.binary and isinstance(self.magic, str):
+            magic_bytes = bytes.fromhex(self.magic)
+        else:
+            magic_bytes = self.magic
+        read_magic = self.read_contents(len(magic_bytes))
+        if read_magic != magic_bytes:
+            if self.binary and isinstance(self.magic, str):
+                read_magic_str = '"' + bytes.hex(read_magic) + '"'
+                magic_str = '"' + self.magic + '"'
+            else:
+                read_magic_str = read_magic
+                magic_str = self.magic
             raise FormatMismatchError(
-                f"Magic number of file '{read_magic}' doesn't match expected "
-                f"'{self.magic}'"
+                f"Magic number of file {read_magic_str} doesn't match expected "
+                f"{magic_str}"
             )
 
 
@@ -39,7 +49,7 @@ class WithSeparateHeader:
     @mark.required
     @property
     def header(self):
-        return self.header_type(self.select_by_ext(self.header_type.ext))
+        return self.header_type(self.select_by_ext(self.header_type))
 
     def load_metadata(self):
         return self.header.load()
@@ -68,7 +78,7 @@ class WithSideCar:
     @mark.required
     @property
     def side_car(self):
-        return self.side_car_type(self.select_by_ext(self.side_car_type.ext))
+        return self.side_car_type(self.select_by_ext(self.side_car_type))
 
     def load_metadata(self):
         metadata = self.primary_type.load_metadata(self)

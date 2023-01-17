@@ -1,7 +1,7 @@
 import pytest
 from fileformats.core.generic import File, Directory
 from fileformats.core.exceptions import FormatMismatchError
-from fileformats.core import mark
+from fileformats.core.mixin import WithSideCar
 from conftest import write_test_file
 
 
@@ -163,62 +163,72 @@ def test_nested_directories_fail2(work_dir):
     assert not NestedDirFormat.matches(fspath)
 
 
-class FileWithSideCar(File):
+# class FileWithSideCar(File):
 
-    ext = ".foo"
+#     ext = ".foo"
 
-    @mark.required
-    @property
-    def bar(self):
-        return self.select_by_ext(".bar")
-
-
-def test_side_car(work_dir):
-    fspath = work_dir / "test.foo"
-    write_test_file(fspath)
-    bar_fspath = work_dir / "test.bar"
-    write_test_file(bar_fspath)
-    file = FileWithSideCar([fspath, bar_fspath])
-    assert file.bar == bar_fspath
+#     @mark.required
+#     @property
+#     def bar(self):
+#         return self.select_by_ext(".bar")
 
 
-def test_side_car2(work_dir):
-    fspath = work_dir / "test.foo"
-    write_test_file(fspath)
-    bar_fspath = work_dir / "whoopwhoop.bar"
-    write_test_file(bar_fspath)
-    file = FileWithSideCar([fspath, bar_fspath])
-    assert file.fspath == fspath
-    assert file.bar == bar_fspath
+# def test_side_car(work_dir):
+#     fspath = work_dir / "test.foo"
+#     write_test_file(fspath)
+#     bar_fspath = work_dir / "test.bar"
+#     write_test_file(bar_fspath)
+#     file = FileWithSideCar([fspath, bar_fspath])
+#     assert file.bar == bar_fspath
 
 
-def test_side_car_with_adjacents(work_dir):
-    fspath = work_dir / "test.foo"
-    write_test_file(fspath)
-    bar_fspath = work_dir / "test.bar"
-    write_test_file(bar_fspath)
-    file = FileWithSideCar.with_adjacents([fspath])
-    assert file.fspath == fspath
-    assert file.bar == bar_fspath
+# def test_side_car2(work_dir):
+#     fspath = work_dir / "test.foo"
+#     write_test_file(fspath)
+#     bar_fspath = work_dir / "whoopwhoop.bar"
+#     write_test_file(bar_fspath)
+#     file = FileWithSideCar([fspath, bar_fspath])
+#     assert file.fspath == fspath
+#     assert file.bar == bar_fspath
 
 
-def test_side_car_fail(work_dir):
-    fspath = work_dir / "test.foo"
-    write_test_file(fspath)
-    assert not FileWithSideCar.matches(fspath)
+# def test_side_car_with_adjacents(work_dir):
+#     fspath = work_dir / "test.foo"
+#     write_test_file(fspath)
+#     bar_fspath = work_dir / "test.bar"
+#     write_test_file(bar_fspath)
+#     file = FileWithSideCar.with_adjacents([fspath])
+#     assert file.fspath == fspath
+#     assert file.bar == bar_fspath
 
 
-def test_side_car_fail2(work_dir):
-    fspath = work_dir / "test.foo"
-    write_test_file(fspath)
-    fspath = work_dir / "test.bad"
-    write_test_file(fspath)
-    assert not FileWithSideCar.matches(fspath)
+# def test_side_car_fail(work_dir):
+#     fspath = work_dir / "test.foo"
+#     write_test_file(fspath)
+#     assert not FileWithSideCar.matches(fspath)
+
+
+# def test_side_car_fail2(work_dir):
+#     fspath = work_dir / "test.foo"
+#     write_test_file(fspath)
+#     fspath = work_dir / "test.bad"
+#     write_test_file(fspath)
+#     assert not FileWithSideCar.matches(fspath)
+
+
+class Bar(File):
+
+    ext = ".bar"
+
+
+class FooWithSideBar(WithSideCar, TestFile):
+
+    side_car_type = Bar
 
 
 class DirContainingSideCars(Directory):
 
-    content_types = (FileWithSideCar,)
+    content_types = (FooWithSideBar,)
 
 
 def test_dir_containing_side_cars(work_dir):

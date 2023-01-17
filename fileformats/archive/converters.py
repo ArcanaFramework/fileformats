@@ -6,8 +6,9 @@ import zipfile
 from pathlib import Path
 import attrs
 import pydra.mark
-from pydra.engine.specs import MultiOutputObj, File, Directory
+import pydra.engine.specs
 from fileformats.core.base import FileSet
+from fileformats.core.generic import File, Directory
 from fileformats.core.utils import set_cwd
 from fileformats.core import mark
 from fileformats.archive import Zip, Tar, Tar_Gzip
@@ -15,31 +16,108 @@ from fileformats.archive import Zip, Tar, Tar_Gzip
 
 TAR_COMPRESSION_TYPES = ["", "gz", "bz2", "xz"]
 
+TAR_COMPRESSION_ANNOT = (
+    str,
+    {
+        "help_string": (
+            "The type of compression applied to tar file, "
+            "', '".join(TAR_COMPRESSION_TYPES)
+        ),
+        "allowed_values": list(TAR_COMPRESSION_TYPES),
+    },
+)
 
-@mark.converter(source_format=FileSet, target_format=Tar_Gzip, compression="gz")
-@mark.converter(source_format=FileSet, target_format=Tar)
+ZIP_COMPRESSION_ANNOT = (
+    int,
+    {
+        "help_string": (
+            "The type of compression applied to zip file, "
+            "see https://docs.python.org/3/library/zipfile.html#zipfile.ZIP_DEFLATED "
+            "for valid compression types"
+        ),
+        "allowed_values": [
+            zipfile.ZIP_STORED,
+            zipfile.ZIP_DEFLATED,
+            zipfile.ZIP_BZIP2,
+            zipfile.ZIP_LZMA,
+        ],
+    },
+)
+
+
+@mark.converter(source_format=File, target_format=Tar_Gzip, compression="gz")
+@mark.converter(source_format=File, target_format=Tar)
 @pydra.mark.task
 @pydra.mark.annotate(
     {
-        "in_file": FileSet,
-        "out_file": Tar,
+        "in_file": pydra.engine.specs.File,
+        "out_file": pydra.engine.specs.File,
         "filter": str,
-        "compression": (
-            str,
-            {
-                "help_string": (
-                    "The type of compression applied to tar file, "
-                    "', '".join(TAR_COMPRESSION_TYPES)
-                ),
-                "allowed_values": list(TAR_COMPRESSION_TYPES),
-            },
-        ),
+        "compression": TAR_COMPRESSION_ANNOT,
         "format": int,
         "ignore_zeros": bool,
         "return": {"out_file": Tar},
     }
 )
-def create_tar(
+def tar_file(
+    in_file,
+    out_file=None,
+    base_dir=".",
+    filter=None,
+    compression=None,
+    format=tarfile.DEFAULT_FORMAT,
+    ignore_zeros=False,
+    encoding=tarfile.ENCODING,
+):
+    return _create_tar(
+        in_file=in_file,
+        out_file=out_file,
+        base_dir=base_dir,
+        filter=filter,
+        compression=compression,
+        format=format,
+        ignore_zeros=ignore_zeros,
+        encoding=encoding,
+    )
+
+
+@mark.converter(source_format=Directory, target_format=Tar_Gzip, compression="gz")
+@mark.converter(source_format=Directory, target_format=Tar)
+@pydra.mark.task
+@pydra.mark.annotate(
+    {
+        "in_file": pydra.engine.specs.Directory,
+        "out_file": pydra.engine.specs.File,
+        "filter": str,
+        "compression": TAR_COMPRESSION_ANNOT,
+        "format": int,
+        "ignore_zeros": bool,
+        "return": {"out_file": Tar},
+    }
+)
+def tar_dir(
+    in_file,
+    out_file=None,
+    base_dir=".",
+    filter=None,
+    compression=None,
+    format=tarfile.DEFAULT_FORMAT,
+    ignore_zeros=False,
+    encoding=tarfile.ENCODING,
+):
+    return _create_tar(
+        in_file=in_file,
+        out_file=out_file,
+        base_dir=base_dir,
+        filter=filter,
+        compression=compression,
+        format=format,
+        ignore_zeros=ignore_zeros,
+        encoding=encoding,
+    )
+
+
+def _create_tar(
     in_file,
     out_file=None,
     base_dir=".",
@@ -77,7 +155,7 @@ def create_tar(
 @mark.converter(source_format=Tar, target_format=FileSet)
 @mark.converter(source_format=Tar_Gzip, target_format=FileSet)
 @pydra.mark.task
-@pydra.mark.annotate({"return": {"out_file": MultiOutputObj}})
+@pydra.mark.annotate({"return": {"out_file": pydra.engine.specs.MultiOutputObj}})
 def extract_tar(
     in_file: File,
     extract_dir: Directory,
@@ -100,35 +178,69 @@ def extract_tar(
     return [os.path.join(extract_dir, f) for f in os.listdir(extract_dir)]
 
 
-@mark.converter(
-    source_format=FileSet, target_format=Zip, compression=zipfile.ZIP_DEFLATED
-)
+@mark.converter(source_format=File, target_format=Zip)
 @pydra.mark.task
 @pydra.mark.annotate(
     {
-        "in_file": File,
+        "in_file": pydra.engine.specs.File,
         "out_file": str,
-        "compression": (
-            int,
-            {
-                "help_string": (
-                    "The type of compression applied to zip file, "
-                    "see https://docs.python.org/3/library/zipfile.html#zipfile.ZIP_DEFLATED "
-                    "for valid compression types"
-                ),
-                "allowed_values": [
-                    zipfile.ZIP_STORED,
-                    zipfile.ZIP_DEFLATED,
-                    zipfile.ZIP_BZIP2,
-                    zipfile.ZIP_LZMA,
-                ],
-            },
-        ),
+        "compression": ZIP_COMPRESSION_ANNOT,
         "allowZip64": bool,
         "return": {"out_file": Zip},
     }
 )
-def create_zip(
+def zip_file(
+    in_file,
+    out_file,
+    base_dir,
+    compression=zipfile.ZIP_DEFLATED,
+    allowZip64=True,
+    compresslevel=None,
+    strict_timestamps=True,
+):
+    return _create_zip(
+        in_file=in_file,
+        out_file=out_file,
+        base_dir=base_dir,
+        compression=compression,
+        allowZip64=allowZip64,
+        compresslevel=compresslevel,
+        strict_timestamps=strict_timestamps,
+    )
+
+
+@mark.converter(source_format=Directory, target_format=Zip)
+@pydra.mark.task
+@pydra.mark.annotate(
+    {
+        "in_file": pydra.engine.specs.Directory,
+        "out_file": str,
+        "compression": ZIP_COMPRESSION_ANNOT,
+        "allowZip64": bool,
+        "return": {"out_file": Zip},
+    }
+)
+def zip_dir(
+    in_file,
+    out_file,
+    base_dir,
+    compression=zipfile.ZIP_DEFLATED,
+    allowZip64=True,
+    compresslevel=None,
+    strict_timestamps=True,
+):
+    return _create_zip(
+        in_file=in_file,
+        out_file=out_file,
+        base_dir=base_dir,
+        compression=compression,
+        allowZip64=allowZip64,
+        compresslevel=compresslevel,
+        strict_timestamps=strict_timestamps,
+    )
+
+
+def _create_zip(
     in_file,
     out_file,
     base_dir,
@@ -139,10 +251,10 @@ def create_zip(
 ):
 
     if out_file == attrs.NOTHING:
-        out_file = Path(in_file[0]).name + ".zip"
+        out_file = Path(in_file).name + ".zip"
 
     if base_dir == attrs.NOTHING:
-        base_dir = Path(in_file[0]).parent
+        base_dir = Path(in_file).parent
 
     out_file = os.path.abspath(out_file)
 
@@ -181,7 +293,7 @@ def create_zip(
     source_format=Zip, target_format=FileSet, compression=zipfile.ZIP_DEFLATED
 )
 @pydra.mark.task
-@pydra.mark.annotate({"return": {"out_file": MultiOutputObj}})
+@pydra.mark.annotate({"return": {"out_file": pydra.engine.specs.MultiOutputObj}})
 def extract_zip(in_file: File, extract_dir: Directory):
 
     if extract_dir == attrs.NOTHING:

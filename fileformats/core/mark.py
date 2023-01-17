@@ -56,6 +56,7 @@ def converter(
     target_format=None,
     in_file="in_file",
     out_file="out_file",
+    **converter_kwargs,
 ):
     """Decorator that registers a task as a converter between a source and target format
     pair
@@ -74,6 +75,8 @@ def converter(
     out_file : _type_, optional
         name of the output to be considered the "out_file",
         by default "out_file" and "out" and will be tried in that order
+    **converter_kwargs
+        keyword arguments passed on to the converter task
     """
     # Note if explicit value for out_file isn't provided note it so we can also try
     # "out"
@@ -113,7 +116,7 @@ def converter(
             from .converter import ConverterWrapper
 
             task_spec = ConverterWrapper(task_spec, in_file=in_file, out_file=out_file)
-        target.converters[source] = task_spec
+        target.converters[source] = (task_spec, converter_kwargs)
         return task_spec
 
     return decorator if task_spec is None else decorator(task_spec)
