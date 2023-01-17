@@ -1,14 +1,14 @@
 from __future__ import annotations
 import inspect
 import attrs
-from .base import FileSet, REQUIRED_ANNOTATION, CHECK_ANNOTATION, REQUIRED_CHECK_OPS
+from .base import FileSet, REQUIRED_ANNOTATION, CHECK_ANNOTATION
 from .exceptions import FormatConversionError
 
 
 __all__ = ["required", "check", "converter"]
 
 
-def required(prop=None, **checks):
+def required(prop):
     """Decorator that flags a property of a file-set as being required for the format
     specified by the class.
 
@@ -24,17 +24,8 @@ def required(prop=None, **checks):
         to pass to the operator (the value of the property will be the first operand)
     """
 
-    def decorator(prop):
-        for op in checks:
-            if op not in REQUIRED_CHECK_OPS:
-                raise RuntimeError(
-                    f"Check {op} does not correspond to a valid operator "
-                    f"{list(REQUIRED_CHECK_OPS)}"
-                )
-        prop.fget.__annotations__[REQUIRED_ANNOTATION] = checks
-        return prop
-
-    return decorator if prop is None else decorator(prop)
+    prop.fget.__annotations__[REQUIRED_ANNOTATION] = None
+    return prop
 
 
 def check(method):

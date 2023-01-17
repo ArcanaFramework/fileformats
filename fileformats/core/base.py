@@ -44,7 +44,7 @@ def fspaths_converter(fspaths):
 class Metadata:
 
     loaded: dict = attrs.field(factory=dict, converter=dict)
-    _fileset = attrs.field(default=None, init=False)
+    _fileset = attrs.field(default=None, init=False, repr=False)
 
     def __iter__(self):
         raise NotImplementedError
@@ -106,9 +106,9 @@ class FileSet:
 
     def __attrs_post_init__(self):
         self.metadata._fileset = self
-        # Check required properties
-        for prop in self.required_properties():
-            self._check_property(self, prop)
+        # Check required properties don't raise errors
+        for prop_name in self.required_properties():
+            getattr(self, prop_name)
 
     @fspaths.validator
     def validate_fspaths(self, _, fspaths):
@@ -459,42 +459,6 @@ class FileSet:
         """
         fspaths = fspaths_converter(fspaths)
         return cls(cls.include_adjacents(fspaths=fspaths, **kwargs))
-
-    @classmethod
-    def _check_property(cls, fileset: FileSet, name: str):
-        """Check the value of a property of the file-set to ensure it meets the given
-        criteria
-
-        Parameters
-        ----------
-        fileset : FileSet
-            the file-set to check
-        name : str
-            name of the property to check
-        checks : dict[str, ty.Any]
-            checks to run against the value of the property
-
-        Raises
-        ------
-        FileFormatError
-            If the value of the property fails to meet any of the checks
-        """
-        value = getattr(fileset, name)
-        failed = []
-        if checks := getattr(cls, name).fget.__annotations__[REQUIRED_ANNOTATION]:
-            for op, operand in checks.items():
-                if not REQUIRED_CHECK_OPS[op](value, operand):
-                    failed.append(
-                        f"Value of '{name}' property ({value}) is not {op}: {operand}"
-                    )
-        else:
-            assert (
-                value is not None
-            ), f"'{name}' property of {fileset} should not be None"
-        if failed:
-            raise FormatMismatchError(
-                f"Check of {fileset} failed:\n" + "\n".join(failed)
-            )
 
     # @classmethod
     # def get_converter(cls, from_format):
