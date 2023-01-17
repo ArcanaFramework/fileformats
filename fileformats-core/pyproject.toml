@@ -68,10 +68,12 @@ raw-options = { root = ".." }
 version-file = "fileformats/core/_version.py"
 
 [tool.hatch.build]
+packages = [
+    "fileformats",
+]
 exclude = [
     "/tests",
 ]
-# only-include = ["fileformats/core"]
 
 [tool.black]
 target-version = ['py38']
