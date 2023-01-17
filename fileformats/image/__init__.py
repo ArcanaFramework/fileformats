@@ -8,18 +8,32 @@ class Image(File):
     pass
 
 
+class Bitmap(Image, WithMagic):
+    ext = ".bmp"
+    magic = b"BM"
+    iana = "image/bmp"
+
+
 class Gif(Image, WithMagic):
     ext = ".gif"
     iana = "image/gif"
-    magic = 0x47494638
+    magic = b"GIF8"
 
 
 class Png(Image, WithMagic):
     ext = ".png"
     iana = "image/png"
-    magic = 0x89504E47
+    magic = b".PNG"
 
 
-class Jpeg(Image):
+class Jpeg(Image, WithMagic):
     ext = (".jpg", ".jpeg")
     iana = "image/jpeg"
+    magic = "ffd8ffe0"
+
+
+class Postscript(Image, WithMagic):
+    ext = ".eps"
+    alternate_exts = (".ps",)
+    magic = b"%!"
+    iana = "application/postscript"
