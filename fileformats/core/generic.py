@@ -59,8 +59,10 @@ class File(FileSet, os.PathLike):
     def contents(self):
         return self.read_contents()
 
-    def read_contents(self, size=None):
+    def read_contents(self, size=None, offset=0):
         with open(self.fspath, "rb" if self.binary else "r") as f:
+            if offset:
+                f.read(offset)
             contents = f.read(size)
         return contents
 

@@ -51,7 +51,7 @@ ZIP_COMPRESSION_ANNOT = (
 @pydra.mark.annotate(
     {
         "in_file": pydra.engine.specs.File,
-        "out_file": pydra.engine.specs.File,
+        "out_file": str,
         "filter": str,
         "compression": TAR_COMPRESSION_ANNOT,
         "format": int,
@@ -62,7 +62,7 @@ ZIP_COMPRESSION_ANNOT = (
 def tar_file(
     in_file,
     out_file=None,
-    base_dir=".",
+    base_dir=None,
     filter=None,
     compression=None,
     format=tarfile.DEFAULT_FORMAT,
@@ -87,7 +87,7 @@ def tar_file(
 @pydra.mark.annotate(
     {
         "in_file": pydra.engine.specs.Directory,
-        "out_file": pydra.engine.specs.File,
+        "out_file": str,
         "filter": str,
         "compression": TAR_COMPRESSION_ANNOT,
         "format": int,
@@ -98,7 +98,7 @@ def tar_file(
 def tar_dir(
     in_file,
     out_file=None,
-    base_dir=".",
+    base_dir=None,
     filter=None,
     compression=None,
     format=tarfile.DEFAULT_FORMAT,
@@ -120,7 +120,7 @@ def tar_dir(
 def _create_tar(
     in_file,
     out_file=None,
-    base_dir=".",
+    base_dir=None,
     filter=None,
     compression=None,
     format=tarfile.DEFAULT_FORMAT,
@@ -135,7 +135,10 @@ def _create_tar(
         ext = ".tar." + compression
 
     if not out_file:
-        out_file = in_file[0] + ext
+        out_file = Path(in_file).name + ext
+
+    if base_dir is None:
+        base_dir = Path(in_file).parent
 
     out_file = os.path.abspath(out_file)
 

@@ -16,13 +16,15 @@ class WithMagic:
         read the contents properly
     """
 
+    magic_offset = 0
+
     @mark.check
     def check_magic(self):
         if self.binary and isinstance(self.magic, str):
             magic_bytes = bytes.fromhex(self.magic)
         else:
             magic_bytes = self.magic
-        read_magic = self.read_contents(len(magic_bytes))
+        read_magic = self.read_contents(len(magic_bytes), offset=self.magic_offset)
         if read_magic != magic_bytes:
             if self.binary and isinstance(self.magic, str):
                 read_magic_str = '"' + bytes.hex(read_magic) + '"'

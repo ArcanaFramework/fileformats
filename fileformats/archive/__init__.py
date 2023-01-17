@@ -32,12 +32,14 @@ class Gzip(Archive, WithMagic):
 class Tar(Archive, WithMagic):
     ext = ".tar"
     magic = "7573746172"
+    magic_offset = 257
     iana = "application/x-tar"
 
 
 class Tar_Gzip(Gzip, Tar):
     ext = ".tar.gz"
     alternate_exts = (".tgz",)
+    magic_offset = 0
 
 
 try:
