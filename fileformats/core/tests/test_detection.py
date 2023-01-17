@@ -192,12 +192,12 @@ def test_nested_directories_fail2(work_dir):
 #     assert file.bar == bar_fspath
 
 
-# def test_side_car_from_path(work_dir):
+# def test_side_car_from_primary(work_dir):
 #     fspath = work_dir / "test.foo"
 #     write_test_file(fspath)
 #     bar_fspath = work_dir / "test.bar"
 #     write_test_file(bar_fspath)
-#     file = FileWithSideCar.from_path([fspath])
+#     file = FileWithSideCar.from_primary([fspath])
 #     assert file.fspath == fspath
 #     assert file.bar == bar_fspath
 

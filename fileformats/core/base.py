@@ -422,7 +422,7 @@ class FileSet:
         return fspaths
 
     @classmethod
-    def from_path(
+    def from_primary(
         cls,
         fspaths: set[Path],
         **kwargs,
