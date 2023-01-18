@@ -3,15 +3,15 @@ import tempfile
 import pydra.mark
 import pydra.engine.specs
 from fileformats.core import mark
-from fileformats.text import DataDictSerialization, Json, Yaml
+from . import Serialization, Json, Yaml
 
 
 @mark.converter(target_format=Json, output_format=Json)
 @mark.converter(target_format=Yaml, output_format=Yaml)
 @pydra.mark.task
-@pydra.mark.annotate({"return": {"out_file": DataDictSerialization}})
+@pydra.mark.annotate({"return": {"out_file": Serialization}})
 def convert_data_serialization(
-    in_file: DataDictSerialization, output_format: type, out_dir: Path = None
+    in_file: Serialization, output_format: type, out_dir: Path = None
 ):
     dct = in_file.load()
     if out_dir is None:

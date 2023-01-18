@@ -1,35 +1,13 @@
-from ._version import __version__
 from warnings import warn
 import json
 import yaml
-from fileformats.core import File
-from fileformats.core import mark
+from ..core import File, __version__, mark
 
 
-# General formats
-class Plain(File):
-    ext = ".txt"
-
-
-class Csv(File):
-    ext = ".csv"
-
-
-class Tsv(File):
-    ext = ".tsv"
-
-
-class Html(File):
-    ext = ".html"
-    alternate_exts = (".htm",)
-
-
-class Xml(File):
-    ext = ".xml"
-
-
-class DataDictSerialization(File):
+class Serialization(File):
     "Base class for text-based hierarchical data-serialization formats, e.g. JSON, YAML"
+
+    iana = None
 
     @mark.check
     def load(self):
@@ -42,7 +20,11 @@ class DataDictSerialization(File):
         raise NotImplementedError
 
 
-class Json(DataDictSerialization):
+class Xml(Serialization):
+    ext = ".xml"
+
+
+class Json(Serialization):
     ext = ".json"
 
     def load(self):
@@ -57,7 +39,7 @@ class Json(DataDictSerialization):
         return cls(fspath)
 
 
-class Yaml(DataDictSerialization):
+class Yaml(Serialization):
     ext = ".yaml"
     alternate_exts = (".yml",)
 
@@ -76,4 +58,7 @@ class Yaml(DataDictSerialization):
 try:
     from .converters import *
 except ImportError:
-    warn(f"could not import converters for fileformats.{__name__}  module")
+    warn(
+        f"could not import converters for {__name__}  module, please install "
+        "fileformats[converters] if conversion is desired"
+    )

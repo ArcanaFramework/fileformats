@@ -1,4 +1,4 @@
-from ._version import __version__
+from ..core import __version__
 from warnings import warn
 from fileformats.core import File
 from fileformats.core.mixin import WithMagic
@@ -46,4 +46,7 @@ class Tar_Gzip(Gzip, Tar):
 try:
     from .converters import *
 except ImportError:
-    warn(f"could not import converters for fileformats.{__name__}  module")
+    warn(
+        f"could not import converters for {__name__}  module, please install "
+        "fileformats[converters] if conversion is desired"
+    )
