@@ -12,7 +12,7 @@ dependencies = [
     "fileformats-core",
     "PyYAML>=6.0",
 ]
-license = {file = "../../LICENSE"}
+license = {text="CC BY-SA 4.0"}
 authors = [
     {name = "Thomas G. Close", email = "tom.g.close@gmail.com"},
 ]

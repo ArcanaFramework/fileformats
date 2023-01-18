@@ -25,12 +25,14 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install twine build
+        python -m pip install twine build
 
     - name: Build and publish
       env:
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
       run: |
-        python -m build
-        twine upload dist/*
+        for subpkg in src/fileformats-*; do
+          python -m build $subpkg
+          twine upload $subpkg/dist/*
+        done

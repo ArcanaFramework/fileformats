@@ -38,7 +38,7 @@ To install each of the namespace sub-packages so that it is editable, you need t
 install each sub-package explicitly. This can be done conveniently from the repo root
 directory using a shell "for loop", e.g.
 
-    $ for f in ./src/fileformats-*; do python3 -m pip install -e ${f}'[test,converters]'; done
+    $ for subpkg in ./src/fileformats-*; do python3 -m pip install -e ${subpkg}'[test,converters]'; done
 
 License
 -------
