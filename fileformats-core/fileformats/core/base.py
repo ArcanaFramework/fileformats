@@ -1,5 +1,6 @@
 from __future__ import annotations
 import os
+from copy import copy
 import shutil
 from pathlib import Path
 import logging
@@ -320,15 +321,20 @@ class FileSet:
         FileSet
             the file-set converted into the type of the current class
         """
-        # Make unique, yet somewhat recognisable task name
         if task_name is None:
             task_name = f"{type(fileset).__name__}_to_{cls.__name__}_{id(fileset)}"
-        task = cls.get_converter(source_format=type(fileset), task_name=task_name)
-        result = task(in_file=fileset, plugin=plugin, **kwargs)
-        return cls(result.output.out_file)
+        # Make unique, yet somewhat recognisable task name
+        task = cls.get_converter(source_format=type(fileset), name=task_name, **kwargs)
+        result = task(in_file=fileset, plugin=plugin)
+        out_file = result.output.out_file
+        if isinstance(out_file, (str, bytes, os.PathLike)):
+            out_file = cls.from_primary(out_file)
+        elif not isinstance(out_file, cls):
+            out_file = cls(out_file)
+        return out_file
 
     @classmethod
-    def get_converter(cls, source_format: type, task_name=None):
+    def get_converter(cls, source_format: type, name: str, **kwargs):
         """Get a converter that converts from the source format type
         into the format specified by the class
 
@@ -338,6 +344,8 @@ class FileSet:
             the format to convert from
         task_name : str
             the name given to the converter task
+        **kwargs
+            passed on to the task init method to customise the conversion
 
         Returns
         -------
@@ -381,10 +389,13 @@ class FileSet:
             else:
                 converter_tuple = available[0]
         converter, conv_kwargs = converter_tuple
+        if kwargs:
+            conv_kwargs = copy(conv_kwargs)
+            conv_kwargs.update(kwargs)
         # Make recognisable default task name
-        if task_name is None:
-            task_name = f"{source_format.__name__}_to_{cls.__name__}"
-        return converter(name=task_name, **conv_kwargs)
+        # if task_name is None:
+        #     task_name = f"{source_format.__name__}_to_{cls.__name__}"
+        return converter(name=name, **conv_kwargs)
 
     @classmethod
     def include_adjacents(
