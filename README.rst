@@ -25,7 +25,7 @@ Quick Installation
 
 This extension can be installed for Python 3 using *pip*::
 
-    $ pip3 install fileformats
+    $ python3 -m pip fileformats
 
 which will install the ``core``, and standard fileformat namespaces, ``archive``,
 ``document``, ``image``, ``numeric``, ``text`` sub-packages within the umbrella
@@ -34,10 +34,11 @@ which will install the ``core``, and standard fileformat namespaces, ``archive``
 Developer Installation
 ----------------------
 
-To install developer copies of each of the namespace sub-packages, you will need to
-install each of them explicitly with
+To install each of the namespace sub-packages so that it is editable, you need to
+install each sub-package explicitly. This can be done conveniently from the repo root
+directory using a shell "for loop", e.g.
 
-    $ pip3 install -e /path/to/repo/fileformats/*[test]
+    $ for f in ./src/fileformats-*; do python3 -m pip install -e ${f}'[test,converters]'; done
 
 License
 -------

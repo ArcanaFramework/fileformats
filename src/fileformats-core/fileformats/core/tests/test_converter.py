@@ -128,8 +128,8 @@ def test_get_converter_functask(Foo, Bar, foo_bar_converter, work_dir):
 
     fspath = work_dir / "test.foo"
     write_test_file(fspath)
-    assert attrs.asdict(Bar.get_converter(Foo).inputs) == attrs.asdict(
-        foo_bar_converter(name="Foo__to_Bar_").inputs
+    assert attrs.asdict(Bar.get_converter(Foo, name="Foo2Bar").inputs) == attrs.asdict(
+        foo_bar_converter(name="Foo2Bar").inputs
     )
 
 
@@ -138,8 +138,8 @@ def test_get_converter_shellcmd(Foo, Qux, FooQuxConverter, work_dir):
 
     fspath = work_dir / "test.foo"
     write_test_file(fspath)
-    assert attrs.asdict(Qux.get_converter(Foo).inputs) == attrs.asdict(
-        FooQuxConverter(name="Foo__to_Qux_").inputs
+    assert attrs.asdict(Qux.get_converter(Foo, name="Foo2Qux").inputs) == attrs.asdict(
+        FooQuxConverter(name="Foo2Qux").inputs
     )
 
 
@@ -149,7 +149,7 @@ def test_get_converter_fail(Foo, Baz, foo_bar_converter, work_dir):
     fspath = work_dir / "test.foo"
     write_test_file(fspath)
     with pytest.raises(FormatConversionError):
-        Baz.get_converter(Foo)
+        Baz.get_converter(Foo, name="Foo2Baz")
 
 
 @pytest.mark.skipif(pydra is None, reason="Pydra could not be imported")
