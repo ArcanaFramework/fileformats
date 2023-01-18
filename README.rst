@@ -1,9 +1,9 @@
 FileFormats
 ===========
-.. .. image:: https://github.com/arcanaframework/fileformats-core/actions/workflows/tests.yml/badge.svg
-..    :target: https://github.com/arcanaframework/fileformats-core/actions/workflows/tests.yml
-.. .. image:: https://codecov.io/gh/arcanaframework/fileformats-core/branch/main/graph/badge.svg?token=UIS0OGPST7
-..    :target: https://codecov.io/gh/arcanaframework/fileformats-core
+.. image:: https://github.com/arcanaframework/fileformats/actions/workflows/tests.yml/badge.svg
+   :target: https://github.com/arcanaframework/fileformats/actions/workflows/tests.yml
+.. image:: https://codecov.io/gh/arcanaframework/fileformats/branch/main/graph/badge.svg?token=UIS0OGPST7
+   :target: https://codecov.io/gh/arcanaframework/fileformats
 .. image:: https://img.shields.io/pypi/pyversions/fileformats-core.svg
    :target: https://pypi.python.org/pypi/fileformats-core/
    :alt: Supported Python versions
@@ -16,14 +16,14 @@ for use in type hinting and input validation in data workflows. Converters betwe
 equivalent formats are also typically written using the `Pydra <https://pydra.readthedocs.io>`__
 dataflow engine are also typically provided.
 
-This package only provides the core base classes, which define the structure that
-extension classes should adhere to.
+Each sub-package in the ``fileformats`` namespace is installed in a separate PyPI package,
+but can be all installed together by installing the ``fileformats`` meta-package.
 
 
 Quick Installation
 ------------------
 
-This extension can be installed for Python 3 using *pip*::
+All sub-packages can be installed by installing the ``fileformats`` meta-package::
 
     $ python3 -m pip fileformats
 
@@ -36,7 +36,7 @@ Developer Installation
 
 To install each of the namespace sub-packages so that it is editable, you need to
 install each sub-package explicitly. This can be done conveniently from the repo root
-directory using a shell "for loop", e.g.
+directory using a shell "for loop", e.g.::
 
     $ for subpkg in ./src/fileformats-*; do python3 -m pip install -e ${subpkg}'[test,converters]'; done
 
