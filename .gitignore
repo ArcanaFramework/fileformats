@@ -10,7 +10,7 @@
 .settings/
 /build/
 /dist
-/dist.*
+/src/fileformats-*/dist
 /docs/build
 /docs/source/_build
 .pytest_cache/
@@ -20,5 +20,5 @@ __pycache__
 .vscode
 *.egg-info
 ~*
-/.venv
-/fileformats/core/_version.py
+.venv
+_version.py

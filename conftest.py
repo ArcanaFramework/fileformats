@@ -1,4 +1,5 @@
 import os
+import typing as ty
 import logging
 from pathlib import Path
 import tempfile
@@ -35,3 +36,12 @@ if os.getenv("_PYTEST_RAISE", "0") != "0":
 def work_dir():
     work_dir = tempfile.mkdtemp()
     return Path(work_dir)
+
+
+def write_test_file(
+    fpath: Path, contents: ty.Union[str, bytes] = "some contents", binary=False
+):
+    fpath.parent.mkdir(exist_ok=True, parents=True)
+    with open(fpath, "wb" if binary else "w") as f:
+        f.write(contents)
+    return fpath
