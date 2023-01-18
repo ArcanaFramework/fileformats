@@ -3,14 +3,16 @@ requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [project]
-name = "fileformats-core"
-description = "Base classes and mixins to build class representations of file-formats for use in type hinting in data workflows"
-readme = "../README.rst"
+name = "fileformats-document"
+description = "Classes for representing different file formats in Python classes for use in type hinting in data workflows"
+readme = "../../README.rst"
 requires-python = ">=3.8"
 dependencies = [
     "attrs>=22.1.0",
+    "fileformats-core",
+    "fileformats-archive",
 ]
-license = {file = "../LICENSE"}
+license = {file = "../../LICENSE"}
 authors = [
     {name = "Thomas G. Close", email = "tom.g.close@gmail.com"},
 ]
@@ -62,10 +64,10 @@ repository = "https://github.com/ArcanaFramework/fileformats"
 
 [tool.hatch.version]
 source = "vcs"
-raw-options = { root = ".." }
+raw-options = { root = "../.." }
 
 [tool.hatch.build.hooks.vcs]
-version-file = "fileformats/core/_version.py"
+version-file = "fileformats/document/_version.py"
 
 [tool.hatch.build]
 packages = [
@@ -75,9 +77,10 @@ exclude = [
     "/tests",
 ]
 
+
 [tool.black]
 target-version = ['py38']
-exclude = "fileformats/core/_version.py"
+exclude = "fileformats/document/_version.py"
 
 [tool.codespell]
 ignore-words = ".codespell-ignorewords"
