@@ -1,4 +1,4 @@
-from ._version import __version__
+from ..core import __version__
 from fileformats.core.generic import File
 from fileformats.core.mixin import WithMagic
 

@@ -1,4 +1,4 @@
-from ._version import __version__
+from ..core import __version__
 from warnings import warn
 import json
 import yaml

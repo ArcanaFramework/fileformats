@@ -1,4 +1,4 @@
-from ._version import __version__
+from ..core import __version__
 from warnings import warn
 from fileformats.core import File
 from fileformats.core.mixin import WithMagic

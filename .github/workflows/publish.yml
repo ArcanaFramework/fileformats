@@ -32,7 +32,5 @@ jobs:
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
       run: |
-        for subpkg in src/fileformats-*; do
-          python -m build $subpkg
-          twine upload $subpkg/dist/*
-        done
+        python -m build
+        twine upload dist/*
