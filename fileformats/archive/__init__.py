@@ -46,4 +46,7 @@ class Tar_Gzip(Gzip, Tar):
 try:
     from .converters import *
 except ImportError:
-    warn(f"could not import converters for {__name__}  module")
+    warn(
+        f"could not import converters for {__name__}  module, please install "
+        "fileformats[converters] if conversion is desired"
+    )
