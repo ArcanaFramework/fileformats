@@ -76,4 +76,4 @@ class Yaml(DataDictSerialization):
 try:
     from .converters import *
 except ImportError:
-    warn(f"could not import converters for fileformats.{__name__}  module")
+    warn(f"could not import converters for {__name__}  module")
