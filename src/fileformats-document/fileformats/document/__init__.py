@@ -6,7 +6,7 @@ from fileformats.core.mixin import WithMagic
 
 # Document formats
 class Document(File):
-    pass
+    iana = None
 
 
 class Pdf(Document, WithMagic):

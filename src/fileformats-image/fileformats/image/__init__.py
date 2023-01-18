@@ -5,10 +5,10 @@ from fileformats.core.mixin import WithMagic
 
 # General image formats
 class Image(File):
-    pass
+    iana = None
 
 
-class Bitmap(Image, WithMagic):
+class Bmp(Image, WithMagic):
     ext = ".bmp"
     magic = b"BM"
     iana = "image/bmp"

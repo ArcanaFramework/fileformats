@@ -7,6 +7,7 @@ from fileformats.core.mixin import WithMagic
 class Archive(File):
     "Base class for compressed archives"
     binary = True
+    iana = None
 
 
 # Compressed formats
@@ -39,6 +40,7 @@ class Tar_Gzip(Gzip, Tar):
     ext = ".tar.gz"
     alternate_exts = (".tgz",)
     magic_offset = 0
+    iana = "application/x-tar+gzip"
 
 
 try:

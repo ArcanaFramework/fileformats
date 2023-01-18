@@ -54,7 +54,7 @@ def to_mime(klass, iana=True):
     if iana:
         mime = f"application/x-{format_name}"
     else:
-        module_parts = klass.__module__.__name__.split(".")
+        module_parts = klass.__module__.split(".")
         if module_parts[0] != "fileformats":
             raise FileFormatsError(
                 f"Cannot create reversible MIME type for {klass} as it is not in the "
