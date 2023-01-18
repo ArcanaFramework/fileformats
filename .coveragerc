@@ -1,0 +1,3 @@
+[run]
+omit = */tests/*, fileformats/core/_version.py
+branch = true
