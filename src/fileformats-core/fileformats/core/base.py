@@ -1,11 +1,12 @@
 from __future__ import annotations
 import os
 from copy import copy
+from inspect import isclass
 import shutil
 from pathlib import Path
 import logging
 import attrs
-from .utils import splitext, to_mime
+from .utils import splitext, to_mime, subpackages, classproperty
 from .exceptions import FileFormatsError, FormatMismatchError, FormatConversionError
 
 
@@ -129,16 +130,25 @@ class FileSet:
         return iter(self.fspaths)
 
     @classmethod
-    def mime(self):
+    def mime(cls):
         """Returns an official MIME type representation of the format, if applicable,
         otherwise a conventional MIME type "extension" of the form "application/x-***"""
-        return to_mime(type(self), iana=True)
+        return to_mime(cls, iana=True)
 
     @classmethod
-    def mimelike(self):
+    def mimelike(cls):
         """Returns a "MIME-like" representation, but with a direct mapping between the
         file-type and the fileformats namespace extension it belongs to"""
-        return to_mime(type(self), iana=False)
+        return to_mime(cls, iana=False)
+
+    @classmethod
+    def subclasses(cls):
+        """Iterate over all installed subclasses"""
+        for subpkg in subpackages():
+            for attr_name in dir(subpkg):
+                attr = getattr(subpkg, attr_name)
+                if isclass(attr) and issubclass(attr, cls):
+                    yield attr
 
     @classmethod
     def matches(cls, fspaths: set[Path], validate: bool = True) -> bool:
@@ -454,3 +464,13 @@ class FileSet:
         """
         fspaths = fspaths_converter(fspaths)
         return cls(cls.include_adjacents(fspaths=fspaths, **kwargs))
+
+    @classproperty
+    def all_formats(cls):
+        if cls._all_formats is None:
+            cls._all_formats = [
+                f for f in FileSet.subclasses() if f.__dict__.get("iana", True)
+            ]
+        return cls._all_formats
+
+    _all_formats = None
