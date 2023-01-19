@@ -213,7 +213,7 @@ class FileSet:
             else:
                 yield attr_name
 
-    def copy(self, dest_dir: Path, stem: str = None, symlink: bool = False):
+    def copy_to(self, dest_dir: Path, stem: str = None, symlink: bool = False):
         """Copies the file-set to a new directory, optionally renaming the files
         to have consistent name-stems.
 

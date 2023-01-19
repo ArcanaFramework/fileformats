@@ -17,67 +17,102 @@ FileFormats
 
 *Fileformats* provides a library of file-format types implemented as Python classes.
 The file-format types can be used in type hinting during the construction
-of data workflows (e.g. Pydra_), and used to detect and validate the format of files.
-Unlike other file-type Python packages, *FileFormats*, handles multi-file/directory
-formats (e.g. with separate header files), and can be used to move such "file sets"
-around the file system together.
+of data workflows (e.g. Pydra_), detect and validate the format of files, and move
+sets of related files around the file-system together.
+
+Unlike other file-type Python packages, *FileFormats*, supports multi-file
+formats, e.g. with separate header/data files, nested directories. It also provides
+limited support for loading metadata/data and conversions between some equivalent
+types.
 
 File-format types are typically identified by a combination of file extension
 and "magic numbers" where applicable. However, *FileFormats* provides a flexible
 framework to add custom identification routines for exotic file formats, e.g.
-formats that require inspection of headers to find the location of data files.
+formats that require inspection of headers, directories containing certain files.
+See the `extension template <https://github.com/ArcanaFramework/fileformats-extension-template>`__
+for instructions on how to add an extension to the standard types.
 
 
-Quick Installation
-------------------
+Installation
+------------
 
 All sub-packages can be installed from PyPI with::
 
     $ python3 -m pip fileformats
 
-Examples
---------
-
-Using the ``WithMagic`` mixin class, the ``Png`` format can be defined concisely as
-
-.. python::
-
-   from fileformats.generic import File
-   from fileformats.core.mixin import WithMagic
-
-   class Png(File, WithMagic):
-      binary = True
-      ext = ".png"
-      iana = "image/png"
-      magic = b".PNG"
-
-
-Files can then be checked to see whether they are of PNG format by
-
-.. python::
-
-   png = Png("/path/to/image/file")
-   png.validate()
-
-or more concisely
-
-.. python::
-
-   if Png.matches("/path/to/image/file"):
-       \.\.\. do something here
-
-
-Converters
-----------
 
 Support for converter methods between a few select formats can be installed by
 passing the 'converters' install extra, e.g::
 
     $ python3 -m pip install fileformats[converters]
 
+
+Examples
+--------
+
+Using the ``WithMagic`` mixin class, the ``Png`` format can be defined concisely as
+
+.. code-block::python
+
+    from fileformats.generic import File
+    from fileformats.core.mixin import WithMagic
+
+    class Png(File, WithMagic):
+        binary = True
+        ext = ".png"
+        iana = "image/png"
+        magic = b".PNG"
+
+
+Files can then be checked to see whether they are of PNG format by
+
+.. code-block::python
+
+    png = Png("/path/to/image/file")
+    png.validate()
+
+or more concisely
+
+.. code-block::python
+
+    if Png.matches("/path/to/image/file"):
+        ... do something here
+
+
+There are a few selected converters between standard file types, perhaps most usefully
+between archive types and generic file/directories
+
+.. code-block::python
+
+    from fileformats.archive import Zip
+    from fileformats.generic import Directory
+
+    zip_file = Zip.convert(Directory("/path/to/a/directory"))
+    extracted = Directory.convert(zip_file)
+    copied = extracted.copy_to("/path/to/output")
+
 The converters are implemented in the Pydra_ dataflow framework, and can be linked into
-wider Pydra_ workflows using ``DesiredFormat.get_converter(OriginalFormat)``, or
-run standalone using the ``DesiredFormat.convert(original_file)`` classmethod.
+wider Pydra_ workflows by creating a converter task
+
+.. code-block::python
+
+    from pydra.tasks.mypackage import MyTask
+    from fileformats.serialization import Json, Yaml
+
+    converter_task =
+    wf = pydra.Workflow(name="a_workflow", input_spec=["in_json"])
+    wf.add(
+        Yaml.get_converter(Json, name="json2yaml", in_file=wf.lzin.in_json)
+    )
+    wf.add(
+        AnExampleTask(
+            name="my_task",
+            in_file=wf.json2yaml.lzout.out_file,
+        )
+    )
+    ...
+
+run standalone using the ``Yaml.convert(json_file)`` classmethod.
 
 
 License

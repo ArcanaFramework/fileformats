@@ -26,7 +26,7 @@ def test_copy(work_dir):
     file = Foo([foo_fspath, bar_fspath])
     dest_dir = work_dir / "new-dir"
     dest_dir.mkdir()
-    cpy = file.copy(dest_dir)
+    cpy = file.copy_to(dest_dir)
     assert cpy.fspath.parent == dest_dir
     assert cpy.fspath.name == "x.foo"
     assert cpy.header.fspath.parent == dest_dir
@@ -40,7 +40,7 @@ def test_copy_with_rename(work_dir):
     bar_fspath = work_dir / "y.bar"
     write_test_file(bar_fspath)
     file = Foo([foo_fspath, bar_fspath])
-    cpy = file.copy(work_dir, stem="new")
+    cpy = file.copy_to(work_dir, stem="new")
     assert cpy.fspath.name == "new.foo"
     assert cpy.header.fspath.name == "new.bar"
 
@@ -54,7 +54,7 @@ def test_copy_symlink(work_dir):
     file = Foo([foo_fspath, bar_fspath])
     dest_dir = work_dir / "new-dir"
     dest_dir.mkdir()
-    cpy = file.copy(dest_dir, symlink=True)
+    cpy = file.copy_to(dest_dir, symlink=True)
     assert cpy.fspath.parent == dest_dir
     assert cpy.fspath.name == "x.foo"
     assert cpy.header.fspath.parent == dest_dir
