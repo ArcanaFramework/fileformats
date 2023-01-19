@@ -36,13 +36,17 @@ for instructions on how to add an extension to the standard types.
 Installation
 ------------
 
-All sub-packages can be installed from PyPI with::
+All sub-packages can be installed from PyPI with
+
+.. code-block:: bash
 
     $ python3 -m pip fileformats
 
 
 Support for converter methods between a few select formats can be installed by
-passing the 'converters' install extra, e.g::
+passing the 'converters' install extra, e.g
+
+.. code-block:: bash
 
     $ python3 -m pip install fileformats[converters]
 
@@ -52,7 +56,7 @@ Examples
 
 Using the ``WithMagic`` mixin class, the ``Png`` format can be defined concisely as
 
-.. code-block::python
+.. code-block:: python
 
     from fileformats.generic import File
     from fileformats.core.mixin import WithMagic
@@ -66,14 +70,14 @@ Using the ``WithMagic`` mixin class, the ``Png`` format can be defined concisely
 
 Files can then be checked to see whether they are of PNG format by
 
-.. code-block::python
+.. code-block:: python
 
     png = Png("/path/to/image/file")
     png.validate()
 
 or more concisely
 
-.. code-block::python
+.. code-block:: python
 
     if Png.matches("/path/to/image/file"):
         ... do something here
@@ -82,7 +86,7 @@ or more concisely
 There are a few selected converters between standard file types, perhaps most usefully
 between archive types and generic file/directories
 
-.. code-block::python
+.. code-block:: python
 
     from fileformats.archive import Zip
     from fileformats.generic import Directory
@@ -94,7 +98,7 @@ between archive types and generic file/directories
 The converters are implemented in the Pydra_ dataflow framework, and can be linked into
 wider Pydra_ workflows by creating a converter task
 
-.. code-block::python
+.. code-block:: python
 
     from pydra.tasks.mypackage import MyTask
     from fileformats.serialization import Json, Yaml
