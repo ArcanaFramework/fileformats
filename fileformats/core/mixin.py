@@ -85,7 +85,8 @@ class WithSideCar:
     def load_metadata(self):
         metadata = self.primary_type.load_metadata(self)
         side_car_data = self.side_car.load()
-        if overlap := set(metadata) & set(side_car_data):
+        overlap = set(metadata) & set(side_car_data)
+        if overlap:
             raise FileFormatsError(
                 "Detected overlap between header values and side-car values:\n"
                 "\n".join(
