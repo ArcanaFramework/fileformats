@@ -1,5 +1,8 @@
 from fileformats.generic import File
 from fileformats.core.mixin import WithSeparateHeader
+from fileformats.core.utils import detect_format
+import fileformats.text
+import fileformats.numeric
 from conftest import write_test_file
 
 
@@ -63,3 +66,21 @@ def test_copy_ext(work_dir):
         File.copy_ext(work_dir / "x.foo.bar", work_dir / "y") == work_dir / "y.foo.bar"
     )
     assert Bar.copy_ext(work_dir / "x.foo.bar", work_dir / "y") == work_dir / "y.bar"
+
+
+def test_format_detection(work_dir):
+
+    text_file = work_dir / "text.txt"
+
+    with open(text_file, "w") as f:
+        f.write("sample text")
+
+    detected = detect_format(text_file)
+    assert detected is fileformats.text.Plain
+
+    # dat_file = work_dir / "data.dat"
+
+    # with open(dat_file, "wb") as f:
+    #     f.write(b"sample bytes")
+
+    # assert detect_format(dat_file) is fileformats.numeric.DataFile
