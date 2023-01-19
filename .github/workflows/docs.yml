@@ -31,7 +31,6 @@ jobs:
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
-      env:
-        ACTIONS_DEPLOY_KEY: ${{ secrets.GHPAGES_DEPLOY_KEY }}
-        PUBLISH_BRANCH: gh-pages
-        PUBLISH_DIR: docs/build/html
+      with:
+        github_token: ${{ secrets.GHPAGES_DEPLOY_KEY }}
+        publis_dir: docs/build/html

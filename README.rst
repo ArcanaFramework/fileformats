@@ -10,6 +10,9 @@ FileFormats
 .. image:: https://img.shields.io/pypi/v/fileformats.svg
    :target: https://pypi.python.org/pypi/fileformats/
    :alt: Latest Version
+.. image:: https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat
+   :target: https://arcanaframework.github.io/fileformats/
+   :alt: Documentation Status
 
 *Fileformats* provides Python classes for representing different file formats
 for use in type hinting and input validation in data workflows. File formats are
