@@ -1,6 +1,6 @@
 import pytest
 from conftest import write_test_file
-from fileformats.core import File
+from fileformats.generic import File
 from fileformats.core import mark
 from fileformats.core.mixin import WithMagic, WithSeparateHeader, WithSideCar
 from fileformats.core.exceptions import FormatMismatchError, FileFormatsError

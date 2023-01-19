@@ -1,7 +1,8 @@
 from warnings import warn
 import json
 import yaml
-from ..core import File, __version__, mark
+from ..core import __version__, mark
+from ..generic import File
 
 
 class Serialization(File):

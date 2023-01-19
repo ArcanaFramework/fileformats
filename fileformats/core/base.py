@@ -6,7 +6,7 @@ import shutil
 from pathlib import Path
 import logging
 import attrs
-from .utils import splitext, to_mime, subpackages, classproperty
+from .utils import splitext, to_mime, subpackages, classproperty, fspaths_converter
 from .exceptions import FileFormatsError, FormatMismatchError, FormatConversionError
 
 
@@ -17,13 +17,6 @@ CHECK_ANNOTATION = "__fileformats_check__"
 
 
 logger = logging.getLogger("fileformats")
-
-
-def fspaths_converter(fspaths):
-    """Ensures fs-paths are a set of pathlib.Path"""
-    if isinstance(fspaths, (str, Path, bytes)):
-        fspaths = [fspaths]
-    return set((Path(p) if isinstance(p, str) else p).absolute() for p in fspaths)
 
 
 @attrs.define

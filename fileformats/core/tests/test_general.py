@@ -1,5 +1,5 @@
 import pytest
-from fileformats.core.generic import File
+from fileformats.generic import File
 from fileformats.core.exceptions import FileFormatsError, FormatMismatchError
 from fileformats.core import mark
 from conftest import write_test_file

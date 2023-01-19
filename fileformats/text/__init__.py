@@ -1,5 +1,5 @@
 from ..core import __version__
-from fileformats.core import File
+from fileformats.generic import File
 
 
 # General formats

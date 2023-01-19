@@ -2,10 +2,10 @@ from __future__ import annotations
 import os
 from pathlib import Path
 import attrs
-from .base import FileSet
-from .exceptions import FormatMismatchError
-from . import mark
-from .utils import splitext
+from ..core.base import FileSet
+from ..core.exceptions import FormatMismatchError
+from ..core import mark
+from ..core.utils import splitext
 
 
 @attrs.define

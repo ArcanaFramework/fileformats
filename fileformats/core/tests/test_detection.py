@@ -1,5 +1,5 @@
 import pytest
-from fileformats.core.generic import File, Directory
+from fileformats.generic import File, Directory
 from fileformats.core.exceptions import FormatMismatchError
 from fileformats.core.mixin import WithSideCar
 from conftest import write_test_file

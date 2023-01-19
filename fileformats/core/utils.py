@@ -1,28 +1,11 @@
 import importlib
 import re
+from pathlib import Path
 import os
 import pkgutil
 from contextlib import contextmanager
-from fileformats.core.exceptions import FileFormatsError, UnrecognisedMimeTypeError
+from fileformats.core.exceptions import FileFormatsError, FormatRecognitionError
 import fileformats.core
-
-
-@contextmanager
-def set_cwd(path):
-    """Sets the current working directory to `path` and back to original
-    working directory on exit
-
-    Parameters
-    ----------
-    path : str
-        The file system path to set as the current working directory
-    """
-    pwd = os.getcwd()
-    os.chdir(path)
-    try:
-        yield path
-    finally:
-        os.chdir(pwd)
 
 
 def to_mime(klass, iana=True):
@@ -107,7 +90,7 @@ def from_mime(mime_string):
             klass = iana_dict[mime_string]
         except KeyError:
             if not format_name.startswith("x-"):
-                raise UnrecognisedMimeTypeError(
+                raise FormatRecognitionError(
                     "Did not find class matching official (i.e. non-extension) MIME type "
                     f"{mime_string} (i.e. one not starting with 'application/x-'"
                 ) from None
@@ -118,14 +101,14 @@ def from_mime(mime_string):
             ]
             if not matching_name:
                 namespace_names = [n.__name__ for n in subpackages()]
-                raise UnrecognisedMimeTypeError(
+                raise FormatRecognitionError(
                     f"Did not find class matching extension the class name '{class_name}' "
                     f"corresponding to MIME type '{mime_string}' "
                     f"in any of the installed namespaces: {namespace_names}"
                 ) from None
             elif len(matching_name) > 1:
                 namespace_names = [f.__module__.__name__ for f in matching_name]
-                raise UnrecognisedMimeTypeError(
+                raise FormatRecognitionError(
                     f"Ambiguous extended MIME type '{mime_string}', could refer to "
                     f"{', '.join(repr(f) for f in matching_name)} installed types. "
                     f"Explicitly set the 'iana' attribute on one or all of these types "
@@ -138,7 +121,7 @@ def from_mime(mime_string):
         try:
             module = importlib.import_module("fileformats." + namespace)
         except ImportError:
-            raise UnrecognisedMimeTypeError(
+            raise FormatRecognitionError(
                 f"Did not find fileformats namespace package corresponding to {namespace} "
                 f"required to interpret '{mime_string}' MIME, or MIME-like, type. "
                 f"try installing the namespace package with "
@@ -147,11 +130,38 @@ def from_mime(mime_string):
         try:
             klass = getattr(module, class_name)
         except AttributeError:
-            raise UnrecognisedMimeTypeError(
+            raise FormatRecognitionError(
                 f"Did not find '{class_name}' class in fileformats.{namespace} "
                 f"corresponding to MIME, or MIME-like, type {mime_string}"
             ) from None
     return klass
+
+
+def detect_format(fspaths: list[Path], multiple=False):
+    """Detect the corresponding file format from a set of file-system paths
+
+    Parameters
+    ----------
+    fspaths : list[Path]
+        file-system paths to detect the format of
+    allow_multiple : bool, optional
+        If multiple all matching formats will be returned, by default False
+    """
+    fspaths = fspaths_converter(fspaths)
+    matches = []
+    for frmt in fileformats.core.FileSet.all_formats:
+        if frmt.matches(fspaths):
+            matches.append(frmt)
+    if not matches:
+        raise FormatRecognitionError(f"Did not find a format matching {fspaths}")
+    if multiple:
+        return matches
+    elif len(matches) > 1:
+        raise FormatRecognitionError(
+            f"Multiple formats matched paths {fspaths}: {matches}"
+        )
+    else:
+        return matches[0]
 
 
 def to_mime_format_name(format_name):
@@ -206,14 +216,37 @@ def subpackages():
     module
         all modules within the package
     """
-    import fileformats
-
     for mod_info in pkgutil.iter_modules(
         fileformats.__path__, prefix=fileformats.__package__ + "."
     ):
         if mod_info.name == "core":
             continue
         yield importlib.import_module(mod_info.name)
+
+
+@contextmanager
+def set_cwd(path):
+    """Sets the current working directory to `path` and back to original
+    working directory on exit
+
+    Parameters
+    ----------
+    path : str
+        The file system path to set as the current working directory
+    """
+    pwd = os.getcwd()
+    os.chdir(path)
+    try:
+        yield path
+    finally:
+        os.chdir(pwd)
+
+
+def fspaths_converter(fspaths):
+    """Ensures fs-paths are a set of pathlib.Path"""
+    if isinstance(fspaths, (str, Path, bytes)):
+        fspaths = [fspaths]
+    return set((Path(p) if isinstance(p, str) else p).absolute() for p in fspaths)
 
 
 class classproperty(object):

@@ -1,6 +1,6 @@
 import filecmp
 import pytest
-from fileformats.core import File, Directory
+from fileformats.generic import File, Directory
 from fileformats.archive import Zip, Gzip, Tar, Tar_Gzip
 
 

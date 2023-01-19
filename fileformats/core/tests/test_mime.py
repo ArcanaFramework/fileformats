@@ -1,4 +1,4 @@
-from fileformats.core import FileSet
+from fileformats.generic import FileSet
 from fileformats.core.utils import from_mime
 
 

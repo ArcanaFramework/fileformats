@@ -13,5 +13,5 @@ class FormatConversionError(RuntimeError):
     "No converters exist between formats"
 
 
-class UnrecognisedMimeTypeError(KeyError):
+class FormatRecognitionError(KeyError):
     "Did not find a format class corresponding to a MIME, or MIME-like, type string"

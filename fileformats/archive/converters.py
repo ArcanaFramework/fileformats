@@ -7,7 +7,7 @@ from pathlib import Path
 import attrs
 import pydra.mark
 import pydra.engine.specs
-from fileformats.core.generic import File, Directory
+from fileformats.generic import File, Directory
 from fileformats.core.utils import set_cwd
 from fileformats.core import mark
 from fileformats.archive import Zip, Tar, Tar_Gzip

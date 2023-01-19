@@ -14,8 +14,12 @@ FileFormats
    :target: https://arcanaframework.github.io/fileformats/
    :alt: Documentation Status
 
-*Fileformats* provides Python classes for representing different file formats
-for use in type hinting and input validation in data workflows. File formats are
+*FileFormats* provides a library of file-format types implemented as Python classes.
+The file-format types can be used in type hinting during the construction
+of data workflows (e.g. Pydra_), and used to detect and validate the format of files.
+The file-format types
+
+
 typically identified by a combination of file extension and "magic numbers" where
 applicable. However, *Fileformats* provides a flexible framework to write custom
 identification routines for exotic file formats, which require deeper inspection of

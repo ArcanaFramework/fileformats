@@ -1,4 +1,4 @@
-from fileformats.core.generic import File
+from fileformats.generic import File
 from fileformats.core.mixin import WithSeparateHeader
 from conftest import write_test_file
 
