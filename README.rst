@@ -19,27 +19,28 @@ FileFormats
 
 
 *Fileformats* provides a library of file-format types implemented as Python classes.
-The file-format types can be used in type hinting during the construction
-of data workflows (e.g. Pydra_), detect and validate the format of files, and move
-sets of related files around the file-system together.
+The file-format types are designed to be used in type validation during the construction
+of data workflows (e.g. Pydra_), and also provide some basic data handling methods (e.g. loading
+data to dictionaries) and conversions between some equivalent types.
 
 Unlike other file-type Python packages, *FileFormats*, supports multi-file
-formats, e.g. with separate header/data files, nested directories. It also provides
-limited support for loading metadata/data and conversions between some equivalent
-types.
+formats, e.g. with separate header/data files, nested directories, and mechanisms to
+peek at metadata fields to define complex data formats.
 
 File-format types are typically identified by a combination of file extension
 and "magic numbers" where applicable. However, *FileFormats* provides a flexible
 framework to add custom identification routines for exotic file formats, e.g.
 formats that require inspection of headers, directories containing certain files.
 See the `extension template <https://github.com/ArcanaFramework/fileformats-extension-template>`__
-for instructions on how to add an extension to the standard types.
+for instructions on how to design *FileFormats* extensions modules to augment the
+standard file-types implemented in the main repository with custom field/vendor-specific
+file-types.
 
 
 Installation
 ------------
 
-All sub-packages can be installed from PyPI with
+*FileFormats* can be installed for Python >= 3.7 from PyPI with
 
 .. code-block:: bash
 
@@ -75,7 +76,7 @@ Files can then be checked to see whether they are of PNG format by
 
 .. code-block:: python
 
-    png = Png("/path/to/image/file")
+    png = Png("/path/to/image/file.png")
     png.validate()
 
 which will raise a ``FormatMismatchError`` if initialisation or validation fails, or
@@ -113,14 +114,14 @@ wider Pydra_ workflows by creating a converter task
         Yaml.get_converter(Json, name="json2yaml", in_file=wf.lzin.in_json)
     )
     wf.add(
-        AnExampleTask(
+        MyTask(
             name="my_task",
             in_file=wf.json2yaml.lzout.out_file,
         )
     )
     ...
 
-Alternatively, the conversion can be performed standalone with
+Alternatively, the conversion can be executed outside of a Pydra_ workflow with
 
 .. code-block:: python
 

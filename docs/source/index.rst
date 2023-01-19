@@ -18,31 +18,50 @@ FileFormats
 
 
 *Fileformats* provides a library of file-format types implemented as Python classes.
-The file-format types can be used in type hinting during the construction
-of data workflows (e.g. Pydra_), detect and validate the format of files, and move
-sets of related files around the file-system together.
+The format classes are designed to be used in file-type validation during the construction
+of data workflows (see Pydra_), and provide a common interface to general methods
+for manipulating and moving the underlying file-system objects between storage locations.
 
-Unlike other file-type Python packages, *FileFormats*, supports multi-file
-formats, e.g. with separate header/data files, nested directories. It also provides
-limited support for loading metadata/data and conversions between some equivalent
-types.
+Unlike other Python file-type packages, *FileFormats*, supports multi-file
+formats, e.g. with separate header/data files, directories containing files of a certain
+type, closely related data spread across several files. It also provides limited support
+for loading data and metadata, and hooks for conversion methods to be registered between
+equivalent data formats.
 
-File-format types are typically identified by a combination of file extension
-and "magic numbers" where applicable. However, *FileFormats* provides a flexible
-framework to add custom identification routines for exotic file formats, e.g.
-formats that require inspection of headers, directories containing certain files.
-See the `extension template <https://github.com/ArcanaFramework/fileformats-extension-template>`__
-for instructions on how to add an extension to the standard types.
+File-format types are typically identified by a combination of file extensions
+and "magic numbers", where applicable. In addition to these generic methods,
+*FileFormats* provides a flexible framework to conveniently add custom identification
+routines for exotic file formats, e.g. formats that require inspection of headers to
+locate other all members of the "file set".
+
+Installation
+------------
+
+*FileFormats* can be installed for Python >=3.7 using *pip*
+
+.. code-block:: bash
+
+    $ python3 -m pip install fileformats
+
+To also install dependencies required to run converters between select file formats
+use the ``converters`` install extra
+
+.. code-block:: bash
+
+    $ python3 -m pip install fileformats[converters]
 
 
 .. toctree::
     :maxdepth: 2
     :hidden:
 
-    installation
-    mime
+    identification
     extensions
     converters
 
 
-.. _Pydra: http://pydra.readthedocs.io
+Basic usage
+-----------
+
+
+.. _Pydra: https://pydra.readthedocs.io
