@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 name = "fileformats"
 description = "Classes for representing different file formats in Python classes for use in type hinting in data workflows"
 readme = "README.rst"
-requires-python = ">=3.8"
+requires-python = ">=3.7"
 dependencies = [
     "attrs>=22.1.0",
     "PyYAML>=6.0",
@@ -30,6 +30,7 @@ classifiers = [
     "Operating System :: MacOS :: MacOS X",
     "Operating System :: Microsoft :: Windows",
     "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",

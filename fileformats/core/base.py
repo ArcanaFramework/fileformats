@@ -47,11 +47,12 @@ class Metadata:
         if hasattr(self._fileset, "load_metadata"):
             loaded_dict = self._fileset.load_metadata()
             if not overwrite:
-                if mismatching := [
+                mismatching = [
                     k
                     for k in set(self.loaded) & set(loaded_dict)
                     if self.loaded[k] != loaded_dict[k]
-                ]:
+                ]
+                if mismatching:
                     raise FileFormatsError(
                         "Mismatch in values between loaded and loaded metadata values, "
                         "use 'load(overwrite=True)' to overwrite:\n"
@@ -102,7 +103,8 @@ class FileSet:
 
     @fspaths.validator
     def validate_fspaths(self, _, fspaths):
-        if missing := [p for p in fspaths if not p or not p.exists()]:
+        missing = [p for p in fspaths if not p or not p.exists()]
+        if missing:
             missing_str = "\n".join(str(p) for p in missing)
             all_str = "\n".join(str(p) for p in fspaths)
             msg = (
