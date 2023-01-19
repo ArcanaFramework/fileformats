@@ -12,7 +12,7 @@ dataflow engine.
 Quick Installation
 ------------------
 
-This extension can be installed for Python >=3.8 using *pip*::
+This extension can be installed for Python >=3.7 using *pip*::
 
     $ pip3 install fileformats
 
@@ -52,4 +52,3 @@ This work is licensed under a
 
 
 .. _Pydra: http://pydra.readthedocs.io
-.. _Arcana: http://arcana.readthedocs.io

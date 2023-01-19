@@ -20,5 +20,5 @@ __pycache__
 .vscode
 *.egg-info
 ~*
-.venv
+*.venv
 _version.py
