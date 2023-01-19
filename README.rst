@@ -22,7 +22,7 @@ header files.
 Quick Installation
 ------------------
 
-All sub-packages can be installed by installing the ``fileformats`` meta-package::
+All sub-packages can be installed from PyPI with::
 
     $ python3 -m pip fileformats
 
