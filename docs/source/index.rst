@@ -3,25 +3,62 @@
 FileFormats
 ===========
 
-Fileformats provides Python classes for representing different file formats
-for use in type hinting and input validation in data workflows. Converters between
-equivalent formats are provided between selected formats using the Pydra_
-dataflow engine.
+*Fileformats* provides a library of file-format types implemented as Python classes.
+The file-format types can be used in type hinting during the construction
+of data workflows (e.g. Pydra_), and used to detect and validate the format of files.
+Unlike other file-type Python packages, *FileFormats*, handles multi-file/directory
+formats (e.g. with separate header files), and can be used to move such "file sets"
+around the file system together.
+
+File-format types are typically identified by a combination of file extension
+and "magic numbers" where applicable. However, *FileFormats* provides a flexible
+framework to add custom identification routines for exotic file formats, e.g.
+formats that require inspection of headers to find the location of data files.
 
 
-Quick Installation
-------------------
+Installation
+------------
 
-This extension can be installed for Python >=3.7 using *pip*::
+This extension can be installed for Python >=3.7 using *pip*
+
+.. bash::
 
     $ pip3 install fileformats
 
+To also install dependencies required to run converters between select file formats
+use the ``converters`` install extra
 
-License
--------
+.. bash::
 
-This work is licensed under a
-`Creative Commons Attribution 4.0 International License <http://creativecommons.org/licenses/by/4.0/>`_
+    $ python3 -m pip install fileformats[converters]
+
+which will enable the following syntax for supported conversions
+
+.. python::
+
+    converted = DesiredFormat.convert(original_file)
+
+
+MIME Types
+----------
+
+File-format types can be read/written as MIME type strings. If the the ``iana`` attribute
+is present in the type class, it should correspond to a formally recognised MIME type
+by the `Internet Assigned Numbering Authority (IANA) <https://www.iana.org/assignments/media-types/media-types.xhtml>`__, e.g.
+
+.. python::
+
+    from fileformats.core import from_mime
+
+    mime_str = AFormat.mime
+    LoadedFormat = from_mime(mime_str)
+    assert AFormat is LoadedFormat
+
+
+Extending
+---------
+
+
 
 .. .. toctree::
 ..    :maxdepth: 2

@@ -14,16 +14,18 @@ FileFormats
    :target: https://arcanaframework.github.io/fileformats/
    :alt: Documentation Status
 
-*FileFormats* provides a library of file-format types implemented as Python classes.
+
+*Fileformats* provides a library of file-format types implemented as Python classes.
 The file-format types can be used in type hinting during the construction
 of data workflows (e.g. Pydra_), and used to detect and validate the format of files.
-The file-format types
+Unlike other file-type Python packages, *FileFormats*, handles multi-file/directory
+formats (e.g. with separate header files), and can be used to move such "file sets"
+around the file system together.
 
-
-typically identified by a combination of file extension and "magic numbers" where
-applicable. However, *Fileformats* provides a flexible framework to write custom
-identification routines for exotic file formats, which require deeper inspection of
-header files.
+File-format types are typically identified by a combination of file extension
+and "magic numbers" where applicable. However, *FileFormats* provides a flexible
+framework to add custom identification routines for exotic file formats, e.g.
+formats that require inspection of headers to find the location of data files.
 
 
 Quick Installation
@@ -33,11 +35,42 @@ All sub-packages can be installed from PyPI with::
 
     $ python3 -m pip fileformats
 
+Examples
+--------
+
+Using the ``WithMagic`` mixin class, the ``Png`` format can be defined concisely as
+
+.. python::
+
+   from fileformats.generic import File
+   from fileformats.core.mixin import WithMagic
+
+   class Png(File, WithMagic):
+      binary = True
+      ext = ".png"
+      iana = "image/png"
+      magic = b".PNG"
+
+
+Files can then be checked to see whether they are of PNG format by
+
+.. python::
+
+   png = Png("/path/to/image/file")
+   png.validate()
+
+or more concisely
+
+.. python::
+
+   if Png.matches("/path/to/image/file"):
+       \.\.\. do something here
+
 
 Converters
 ----------
 
-Support for converter methods between several equivalent formats can be installed by
+Support for converter methods between a few select formats can be installed by
 passing the 'converters' install extra, e.g::
 
     $ python3 -m pip install fileformats[converters]
