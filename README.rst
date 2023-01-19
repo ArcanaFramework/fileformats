@@ -78,12 +78,13 @@ Files can then be checked to see whether they are of PNG format by
     png = Png("/path/to/image/file")
     png.validate()
 
-or more concisely
+which will raise a ``FormatMismatchError`` if initialisation or validation fails, or
+for a boolean method use ``matches``
 
 .. code-block:: python
 
-    if Png.matches("/path/to/image/file"):
-        ... do something here
+    if not Png.matches("/path/to/image/file"):
+        ... handle case ...
 
 
 There are a few selected converters between standard file types, perhaps most usefully
