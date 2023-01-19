@@ -103,10 +103,10 @@ wider Pydra_ workflows by creating a converter task
 
 .. code-block:: python
 
+    import pydra
     from pydra.tasks.mypackage import MyTask
     from fileformats.serialization import Json, Yaml
 
-    converter_task =
     wf = pydra.Workflow(name="a_workflow", input_spec=["in_json"])
     wf.add(
         Yaml.get_converter(Json, name="json2yaml", in_file=wf.lzin.in_json)
