@@ -123,7 +123,8 @@ Alternatively, the conversion can be performed standalone with
 
 .. code-block:: python
 
-    Yaml.convert(json_file)
+    json_file = Json("/path/to/file.json")
+    yaml_file = Yaml.convert(json_file)
 
 
 
