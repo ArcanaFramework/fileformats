@@ -119,7 +119,12 @@ wider Pydra_ workflows by creating a converter task
     )
     ...
 
-run standalone using the ``Yaml.convert(json_file)`` classmethod.
+Alternatively, the conversion can be performed standalone with
+
+.. code-block:: python
+
+    Yaml.convert(json_file)
+
 
 
 License
