@@ -83,7 +83,7 @@ for a boolean method use ``matches``
 
 .. code-block:: python
 
-    if not Png.matches("/path/to/image/file"):
+    if Png.matches("/path/to/image/file"):
         ... handle case ...
 
 
