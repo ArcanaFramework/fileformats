@@ -9,7 +9,7 @@ from ..core.utils import splitext, classproperty
 
 
 @attrs.define
-class FSObject(FileSet, os.PathLike):
+class FsObject(FileSet, os.PathLike):
     "Generic file-system object, can be either a file or a directory"
 
     @mark.required
