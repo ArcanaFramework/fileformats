@@ -11,7 +11,7 @@ class Bar(File):
     ext = ".bar"
 
 
-class Foo(File, WithSeparateHeader):
+class Foo(WithSeparateHeader, File):
 
     ext = ".foo"
     header_type = Bar

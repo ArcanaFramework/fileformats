@@ -12,14 +12,17 @@ from ..core.utils import splitext, classproperty
 class FsObject(FileSet, os.PathLike):
     "Generic file-system object, can be either a file or a directory"
 
+    iana_mime = None
+
     @mark.required
     @property
     def fspath(self):
         if len(self.fspaths) > 1:
             raise FormatMismatchError(
-                f"More than one fspath ({self.fspaths}) provided to {self}"
+                f"More than one fspath ({self.fspaths}) provided to {self}, "
+                f"primary path is ambiguous"
             )
-        return self.fspaths[0]
+        return next(iter(self.fspaths))
 
     def __str__(self):
         return str(self.fspath)
@@ -87,9 +90,13 @@ class File(FsObject):
         return contents
 
     def required_paths(self):
+        all_fspaths = set(Path(p) for p in self.fspaths)
         for prop_name in self.required_properties():
-            prop = getattr(self, prop_name)
-            if prop in self.fspaths:
+            try:
+                prop = Path(getattr(self, prop_name))
+            except TypeError:
+                continue
+            if prop in all_fspaths:
                 yield prop
 
     @classproperty
@@ -126,7 +133,7 @@ class Directory(FsObject):
             match = False
             for p in fspath.iterdir():
                 try:
-                    content_type.from_primary([p])
+                    content_type([p])
                 except FormatMismatchError:
                     continue
                 else:
@@ -145,7 +152,7 @@ class Directory(FsObject):
         for content_type in self.content_types:
             for p in self.fspath.iterdir():
                 try:
-                    yield content_type.from_primary([p])
+                    yield content_type([p])
                 except FormatMismatchError:
                     continue
 

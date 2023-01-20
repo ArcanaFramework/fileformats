@@ -6,7 +6,7 @@ import shutil
 from pathlib import Path
 import logging
 import attrs
-from .utils import splitext, to_mime, subpackages, classproperty, fspaths_converter
+from .utils import to_mime, subpackages, classproperty, fspaths_converter
 from .exceptions import FileFormatsError, FormatMismatchError, FormatConversionError
 
 
@@ -196,6 +196,19 @@ class FileSet:
                 else:
                     yield attr_name
 
+    def required_paths(self):
+        """Returns all fspaths that are required for the format"""
+        required = set()
+        for prop_name in self.required_properties:
+            prop = getattr(self, prop_name)
+            if prop in self.fspaths:
+                required.add(prop)
+
+    def trim_paths(self):
+        """Trims paths in fspaths to only those that are "required" by the format class
+        i.e. returned by a required property"""
+        self.fspaths = self.required_paths()
+
     @classmethod
     def checks(cls):
         """Find all methods used to check the validity of the file format
@@ -215,7 +228,9 @@ class FileSet:
             else:
                 yield attr_name
 
-    def copy_to(self, dest_dir: Path, stem: str = None, symlink: bool = False):
+    def copy_to(
+        self, dest_dir: Path, stem: str = None, symlink: bool = False, trim: bool = True
+    ):
         """Copies the file-set to a new directory, optionally renaming the files
         to have consistent name-stems.
 
@@ -228,6 +243,8 @@ class FileSet:
             directory, by default the original file name is used
         symlink : bool, optional
             Use symbolic links instead of copying files to new location, false by default
+        trim : bool, optional
+            Only copy the paths in the file-set that are "required" by the format, true by default
         """
         dest_dir = Path(dest_dir)  # ensure a Path not a string
         if symlink:
@@ -236,7 +253,11 @@ class FileSet:
             copy_dir = shutil.copytree
             copy_file = shutil.copyfile
         new_paths = []
-        for fspath in self.fspaths:
+        if trim:
+            fspaths_to_copy = self.required_paths()
+        else:
+            fspaths_to_copy = self.fspaths
+        for fspath in fspaths_to_copy:
             new_fname = stem + ".".join(fspath.suffixes) if stem else fspath.name
             new_path = dest_dir / new_fname
             if fspath.is_dir():
@@ -338,9 +359,7 @@ class FileSet:
         task = cls.get_converter(source_format=type(fileset), name=task_name, **kwargs)
         result = task(in_file=fileset, plugin=plugin)
         out_file = result.output.out_file
-        if isinstance(out_file, (str, bytes, os.PathLike)):
-            out_file = cls.from_primary(out_file)
-        elif not isinstance(out_file, cls):
+        if not isinstance(out_file, cls):
             out_file = cls(out_file)
         return out_file
 
@@ -407,64 +426,6 @@ class FileSet:
         # if task_name is None:
         #     task_name = f"{source_format.__name__}_to_{cls.__name__}"
         return converter(name=name, **conv_kwargs)
-
-    @classmethod
-    def include_adjacents(
-        cls,
-        fspaths: set[Path],
-        duplicate_ext: bool = False,
-        multipart_ext: bool = True,
-    ) -> set[Path]:
-        """Adds any "adjacent files", i.e. any files with the same stem but different
-        extension, if that suffix isn't already present in the existing fspaths
-
-        Parameters
-        ----------
-        fspaths : list[Path]
-            the paths to find the suffies
-        duplicate_ext : bool, optional
-            whether to include adjacent files if there is already a file with the same
-            extension in the file set
-        multipart_ext : bool, optional
-            whether to treat paths with multiple "." as having one long suffix,
-            e.g. "image.nii.gz"
-        """
-        # Create a copy of the fspaths provided
-        fspaths = set(fspaths)
-
-        for fspath in list(fspaths):
-            stem = splitext(fspath, multi=multipart_ext)[0]
-            for neighbour in fspath.parent.iterdir():
-                neigh_stem, neigh_ext = splitext(neighbour, multi=multipart_ext)
-                if neigh_stem == stem:
-                    if duplicate_ext or neigh_ext not in (
-                        splitext(p, multi=multipart_ext)[-1] for p in fspaths
-                    ):
-                        fspaths.add(neighbour)
-        return fspaths
-
-    @classmethod
-    def from_primary(
-        cls,
-        fspaths: set[Path],
-        **kwargs,
-    ):
-        """Factory method to create a file-set object with all the secondary files
-        that inferred/referenced from the primary fspath included in the file-set paths.
-
-        Parameters
-        ----------
-        fspaths : list[Path]
-            the paths to find the suffies
-        duplicate_ext : bool, optional
-            whether to include adjacent files if there is already a file with the same
-            extension in the file set
-        multipart_ext : bool, optional
-            whether to treat paths with multiple "." as having one long suffix,
-            e.g. "image.nii.gz"
-        """
-        fspaths = fspaths_converter(fspaths)
-        return cls(cls.include_adjacents(fspaths=fspaths, **kwargs))
 
     @classproperty
     def all_formats(cls):

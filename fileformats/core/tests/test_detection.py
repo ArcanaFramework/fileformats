@@ -197,7 +197,7 @@ def test_nested_directories_fail2(work_dir):
 #     write_test_file(fspath)
 #     bar_fspath = work_dir / "test.bar"
 #     write_test_file(bar_fspath)
-#     file = FileWithSideCar.from_primary([fspath])
+#     file = FileWithSideCar(fspath)
 #     assert file.fspath == fspath
 #     assert file.bar == bar_fspath
 
@@ -221,14 +221,14 @@ class Bar(File):
     ext = ".bar"
 
 
-class FooWithSideBar(WithSideCar, TestFile):
+class FooWithSideCar(WithSideCar, TestFile):
 
     side_car_type = Bar
 
 
 class DirContainingSideCars(Directory):
 
-    content_types = (FooWithSideBar,)
+    content_types = (FooWithSideCar,)
 
 
 def test_dir_containing_side_cars(work_dir):
