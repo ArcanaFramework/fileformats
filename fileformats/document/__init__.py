@@ -1,7 +1,7 @@
 from ..core import __version__
 from fileformats.generic import File
 from fileformats.archive import Zip
-from fileformats.core.mixin import WithMagic
+from fileformats.core.mixin import WithMagicNumber
 
 
 # Document formats
@@ -9,9 +9,9 @@ class Document(File):
     iana = None
 
 
-class Pdf(Document, WithMagic):
+class Pdf(Document, WithMagicNumber):
     ext = ".pdf"
-    magic = b"%PDF-"
+    magic_number = b"%PDF-"
     binary = True
 
     iana = "application/pdf"

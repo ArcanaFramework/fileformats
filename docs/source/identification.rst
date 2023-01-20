@@ -87,16 +87,23 @@ Detecting formats
 
 While not a key consideration in the design of the *FileFormats* library, it is also
 possible to detect the formats that match a given set of files. Note that it isn't
-envisaged that this is always possible, there may be many non-descript binary files
-with the ".dat" extension for example, and the *FileFormats* is designed to go the
-other way, i.e. start with a format you want and see whether the file-system objects
-match it. However, the ``detect_format`` function is provided to help detect a
-from a given file set.
+envisaged that this is always possible. For example, there may be many non-descript
+binary file formats that use the ".dat" extension. *FileFormats* is primarily designed
+to go the other way, i.e. start with a format you want and see whether the file-system
+objects match it. However, the ``detect_format`` function is provided to help detect a
+from a given file set, e.g.
+
+.. code-block::
+
+    >>> from fileformats.core import detect_format
+    >>> detect_format("/path/to/word.doc")
+    <class 'fileformats.document.Msword'>
 
 .. warning::
-    Note that the installation of additional sub-packages, may cause a detection to
-    stop working, if the additional sub-packages add new formats that are ambiguous
-    with previously installed format classes.
+    Note that the installation of additional sub-packages will cause a detection to
+    stop working if the new sub-packages add formats that are ambiguous
+    with previously installed format classes for the given files. Therefore, care
+    should be taken using detect_format in production.
 
 
 .. _`IANA Media Types`: https://www.iana.org/assignments/media-types/media-types.xhtml

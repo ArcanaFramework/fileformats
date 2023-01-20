@@ -3,35 +3,37 @@ from . import mark
 from .exceptions import FileFormatsError, FormatMismatchError
 
 
-class WithMagic:
+class WithMagicNumber:
     """Mixin class for Files with magic numbers at the start of their
     contents.
 
     Required Class Attrs
     --------------------
-    magic : str
+    magic_number : str
         the magic number/string to search for at the start of the file
     binary : bool
         if the file-format is a binary type then this flag needs to be set in order to
         read the contents properly
     """
 
-    magic_offset = 0
+    magic_number_offset = 0
 
     @mark.check
-    def check_magic(self):
-        if self.binary and isinstance(self.magic, str):
-            magic_bytes = bytes.fromhex(self.magic)
+    def check_magic_number(self):
+        if self.binary and isinstance(self.magic_number, str):
+            magic_bytes = bytes.fromhex(self.magic_number)
         else:
-            magic_bytes = self.magic
-        read_magic = self.read_contents(len(magic_bytes), offset=self.magic_offset)
-        if read_magic != magic_bytes:
-            if self.binary and isinstance(self.magic, str):
-                read_magic_str = '"' + bytes.hex(read_magic) + '"'
-                magic_str = '"' + self.magic + '"'
+            magic_bytes = self.magic_number
+        read_magic_number = self.read_contents(
+            len(magic_bytes), offset=self.magic_number_offset
+        )
+        if read_magic_number != magic_bytes:
+            if self.binary and isinstance(self.magic_number, str):
+                read_magic_str = '"' + bytes.hex(read_magic_number) + '"'
+                magic_str = '"' + self.magic_number + '"'
             else:
-                read_magic_str = read_magic
-                magic_str = self.magic
+                read_magic_str = read_magic_number
+                magic_str = self.magic_number
             raise FormatMismatchError(
                 f"Magic number of file {read_magic_str} doesn't match expected "
                 f"{magic_str}"

@@ -1,7 +1,7 @@
 from ..core import __version__
 from warnings import warn
 from fileformats.generic import File
-from fileformats.core.mixin import WithMagic
+from fileformats.core.mixin import WithMagicNumber
 
 
 class Archive(File):
@@ -11,35 +11,35 @@ class Archive(File):
 
 
 # Compressed formats
-class Zip(Archive, WithMagic):
+class Zip(Archive, WithMagicNumber):
     ext = ".zip"
-    magic = "504B0304"
+    magic_number = "504B0304"
     iana = "application/zip"
 
 
-class Bzip(Archive, WithMagic):
+class Bzip(Archive, WithMagicNumber):
     ext = ".bzip"
-    magic = "425a"
+    magic_number = "425a"
     iana = "application/bzip"
 
 
-class Gzip(Archive, WithMagic):
+class Gzip(Archive, WithMagicNumber):
     ext = ".gz"
-    magic = "1F8B08"
+    magic_number = "1F8B08"
     iana = "application/gzip"
 
 
-class Tar(Archive, WithMagic):
+class Tar(Archive, WithMagicNumber):
     ext = ".tar"
-    magic = "7573746172"
-    magic_offset = 257
+    magic_number = "7573746172"
+    magic_number_offset = 257
     iana = "application/x-tar"
 
 
 class Tar_Gzip(Gzip, Tar):
     ext = ".tar.gz"
     alternate_exts = (".tgz",)
-    magic_offset = 0
+    magic_number_offset = 0
     iana = "application/x-tar+gzip"
 
 

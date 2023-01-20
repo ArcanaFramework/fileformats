@@ -9,7 +9,6 @@ readme = "README.rst"
 requires-python = ">=3.7"
 dependencies = [
     "attrs>=22.1.0",
-    "PyYAML>=6.0",
 ]
 license = {file = "LICENSE"}
 authors = [
@@ -53,7 +52,6 @@ test = [
     "pytest-cov>=2.12.1",
     "codecov",
 ]
-
 docs = [
     "packaging",
     "docutils>=0.10",
@@ -64,9 +62,9 @@ docs = [
     "furo>=2022.2.14.1",
     "numpydoc>=0.6.0",
 ]
-
-converters = [
+extended = [
     "pydra >= 0.20.0",
+    "PyYAML>=6.0",
 ]
 
 [project.urls]

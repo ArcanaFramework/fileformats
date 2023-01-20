@@ -48,7 +48,7 @@ use the ``converters`` install extra
 
 .. code-block:: bash
 
-    $ python3 -m pip install fileformats[converters]
+    $ python3 -m pip install fileformats[extended]
 
 
 .. toctree::
@@ -60,8 +60,19 @@ use the ``converters`` install extra
     converters
 
 
-Basic usage
+Basic Usage
 -----------
+
+Type Hinting
+~~~~~~~~~~~~
+
+
+Validation
+~~~~~~~~~~~~
+
+
+Manipulation
+~~~~~~~~~~~~
 
 
 .. _Pydra: https://pydra.readthedocs.io

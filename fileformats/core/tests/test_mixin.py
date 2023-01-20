@@ -2,34 +2,34 @@ import pytest
 from conftest import write_test_file
 from fileformats.generic import File
 from fileformats.core import mark
-from fileformats.core.mixin import WithMagic, WithSeparateHeader, WithSideCar
+from fileformats.core.mixin import WithMagicNumber, WithSeparateHeader, WithSideCar
 from fileformats.core.exceptions import FormatMismatchError, FileFormatsError
 
 
-class FileWithMagic(File, WithMagic):
+class FileWithMagicNumber(File, WithMagicNumber):
 
     ext = ".magic"
     binary = True
-    magic = b"magicnumber"
+    magic_number = b"magicnumber"
 
 
-def test_magic(work_dir):
+def test_magic_number(work_dir):
 
     fspath = work_dir / "test.magic"
     write_test_file(
         fspath,
-        FileWithMagic.magic + b"some contents\n\n",
+        FileWithMagicNumber.magic_number + b"some contents\n\n",
         binary=True,
     )
-    assert FileWithMagic.matches(fspath)
+    assert FileWithMagicNumber.matches(fspath)
 
 
 def test_magic_fail(work_dir):
 
     fspath = work_dir / "test.magic"
     write_test_file(fspath, b"NOMAGIC some contents\n\n", binary=True)
-    assert not FileWithMagic.matches(fspath)
-    assert FileWithMagic.matches(fspath, validate=False)
+    assert not FileWithMagicNumber.matches(fspath)
+    assert FileWithMagicNumber.matches(fspath, validate=False)
 
 
 class Header(File):

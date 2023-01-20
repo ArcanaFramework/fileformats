@@ -25,16 +25,17 @@ data to dictionaries) and conversions between some equivalent types.
 
 Unlike other file-type Python packages, *FileFormats*, supports multi-file
 formats, e.g. with separate header/data files, nested directories, and mechanisms to
-peek at metadata fields to define complex data formats.
+peek at metadata fields to define complex data formats or specific sub-types (e.g.
+functional MRI DICOM file set)
 
 File-format types are typically identified by a combination of file extension
 and "magic numbers" where applicable. However, *FileFormats* provides a flexible
 framework to add custom identification routines for exotic file formats, e.g.
-formats that require inspection of headers, directories containing certain files.
-See the `extension template <https://github.com/ArcanaFramework/fileformats-extension-template>`__
+formats that require inspection of headers to locate data files, directories containing
+certain file types. See the `extension template <https://github.com/ArcanaFramework/fileformats-extension-template>`__
 for instructions on how to design *FileFormats* extensions modules to augment the
-standard file-types implemented in the main repository with custom field/vendor-specific
-file-types.
+standard file-types implemented in the main repository with custom domain/vendor-specific
+file-format types.
 
 
 Installation
@@ -58,29 +59,29 @@ passing the 'converters' install extra, e.g
 Examples
 --------
 
-Using the ``WithMagic`` mixin class, the ``Png`` format can be defined concisely as
+Using the ``WithMagicNumber`` mixin class, the ``Png`` format can be defined concisely as
 
 .. code-block:: python
 
     from fileformats.generic import File
-    from fileformats.core.mixin import WithMagic
+    from fileformats.core.mixin import WithMagicNumber
 
-    class Png(File, WithMagic):
+    class Png(File, WithMagicNumber):
         binary = True
         ext = ".png"
         iana = "image/png"
-        magic = b".PNG"
+        magic_number = b".PNG"
 
 
 Files can then be checked to see whether they are of PNG format by
 
 .. code-block:: python
 
-    png = Png("/path/to/image/file.png")
-    png.validate()
+    png = Png("/path/to/image/file.png")  # Checks the extension (i.e. path-only validation)
+    png.validate()  # Checks the magic number (i.e. deeper file-contents validation)
 
 which will raise a ``FormatMismatchError`` if initialisation or validation fails, or
-for a boolean method use ``matches``
+for a boolean method that checks the validation use ``matches``
 
 .. code-block:: python
 
@@ -88,7 +89,7 @@ for a boolean method use ``matches``
         ... handle case ...
 
 
-There are a few selected converters between standard file types, perhaps most usefully
+There are a few selected converters between standard file-format types, perhaps most usefully
 between archive types and generic file/directories
 
 .. code-block:: python
