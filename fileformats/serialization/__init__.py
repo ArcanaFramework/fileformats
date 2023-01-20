@@ -1,14 +1,19 @@
 from warnings import warn
 import json
-import yaml
 from ..core import __version__, mark
 from ..generic import File
+from ..core.utils import MissingDependencyPlacholder
+
+try:
+    import yaml
+except ImportError:
+    yaml = MissingDependencyPlacholder("yaml", __name__)
 
 
 class Serialization(File):
     "Base class for text-based hierarchical data-serialization formats, e.g. JSON, YAML"
 
-    iana = None
+    iana_mime = None
 
     @mark.check
     def load(self):
@@ -59,7 +64,6 @@ class Yaml(Serialization):
 try:
     from .converters import *
 except ImportError:
-    warn(
-        f"could not import converters for {__name__}  module, please install "
-        "fileformats[converters] if conversion is desired"
-    )
+    f"could not import converters for {__name__}  module, please install with the"
+    f"'extended' install extra to use converters for {__name__}, i.e.\n\n"
+    "$ python3 -m pip install fileformats-medimage[extended]"

@@ -15,7 +15,7 @@ class File(FileSet, os.PathLike):
     ext = ""
     binary = False
     is_dir = False
-    iana = None
+    iana_mime = None
 
     @mark.required
     @property
@@ -83,7 +83,7 @@ class Directory(FileSet, os.PathLike):
 
     content_types = ()
     is_dir = True
-    iana = None
+    iana_mime = None
 
     @mark.required
     @property

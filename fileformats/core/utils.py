@@ -5,11 +5,15 @@ from pathlib import Path
 import os
 import pkgutil
 from contextlib import contextmanager
-from fileformats.core.exceptions import FileFormatsError, FormatRecognitionError
+from fileformats.core.exceptions import (
+    FileFormatsError,
+    FormatRecognitionError,
+    MissingExtendedDepenciesError,
+)
 import fileformats.core
 
 
-def to_mime(klass, iana=True):
+def to_mime(klass, iana_mime=True):
     """Generates a MIME (IANA) or "MIME-like" identifier from a format class (i.e.
     an identifier for a non-MIME class in the MIME style), e.g.
 
@@ -23,7 +27,7 @@ def to_mime(klass, iana=True):
     ----------
     klass : type(FileSet)
         FileSet subclass
-    iana : bool
+    iana_mime : bool
         whether to use standardised IANA format or a more relaxed type format corresponding
         to the fileformats extension the type belongs to
 
@@ -32,10 +36,10 @@ def to_mime(klass, iana=True):
     type
         the corresponding file format class
     """
-    if iana and getattr(klass, "iana", None) is not None:
-        return klass.iana
+    if iana_mime and getattr(klass, "iana_mime", None) is not None:
+        return klass.iana_mime
     format_name = to_mime_format_name(klass.__name__)
-    if iana:
+    if iana_mime:
         mime = f"application/x-{format_name}"
     else:
         module_parts = klass.__module__.split(".")
@@ -82,13 +86,13 @@ def from_mime(mime_string):
         # not explicitly covered by the IANA standard (which is kind of how the IANA
         # treats it). Therefore, we loop through all subclasses across the different
         # namespaces to find one that matches the name.
-        iana_dict = {
-            f.iana: f
+        iana_mime_dict = {
+            f.iana_mime: f
             for f in fileformats.core.FileSet.all_formats
-            if getattr(f, "iana", None) is not None
+            if getattr(f, "iana_mime", None) is not None
         }
         try:
-            klass = iana_dict[mime_string]
+            klass = iana_mime_dict[mime_string]
         except KeyError:
             if not format_name.startswith("x-"):
                 raise FormatRecognitionError(
@@ -98,7 +102,7 @@ def from_mime(mime_string):
             matching_name = [
                 f
                 for f in fileformats.core.FileSet.all_formats
-                if f.__name__ == class_name and getattr(f, "iana", None) is None
+                if f.__name__ == class_name and getattr(f, "iana_mime", None) is None
             ]
             if not matching_name:
                 namespace_names = [n.__name__ for n in subpackages()]
@@ -112,7 +116,7 @@ def from_mime(mime_string):
                 raise FormatRecognitionError(
                     f"Ambiguous extended MIME type '{mime_string}', could refer to "
                     f"{', '.join(repr(f) for f in matching_name)} installed types. "
-                    f"Explicitly set the 'iana' attribute on one or all of these types "
+                    f"Explicitly set the 'iana_mime' attribute on one or all of these types "
                     f"to disambiguate, or uninstall all but one of the following "
                     "namespaces: "
                 ) from None
@@ -256,3 +260,47 @@ class classproperty(object):
 
     def __get__(self, obj, owner):
         return self.f(owner)
+
+
+class MissingDependencyPlacholder:
+    """Used as a placeholder for package dependencies that are only installed with the
+    "extended" install extra.
+
+    Parameters
+    ----------
+    pkg_name : str
+        name of the package to act as a placeholder for
+    module_path : str
+        path of the module, i.e. the value of the '__name__' global variable
+    """
+
+    def __init__(self, pkg_name: str, module_path: str):
+        self.pkg_name = pkg_name
+        module_parts = module_path.split(".")
+        assert module_parts[0] == "fileformats"
+        if module_parts[1] in STANDARD_REGISTRIES:
+            self.required_in = "fileformats"
+        else:
+            self.required_in = f"fileformats-{module_parts[1]}"
+
+    def __getattr__(self, _):
+        raise MissingExtendedDepenciesError(
+            f"Not able to access extended behaviour in {self.required_in} as required "
+            f"package '{self.pkg_name}' was not installed. Please reinstall "
+            f"{self.required_in} with 'extended' install extra to access extended "
+            f"behaviour of the format classes (such as loading and conversion), i.e.\n\n"
+            f"    $ python3 -m pip install {self.required_in}[extended]"
+        )
+
+
+STANDARD_REGISTRIES = [
+    "archive",
+    "audio",
+    "document",
+    "generic",
+    "image",
+    "numeric",
+    "serialization",
+    "text",
+    "video",
+]

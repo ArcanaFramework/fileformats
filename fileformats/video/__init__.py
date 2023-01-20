@@ -5,25 +5,25 @@ from fileformats.generic import File
 class Video(File):
     "Base class for audio file formats"
     binary = True
-    iana = None
+    iana_mime = None
 
 
 class Mp4(Video):
     ext = ".mp4"
-    iana = "video/mp4"
+    iana_mime = "video/mp4"
 
 
 class Webm(Video):
     ext = ".webm"
-    iana = "video/webm"
+    iana_mime = "video/webm"
 
 
 class Quicktime(Video):
     ext = ".mov"
     alternate_exts = (".qt",)
-    iana = "video/quicktime"
+    iana_mime = "video/quicktime"
 
 
 class Ogg(Video):
     ext = ".ogv"
-    iana = "video/ogg"
+    iana_mime = "video/ogg"

@@ -80,9 +80,9 @@ class FileSet:
     fspaths: set[Path] = attrs.field(default=None, converter=fspaths_converter)
     metadata: Metadata = attrs.field(factory=dict, converter=Metadata, kw_only=True)
 
-    # Explicitly set the Internet Assigned Numbers Authority (https://iana.org) MIME
+    # Explicitly set the Internet Assigned Numbers Authority (https://iana_mime.org) MIME
     # type to None for any base classes that should not correspond to a MIME type.
-    iana = None
+    iana_mime = None
 
     # Store converters registered by @converter decorator that convert to FileSet
     # NB: each class will have its own version of this dictionary
@@ -132,13 +132,13 @@ class FileSet:
     def mime(cls):
         """Returns an official MIME type representation of the format, if applicable,
         otherwise a conventional MIME type "extension" of the form "application/x-***"""
-        return to_mime(cls, iana=True)
+        return to_mime(cls, iana_mime=True)
 
     @classmethod
     def mimelike(cls):
         """Returns a "MIME-like" representation, but with a direct mapping between the
         file-type and the fileformats namespace extension it belongs to"""
-        return to_mime(cls, iana=False)
+        return to_mime(cls, iana_mime=False)
 
     @classmethod
     def subclasses(cls):
@@ -468,7 +468,7 @@ class FileSet:
     def all_formats(cls):
         if cls._all_formats is None:
             cls._all_formats = [
-                f for f in FileSet.subclasses() if f.__dict__.get("iana", True)
+                f for f in FileSet.subclasses() if f.__dict__.get("iana_mime", True)
             ]
         return cls._all_formats
 

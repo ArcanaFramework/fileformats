@@ -6,7 +6,7 @@ from fileformats.core.mixin import WithMagicNumber
 
 # Document formats
 class Document(File):
-    iana = None
+    iana_mime = None
 
 
 class Pdf(Document, WithMagicNumber):
@@ -14,17 +14,19 @@ class Pdf(Document, WithMagicNumber):
     magic_number = b"%PDF-"
     binary = True
 
-    iana = "application/pdf"
+    iana_mime = "application/pdf"
 
 
 class Msword(Document):
     ext = ".doc"
     binary = True
 
-    iana = "application/msword"
+    iana_mime = "application/msword"
 
 
 class MswordX(Zip, Document):
     ext = ".docx"
 
-    iana = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    iana_mime = (
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    )

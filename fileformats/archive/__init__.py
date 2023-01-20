@@ -7,40 +7,40 @@ from fileformats.core.mixin import WithMagicNumber
 class Archive(File):
     "Base class for compressed archives"
     binary = True
-    iana = None
+    iana_mime = None
 
 
 # Compressed formats
 class Zip(Archive, WithMagicNumber):
     ext = ".zip"
     magic_number = "504B0304"
-    iana = "application/zip"
+    iana_mime = "application/zip"
 
 
 class Bzip(Archive, WithMagicNumber):
     ext = ".bzip"
     magic_number = "425a"
-    iana = "application/bzip"
+    iana_mime = "application/bzip"
 
 
 class Gzip(Archive, WithMagicNumber):
     ext = ".gz"
     magic_number = "1F8B08"
-    iana = "application/gzip"
+    iana_mime = "application/gzip"
 
 
 class Tar(Archive, WithMagicNumber):
     ext = ".tar"
     magic_number = "7573746172"
     magic_number_offset = 257
-    iana = "application/x-tar"
+    iana_mime = "application/x-tar"
 
 
 class Tar_Gzip(Gzip, Tar):
     ext = ".tar.gz"
     alternate_exts = (".tgz",)
     magic_number_offset = 0
-    iana = "application/x-tar+gzip"
+    iana_mime = "application/x-tar+gzip"
 
 
 try:

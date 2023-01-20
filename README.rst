@@ -69,7 +69,7 @@ Using the ``WithMagicNumber`` mixin class, the ``Png`` format can be defined con
     class Png(File, WithMagicNumber):
         binary = True
         ext = ".png"
-        iana = "image/png"
+        iana_mime = "image/png"
         magic_number = b".PNG"
 
 

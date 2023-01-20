@@ -18,7 +18,7 @@ zip, bzip, gzip, etc..., ``fileformats.document`` for PDFs, word docs, and
 ``fileformats.serialization`` for JSON, YAML and XML.
 
 Format class can be converted to and from MIME type strings using the ``to_mime`` and
-``from_mime`` functions. If the the ``iana`` attribute
+``from_mime`` functions. If the the ``iana_mime`` attribute
 is present in the type class, it should correspond to a formally recognised MIME type
 by the , e.g.
 
@@ -31,8 +31,8 @@ by the , e.g.
     assert Loaded is Png
     assert to_mime(Loaded) == "image/png"
 
-If the format class doesn't define an ``iana`` attribute (i.e. in the actual class,
-not including ``iana`` attributes defined in base classes), it will be assigned an informal
+If the format class doesn't define an ``iana_mime`` attribute (i.e. in the actual class,
+not including ``iana_mime`` attributes defined in base classes), it will be assigned an informal
 MIME-type of "application/x-<transformed-class-name>", where *transformed-class-name*
 is the name of the format class converted from "PascalCase" to "kebab-case", with the
 first underscore encountered in a class name converted to a "+" and subsequent underscores
@@ -44,7 +44,7 @@ converted to ".", e.g.
     "application/x-nifti+gzip.bids"
 
 Note that if there are two file-formats with the same class name in different sub-packages
-then the ``iana`` attribute will need to be set on at least one of them otherwise an
+then the ``iana_mime`` attribute will need to be set on at least one of them otherwise an
 error will be raised they are converted either to or from a MIME type.
 
 
@@ -56,13 +56,13 @@ IANA-style MIME type, and for additional clarity (i.e. not drowning in a sea of
 "application/x-\*" types), it can be preferable not to worry with closely matching the
 MIME-type specification for non-standard formats and just use the file-formats
 sub-package inplace of the "application/x-" prefix. This can be done by setting
-``iana=False`` in the ``to_mime`` function, e.g.
+``iana_mime=False`` in the ``to_mime`` function, e.g.
 
 .. code-block::
 
     >>> from fileformats.core import to_mime
     >>> from fileformats.archive import Bzip
-    >>> to_mime(Yaml, iana=False)
+    >>> to_mime(Yaml, iana_mime=False)
     "archive/bzip"
 
 The ``from_mime`` function will resolve both official-style MIME types and the MIME-like
@@ -73,11 +73,11 @@ types, so it is possible to roundtrip from both.
     from fileformats.core import to_mime, from_mime
     from from fileformats.archive import Bzip
     # Using official-style MIME string
-    mime_type = to_mime(Bzip, iana=True)
+    mime_type = to_mime(Bzip, iana_mime=True)
     assert mime_type == "application/x-bzip"
     assert from_mime(mime_type) is Bzip
     # Using MIME-like string
-    mimelike_type = to_mime(Bzip, iana=False)
+    mimelike_type = to_mime(Bzip, iana_mime=False)
     assert mimelike_type == "archive/bzip"
     assert from_mime(mimelike_type) is Bzip
 
@@ -106,4 +106,4 @@ from a given file set, e.g.
     should be taken using detect_format in production.
 
 
-.. _`IANA Media Types`: https://www.iana.org/assignments/media-types/media-types.xhtml
+.. _`IANA Media Types`: https://www.iana_mime.org/assignments/media-types/media-types.xhtml
