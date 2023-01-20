@@ -1,6 +1,6 @@
 from fileformats.generic import File
 from fileformats.core.mixin import WithSeparateHeader
-from fileformats.core.utils import detect_format
+from fileformats.core.utils import matching_formats
 import fileformats.text
 import fileformats.numeric
 from conftest import write_test_file
@@ -75,8 +75,9 @@ def test_format_detection(work_dir):
     with open(text_file, "w") as f:
         f.write("sample text")
 
-    detected = detect_format(text_file)
-    assert detected is fileformats.text.Plain
+    detected = matching_formats(text_file)
+    assert len(detected) == 1
+    assert detected[0] is fileformats.text.Plain
 
     # dat_file = work_dir / "data.dat"
 

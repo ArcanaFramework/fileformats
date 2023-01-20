@@ -3,10 +3,18 @@ import os
 from copy import copy
 from inspect import isclass
 import shutil
+from operator import itemgetter
+import itertools
 from pathlib import Path
 import logging
 import attrs
-from .utils import to_mime, subpackages, classproperty, fspaths_converter
+from .utils import (
+    to_mime,
+    subpackages,
+    classproperty,
+    fspaths_converter,
+    to_mime_format_name,
+)
 from .exceptions import FileFormatsError, FormatMismatchError, FormatConversionError
 
 
@@ -186,7 +194,10 @@ class FileSet:
         iter(str)
             an iterator over all properties names marked as "required"
         """
+        fileset_props = dir(FileSet)
         for attr_name in dir(cls):
+            if attr_name in fileset_props:
+                continue
             klass_attr = getattr(cls, attr_name)
             if isinstance(klass_attr, property):
                 try:
@@ -219,7 +230,10 @@ class FileSet:
             an iterator over all method names marked as a "check"
         """
         # Loop through all attributes and find methods marked by CHECK_ANNOTATION
+        fileset_props = dir(FileSet)
         for attr_name in dir(cls):
+            if attr_name in fileset_props:
+                continue
             klass_attr = getattr(cls, attr_name)
             try:
                 klass_attr.__annotations__[CHECK_ANNOTATION]
@@ -428,6 +442,16 @@ class FileSet:
         return converter(name=name, **conv_kwargs)
 
     @classproperty
+    def mimelike_registry(cls):
+        module_parts = cls.__module__.split(".")
+        if module_parts[0] != "fileformats":
+            raise FileFormatsError(
+                f"Cannot create reversible MIME type for {cls} as it is not in the "
+                "fileformats namespace"
+            )
+        return module_parts[1]
+
+    @classproperty
     def all_formats(cls):
         if cls._all_formats is None:
             cls._all_formats = [
@@ -435,4 +459,35 @@ class FileSet:
             ]
         return cls._all_formats
 
+    @classproperty
+    def formats_by_iana_mime(cls):
+        if cls._formats_by_iana_mime is None:
+            cls._formats_by_iana_mime = {
+                f.iana_mime: f
+                for f in FileSet.all_formats
+                if getattr(f, "iana_mime", None) is not None
+            }
+        return cls._formats_by_iana_mime
+
+    @classproperty
+    def formats_by_name(cls):
+        if cls._formats_by_name is None:
+            cls._formats_by_name = {
+                k: set(v for _, v in g)
+                for k, g in itertools.groupby(
+                    sorted(
+                        (
+                            (to_mime_format_name(f.__name__), f)
+                            for f in FileSet.all_formats
+                            if getattr(f, "iana_mime", None) is None
+                        ),
+                        key=itemgetter(0),
+                    ),
+                    key=itemgetter(0),
+                )
+            }
+        return cls._formats_by_name
+
     _all_formats = None
+    _formats_by_iana_mime = None
+    _formats_by_name = None

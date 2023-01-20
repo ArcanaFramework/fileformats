@@ -42,20 +42,15 @@ def to_mime(klass, iana_mime=True):
     if iana_mime:
         mime = f"application/x-{format_name}"
     else:
-        module_parts = klass.__module__.split(".")
-        if module_parts[0] != "fileformats":
-            raise FileFormatsError(
-                f"Cannot create reversible MIME type for {klass} as it is not in the "
-                "fileformats namespace"
-            )
-        namespace = module_parts[1]
-        namespace_module = importlib.import_module("fileformats." + namespace)
+        namespace_module = importlib.import_module(
+            "fileformats." + klass.mimelike_registry
+        )
         if getattr(namespace_module, klass.__name__, None) is not klass:
             raise FileFormatsError(
                 f"Cannot create reversible MIME type for {klass} as it is not present in a "
-                f"top-level fileformats namespace package ({klass.__module__.__name__}"
+                f"top-level fileformats namespace package '{klass.mimelike_registry}'"
             )
-        mime = f"{namespace}/{format_name}"
+        mime = f"{klass.mimelike_registry}/{format_name}"
     return mime
 
 
@@ -80,32 +75,25 @@ def from_mime(mime_string):
         the corresponding file format class
     """
     namespace, format_name = mime_string.split("/")
-    class_name = from_mime_format_name(format_name)
     if namespace == "application":
         # We treat the "application" namespace as a catch-all for any formats that are
         # not explicitly covered by the IANA standard (which is kind of how the IANA
         # treats it). Therefore, we loop through all subclasses across the different
         # namespaces to find one that matches the name.
-        iana_mime_dict = {
-            f.iana_mime: f
-            for f in fileformats.core.FileSet.all_formats
-            if getattr(f, "iana_mime", None) is not None
-        }
         try:
-            klass = iana_mime_dict[mime_string]
+            klass = fileformats.core.FileSet.formats_by_iana_mime[mime_string]
         except KeyError:
-            if not format_name.startswith("x-"):
+            if format_name.startswith("x-"):
+                format_name = format_name[2:]
+            else:
                 raise FormatRecognitionError(
                     "Did not find class matching official (i.e. non-extension) MIME type "
                     f"{mime_string} (i.e. one not starting with 'application/x-'"
                 ) from None
-            matching_name = [
-                f
-                for f in fileformats.core.FileSet.all_formats
-                if f.__name__ == class_name and getattr(f, "iana_mime", None) is None
-            ]
+            matching_name = fileformats.core.FileSet.formats_by_name[format_name]
             if not matching_name:
                 namespace_names = [n.__name__ for n in subpackages()]
+                class_name = from_mime_format_name(format_name)
                 raise FormatRecognitionError(
                     f"Did not find class matching extension the class name '{class_name}' "
                     f"corresponding to MIME type '{mime_string}' "
@@ -121,8 +109,9 @@ def from_mime(mime_string):
                     "namespaces: "
                 ) from None
             else:
-                klass = matching_name[0]
+                klass = next(iter(matching_name))
     else:
+        class_name = from_mime_format_name(format_name)
         try:
             module = importlib.import_module("fileformats." + namespace)
         except ImportError:
@@ -142,31 +131,22 @@ def from_mime(mime_string):
     return klass
 
 
-def detect_format(fspaths: list[Path], multiple=False):
+def matching_formats(fspaths: list[Path], standard_only: bool = False):
     """Detect the corresponding file format from a set of file-system paths
 
     Parameters
     ----------
     fspaths : list[Path]
         file-system paths to detect the format of
-    allow_multiple : bool, optional
-        If multiple all matching formats will be returned, by default False
+    standard_only : bool, optional
+        If you only want to return matches from the "standard" IANA types
     """
     fspaths = fspaths_converter(fspaths)
     matches = []
     for frmt in fileformats.core.FileSet.all_formats:
-        if frmt.matches(fspaths):
+        if frmt.matches(fspaths) and frmt.mimelike_registry in STANDARD_REGISTRIES:
             matches.append(frmt)
-    if not matches:
-        raise FormatRecognitionError(f"Did not find a format matching {fspaths}")
-    if multiple:
-        return matches
-    elif len(matches) > 1:
-        raise FormatRecognitionError(
-            f"Multiple formats matched paths {fspaths}: {matches}"
-        )
-    else:
-        return matches[0]
+    return matches
 
 
 def to_mime_format_name(format_name):

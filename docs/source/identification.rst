@@ -45,7 +45,13 @@ converted to ".", e.g.
 
 Note that if there are two file-formats with the same class name in different sub-packages
 then the ``iana_mime`` attribute will need to be set on at least one of them otherwise an
-error will be raised they are converted either to or from a MIME type.
+error will be raised they are loaded from a MIME type.
+
+.. warning::
+    Note that the installation of additional sub-packages may cause detection code to
+    break if your code doesn't the potential of new formats being added with the same
+    class name
+
 
 
 MIME-like types
@@ -87,23 +93,22 @@ Detecting formats
 
 While not a key consideration in the design of the *FileFormats* library, it is also
 possible to detect the formats that match a given set of files. Note that it isn't
-envisaged that this is always possible. For example, there may be many non-descript
-binary file formats that use the ".dat" extension. *FileFormats* is primarily designed
-to go the other way, i.e. start with a format you want and see whether the file-system
-objects match it. However, the ``detect_format`` function is provided to help detect a
-from a given file set, e.g.
+always possible to uniquely identify a single format, since there may be several matching
+formats for, non-descript binary file formats that use the ".dat" extension for example.
+
+The ``matching_formats`` function will find all formats that match the provided file-system
+paths.
 
 .. code-block::
 
-    >>> from fileformats.core import detect_format
-    >>> detect_format("/path/to/word.doc")
-    <class 'fileformats.document.Msword'>
+    >>> from fileformats.core import matching_formats
+    >>> matching_formats("/path/to/word.doc")
+    [<class 'fileformats.document.Msword'>]
 
 .. warning::
-    Note that the installation of additional sub-packages will cause a detection to
-    stop working if the new sub-packages add formats that are ambiguous
-    with previously installed format classes for the given files. Therefore, care
-    should be taken using detect_format in production.
+    Note that the installation of additional sub-packages may cause detection code to
+    break if your code doesn't the potential of new formats being added with overlapping
+    cases where they will both match a given file set.
 
 
 .. _`IANA Media Types`: https://www.iana_mime.org/assignments/media-types/media-types.xhtml
