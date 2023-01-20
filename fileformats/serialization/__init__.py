@@ -33,6 +33,7 @@ class Xml(Serialization):
 class Json(Serialization):
     ext = ".json"
 
+    @mark.check
     def load(self):
         with open(self.fspath) as f:
             dct = json.load(f)
@@ -49,6 +50,7 @@ class Yaml(Serialization):
     ext = ".yaml"
     alternate_exts = (".yml",)
 
+    @mark.check
     def load(self):
         with open(self.fspath) as f:
             dct = yaml.load(f, Loader=yaml.Loader)

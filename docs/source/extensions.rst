@@ -1,8 +1,27 @@
-Adding new types
-================
+Defining Formats and Converters
+===============================
 
-Extensions
+
+File types
 ----------
+
+.. warning::
+   UNDER CONSTRUCTION
+
+Directory types
+---------------
+
+.. warning::
+   UNDER CONSTRUCTION
+
+Complex types
+-------------
+
+.. warning::
+   UNDER CONSTRUCTION
+
+Extension modules
+-----------------
 
 *FileFormats* has been designed so that new format classes can be defined to recognise
 and handle any weird and whacky file formats in use in a particular domain. These format
@@ -12,5 +31,5 @@ the ``fileformats`` namespace. For example, the
 implements a range of file formats used in medical imaging research under the
 ``fileformats.medimage`` package. The
 `FileFormats extension template <https://github.com/ArcanaFramework/fileformats-medimage>`__
-can be used to quickly create new extensions packages in which to add support for domain-specific
+can be customised to quickly create new extensions packages to add support for domain-specific
 file-types.

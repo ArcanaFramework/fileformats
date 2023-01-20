@@ -9,6 +9,7 @@ readme = "README.rst"
 requires-python = ">=3.7"
 dependencies = [
     "attrs>=22.1.0",
+    "PyYAML>=6.0",
 ]
 license = {file = "LICENSE"}
 authors = [
@@ -64,7 +65,6 @@ docs = [
 ]
 extended = [
     "pydra >= 0.20.0",
-    "PyYAML>=6.0",
 ]
 
 [project.urls]
