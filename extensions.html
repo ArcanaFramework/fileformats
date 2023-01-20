@@ -2,9 +2,12 @@
 <html class="no-js" lang="English">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="#" />
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="prev" title="Identifying formats" href="identification.html" />
 
-    <!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07 --><title>Search - FileFormats v0.3.1</title><link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07 -->
+        <title>Defining Formats and Converters - FileFormats v0.3.1</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
@@ -137,7 +140,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -151,15 +154,15 @@
   
   <span class="sidebar-brand-text">FileFormats v0.3.1</span>
   
-</a><form class="sidebar-search-container" method="get" action="#" role="search">
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <ul>
+  <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="identification.html">Identifying formats</a></li>
-<li class="toctree-l1"><a class="reference internal" href="extensions.html">Defining Formats and Converters</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Defining Formats and Converters</a></li>
 </ul>
 
 </div>
@@ -179,7 +182,8 @@
           <span>Back to top</span>
         </a>
         <div class="content-icon-container">
-          <div class="theme-toggle-container theme-toggle-content">
+          
+<div class="theme-toggle-container theme-toggle-content">
             <button class="theme-toggle">
               <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
               <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
@@ -187,23 +191,49 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          
-<noscript>
-<div class="admonition error">
-  <p class="admonition-title">Error</p>
-  <p>
-    Please activate JavaScript to enable the search functionality.
-  </p>
+          <section id="defining-formats-and-converters">
+<h1>Defining Formats and Converters<a class="headerlink" href="#defining-formats-and-converters" title="Permalink to this heading">#</a></h1>
+<section id="file-types">
+<h2>File types<a class="headerlink" href="#file-types" title="Permalink to this heading">#</a></h2>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>UNDER CONSTRUCTION</p>
 </div>
-</noscript>
-
-<div id="search-results"></div>
+</section>
+<section id="directory-types">
+<h2>Directory types<a class="headerlink" href="#directory-types" title="Permalink to this heading">#</a></h2>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>UNDER CONSTRUCTION</p>
+</div>
+</section>
+<section id="complex-types">
+<h2>Complex types<a class="headerlink" href="#complex-types" title="Permalink to this heading">#</a></h2>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>UNDER CONSTRUCTION</p>
+</div>
+</section>
+<section id="extension-modules">
+<h2>Extension modules<a class="headerlink" href="#extension-modules" title="Permalink to this heading">#</a></h2>
+<p><em>FileFormats</em> has been designed so that new format classes can be defined to recognise
+and handle any weird and whacky file formats in use in a particular domain. These format
+classes should be implemented in <em>FileFormats</em> extensions, which add sub-packages under
+the <code class="docutils literal notranslate"><span class="pre">fileformats</span></code> namespace. For example, the
+<a class="reference external" href="https://github.com/ArcanaFramework/fileformats-medimage">FileFormats Medimage Extension</a>
+implements a range of file formats used in medical imaging research under the
+<code class="docutils literal notranslate"><span class="pre">fileformats.medimage</span></code> package. The
+<a class="reference external" href="https://github.com/ArcanaFramework/fileformats-medimage">FileFormats extension template</a>
+can be customised to quickly create new extensions packages to add support for domain-specific
+file-types.</p>
+</section>
+</section>
 
         </article>
       </div>
@@ -211,7 +241,17 @@
         
         <div class="related-pages">
           
-          
+          <a class="prev-page" href="identification.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Identifying formats</div>
+                
+              </div>
+            </a>
         </div>
         <div class="bottom-of-page">
           <div class="left-details">
@@ -230,8 +270,30 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Defining Formats and Converters</a><ul>
+<li><a class="reference internal" href="#file-types">File types</a></li>
+<li><a class="reference internal" href="#directory-types">Directory types</a></li>
+<li><a class="reference internal" href="#complex-types">Complex types</a></li>
+<li><a class="reference internal" href="#extension-modules">Extension modules</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>
@@ -240,8 +302,5 @@
     <script src="_static/doctools.js"></script>
     <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/scripts/furo.js"></script>
-    
-<script src="_static/searchtools.js"></script>
-<script src="_static/language_data.js"></script>
-<script src="searchindex.js"></script></body>
+    </body>
 </html>
