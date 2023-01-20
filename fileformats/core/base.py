@@ -96,6 +96,8 @@ class FileSet:
 
     @fspaths.validator
     def validate_fspaths(self, _, fspaths):
+        if not fspaths:
+            raise FileFormatsError(f"No file-system paths provided to {self}")
         missing = [p for p in fspaths if not p or not p.exists()]
         if missing:
             missing_str = "\n".join(str(p) for p in missing)

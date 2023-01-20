@@ -5,11 +5,33 @@ import attrs
 from ..core.base import FileSet
 from ..core.exceptions import FormatMismatchError
 from ..core import mark
-from ..core.utils import splitext
+from ..core.utils import splitext, classproperty
 
 
 @attrs.define
-class File(FileSet, os.PathLike):
+class FSObject(FileSet, os.PathLike):
+    "Generic file-system object, can be either a file or a directory"
+
+    @mark.required
+    @property
+    def fspath(self):
+        if len(self.fspaths) > 1:
+            raise FormatMismatchError(
+                f"More than one fspath ({self.fspaths}) provided to {self}"
+            )
+        return self.fspaths[0]
+
+    def __str__(self):
+        return str(self.fspath)
+
+    def __fspath__(self):
+        """Render to string, so can be treated as any other file-system path, i.e. passed
+        to functions like file 'open'"""
+        return str(self)
+
+
+@attrs.define
+class File(FSObject):
     """Generic file type"""
 
     ext = ""
@@ -27,9 +49,6 @@ class File(FileSet, os.PathLike):
                 "file in {repr(self)}"
             )
         return fspath
-
-    def __str__(self):
-        return str(self.fspath)
 
     @classmethod
     def copy_ext(cls, old_path: Path, new_path: Path):
@@ -73,12 +92,18 @@ class File(FileSet, os.PathLike):
             if prop in self.fspaths:
                 yield prop
 
-    def __fspath__(self):
-        return str(self)
+    @classproperty
+    def possible_exts(cls):
+        possible = [cls.ext]
+        try:
+            possible.extend(cls.alternate_exts)
+        except AttributeError:
+            pass
+        return possible
 
 
 @attrs.define
-class Directory(FileSet, os.PathLike):
+class Directory(FSObject):
     """Generic directory type"""
 
     content_types = ()
@@ -138,9 +163,3 @@ class Directory(FileSet, os.PathLike):
             (cls,),
             {"content_types": content_types},
         )
-
-    def __str__(self):
-        return str(self.fspath)
-
-    def __fspath__(self):
-        return str(self)
