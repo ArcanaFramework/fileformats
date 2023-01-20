@@ -31,7 +31,7 @@ class FsObject(FileSet, os.PathLike):
 
 
 @attrs.define
-class File(FSObject):
+class File(FsObject):
     """Generic file type"""
 
     ext = ""
@@ -103,7 +103,7 @@ class File(FSObject):
 
 
 @attrs.define
-class Directory(FSObject):
+class Directory(FsObject):
     """Generic directory type"""
 
     content_types = ()
