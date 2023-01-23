@@ -74,6 +74,7 @@ def converter(
     from pydra.engine.helpers import make_klass
 
     def decorator(task_spec):
+        out_file_local = out_file
         if source_format is None or target_format is None:
             task = task_spec()
         if source_format is None:
@@ -83,7 +84,16 @@ def converter(
             source = source_format
         if target_format is None:
             outputs_dict = attrs.fields_dict(make_klass(task.output_spec))
-            target = outputs_dict[out_file].type
+            try:
+                target = outputs_dict[out_file].type
+            except KeyError:
+                # If there isn't an 'out_file' field but there is only one output field
+                # with the default name of 'out' use that instead
+                if list(outputs_dict.keys()) == ["out"]:
+                    out_file_local = "out"
+                    target = outputs_dict["out"].type
+                else:
+                    raise
         else:
             target = target_format
         if not issubclass(target, FileSet):
@@ -106,7 +116,9 @@ def converter(
         if in_file != "in_file" or out_file != "out_file":
             from .converter import ConverterWrapper
 
-            task_spec = ConverterWrapper(task_spec, in_file=in_file, out_file=out_file)
+            task_spec = ConverterWrapper(
+                task_spec, in_file=in_file, out_file=out_file_local
+            )
         target.converters[source] = (task_spec, converter_kwargs)
         return task_spec
 

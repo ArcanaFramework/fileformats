@@ -75,6 +75,16 @@ Validate an mp4 audio file
    "/path/to/audio.mp4"
 
 
+License
+-------
+
+This work is licensed under a
+`Creative Commons Attribution 4.0 International License <http://creativecommons.org/licenses/by/4.0/>`_
+
+.. image:: https://i.creativecommons.org/l/by/4.0/88x31.png
+  :target: http://creativecommons.org/licenses/by/4.0/
+  :alt: Creative Commons Attribution 4.0 International License
+
 
 .. _Pydra: https://pydra.readthedocs.io
 .. _Fastr: https://gitlab.com/radiology/infrastructure/fastr

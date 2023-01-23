@@ -30,6 +30,7 @@ logger = logging.getLogger("fileformats")
 
 @attrs.define
 class Metadata:
+    """Manually set and lazily loaded metadata of a FileSet"""
 
     loaded: dict = attrs.field(factory=dict, converter=dict)
     _fileset = attrs.field(default=None, init=False, repr=False)
@@ -284,26 +285,27 @@ class FileSet:
             new_paths.append(new_path)
         return type(self)(new_paths)
 
-    def select_by_ext(self, fileformat: type = None) -> Path:
+    def select_by_ext(self, fileformat: type = None, allow_none: bool = False) -> Path:
         """Selects a single path from a set of file-system paths based on the file
         extension
 
         Parameters
         ----------
-        fspaths : set[Path]
-            the file-system paths to select from
-        ext : str
-            the file extension to select
+        fileformat : type
+            the format class of the path to select
+        allow_none : bool
+            whether to return None instead of raising an error if the file is not found
 
         Returns
         -------
-        Path
-            the selected file-system path that matches the extension
+        Path or None
+            the selected file-system path that matches the extension or None if not found
+            and `allow_none` is True
 
         Raises
         ------
         FileFormatError
-            if no paths match the extension
+            if no paths match the extension and `allow_none` is False
         FileFormatError
             if more than one paths matches the extension
         """
@@ -316,6 +318,8 @@ class FileSet:
             pass
         matches = self.matching_exts(self.fspaths, exts)
         if not matches:
+            if allow_none:
+                return None
             paths_str = ", ".join(str(p) for p in self.fspaths)
             raise FormatMismatchError(
                 f"No matching files with extensions in {exts} in file set {paths_str}"
