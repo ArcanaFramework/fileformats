@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Identifying formats" href="identification.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Data Workflows" href="workflows.html" />
 
     <!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07 -->
-        <title>FileFormats v0.3.1</title>
+        <title>FileFormats v0.3.2</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -129,7 +129,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="#"><div class="brand">FileFormats v0.3.1</div></a>
+      <a href="#"><div class="brand">FileFormats v0.3.2</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -152,7 +152,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="#">
   
   
-  <span class="sidebar-brand-text">FileFormats v0.3.1</span>
+  <span class="sidebar-brand-text">FileFormats v0.3.2</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -161,8 +161,9 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul>
-<li class="toctree-l1"><a class="reference internal" href="identification.html">Identifying formats</a></li>
-<li class="toctree-l1"><a class="reference internal" href="extensions.html">Defining Formats and Converters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="workflows.html">Data Workflows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="identification.html">Format Identification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer.html">Developer Guide</a></li>
 </ul>
 
 </div>
@@ -206,13 +207,12 @@
 <a class="reference external image-reference" href="https://github.com/ArcanaFramework/fileformats"><img alt="GitHub stars" src="https://img.shields.io/github/stars/ArcanaFramework/fileformats?label=GitHub" /></a>
 <p><em>Fileformats</em> provides a library of file-format types implemented as Python classes.
 The format classes are designed to be used in file-type validation during the construction
-of data workflows (see <a class="reference external" href="https://pydra.readthedocs.io">Pydra</a>), and provide a common interface to general methods
+of data workflows (e.g. <a class="reference external" href="https://pydra.readthedocs.io">Pydra</a>, <a class="reference external" href="https://gitlab.com/radiology/infrastructure/fastr">Fastr</a>), and provide a common interface to general methods
 for manipulating and moving the underlying file-system objects between storage locations.</p>
-<p>Unlike other Python file-type packages, <em>FileFormats</em>, supports multi-file
-formats, e.g. with separate header/data files, directories containing files of a certain
-type, closely related data spread across several files. It also provides limited support
-for loading data and metadata, and hooks for conversion methods to be registered between
-equivalent data formats.</p>
+<p>Unlike other file-type Python packages, <em>FileFormats</em>, supports multi-file data
+formats (&quot;file sets&quot;) often found in scientific workflows, e.g. with separate header/data
+files, directories containing certain file types, and mechanisms to peek at metadata fields
+to define complex data formats or specific sub-types (e.g. functional MRI DICOM file set).</p>
 <p>File-format types are typically identified by a combination of file extensions
 and &quot;magic numbers&quot;, where applicable. In addition to these generic methods,
 <em>FileFormats</em> provides a flexible framework to conveniently add custom identification
@@ -231,116 +231,25 @@ the <code class="docutils literal notranslate"><span class="pre">extended</span>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>fileformats<span class="o">[</span>extended<span class="o">]</span>
 </pre></div>
 </div>
-</section>
-<section id="basic-usage">
-<h2>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this heading">#</a></h2>
-<section id="validation">
-<h3>Validation<a class="headerlink" href="#validation" title="Permalink to this heading">#</a></h3>
-<p>In the basic case, <em>FileFormats</em> can be used for checking the format of files and
-directories against known types. There are two layers of checks, ones
-performed on the file-system paths alone, which are run when a format class is
-initiated, e.g.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.image</span> <span class="kn">import</span> <span class="n">Jpeg</span>
-
-<span class="n">jpeg_file</span> <span class="o">=</span> <span class="n">Jpeg</span><span class="p">(</span><span class="s2">&quot;/path/to/image.jpg&quot;</span><span class="p">)</span>  <span class="c1"># Checks path for correct extension</span>
-
-<span class="n">jpeg_file</span> <span class="o">=</span> <span class="n">Jpeg</span><span class="p">(</span><span class="s2">&quot;/path/to/image.png&quot;</span><span class="p">)</span>  <span class="c1"># &lt;-- THIS WILL FAIL as the extension is wrong</span>
-</pre></div>
-</div>
-<p>The second layer of checks, which typically require reading the file and checking for
-magic numbers and the like, are explicitly run by the <code class="docutils literal notranslate"><span class="pre">validate</span></code> method.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fspath</span> <span class="o">=</span> <span class="s2">&quot;/path/to/fake-image.jpg&quot;</span>
-
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fspath</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;this is not a valid JPEG file&quot;</span><span class="p">)</span>
-
-<span class="n">jpeg_file</span> <span class="o">=</span> <span class="n">Jpeg</span><span class="p">(</span><span class="n">fspath</span><span class="p">)</span>  <span class="c1"># Extension checks out ok</span>
-<span class="n">jpeg_file</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>  <span class="c1"># &lt;-- THIS WILL FAIL as the magic number isn&#39;t present</span>
-</pre></div>
-</div>
-</section>
-<section id="path-handling">
-<h3>Path handling<a class="headerlink" href="#path-handling" title="Permalink to this heading">#</a></h3>
-<p>Once a file object is initiated you are able to access the &quot;required properties&quot; of the
-format class, which for single file formats is typically just the file-system path,
-<code class="docutils literal notranslate"><span class="pre">fspath</span></code>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.image</span> <span class="kn">import</span> <span class="n">Jpeg</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">jpeg_file</span> <span class="o">=</span> <span class="n">Jpeg</span><span class="p">(</span><span class="s2">&quot;/path/to/image.jpg&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">jpeg_file</span><span class="o">.</span><span class="n">fspath</span>
-<span class="go">&quot;/path/to/image.jpg&quot;</span>
-</pre></div>
-</div>
-<p>However, file-formats that consist of multiple files, which is common in scientific
-data, will define separate required properties for each file. For example, the
-<a class="reference external" href="https://en.wikipedia.org/wiki/Analyze_(imaging_software)">Analyze</a> neuroimaging format, which stores the image in a file with the extension
-&quot;.img&quot; and metadata in a separate header file with the extension &quot;.hdr&quot;.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.medimage</span> <span class="kn">import</span> <span class="n">Analyze</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">analyze_file</span> <span class="o">=</span> <span class="n">Analyze</span><span class="p">([</span><span class="s2">&quot;/path/to/neuroimage.hdr&quot;</span><span class="p">,</span> <span class="s2">&quot;/path/to/neuroimage.img&quot;</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">analyze_file</span><span class="o">.</span><span class="n">fspath</span>
-<span class="go">&quot;/path/to/neuroimage.img&quot;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">analyze_file</span><span class="o">.</span><span class="n">header</span>
-<span class="go">&quot;/path/to/neuroimage.hdr&quot;</span>
-</pre></div>
-</div>
-<p>To access all file-system paths in a format object you can access the <code class="docutils literal notranslate"><span class="pre">fspaths</span></code>
-attribute from the base class of all file formats <code class="docutils literal notranslate"><span class="pre">fileformats.core.base.FileSet</span></code></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">analyze_file</span><span class="o">.</span><span class="n">fspaths</span>
-<span class="go">{&quot;/path/to/neuroimage.hdr&quot;, &quot;/path/to/neuroimage.img&quot;}</span>
-</pre></div>
-</div>
-<p>In the case of file formats with &quot;adjacent&quot; files that share the same file-name stem
-(such as <a class="reference external" href="https://en.wikipedia.org/wiki/Analyze_(imaging_software)">Analyze</a>) you only need to provide one the primary paths and the header will be
-automatically detected if present and added to the file-set</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.medimage</span> <span class="kn">import</span> <span class="n">Analyze</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">analyze_file</span> <span class="o">=</span> <span class="n">Analyze</span><span class="p">(</span><span class="s2">&quot;/path/to/neuroimage.img&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">analyze_file</span><span class="o">.</span><span class="n">fspaths</span>
-<span class="go">{&quot;/path/to/neuroimage.hdr&quot;, &quot;/path/to/neuroimage.img&quot;}</span>
-</pre></div>
-</div>
-<p>This can be useful when reading the output path of a workflow where only primary path
-is returned, and both files need to be saved to an output directory. To copy all files
-in a format you can use the <code class="docutils literal notranslate"><span class="pre">copy_to</span></code> method</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">analyze_file_copy</span> <span class="o">=</span> <span class="n">analyze_file</span><span class="o">.</span><span class="n">copy_to</span><span class="p">(</span><span class="s2">&quot;/path/to/destination&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">analyze_file_copy</span><span class="o">.</span><span class="n">fspaths</span>
-<span class="go">{&quot;/path/to/destination/neuroimage.hdr&quot;, &quot;/path/to/destination/neuroimage.img&quot;}</span>
-</pre></div>
-</div>
-<p>Going the other way from a format class to a workflow/task input, the transformation
-of the format object to a path-like string is handled implicitly through the
-implementation of the <code class="docutils literal notranslate"><span class="pre">__str__</span></code> and <code class="docutils literal notranslate"><span class="pre">__fspath__</span></code> magic methods. This means
-that format objects can be used in place of the path objects themselves, e.g.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">subprocess</span>
-<span class="kn">from</span> <span class="nn">fileformats.text</span> <span class="kn">import</span> <span class="n">Plain</span>
-<span class="n">text_file</span> <span class="o">=</span> <span class="n">Plain</span><span class="p">(</span><span class="s2">&quot;/path/to/image.txt&quot;</span><span class="p">)</span>
-
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">text_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">contents</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-
-<span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cp </span><span class="si">{</span><span class="n">text_file</span><span class="si">}</span><span class="s2"> /path/to/destination&quot;</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Noting that it is only the &quot;primary&quot; path as returned by the <code class="docutils literal notranslate"><span class="pre">fspath</span></code> property that
-is rendered.</p>
-</section>
-<section id="directory-formats">
-<h3>Directory formats<a class="headerlink" href="#directory-formats" title="Permalink to this heading">#</a></h3>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>UNDER CONSTRUCTION</p>
-</div>
-</section>
-</section>
-<section id="extended-usage">
-<h2>Extended Usage<a class="headerlink" href="#extended-usage" title="Permalink to this heading">#</a></h2>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>UNDER CONSTRUCTION</p>
-</div>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>fileformats<span class="o">[</span>extended<span class="o">]</span>
-</pre></div>
-</div>
 <div class="toctree-wrapper compound">
 </div>
+</section>
+<section id="quick-example">
+<h2>Quick Example<a class="headerlink" href="#quick-example" title="Permalink to this heading">#</a></h2>
+<p>Validate an mp4 audio file</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.audio</span> <span class="kn">import</span> <span class="n">Mp4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp4_file</span> <span class="o">=</span> <span class="n">Mp4</span><span class="p">(</span><span class="s2">&quot;/path/to/audio.mp4&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp4_file</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp4_file</span><span class="o">.</span><span class="n">fspath</span>
+<span class="go">&quot;/path/to/audio.mp4&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="license">
+<h2>License<a class="headerlink" href="#license" title="Permalink to this heading">#</a></h2>
+<p>This work is licensed under a
+<a class="reference external" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a></p>
+<a class="reference external image-reference" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons Attribution 4.0 International License" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a>
 </section>
 </section>
 
@@ -349,12 +258,12 @@ is rendered.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="identification.html">
+          <a class="next-page" href="workflows.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Identifying formats</div>
+                <div class="title">Data Workflows</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -391,13 +300,8 @@ is rendered.</p>
             <ul>
 <li><a class="reference internal" href="#">FileFormats</a><ul>
 <li><a class="reference internal" href="#installation">Installation</a></li>
-<li><a class="reference internal" href="#basic-usage">Basic Usage</a><ul>
-<li><a class="reference internal" href="#validation">Validation</a></li>
-<li><a class="reference internal" href="#path-handling">Path handling</a></li>
-<li><a class="reference internal" href="#directory-formats">Directory formats</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#extended-usage">Extended Usage</a></li>
+<li><a class="reference internal" href="#quick-example">Quick Example</a></li>
+<li><a class="reference internal" href="#license">License</a></li>
 </ul>
 </li>
 </ul>

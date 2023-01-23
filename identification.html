@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Defining Formats and Converters" href="extensions.html" /><link rel="prev" title="FileFormats" href="index.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Developer Guide" href="developer.html" /><link rel="prev" title="Data Workflows" href="workflows.html" />
 
     <!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07 -->
-        <title>Identifying formats - FileFormats v0.3.1</title>
+        <title>Format Identification - FileFormats v0.3.2</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -129,7 +129,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">FileFormats v0.3.1</div></a>
+      <a href="index.html"><div class="brand">FileFormats v0.3.2</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -152,7 +152,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">FileFormats v0.3.1</span>
+  <span class="sidebar-brand-text">FileFormats v0.3.2</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -161,8 +161,9 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul class="current">
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Identifying formats</a></li>
-<li class="toctree-l1"><a class="reference internal" href="extensions.html">Defining Formats and Converters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="workflows.html">Data Workflows</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Format Identification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer.html">Developer Guide</a></li>
 </ul>
 
 </div>
@@ -197,21 +198,44 @@
           </label>
         </div>
         <article role="main">
-          <section id="identifying-formats">
-<h1>Identifying formats<a class="headerlink" href="#identifying-formats" title="Permalink to this heading">#</a></h1>
-<p>In addition to simply importing and using a format class in your Python code. There are
-several ways to load a class corresponding to given file format, either from the
-<code class="docutils literal notranslate"><span class="pre">MIME</span> <span class="pre">type</span></code> (see <a class="reference external" href="https://www.iana_mime.org/assignments/media-types/media-types.xhtml">IANA Media Types</a>) or the file-system objects themselves.</p>
+          <section id="format-identification">
+<h1>Format Identification<a class="headerlink" href="#format-identification" title="Permalink to this heading">#</a></h1>
+<p>In addition to simply importing and using a format class in your Python code, format classes
+can be loaded from their <a class="reference external" href="https://www.iana_mime.org/assignments/media-types/media-types.xhtml">MIME type</a> or detected from
+file-system objects.</p>
+<section id="detecting-formats">
+<h2>Detecting formats<a class="headerlink" href="#detecting-formats" title="Permalink to this heading">#</a></h2>
+<p>While not a primary design goal of the <em>FileFormats</em> library, it is
+possible to detect the formats that match a given set of files using the <code class="docutils literal notranslate"><span class="pre">find_matching</span></code>
+function. Note that it isn't always possible to uniquely identify a single format, since
+there may be several matching formats for, non-descript binary file formats that use the
+&quot;.dat&quot; extension for example.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">find_matching</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">find_matching</span><span class="p">(</span><span class="s2">&quot;/path/to/word.doc&quot;</span><span class="p">)</span>
+<span class="go">[&lt;class &#39;fileformats.document.Msword&#39;&gt;]</span>
+</pre></div>
+</div>
+<p>Note that the installation of additional sub-packages may cause detection code to
+break if your code doesn't the potential of new formats being added with overlapping
+cases where they will both match a given file set. If you are only interested in
+formats covered in the main fileformats package then you should use the <code class="docutils literal notranslate"><span class="pre">standard_only</span></code>
+flag</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">find_matching</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">find_matching</span><span class="p">(</span><span class="s2">&quot;/path/to/data.dat&quot;</span><span class="p">,</span> <span class="n">standard_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">[&lt;class &#39;fileformats.numeric.DataFile&#39;&gt;]</span>
+</pre></div>
+</div>
+</section>
 <section id="mime-types">
 <h2>MIME Types<a class="headerlink" href="#mime-types" title="Permalink to this heading">#</a></h2>
-<p>Sub-packages in the <code class="docutils literal notranslate"><span class="pre">fileformats</span></code> namespace are named after MIME type registries
-as defined by the Internet Assigned Numbering Authority (IANA) (see <a class="reference external" href="https://www.iana_mime.org/assignments/media-types/media-types.xhtml">IANA Media Types</a>).
+<p>Namespaces in the <code class="docutils literal notranslate"><span class="pre">fileformats</span></code> package are named after MIME type registries
+as defined by the <a class="reference external" href="https://www.iana_mime.org/assignments/media-types/media-types.xhtml">Internet Assigned Numbering Authority (IANA)</a>.
 The main difference is that there is no &quot;application&quot; registry, which acts as a
 catch-all for any type that doesn't have a formal specification. Instead, types that
 fall under the &quot;application&quot; registry are grouped by the types of data that they
 store, e.g. <code class="docutils literal notranslate"><span class="pre">fileformats.archive</span></code> for (typically compressed) archives such as
-zip, bzip, gzip, etc..., <code class="docutils literal notranslate"><span class="pre">fileformats.document</span></code> for PDFs, word docs, and
-<code class="docutils literal notranslate"><span class="pre">fileformats.serialization</span></code> for JSON, YAML and XML.</p>
+zip, bzip, gzip, etc..., <code class="docutils literal notranslate"><span class="pre">fileformats.document</span></code> for PDFs, word docs,
+<code class="docutils literal notranslate"><span class="pre">fileformats.serialization</span></code> for JSON, YAML and XML, etc...</p>
 <p>Format class can be converted to and from MIME type strings using the <code class="docutils literal notranslate"><span class="pre">to_mime</span></code> and
 <code class="docutils literal notranslate"><span class="pre">from_mime</span></code> functions. If the the <code class="docutils literal notranslate"><span class="pre">iana_mime</span></code> attribute
 is present in the type class, it should correspond to a formally recognised MIME type
@@ -241,20 +265,21 @@ error will be raised they are loaded from a MIME type.</p>
 <p class="admonition-title">Warning</p>
 <p>Note that the installation of additional sub-packages may cause detection code to
 break if your code doesn't the potential of new formats being added with the same
-class name</p>
+class name. Therefore, you may prefer to use &quot;MIME-like&quot; type strings (see below)
+unless IANA compliance is required.</p>
 </div>
 </section>
 <section id="mime-like-types">
 <h2>MIME-like types<a class="headerlink" href="#mime-like-types" title="Permalink to this heading">#</a></h2>
-<p>To avoid the issue with format classes in separate sub-packages mapping onto the same
+<p>To avoid the issue with format classes in separate namespaces mapping onto the same
 IANA-style MIME type, and for additional clarity (i.e. not drowning in a sea of
-&quot;application/x-*&quot; types), it can be preferable not to worry with closely matching the
-MIME-type specification for non-standard formats and just use the file-formats
-sub-package inplace of the &quot;application/x-&quot; prefix. This can be done by setting
-<code class="docutils literal notranslate"><span class="pre">iana_mime=False</span></code> in the <code class="docutils literal notranslate"><span class="pre">to_mime</span></code> function, e.g.</p>
+&quot;application/x-*&quot; types), it can be preferable in some use cases not to worry with
+closely matching the MIME-type specification for non-standard formats and just use the
+<em>FileFormats</em> namespace inplace of the generic &quot;application/x-&quot; prefix. This can be done
+by setting <code class="docutils literal notranslate"><span class="pre">iana=False</span></code> in the <code class="docutils literal notranslate"><span class="pre">to_mime</span></code> function, e.g.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">to_mime</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.archive</span> <span class="kn">import</span> <span class="n">Bzip</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">to_mime</span><span class="p">(</span><span class="n">Yaml</span><span class="p">,</span> <span class="n">iana_mime</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">to_mime</span><span class="p">(</span><span class="n">Yaml</span><span class="p">,</span> <span class="n">iana</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="go">&quot;archive/bzip&quot;</span>
 </pre></div>
 </div>
@@ -262,35 +287,17 @@ sub-package inplace of the &quot;application/x-&quot; prefix. This can be done b
 types, so it is possible to roundtrip from both.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">to_mime</span><span class="p">,</span> <span class="n">from_mime</span>
 <span class="kn">from</span> <span class="nn">from</span> <span class="n">fileformats</span><span class="o">.</span><span class="n">archive</span> <span class="kn">import</span> <span class="nn">Bzip</span>
+
 <span class="c1"># Using official-style MIME string</span>
-<span class="n">mime_type</span> <span class="o">=</span> <span class="n">to_mime</span><span class="p">(</span><span class="n">Bzip</span><span class="p">,</span> <span class="n">iana_mime</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">mime_type</span> <span class="o">=</span> <span class="n">to_mime</span><span class="p">(</span><span class="n">Bzip</span><span class="p">,</span> <span class="n">iana</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">assert</span> <span class="n">mime_type</span> <span class="o">==</span> <span class="s2">&quot;application/x-bzip&quot;</span>
 <span class="k">assert</span> <span class="n">from_mime</span><span class="p">(</span><span class="n">mime_type</span><span class="p">)</span> <span class="ow">is</span> <span class="n">Bzip</span>
+
 <span class="c1"># Using MIME-like string</span>
-<span class="n">mimelike_type</span> <span class="o">=</span> <span class="n">to_mime</span><span class="p">(</span><span class="n">Bzip</span><span class="p">,</span> <span class="n">iana_mime</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">mimelike_type</span> <span class="o">=</span> <span class="n">to_mime</span><span class="p">(</span><span class="n">Bzip</span><span class="p">,</span> <span class="n">iana</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">assert</span> <span class="n">mimelike_type</span> <span class="o">==</span> <span class="s2">&quot;archive/bzip&quot;</span>
 <span class="k">assert</span> <span class="n">from_mime</span><span class="p">(</span><span class="n">mimelike_type</span><span class="p">)</span> <span class="ow">is</span> <span class="n">Bzip</span>
 </pre></div>
-</div>
-</section>
-<section id="detecting-formats">
-<h2>Detecting formats<a class="headerlink" href="#detecting-formats" title="Permalink to this heading">#</a></h2>
-<p>While not a key consideration in the design of the <em>FileFormats</em> library, it is also
-possible to detect the formats that match a given set of files. Note that it isn't
-always possible to uniquely identify a single format, since there may be several matching
-formats for, non-descript binary file formats that use the &quot;.dat&quot; extension for example.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">matching_formats</span></code> function will find all formats that match the provided file-system
-paths.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">matching_formats</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">matching_formats</span><span class="p">(</span><span class="s2">&quot;/path/to/word.doc&quot;</span><span class="p">)</span>
-<span class="go">[&lt;class &#39;fileformats.document.Msword&#39;&gt;]</span>
-</pre></div>
-</div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Note that the installation of additional sub-packages may cause detection code to
-break if your code doesn't the potential of new formats being added with overlapping
-cases where they will both match a given file set.</p>
 </div>
 </section>
 </section>
@@ -300,23 +307,23 @@ cases where they will both match a given file set.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="extensions.html">
+          <a class="next-page" href="developer.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Defining Formats and Converters</div>
+                <div class="title">Developer Guide</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="index.html">
+          <a class="prev-page" href="workflows.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Home</div>
+                <div class="title">Data Workflows</div>
                 
               </div>
             </a>
@@ -350,10 +357,10 @@ cases where they will both match a given file set.</p>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Identifying formats</a><ul>
+<li><a class="reference internal" href="#">Format Identification</a><ul>
+<li><a class="reference internal" href="#detecting-formats">Detecting formats</a></li>
 <li><a class="reference internal" href="#mime-types">MIME Types</a></li>
 <li><a class="reference internal" href="#mime-like-types">MIME-like types</a></li>
-<li><a class="reference internal" href="#detecting-formats">Detecting formats</a></li>
 </ul>
 </li>
 </ul>

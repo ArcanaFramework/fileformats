@@ -1,0 +1,673 @@
+<!doctype html>
+<html class="no-js" lang="English">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="prev" title="Format Identification" href="identification.html" />
+
+    <!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07 -->
+        <title>Developer Guide - FileFormats v0.3.2</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #ffffff;
+  --color-code-foreground: black;
+  --color-brand-primary: #0e691b;
+  --color-brand-content: #0e691b;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #111111;
+  --color-code-foreground: #ffffff;
+  --color-brand-primary: #5db754;
+  --color-brand-content: #5db754;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #111111;
+  --color-code-foreground: #ffffff;
+  --color-brand-primary: #5db754;
+  --color-brand-content: #5db754;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">FileFormats v0.3.2</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  
+  
+  <span class="sidebar-brand-text">FileFormats v0.3.2</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="workflows.html">Data Workflows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="identification.html">Format Identification</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Developer Guide</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="developer-guide">
+<h1>Developer Guide<a class="headerlink" href="#developer-guide" title="Permalink to this heading">#</a></h1>
+<p><em>FileFormats</em> has been designed so that file-formats specified by standard features,
+such as file extension and magic number can be implemented in a few lines, while
+still being flexible enough handle any weird whacky file formats used in obscure domains.</p>
+<section id="extension-packages">
+<h2>Extension packages<a class="headerlink" href="#extension-packages" title="Permalink to this heading">#</a></h2>
+<p>Format classes not covered by <a class="reference external" href="https://www.iana_mime.org/assignments/media-types/media-types.xhtml">IANA Media Types</a> should be implemented in a separate
+<em>FileFormats</em> extension packages. New extension packages can be conveniently created from
+the FileFormats extension template, <a class="reference external" href="https://github.com/ArcanaFramework/fileformats-medimage">https://github.com/ArcanaFramework/fileformats-medimage</a>,
+including CI/CD workflows and tests.</p>
+<p>Extension packages add a new unique format namespace under the <code class="docutils literal notranslate"><span class="pre">fileformats</span></code> namespace package.
+For example, the <a class="reference external" href="https://github.com/ArcanaFramework/fileformats-medimage">FileFormats Medimage Extension</a>
+implements a range of file formats used in medical imaging research under the
+<code class="docutils literal notranslate"><span class="pre">fileformats.medimage</span></code> namespace.</p>
+<p>When designing an extension packages, try to keep any external dependencies to a bare
+minimum in the base installation, and add them into the <code class="docutils literal notranslate"><span class="pre">[extended]</span></code> optional
+dependencies. When importing extended dependencies in a module, enclose them in
+a try-except statement that catches ImportErrors and sets the module to a
+<code class="docutils literal notranslate"><span class="pre">MissingExtendedDependency</span></code> instead, e.g.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">MissingExtendedDependency</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">external_package</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">external_package</span> <span class="o">=</span> <span class="n">MissingExtendedDependency</span><span class="p">(</span><span class="s2">&quot;external_package&quot;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This will raise an informative error message, if a user attempts to access this the
+external package.</p>
+</section>
+<section id="basic-formats">
+<h2>Basic formats<a class="headerlink" href="#basic-formats" title="Permalink to this heading">#</a></h2>
+<p>In the simplest case of a file format identified by its extension alone, you only need
+to inherit from the <code class="docutils literal notranslate"><span class="pre">fileformats.generic.File</span></code> class and set the <code class="docutils literal notranslate"><span class="pre">ext</span></code> attr, e.g</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.generic</span> <span class="kn">import</span> <span class="n">File</span>
+
+<span class="k">class</span> <span class="nc">MyFileFormat</span><span class="p">(</span><span class="n">File</span><span class="p">):</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.my&quot;</span>
+</pre></div>
+</div>
+<p>Likewise if the format you are defining is a directory containing one or more files of
+a given type you can just inherit from the <code class="docutils literal notranslate"><span class="pre">fileformats.generic.Directory</span></code> class and
+set the <code class="docutils literal notranslate"><span class="pre">content_types</span></code> attributes</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.generic</span> <span class="kn">import</span> <span class="n">Directory</span>
+<span class="kn">from</span> <span class="nn">fileformats.text</span> <span class="kn">import</span> <span class="n">Markdown</span><span class="p">,</span> <span class="n">Html</span>
+
+
+<span class="k">class</span> <span class="nc">MyDirFormat</span><span class="p">(</span><span class="n">File</span><span class="p">):</span>
+    <span class="n">content_types</span> <span class="o">=</span> <span class="p">(</span><span class="n">Markdown</span><span class="p">,</span> <span class="n">Html</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="standard-mixins">
+<h2>Standard mixins<a class="headerlink" href="#standard-mixins" title="Permalink to this heading">#</a></h2>
+<p>If the format is a binary file with a magic number (identifying byte string at start of
+file), you can use the <code class="docutils literal notranslate"><span class="pre">fileformats.core.mixin.WithMagicNumber</span></code> mixin. For files with
+magic numbers you will also need to set the <code class="docutils literal notranslate"><span class="pre">binary</span></code> attr to True.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.generic</span> <span class="kn">import</span> <span class="n">File</span>
+<span class="kn">from</span> <span class="nn">fileformats.core.mixin</span> <span class="kn">import</span> <span class="n">WithMagicNumber</span>
+
+
+<span class="k">class</span> <span class="nc">MyBinaryFormat1</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.myb1&quot;</span>
+    <span class="n">binary</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="s2">&quot;98E3F12200AA&quot;</span>  <span class="c1"># Unicode strings are interpreted as hex</span>
+
+
+<span class="k">class</span> <span class="nc">MyBinaryFormat2</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.myb2&quot;</span>
+    <span class="n">binary</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;MYB2&quot;</span>  <span class="c1"># Byte strings are not converted</span>
+</pre></div>
+</div>
+<p>Formats will contain metadata in a separate header file can be defined using
+the <code class="docutils literal notranslate"><span class="pre">WithSeparateHeader</span></code> mixin.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.generic</span> <span class="kn">import</span> <span class="n">File</span>
+<span class="kn">from</span> <span class="nn">fileformats.core.mixin</span> <span class="kn">import</span> <span class="n">WithSeparateHeader</span>
+
+
+ <span class="k">class</span> <span class="nc">MyHeaderFormat</span><span class="p">(</span><span class="n">File</span><span class="p">):</span>
+     <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.hdr&quot;</span>
+
+     <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+         <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">ln</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">ln</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">contents</span><span class="o">.</span><span class="n">splitlines</span><span class="p">())</span>
+
+ <span class="k">class</span> <span class="nc">MyFormatWithHeader</span><span class="p">(</span><span class="n">WithSeparateHeader</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
+     <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.myh&quot;</span>
+     <span class="n">header_type</span> <span class="o">=</span> <span class="n">MyHeaderFormat</span>
+</pre></div>
+</div>
+<p>The header file can be accessed from an instantiated file object via the <code class="docutils literal notranslate"><span class="pre">header</span></code>
+property. If the header format implements the <code class="docutils literal notranslate"><span class="pre">load</span></code> method, then it is assumed to
+return a dictionary containing metadata for the file-set.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">my_file</span> <span class="o">=</span> <span class="n">MyFormatWithHeader</span><span class="p">(</span><span class="s2">&quot;/path/to/a/file.myh&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_file</span><span class="o">.</span><span class="n">header</span>
+<span class="go">MyHeaderFormat(fspaths={&quot;/path/to/a/file.hdr&quot;})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_file</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;experiment-id&quot;</span><span class="p">]</span>  <span class="c1"># load experiment ID from header file</span>
+<span class="go">&#39;0001&#39;</span>
+</pre></div>
+</div>
+<p>Similar to <code class="docutils literal notranslate"><span class="pre">WithSeparateHeader</span></code>, <code class="docutils literal notranslate"><span class="pre">WithSideCar</span></code> can be used to define a format that
+contains some metadata within the main file, and additional metadata in a separate
+&quot;side-car&quot; file. It can be used the same as <code class="docutils literal notranslate"><span class="pre">WithSeparateHeader</span></code>, however, the
+type of the primary file that reads the metadata from the binary file with <code class="docutils literal notranslate"><span class="pre">load_metadata</span></code>
+must also be defined in <code class="docutils literal notranslate"><span class="pre">primary_type</span></code></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.generic</span> <span class="kn">import</span> <span class="n">File</span>
+<span class="kn">from</span> <span class="nn">fileformats.core.mixin</span> <span class="kn">import</span> <span class="n">WithSideCar</span>
+<span class="kn">from</span> <span class="nn">fileformats.serialization</span> <span class="kn">import</span> <span class="n">Json</span>
+
+<span class="k">class</span> <span class="nc">FormatWithoutSideCar</span><span class="p">(</span><span class="n">File</span><span class="p">):</span>
+
+     <span class="n">binary</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">load_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       <span class="o">...</span> <span class="n">load</span> <span class="n">metadata</span> <span class="ow">in</span> <span class="n">binary</span><span class="o">...</span>
+
+
+<span class="k">class</span> <span class="nc">FormatWithSideCar</span><span class="p">(</span><span class="n">WithSideCar</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.fws&quot;</span>
+    <span class="n">primary_type</span> <span class="o">=</span> <span class="n">FormatWithoutSideCar</span>
+    <span class="n">side_car_type</span> <span class="o">=</span> <span class="n">Json</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Mixin classes in the <code class="docutils literal notranslate"><span class="pre">fileformats.core.mixin</span></code> package must come first in the
+method resolution order of the types bases, so that they can override methods in
+<code class="docutils literal notranslate"><span class="pre">FileSet</span></code> if need be.</p>
+</div>
+</section>
+<section id="custom-format-patterns">
+<h2>Custom format patterns<a class="headerlink" href="#custom-format-patterns" title="Permalink to this heading">#</a></h2>
+<p>While the standard mixin classes should cover 90% of all formats, in the wild-west of
+scientific data formats you might need to write custom validators using the
+<code class="docutils literal notranslate"><span class="pre">&#64;fileformats.core.mark.required</span></code> and <code class="docutils literal notranslate"><span class="pre">&#64;fileformats.core.mark.check</span></code> decorators.</p>
+<p>Take for example the <a class="reference external" href="https://www.earthdatascience.org/courses/earth-analytics/spatial-data-r/shapefile-structure/">GIS shapefile structure</a>,
+it is a file-set consisting of 3 to 6 files differentiated by their extensions. To
+implement this class we use the <code class="docutils literal notranslate"><span class="pre">required</span></code> decorator. We inherit from the <code class="docutils literal notranslate"><span class="pre">WithAdjacents</span></code>
+mixin so that neighbouring files (i.e. files with the same stem but different extension)
+are included when the class is instantiated with just the primary &quot;.shp&quot; file.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.generic</span> <span class="kn">import</span> <span class="n">File</span>
+<span class="kn">from</span> <span class="nn">fileformats.serialization</span> <span class="kn">import</span> <span class="n">Xml</span>
+<span class="kn">from</span> <span class="nn">fileformats.mixin</span> <span class="kn">import</span> <span class="n">WithAdjacents</span>
+<span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">mark</span>
+
+<span class="k">class</span> <span class="nc">GisShapeIndex</span><span class="p">(</span><span class="n">File</span><span class="p">):</span>
+    <span class="s2">&quot;the file that indexes the geometry.&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.shx&quot;</span>
+
+
+<span class="k">class</span> <span class="nc">GisShapeFeatures</span><span class="p">(</span><span class="n">File</span><span class="p">):</span>
+    <span class="s2">&quot;the file that stores feature attributes in a tabular format&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.dbf&quot;</span>
+
+
+<span class="k">class</span> <span class="nc">WellKnownText</span><span class="p">(</span><span class="n">File</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;the file that contains information on projection format including the</span>
+<span class="sd">    coordinate system and projection information. It is a plain text file</span>
+<span class="sd">    describing the projection using well-known text (WKT) format.&quot;&quot;&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.prj&quot;</span>
+
+
+<span class="k">class</span> <span class="nc">GisShapeSpatialIndexN</span><span class="p">(</span><span class="n">File</span><span class="p">):</span>
+    <span class="s2">&quot;the files that are a spatial index of the features.&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.shn&quot;</span>
+
+
+<span class="k">class</span> <span class="nc">GisShapeSpatialIndexB</span><span class="p">(</span><span class="n">File</span><span class="p">):</span>
+    <span class="s2">&quot;the files that are a spatial index of the features.&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.shb&quot;</span>
+
+
+<span class="k">class</span> <span class="nc">GisShapeGeoSpatialMetadata</span><span class="p">(</span><span class="n">Xml</span><span class="p">):</span>
+    <span class="s2">&quot;the file that is the geospatial metadata in XML format&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.shp.xml&quot;</span>
+
+
+<span class="k">class</span> <span class="nc">GisShape</span><span class="p">(</span><span class="n">WithAdjacents</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
+
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.shp&quot;</span>  <span class="c1"># the main file that will be mapped to fspath</span>
+
+    <span class="nd">@mark</span><span class="o">.</span><span class="n">required</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">index_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">GisShapeIndex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">select_by_ext</span><span class="p">(</span><span class="n">GisShapeIndex</span><span class="p">))</span>
+
+    <span class="nd">@mark</span><span class="o">.</span><span class="n">required</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">features_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">GisShapeFeatures</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">select_by_ext</span><span class="p">(</span><span class="n">GisShapeFeatures</span><span class="p">))</span>
+
+    <span class="nd">@mark</span><span class="o">.</span><span class="n">required</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">project_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">WellKnownText</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">select_by_ext</span><span class="p">(</span><span class="n">WellKnownText</span><span class="p">),</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="nd">@mark</span><span class="o">.</span><span class="n">required</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">spatial_index_n_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">GisShapeSpatialIndexN</span><span class="p">(</span>
+           <span class="bp">self</span><span class="o">.</span><span class="n">select_by_ext</span><span class="p">(</span><span class="n">GisShapeSpatialIndexN</span><span class="p">),</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+
+    <span class="nd">@mark</span><span class="o">.</span><span class="n">required</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">spatial_index_n_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">GisShapeSpatialIndexB</span><span class="p">(</span>
+           <span class="bp">self</span><span class="o">.</span><span class="n">select_by_ext</span><span class="p">(</span><span class="n">GisShapeSpatialIndexB</span><span class="p">),</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+
+    <span class="nd">@mark</span><span class="o">.</span><span class="n">required</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">geospatial_metadata_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">GisShapeGeoSpatialMetadata</span><span class="p">(</span>
+           <span class="bp">self</span><span class="o">.</span><span class="n">select_by_ext</span><span class="p">(</span><span class="n">GisShapeGeoSpatialMetadata</span><span class="p">),</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+<p>By marking the properties as required, means that they need to be able to return a
+value without raising a <code class="docutils literal notranslate"><span class="pre">FormatsMismatchError</span></code> for the class to be initiated. Required
+properties, that appear in <code class="docutils literal notranslate"><span class="pre">fspaths</span></code> attribute of the object are considered to be
+&quot;required paths&quot;, and are copied along side the main path in the <code class="docutils literal notranslate"><span class="pre">copy_to</span></code> method.</p>
+<p>After the format class has been initiated and a cursory validation has been performed
+on the paths provided, deeper checks can be run as part of the <code class="docutils literal notranslate"><span class="pre">validate</span></code> method.
+These checks are specified using the <code class="docutils literal notranslate"><span class="pre">check</span></code> decorator. Take the <code class="docutils literal notranslate"><span class="pre">fileformats.image.Tiff</span></code>
+class</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Tiff</span><span class="p">(</span><span class="n">RasterImage</span><span class="p">):</span>
+
+   <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.tiff&quot;</span>
+   <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/tiff&quot;</span>
+
+   <span class="n">magic_number_le</span> <span class="o">=</span> <span class="s2">&quot;49492A00&quot;</span>
+   <span class="n">magic_number_be</span> <span class="o">=</span> <span class="s2">&quot;4D4D002A&quot;</span>
+
+   <span class="nd">@mark</span><span class="o">.</span><span class="n">check</span>
+   <span class="k">def</span> <span class="nf">endianness</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+      <span class="n">read_magic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_contents</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">magic_number_le</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">read_magic</span> <span class="o">==</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">magic_number_le</span><span class="p">):</span>
+            <span class="n">endianness</span> <span class="o">=</span> <span class="s2">&quot;little&quot;</span>
+      <span class="k">elif</span> <span class="n">read_magic</span> <span class="o">==</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">magic_number_be</span><span class="p">):</span>
+            <span class="n">endianness</span> <span class="o">=</span> <span class="s2">&quot;big&quot;</span>
+      <span class="k">else</span><span class="p">:</span>
+            <span class="n">read_magic_str</span> <span class="o">=</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">hex</span><span class="p">(</span><span class="n">read_magic</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">FormatMismatchError</span><span class="p">(</span>
+               <span class="sa">f</span><span class="s2">&quot;Magic number of file &#39;</span><span class="si">{</span><span class="n">read_magic_str</span><span class="si">}</span><span class="s2">&#39; doesn&#39;t match either the &quot;</span>
+               <span class="sa">f</span><span class="s2">&quot;little-endian &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">magic_number_le</span><span class="si">}</span><span class="s2">&#39; and big-endian &quot;</span>
+               <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">magic_number_be</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+            <span class="p">)</span>
+      <span class="k">return</span> <span class="n">endianness</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">Tiff</span></code> format class needs to check two different magic numbers, one for big endian
+files and another one for little endian files. Therefore we can't just use the
+<code class="docutils literal notranslate"><span class="pre">WithMagicNumber</span></code> mixin and have to roll our own, <code class="docutils literal notranslate"><span class="pre">endianness</span></code> which will be called
+when <code class="docutils literal notranslate"><span class="pre">validate()</span></code> is called because it is decorated with <code class="docutils literal notranslate"><span class="pre">fileformats.core.mark.check</span></code>.
+Note that this method can also be used to check the endianness of the file if required.</p>
+</section>
+<section id="converters">
+<h2>Converters<a class="headerlink" href="#converters" title="Permalink to this heading">#</a></h2>
+<p>Converters between two equivalent formats are defined using <a class="reference external" href="https://pydra.readthedocs.io">Pydra</a> dataflow engine
+<a class="reference external" href="https://pydra.readthedocs.io/en/latest/components.html">tasks</a>. There are two types
+of <a class="reference external" href="https://pydra.readthedocs.io">Pydra</a> tasks, function tasks, Python functions decorated by <code class="docutils literal notranslate"><span class="pre">&#64;pydra.mark.task</span></code>, and
+shell-command tasks, which wrap command-line tools in Python classes. To register a
+<a class="reference external" href="https://pydra.readthedocs.io">Pydra</a> task as a converter between two file formats it needs to be decorated with the
+<code class="docutils literal notranslate"><span class="pre">&#64;fileformats.core.mark.converter</span></code> decorator.</p>
+<p>Pydra uses type annotations to define the input and outputs of the tasks. It there is
+a input to the task named <code class="docutils literal notranslate"><span class="pre">in_file</span></code>, and either a single anonymous output or an output
+named <code class="docutils literal notranslate"><span class="pre">out_file</span></code>, and both are format classes, then no arguments need to be passed
+to the converter decorator and the conversion source and target formats are determined
+automatically. For example,</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">pydra.mark</span>
+<span class="kn">import</span> <span class="nn">fileformats.core.mark</span>
+<span class="kn">from</span> <span class="nn">.mypackage</span> <span class="kn">import</span> <span class="n">MyFormat</span><span class="p">,</span> <span class="n">MyOtherFormat</span>
+
+
+<span class="nd">@fileformats</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">converter</span>
+<span class="nd">@pydra</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">task</span>
+<span class="k">def</span> <span class="nf">convert_my_format</span><span class="p">(</span><span class="n">in_file</span><span class="p">:</span> <span class="n">MyFormat</span><span class="p">,</span> <span class="n">conversion_argument</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MyOtherFormat</span><span class="p">:</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">in_file</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+    <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span><span class="s2">&quot;out&quot;</span> <span class="o">+</span> <span class="n">MyOtherFormat</span><span class="o">.</span><span class="n">ext</span><span class="p">)</span>
+    <span class="o">...</span> <span class="n">do</span> <span class="n">conversion</span> <span class="o">...</span>
+    <span class="k">return</span> <span class="n">MyOtherFormat</span><span class="o">.</span><span class="n">save_new</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>defines a converter between <code class="docutils literal notranslate"><span class="pre">MyFormat</span></code> and <code class="docutils literal notranslate"><span class="pre">MyOtherFormat</span></code>, with the converter
+argument <code class="docutils literal notranslate"><span class="pre">conversion_argument</span></code>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">&#64;converter</span></code> decorator registers the class in a class attribute of the target class,
+therefore only if module containing the converter methods is imported will the converters
+be available. Converter arguments can be passed as keyword-arguments to the
+<code class="docutils literal notranslate"><span class="pre">get_converter</span></code> and <code class="docutils literal notranslate"><span class="pre">convert</span></code> methods if required.</p>
+<p>Sometimes the source and target formats cannot be automatically determined from the
+task signature, and need to be provided as arguments to the <code class="docutils literal notranslate"><span class="pre">&#64;converter</span></code> decorator
+instead. For example, the converter between raster images using the <code class="docutils literal notranslate"><span class="pre">imageio</span></code> package
+to do a generic conversion between all image types,</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">pydra.mark</span>
+<span class="kn">import</span> <span class="nn">pydra.engine.specs</span>
+<span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">mark</span>
+<span class="kn">from</span> <span class="nn">.raster</span> <span class="kn">import</span> <span class="n">RasterImage</span><span class="p">,</span> <span class="n">Bitmap</span><span class="p">,</span> <span class="n">Gif</span><span class="p">,</span> <span class="n">Jpeg</span><span class="p">,</span> <span class="n">Png</span><span class="p">,</span> <span class="n">Tiff</span>
+
+
+<span class="nd">@mark</span><span class="o">.</span><span class="n">converter</span><span class="p">(</span><span class="n">target_format</span><span class="o">=</span><span class="n">Bitmap</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="n">Bitmap</span><span class="p">)</span>
+<span class="nd">@mark</span><span class="o">.</span><span class="n">converter</span><span class="p">(</span><span class="n">target_format</span><span class="o">=</span><span class="n">Gif</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="n">Gif</span><span class="p">)</span>
+<span class="nd">@mark</span><span class="o">.</span><span class="n">converter</span><span class="p">(</span><span class="n">target_format</span><span class="o">=</span><span class="n">Jpeg</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="n">Jpeg</span><span class="p">)</span>
+<span class="nd">@mark</span><span class="o">.</span><span class="n">converter</span><span class="p">(</span><span class="n">target_format</span><span class="o">=</span><span class="n">Png</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="n">Png</span><span class="p">)</span>
+<span class="nd">@mark</span><span class="o">.</span><span class="n">converter</span><span class="p">(</span><span class="n">target_format</span><span class="o">=</span><span class="n">Tiff</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="n">Tiff</span><span class="p">)</span>
+<span class="nd">@pydra</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">task</span>
+<span class="nd">@pydra</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">annotate</span><span class="p">({</span><span class="s2">&quot;return&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;out_file&quot;</span><span class="p">:</span> <span class="n">RasterImage</span><span class="p">}})</span>
+<span class="k">def</span> <span class="nf">convert_image</span><span class="p">(</span><span class="n">in_file</span><span class="p">:</span> <span class="n">RasterImage</span><span class="p">,</span> <span class="n">output_format</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="n">data_array</span> <span class="o">=</span> <span class="n">in_file</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">out_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">out_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">())</span>
+    <span class="n">output_path</span> <span class="o">=</span> <span class="n">out_dir</span> <span class="o">/</span> <span class="p">(</span><span class="n">in_file</span><span class="o">.</span><span class="n">fspath</span><span class="o">.</span><span class="n">stem</span> <span class="o">+</span> <span class="n">output_format</span><span class="o">.</span><span class="n">ext</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">output_format</span><span class="o">.</span><span class="n">save_new</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">data_array</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In this case because we can write the converter in a generic way that allows us to convert
+between any image type supported by <code class="docutils literal notranslate"><span class="pre">imageio</span></code>, we use the <code class="docutils literal notranslate"><span class="pre">RasterImage</span></code> base class
+for the input and output format, and explicitly set the <code class="docutils literal notranslate"><span class="pre">target_format</span></code> of the output
+for each of the support output formats. We also pass <code class="docutils literal notranslate"><span class="pre">output_format</span></code> as a keyword argument
+from the converter decorator to specify the format we want to convert to.</p>
+<p>Note that while the <code class="docutils literal notranslate"><span class="pre">source_format</span></code> can be a base class of the format to be converted,
+the <code class="docutils literal notranslate"><span class="pre">target_format</span></code> can't be, since the subclass my have specific characteristics not
+captured by transformation to the base class. However, you can attempt to &quot;cast&quot; a
+base class to a sub-class simply by providing the base class as an input, since it will
+simply iterate over paths in the base class and attempt to validate them.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sub_format</span> <span class="o">=</span> <span class="n">SubFormat</span><span class="p">(</span><span class="n">BaseFormat</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">another_format</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sub_format</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Shell commands are marked as converters in the same way as function tasks, and existing
+ShellCommandTask classes can be registered by calling the converter method on the ShellCommandTask
+directly. If required, you can also map the input and output files to <code class="docutils literal notranslate"><span class="pre">in_file</span></code> and
+<code class="docutils literal notranslate"><span class="pre">out_file</span></code> via the converter decorator for any converter task and set appropriate
+input fields</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.yourpackage</span> <span class="kn">import</span> <span class="n">YourFormat</span><span class="p">,</span> <span class="n">YourOtherFormat</span>
+<span class="kn">from</span> <span class="nn">pydra.tasks.thirdparty</span> <span class="kn">import</span> <span class="n">ThirdPartyShellCmd</span>
+
+<span class="n">converter</span><span class="p">(</span>
+    <span class="n">source_format</span><span class="o">=</span><span class="n">YourFormat</span><span class="p">,</span>
+    <span class="n">target_format</span><span class="o">=</span><span class="n">YourOtherFormat</span><span class="p">,</span>
+    <span class="n">in_file</span><span class="o">=</span><span class="n">your_file</span><span class="p">,</span>
+    <span class="n">out_file</span><span class="o">=</span><span class="n">other_file</span><span class="p">,</span>
+    <span class="n">compression</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span>
+<span class="p">)(</span><span class="n">ThirdPartyShellCmd</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If you need to map any of the converter arguments or perform more complex logic, it is
+also possible to decorate a generic function that returns an instantiated <a class="reference external" href="https://pydra.readthedocs.io">Pydra</a> task,
+such as in the <code class="docutils literal notranslate"><span class="pre">mrconvert</span></code> converter in the <code class="docutils literal notranslate"><span class="pre">fileformats-medimage</span></code> package.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@mark</span><span class="o">.</span><span class="n">converter</span><span class="p">(</span><span class="n">source_format</span><span class="o">=</span><span class="n">MedicalImage</span><span class="p">,</span> <span class="n">target_format</span><span class="o">=</span><span class="n">Analyze</span><span class="p">,</span> <span class="n">out_ext</span><span class="o">=</span><span class="n">Analyze</span><span class="o">.</span><span class="n">ext</span><span class="p">)</span>
+<span class="nd">@mark</span><span class="o">.</span><span class="n">converter</span><span class="p">(</span>
+    <span class="n">source_format</span><span class="o">=</span><span class="n">MedicalImage</span><span class="p">,</span> <span class="n">target_format</span><span class="o">=</span><span class="n">MrtrixImage</span><span class="p">,</span> <span class="n">out_ext</span><span class="o">=</span><span class="n">MrtrixImage</span><span class="o">.</span><span class="n">ext</span>
+<span class="p">)</span>
+<span class="nd">@mark</span><span class="o">.</span><span class="n">converter</span><span class="p">(</span>
+    <span class="n">source_format</span><span class="o">=</span><span class="n">MedicalImage</span><span class="p">,</span>
+    <span class="n">target_format</span><span class="o">=</span><span class="n">MrtrixImageHeader</span><span class="p">,</span>
+    <span class="n">out_ext</span><span class="o">=</span><span class="n">MrtrixImageHeader</span><span class="o">.</span><span class="n">ext</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">mrconvert</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">out_ext</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Initiate an MRConvert task with the output file extension set</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        name of the converter task</span>
+<span class="sd">    out_ext : str</span>
+<span class="sd">        extension of the output file, used by MRConvert to determine the desired format</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pydra.ShellCommandTask</span>
+<span class="sd">        the converter task</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">pydra_mrtrix3_utils</span><span class="o">.</span><span class="n">MRConvert</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">out_file</span><span class="o">=</span><span class="s2">&quot;out&quot;</span> <span class="o">+</span> <span class="n">out_ext</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Since converter tasks rely on <a class="reference external" href="https://pydra.readthedocs.io">Pydra</a>, which should be added as an &quot;extended&quot; dependency,
+there is a helping function <code class="docutils literal notranslate"><span class="pre">fileformats.core.import_converters</span></code>, which should be used
+to import the converters into the namespace subpackage <code class="docutils literal notranslate"><span class="pre">__init__.py</span></code>. This will catch
+an import error and raise an informative warning. For example, it is used in the
+<code class="docutils literal notranslate"><span class="pre">__init__.py</span></code> of <code class="docutils literal notranslate"><span class="pre">fileformats.image</span></code>.</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">..core</span> <span class="kn">import</span> <span class="n">__version__</span><span class="p">,</span> <span class="n">import_converters</span>
+<span class="kn">from</span> <span class="nn">.raster</span> <span class="kn">import</span> <span class="n">RasterImage</span><span class="p">,</span> <span class="n">Bitmap</span><span class="p">,</span> <span class="n">Gif</span><span class="p">,</span> <span class="n">Jpeg</span><span class="p">,</span> <span class="n">Png</span><span class="p">,</span> <span class="n">Tiff</span>
+<span class="kn">from</span> <span class="nn">.vector</span> <span class="kn">import</span> <span class="n">VectorImage</span><span class="p">,</span> <span class="n">Svg</span>
+
+<span class="n">import_converters</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If the converters aren't imported successfully, then you will receive a
+<code class="docutils literal notranslate"><span class="pre">FormatConversionError</span></code> error saying there are no converters between FormatA and
+FormatB.</p>
+</div>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          <a class="prev-page" href="identification.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Format Identification</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2023, Thomas G. Close
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Developer Guide</a><ul>
+<li><a class="reference internal" href="#extension-packages">Extension packages</a></li>
+<li><a class="reference internal" href="#basic-formats">Basic formats</a></li>
+<li><a class="reference internal" href="#standard-mixins">Standard mixins</a></li>
+<li><a class="reference internal" href="#custom-format-patterns">Custom format patterns</a></li>
+<li><a class="reference internal" href="#converters">Converters</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/scripts/furo.js"></script>
+    </body>
+</html>
