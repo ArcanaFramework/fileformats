@@ -1,6 +1,7 @@
 from __future__ import annotations
 import importlib
 import re
+from warnings import warn
 from pathlib import Path
 import os
 import pkgutil
@@ -268,6 +269,23 @@ class MissingExtendedDependency:
             f"{self.required_in} with 'extended' install extra to access extended "
             f"behaviour of the format classes (such as loading and conversion), i.e.\n\n"
             f"    $ python3 -m pip install {self.required_in}[extended]"
+        )
+
+
+def import_converters(module_name):
+    """Attempts to import converters and raises warning if they can be imported"""
+    try:
+        importlib.import_module(module_name + ".converters")
+    except ImportError:
+        namespace = module_name.split(".")[1]
+        if namespace in STANDARD_NAMESPACES:
+            subpkg = ""
+        else:
+            subpkg = f"-{namespace}"
+        warn(
+            f"could not import converters for {module_name}  module, please install with "
+            f"the 'extended' install option to use converters for {module_name}, i.e.\n\n"
+            f"$ python3 -m pip install fileformats{subpkg}[extended]"
         )
 
 

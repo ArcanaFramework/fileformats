@@ -1,4 +1,4 @@
-from ..core import __version__
+from ..core import __version__, import_converters
 from warnings import warn
 from fileformats.generic import File
 from fileformats.core.mixin import WithMagicNumber
@@ -43,10 +43,4 @@ class Tar_Gzip(Gzip, Tar):
     iana_mime = "application/x-tar+gzip"
 
 
-try:
-    from .converters import *
-except ImportError:
-    warn(
-        f"could not import converters for {__name__}  module, please install "
-        "fileformats[converters] if conversion is desired"
-    )
+import_converters(__name__)

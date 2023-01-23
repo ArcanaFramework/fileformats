@@ -3,7 +3,7 @@ from pathlib import Path
 import json
 from ..core import __version__, mark
 from ..generic import File
-from ..core.utils import MissingExtendedDependency
+from ..core.utils import MissingExtendedDependency, import_converters
 
 try:
     import yaml
@@ -64,11 +64,4 @@ class Yaml(DataSerialization):
         return cls(fspath)
 
 
-try:
-    from .converters import *
-except ImportError:
-    warn(
-        f"could not import converters for {__name__}  module, please install with the"
-        f"'extended' install extra to use converters for {__name__}, i.e.\n\n"
-        "$ python3 -m pip install fileformats-medimage[extended]"
-    )
+import_converters(__name__)

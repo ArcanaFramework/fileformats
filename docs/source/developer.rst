@@ -19,6 +19,22 @@ For example, the `FileFormats Medimage Extension <https://github.com/ArcanaFrame
 implements a range of file formats used in medical imaging research under the
 ``fileformats.medimage`` namespace.
 
+When designing an extension packages, try to keep any external dependencies to a bare
+minimum in the base installation, and add them into the ``[extended]`` optional
+dependencies. When importing extended dependencies in a module, enclose them in
+a try-except statement that catches ImportErrors and sets the module to a
+``MissingExtendedDependency`` instead, e.g.
+
+.. code-block:: python
+
+    from fileformats.core import MissingExtendedDependency
+    try:
+        import external_package
+    except ImportError:
+        external_package = MissingExtendedDependency("external_package", __name__)
+
+This will raise an informative error message, if a user attempts to access this the
+external package.
 
 Basic formats
 -------------
