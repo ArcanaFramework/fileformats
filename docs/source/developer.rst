@@ -1,5 +1,3 @@
-__developer__
-
 Developer Guide
 ===============
 

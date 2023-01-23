@@ -79,8 +79,7 @@ error will be raised they are loaded from a MIME type.
 .. warning::
     Note that the installation of additional sub-packages may cause detection code to
     break if your code doesn't the potential of new formats being added with the same
-    class name
-
+    class name. You may prefer to use "MIME-like" type strings in that case if possible.
 
 
 MIME-like types
@@ -107,10 +106,12 @@ types, so it is possible to roundtrip from both.
 
     from fileformats.core import to_mime, from_mime
     from from fileformats.archive import Bzip
+
     # Using official-style MIME string
     mime_type = to_mime(Bzip, iana=True)
     assert mime_type == "application/x-bzip"
     assert from_mime(mime_type) is Bzip
+
     # Using MIME-like string
     mimelike_type = to_mime(Bzip, iana=False)
     assert mimelike_type == "archive/bzip"

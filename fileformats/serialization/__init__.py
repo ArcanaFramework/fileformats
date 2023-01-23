@@ -11,7 +11,7 @@ except ImportError:
     yaml = MissingExtendedDependency("yaml", __name__)
 
 
-class Serialization(File):
+class DataSerialization(File):
     "Base class for text-based hierarchical data-serialization formats, e.g. JSON, YAML"
 
     iana_mime = None
@@ -27,11 +27,11 @@ class Serialization(File):
         raise NotImplementedError
 
 
-class Xml(Serialization):
+class Xml(DataSerialization):
     ext = ".xml"
 
 
-class Json(Serialization):
+class Json(DataSerialization):
     ext = ".json"
 
     @mark.check
@@ -47,7 +47,7 @@ class Json(Serialization):
         return cls(fspath)
 
 
-class Yaml(Serialization):
+class Yaml(DataSerialization):
     ext = ".yaml"
     alternate_exts = (".yml",)
 

@@ -5,6 +5,13 @@ Data Workflows
 *FileFormats* is primarily designed for the typing of data workflows to ensure
 that data is transferred between workflow nodes in compatible formats.
 
+Base features
+~~~~~~~~~~~~~
+
+Base features are available for all types within *FileFormats* and its extension
+packages using the base install.
+
+
 Validation
 ----------
 
@@ -160,18 +167,66 @@ is rendered.
 
 
 Extended features
------------------
+~~~~~~~~~~~~~~~~~
 
-In addition to the core features of validation and path handling, once a file format
-is defined, it can be convenient to add methods for loading, saving and converting
-the format into the format class. Such features are added on an as needed basis
-(pull requests welcome, see __developer__), so are by no means comprehensive. To use
-extended features, the ``[extended]`` option should be used when installing the
-relevant package to ensure all required dependencies are installed.
+In addition to the basic features of validation and path handling, once a file format
+is defined, it can be convenient to additional methods in the format class for accessing
+and converting the data they refer to. Such features are added to selected
+format classes on a needs basis (pull requests welcome 😊, see :ref:`Developer Guide`),
+so are by no means comprehensive, and **are very much provided "as-is"**.
+
+Since these features, typically rely on a wide-range of external libraries, the dependencies
+are kept separate and only installed if the ``[extended]`` install option is used
+(i.e. ``python3 -m pip install filformats[extended]``).
 
 
-There are a few selected converters between standard file-format types, perhaps most usefully
-between archive types and generic file/directories
+Metadata
+--------
+
+In addition to ``fspaths``, the base ``FileSet`` class defines a ``metadata`` attribute,
+which can be used to save arbitrary metadata alongside the file paths, which can be
+accessed as required, e.g.
+
+.. code-block:: python
+
+    >>> from fileformats.medimage import Dicom
+    >>> dicom = Dicom("/path/to/dicom-dir", metadata={"sex": "male", "handedness": "right"})
+    >>> dicom.metadata["sex"]
+    "male"
+
+If the format class defines the ``load_metadata`` method, then it is lazily called
+whenever a key doesn't exist in the provided metadata to populate the metadata dictionary,
+e.g.
+
+.. code-block:: python
+
+    >>> dicom.metadata["SeriesDescription"]
+    "localizer"
+
+
+Load/saving data
+----------------
+
+Several classes in the base fileformats package implement ``load`` and ``save`` methods.
+An advantage of implementing them  in the format class is that objects instantiated from
+them can then be duck-typed in calling functions/methods. For example, both ``Yaml`` and
+``Json`` formats (both inherit from the ``DataSerialization`` type) implement the
+``load`` method, which returns a dictionary
+
+.. code-block:: python
+
+    from fileformats.serialization import DataSerialization
+
+    def read_json_or_yaml_to_dict(serialized: DataSerialization):
+        return serialized.load()
+
+
+Conversion
+----------
+
+Several Conversion methods are available between equivalent file-formats in the standard
+classes. For example, archive types such as ``Zip`` can be converted into and generic
+file/directories using the ``convert`` classmethod of the target format to convert to
 
 .. code-block:: python
 
@@ -183,17 +238,18 @@ between archive types and generic file/directories
     copied = extracted.copy_to("/path/to/output")
 
 The converters are implemented in the Pydra_ dataflow framework, and can be linked into
-wider Pydra_ workflows by creating a converter task
+wider Pydra_ workflows by accessing the underlying converter task with the ``get_converter``
+classmethod
 
 .. code-block:: python
 
     import pydra
     from pydra.tasks.mypackage import MyTask
-    from fileformats.serialization import Json, Yaml
+    from fileformats.image import Gif, Png
 
-    wf = pydra.Workflow(name="a_workflow", input_spec=["in_json"])
+    wf = pydra.Workflow(name="a_workflow", input_spec=["in_gif"])
     wf.add(
-        Yaml.get_converter(Json, name="json2yaml", in_file=wf.lzin.in_json)
+        Yaml.get_converter(Png, name="gif2png", in_file=wf.lzin.in_gif)
     )
     wf.add(
         MyTask(
@@ -203,9 +259,6 @@ wider Pydra_ workflows by creating a converter task
     )
     ...
 
-Alternatively, the conversion can be executed outside of a Pydra_ workflow with
 
-.. code-block:: python
-
-    json_file = Json("/path/to/file.json")
-    yaml_file = Yaml.convert(json_file)
+.. _Pydra: https://pydra.readthedocs.io
+.. _Analyze: https://en.wikipedia.org/wiki/Analyze_(imaging_software)

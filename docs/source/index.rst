@@ -19,13 +19,13 @@ FileFormats
 
 *Fileformats* provides a library of file-format types implemented as Python classes.
 The format classes are designed to be used in file-type validation during the construction
-of data workflows (see Pydra_), and provide a common interface to general methods
+of data workflows (e.g. Pydra_, Fastr_), and provide a common interface to general methods
 for manipulating and moving the underlying file-system objects between storage locations.
 
-Unlike other file-type Python packages, *FileFormats*, supports "file-set" data
-formats often found in scientific workflows, e.g. with separate header/data files,
-directories containing certain file types, and mechanisms to peek at metadata fields to
-define complex data formats or specific sub-types (e.g. functional MRI DICOM file set).
+Unlike other file-type Python packages, *FileFormats*, supports multi-file data
+formats ("file sets") often found in scientific workflows, e.g. with separate header/data
+files, directories containing certain file types, and mechanisms to peek at metadata fields
+to define complex data formats or specific sub-types (e.g. functional MRI DICOM file set).
 
 File-format types are typically identified by a combination of file extensions
 and "magic numbers", where applicable. In addition to these generic methods,
@@ -62,4 +62,4 @@ the ``extended`` option.
 
 
 .. _Pydra: https://pydra.readthedocs.io
-.. _Analyze: https://en.wikipedia.org/wiki/Analyze_(imaging_software)
+.. _Fastr: https://gitlab.com/radiology/infrastructure/fastr
