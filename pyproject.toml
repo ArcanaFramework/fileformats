@@ -19,8 +19,12 @@ maintainers = [
     {name = "Thomas G. Close", email = "tom.g.close@gmail.com"},
 ]
 keywords = [
-    "file formats",
+    "file-formats",
     "data",
+    "filetype",
+    "magic numbers",
+    "file extension",
+    "MIME",
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
