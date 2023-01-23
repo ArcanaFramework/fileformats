@@ -28,6 +28,10 @@ CHECK_ANNOTATION = "__fileformats_check__"
 logger = logging.getLogger("fileformats")
 
 
+class DataType:
+    pass
+
+
 @attrs.define
 class Metadata:
     """Manually set and lazily loaded metadata of a FileSet"""
@@ -68,7 +72,7 @@ class Metadata:
 
 
 @attrs.define
-class FileSet:
+class FileSet(DataType):
     """
     The base class for all format types within the fileformats package. A generic
     representation of a collection of files related to a single data resource. A
