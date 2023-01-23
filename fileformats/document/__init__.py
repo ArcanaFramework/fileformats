@@ -9,7 +9,7 @@ class Document(File):
     iana_mime = None
 
 
-class Pdf(Document, WithMagicNumber):
+class Pdf(WithMagicNumber, Document):
     ext = ".pdf"
     magic_number = b"%PDF-"
     binary = True
@@ -32,7 +32,7 @@ class MswordX(Zip, Document):
     )
 
 
-class Postscript(Document, WithMagicNumber):
+class Postscript(WithMagicNumber, Document):
     ext = ".eps"
     alternate_exts = (".ps",)
     magic_number = b"%!"

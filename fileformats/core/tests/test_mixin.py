@@ -6,7 +6,7 @@ from fileformats.core.mixin import WithMagicNumber, WithSeparateHeader, WithSide
 from fileformats.core.exceptions import FormatMismatchError, FileFormatsError
 
 
-class FileWithMagicNumber(File, WithMagicNumber):
+class FileWithMagicNumber(WithMagicNumber, File):
 
     ext = ".magic"
     binary = True

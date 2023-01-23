@@ -66,7 +66,7 @@ Using the ``WithMagicNumber`` mixin class, the ``Png`` format can be defined con
     from fileformats.generic import File
     from fileformats.core.mixin import WithMagicNumber
 
-    class Png(File, WithMagicNumber):
+    class Png(WithMagicNumber, File):
         binary = True
         ext = ".png"
         iana_mime = "image/png"

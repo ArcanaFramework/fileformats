@@ -22,25 +22,25 @@ class RasterImage(Image):
         return cls(fspath)
 
 
-class Bitmap(RasterImage, WithMagicNumber):
+class Bitmap(WithMagicNumber, RasterImage):
     ext = ".bmp"
     magic_number = b"BM"
     iana_mime = "image/bmp"
 
 
-class Gif(RasterImage, WithMagicNumber):
+class Gif(WithMagicNumber, RasterImage):
     ext = ".gif"
     iana_mime = "image/gif"
     magic_number = b"GIF8"
 
 
-class Png(RasterImage, WithMagicNumber):
+class Png(WithMagicNumber, RasterImage):
     ext = ".png"
     iana_mime = "image/png"
     magic_number = "89504E470D0A1A0A"
 
 
-class Jpeg(RasterImage, WithMagicNumber):
+class Jpeg(WithMagicNumber, RasterImage):
     ext = ".jpg"
     alternate_exts = (".jpeg", ".jpe", ".jfif", ".jif")
     iana_mime = "image/jpeg"

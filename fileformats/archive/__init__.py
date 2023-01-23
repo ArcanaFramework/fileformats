@@ -11,25 +11,25 @@ class Archive(File):
 
 
 # Compressed formats
-class Zip(Archive, WithMagicNumber):
+class Zip(WithMagicNumber, Archive):
     ext = ".zip"
     magic_number = "504B0304"
     iana_mime = "application/zip"
 
 
-class Bzip(Archive, WithMagicNumber):
+class Bzip(WithMagicNumber, Archive):
     ext = ".bzip"
     magic_number = "425a"
     iana_mime = "application/bzip"
 
 
-class Gzip(Archive, WithMagicNumber):
+class Gzip(WithMagicNumber, Archive):
     ext = ".gz"
     magic_number = "1F8B08"
     iana_mime = "application/gzip"
 
 
-class Tar(Archive, WithMagicNumber):
+class Tar(WithMagicNumber, Archive):
     ext = ".tar"
     magic_number = "7573746172"
     magic_number_offset = 257

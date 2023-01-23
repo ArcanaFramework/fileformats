@@ -87,7 +87,9 @@ class FileSet:
     """
 
     fspaths: set[Path] = attrs.field(default=None, converter=fspaths_converter)
-    metadata: Metadata = attrs.field(factory=dict, converter=Metadata, kw_only=True)
+    metadata: Metadata = attrs.field(
+        factory=dict, converter=Metadata, repr=False, kw_only=True
+    )
 
     # Explicitly set the Internet Assigned Numbers Authority (https://iana_mime.org) MIME
     # type to None for any base classes that should not correspond to a MIME type.

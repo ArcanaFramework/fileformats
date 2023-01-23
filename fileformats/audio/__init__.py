@@ -16,7 +16,7 @@ class Mpeg(Audio):
     iana_mime = "audio/mpeg"
 
 
-class Mp4(Audio, WithMagicNumber):
+class Mp4(WithMagicNumber, Audio):
     ext = ".mp4"
     iana_mime = "audio/mp4"
     magic_number = "6674797069736F6D"
