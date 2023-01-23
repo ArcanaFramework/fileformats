@@ -4,6 +4,7 @@ import re
 from warnings import warn
 from pathlib import Path
 import os
+import traceback
 import pkgutil
 from contextlib import contextmanager
 from fileformats.core.exceptions import (
@@ -283,9 +284,10 @@ def import_converters(module_name):
         else:
             subpkg = f"-{namespace}"
         warn(
-            f"could not import converters for {module_name}  module, please install with "
+            f"could not import converters for {module_name} module, please install with "
             f"the 'extended' install option to use converters for {module_name}, i.e.\n\n"
-            f"$ python3 -m pip install fileformats{subpkg}[extended]"
+            f"$ python3 -m pip install fileformats{subpkg}[extended]:\n\n"
+            f"Import error was:\n{traceback.format_exc()}"
         )
 
 
