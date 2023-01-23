@@ -3,13 +3,16 @@ Data Workflows
 ==============
 
 *FileFormats* is primarily designed for the typing of data workflows to ensure
-that data is transferred between workflow nodes in compatible formats.
+that data is transferred between workflow nodes in compatible formats. See Pydra_
+and Fastr_ for examples of compatible workflow engines.
+
 
 Base features
 ~~~~~~~~~~~~~
 
 Base features are available for all types within *FileFormats* and its extension
-packages using the base install.
+packages using the base install. They are designed to be broadly available for a large
+range of types and very light-weight in terms of external dependencies.
 
 
 Validation
@@ -262,3 +265,4 @@ classmethod
 
 .. _Pydra: https://pydra.readthedocs.io
 .. _Analyze: https://en.wikipedia.org/wiki/Analyze_(imaging_software)
+.. _Fastr: https://gitlab.com/radiology/infrastructure/fastr
