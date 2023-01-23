@@ -59,7 +59,7 @@ One way to do this is to [configure a new remote named "upstream"](https://help.
 **iv. Install FileFormats on your machine**
 
 To install your version of FileFormats, and the dependencies needed for development,
-in your Python environment (Python 3.7 or higher), run `pip install -e ".[dev,test]"`
+in your Python environment (Python 3.7 or higher), run `pip install -e ".[dev,test,extended]"`
 from your local FileFormats directory.
 
 In order to check if everything is working correctly, run the tests
