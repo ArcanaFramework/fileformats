@@ -431,5 +431,27 @@ such as in the ``mrconvert`` converter in the ``fileformats-medimage`` package.
         return pydra_mrtrix3_utils.MRConvert(name=name, out_file="out" + out_ext)
 
 
+Since converter tasks rely on Pydra_, which should be added as an "extended" dependency,
+there is a helping function ``fileformats.core.import_converters``, which should be used
+to import the converters into the namespace subpackage ``__init__.py``. This will catch
+an import error and raise an informative warning. For example, it is used in the
+``__init__.py`` of ``fileformats.image``.
+
+
+ .. code-block:: python
+
+    from ..core import __version__, import_converters
+    from .raster import RasterImage, Bitmap, Gif, Jpeg, Png, Tiff
+    from .vector import VectorImage, Svg
+
+    import_converters(__name__)
+
+
+.. note::
+    If the converters aren't imported successfully, then you will receive a
+    ``FormatConversionError`` error saying there are no converters between FormatA and
+    FormatB.
+
+
 .. _`IANA Media Types`: https://www.iana_mime.org/assignments/media-types/media-types.xhtml
 .. _Pydra: https://pydra.readthedocs.io
