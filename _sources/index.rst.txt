@@ -64,13 +64,13 @@ the ``extended`` option.
 Quick Example
 -------------
 
-Validate an mp4 audio file
+Validate an mp4 audio file's file-system path (including extension) and magic number
 
 .. code-block:: python
 
    >>> from fileformats.audio import Mp4
-   >>> mp4_file = Mp4("/path/to/audio.mp4")
-   >>> mp4_file.validate()
+   >>> mp4_file = Mp4("/path/to/audio.mp4")  # check path and extension
+   >>> mp4_file.validate()  # check magic number
    >>> mp4_file.fspath
    "/path/to/audio.mp4"
 

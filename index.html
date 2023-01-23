@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Data Workflows" href="workflows.html" />
 
     <!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07 -->
-        <title>FileFormats v0.3.2</title>
+        <title>FileFormats v0.3.3</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -129,7 +129,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="#"><div class="brand">FileFormats v0.3.2</div></a>
+      <a href="#"><div class="brand">FileFormats v0.3.3</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -152,7 +152,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="#">
   
   
-  <span class="sidebar-brand-text">FileFormats v0.3.2</span>
+  <span class="sidebar-brand-text">FileFormats v0.3.3</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -236,10 +236,10 @@ the <code class="docutils literal notranslate"><span class="pre">extended</span>
 </section>
 <section id="quick-example">
 <h2>Quick Example<a class="headerlink" href="#quick-example" title="Permalink to this heading">#</a></h2>
-<p>Validate an mp4 audio file</p>
+<p>Validate an mp4 audio file's file-system path (including extension) and magic number</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.audio</span> <span class="kn">import</span> <span class="n">Mp4</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp4_file</span> <span class="o">=</span> <span class="n">Mp4</span><span class="p">(</span><span class="s2">&quot;/path/to/audio.mp4&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp4_file</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp4_file</span> <span class="o">=</span> <span class="n">Mp4</span><span class="p">(</span><span class="s2">&quot;/path/to/audio.mp4&quot;</span><span class="p">)</span>  <span class="c1"># check path and extension</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mp4_file</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>  <span class="c1"># check magic number</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp4_file</span><span class="o">.</span><span class="n">fspath</span>
 <span class="go">&quot;/path/to/audio.mp4&quot;</span>
 </pre></div>
