@@ -21,21 +21,24 @@ FileFormats
 *Fileformats* provides a library of file-format types implemented as Python classes.
 The file-format types are designed to be used in type validation during the construction
 of data workflows (e.g. Pydra_, Fastr_), and also provide some basic data handling methods
-(e.g. loading data to dictionaries) and conversions between some equivalent types.
-
-Unlike other file-type Python packages, *FileFormats*, supports multi-file data
-formats ("file sets") often found in scientific workflows, e.g. with separate header/data files,
-directories containing certain file types, and mechanisms to peek at metadata fields to
-define complex data formats or specific sub-types (e.g. functional MRI DICOM file set).
+(e.g. loading data to dictionaries) and conversions between some equivalent types When
+the "extended" install option is provided.
 
 File-format types are typically identified by a combination of file extension
-and "magic numbers" where applicable. However, *FileFormats* provides a flexible
+and "magic numbers" where applicable, however, unlike many other file-type Python packages,
+*FileFormats*, supports multi-file data formats ("file sets") often found in scientific
+workflows, e.g. with separate header/data files. *FileFormats* also provides a flexible
 framework to add custom identification routines for exotic file formats, e.g.
 formats that require inspection of headers to locate data files, directories containing
-certain file types. See the `extension template <https://github.com/ArcanaFramework/fileformats-extension-template>`__
+certain file types, or to peek at metadata fields to define specific sub-types
+(e.g. functional MRI DICOM file set).
+
+See the `extension template <https://github.com/ArcanaFramework/fileformats-extension-template>`__
 for instructions on how to design *FileFormats* extensions modules to augment the
 standard file-types implemented in the main repository with custom domain/vendor-specific
-file-format types.
+file-format types. Note that *FileFormats* is a new package, and only has limited support
+for standard formats at this stage, although the aim is to include all the official
+`IANA MIME types` (hopefully by scraping that site if anyone wants to have a go 😊).
 
 
 Installation
@@ -143,3 +146,4 @@ This work is licensed under a
 
 .. _Pydra: https://pydra.readthedocs.io
 .. _Fastr: https://gitlab.com/radiology/infrastructure/fastr
+.. _`IANA MIME types`: https://www.iana_mime.org/assignments/media-types/media-types.xhtml

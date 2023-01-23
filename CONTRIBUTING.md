@@ -14,7 +14,7 @@ If you are not familiar with version control systems such as git,
 ## Acknowledgements
 
 If you contribute any modifications to the code please remember to add yourself
-to the AUTHORS file and the `__authors__` list in `arcana/__about__.py`.
+to the AUTHORS file.
 
 ## How can you contribute
 
@@ -59,11 +59,11 @@ One way to do this is to [configure a new remote named "upstream"](https://help.
 **iv. Install FileFormats on your machine**
 
 To install your version of FileFormats, and the dependencies needed for development,
-in your Python environment (Python 3.7 or higher), run `pip install -e ".[dev]"`
+in your Python environment (Python 3.7 or higher), run `pip install -e ".[dev,test]"`
 from your local FileFormats directory.
 
 In order to check if everything is working correctly, run the tests
-using [pytest](https://docs.pytest.org/en/latest/), e.g. `pytest -vs arcana`
+using [pytest](https://docs.pytest.org/en/latest/), e.g. `pytest -vs fileformats`
 
 <!-- **v. Install pre-commit.**
 
@@ -136,7 +136,7 @@ You can see a list of current contributors in our [zenodo file][link_zenodo].
 If you are new to the project, don't forget to add your name and affiliation there!
 
 
-[link_fileformats]: https://github.com/ArcanaFramework/arcana
+[link_fileformats]: https://github.com/ArcanaFramework/fileformats
 [link_signupinstructions]: https://help.github.com/articles/signing-up-for-a-new-github-account
 [link_new_issues]: https://github.com/ArcanaFramework/fileformats/issues/new/choose
 [link_doc_issues]: https://github.com/ArcanaFramework/fileformats/issues/new?assignees=&labels=documentation&template=documentation.md&title=
@@ -148,4 +148,4 @@ If you are new to the project, don't forget to add your name and affiliation the
 [link_push]: https://help.github.com/en/github/using-git/pushing-commits-to-a-remote-repository
 [link_commit]: https://git-scm.com/docs/git-commit
 
-[link_zenodo]: https://github.com/ArcanaFramework/arcana/master/.zenodo.json
+[link_zenodo]: https://github.com/ArcanaFramework/fileformats/master/.zenodo.json

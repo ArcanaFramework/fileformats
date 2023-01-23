@@ -1,0 +1,19 @@
+{
+  "creators": [
+    {
+      "affiliation": "Department of Biomedical Engineering, University of Sydney and Australian National Imaging Facility",
+      "name": "Close, Thomas G.",
+      "orcid": "0000-0002-4160-2134"
+    }
+  ],
+  "keywords": [
+    "file-formats",
+    "data",
+    "filetype",
+    "magic numbers",
+    "file extension",
+    "MIME"
+  ],
+  "license": "CC BY 4.0",
+  "upload_type": "software"
+}
