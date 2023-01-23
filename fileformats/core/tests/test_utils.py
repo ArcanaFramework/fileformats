@@ -1,6 +1,12 @@
+import pytest
 from fileformats.generic import File
 from fileformats.core.mixin import WithSeparateHeader
-from fileformats.core.utils import find_matching
+from fileformats.core.utils import (
+    find_matching,
+    MissingExtendedDependency,
+    import_converters,
+)
+from fileformats.core.exceptions import MissingExtendedDepenciesError
 import fileformats.text
 import fileformats.numeric
 from conftest import write_test_file
@@ -79,9 +85,17 @@ def test_format_detection(work_dir):
     assert len(detected) == 1
     assert detected[0] is fileformats.text.Plain
 
-    # dat_file = work_dir / "data.dat"
 
-    # with open(dat_file, "wb") as f:
-    #     f.write(b"sample bytes")
+def test_missing_dependency():
 
-    # assert detect_format(dat_file) is fileformats.numeric.DataFile
+    missing_dep = MissingExtendedDependency("missing_dep", "fileformats.image")
+
+    with pytest.raises(MissingExtendedDepenciesError):
+        missing_dep.an_attr
+
+
+def test_import_converters_warning():
+    with pytest.warns(
+        UserWarning, match="could not import converters for fileformats.notimportable"
+    ):
+        import_converters("fileformats.notimportable")
