@@ -14,6 +14,7 @@ from .utils import (
     classproperty,
     fspaths_converter,
     to_mime_format_name,
+    STANDARD_NAMESPACES,
 )
 from .exceptions import FileFormatsError, FormatMismatchError, FormatConversionError
 
@@ -386,7 +387,7 @@ class FileSet:
         ----------
         source_format : type
             the format to convert from
-        task_name : str
+        name : str
             the name given to the converter task
         **kwargs
             passed on to the task init method to customise the conversion
@@ -399,9 +400,9 @@ class FileSet:
         Raises
         ------
         FileFormatConversionError
-            _description_
+            no converters found between source and dest format
         FileFormatConversionError
-            _description_
+            ambiguous (i.e. more than one) converters found between source and dest format
         """
         converter_tuple = None
         # Only access converters to the specific class, not superclasses (which may not
@@ -436,13 +437,12 @@ class FileSet:
         if kwargs:
             conv_kwargs = copy(conv_kwargs)
             conv_kwargs.update(kwargs)
-        # Make recognisable default task name
-        # if task_name is None:
-        #     task_name = f"{source_format.__name__}_to_{cls.__name__}"
         return converter(name=name, **conv_kwargs)
 
     @classproperty
-    def mimelike_registry(cls):
+    def namespace(cls):
+        """The "namespace" the format belongs to under the "fileformats" umbrella
+        namespace"""
         module_parts = cls.__module__.split(".")
         if module_parts[0] != "fileformats":
             raise FileFormatsError(
@@ -453,6 +453,7 @@ class FileSet:
 
     @classproperty
     def all_formats(cls):
+        """Iterate over all formats in fileformats.* namespaces"""
         if cls._all_formats is None:
             cls._all_formats = [
                 f for f in FileSet.subclasses() if f.__dict__.get("iana_mime", True)
@@ -460,7 +461,13 @@ class FileSet:
         return cls._all_formats
 
     @classproperty
+    def standard_formats(cls):
+        """Iterate over all formats in the standard fileformats.* namespaces"""
+        return (f for f in cls.all_formats if f.namespace in STANDARD_NAMESPACES)
+
+    @classproperty
     def formats_by_iana_mime(cls):
+        """a dictionary containing all formats by their IANA MIME type (if applicable)"""
         if cls._formats_by_iana_mime is None:
             cls._formats_by_iana_mime = {
                 f.iana_mime: f
@@ -471,6 +478,8 @@ class FileSet:
 
     @classproperty
     def formats_by_name(cls):
+        """a dictionary containing lists of formats by their translated class names,
+        i.e. their can be more than one format with the same translated name"""
         if cls._formats_by_name is None:
             cls._formats_by_name = {
                 k: set(v for _, v in g)

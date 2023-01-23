@@ -13,7 +13,7 @@ from fileformats.core.exceptions import (
 import fileformats.core
 
 
-def to_mime(klass, iana_mime=True):
+def to_mime(klass, iana=True):
     """Generates a MIME (IANA) or "MIME-like" identifier from a format class (i.e.
     an identifier for a non-MIME class in the MIME style), e.g.
 
@@ -36,21 +36,19 @@ def to_mime(klass, iana_mime=True):
     type
         the corresponding file format class
     """
-    if iana_mime and getattr(klass, "iana_mime", None) is not None:
+    if iana and getattr(klass, "iana_mime", None) is not None:
         return klass.iana_mime
     format_name = to_mime_format_name(klass.__name__)
-    if iana_mime:
+    if iana:
         mime = f"application/x-{format_name}"
     else:
-        namespace_module = importlib.import_module(
-            "fileformats." + klass.mimelike_registry
-        )
+        namespace_module = importlib.import_module("fileformats." + klass.namespace)
         if getattr(namespace_module, klass.__name__, None) is not klass:
             raise FileFormatsError(
                 f"Cannot create reversible MIME type for {klass} as it is not present in a "
-                f"top-level fileformats namespace package '{klass.mimelike_registry}'"
+                f"top-level fileformats namespace package '{klass.namespace}'"
             )
-        mime = f"{klass.mimelike_registry}/{format_name}"
+        mime = f"{klass.namespace}/{format_name}"
     return mime
 
 
@@ -75,41 +73,41 @@ def from_mime(mime_string):
         the corresponding file format class
     """
     namespace, format_name = mime_string.split("/")
+    try:
+        return fileformats.core.FileSet.formats_by_iana_mime[mime_string]
+    except KeyError:
+        pass
     if namespace == "application":
         # We treat the "application" namespace as a catch-all for any formats that are
         # not explicitly covered by the IANA standard (which is kind of how the IANA
         # treats it). Therefore, we loop through all subclasses across the different
         # namespaces to find one that matches the name.
-        try:
-            klass = fileformats.core.FileSet.formats_by_iana_mime[mime_string]
-        except KeyError:
-            if format_name.startswith("x-"):
-                format_name = format_name[2:]
-            else:
-                raise FormatRecognitionError(
-                    "Did not find class matching official (i.e. non-extension) MIME type "
-                    f"{mime_string} (i.e. one not starting with 'application/x-'"
-                ) from None
-            matching_name = fileformats.core.FileSet.formats_by_name[format_name]
-            if not matching_name:
-                namespace_names = [n.__name__ for n in subpackages()]
-                class_name = from_mime_format_name(format_name)
-                raise FormatRecognitionError(
-                    f"Did not find class matching extension the class name '{class_name}' "
-                    f"corresponding to MIME type '{mime_string}' "
-                    f"in any of the installed namespaces: {namespace_names}"
-                ) from None
-            elif len(matching_name) > 1:
-                namespace_names = [f.__module__.__name__ for f in matching_name]
-                raise FormatRecognitionError(
-                    f"Ambiguous extended MIME type '{mime_string}', could refer to "
-                    f"{', '.join(repr(f) for f in matching_name)} installed types. "
-                    f"Explicitly set the 'iana_mime' attribute on one or all of these types "
-                    f"to disambiguate, or uninstall all but one of the following "
-                    "namespaces: "
-                ) from None
-            else:
-                klass = next(iter(matching_name))
+        if not format_name.startswith("x-"):
+            raise FormatRecognitionError(
+                "Did not find class matching official (i.e. non-extension) MIME type "
+                f"{mime_string} (i.e. one not starting with 'application/x-'"
+            ) from None
+        format_name = format_name[2:]  # remove "x-" prefix
+        matching_name = fileformats.core.FileSet.formats_by_name[format_name]
+        if not matching_name:
+            namespace_names = [n.__name__ for n in subpackages()]
+            class_name = from_mime_format_name(format_name)
+            raise FormatRecognitionError(
+                f"Did not find class matching extension the class name '{class_name}' "
+                f"corresponding to MIME type '{mime_string}' "
+                f"in any of the installed namespaces: {namespace_names}"
+            )
+        elif len(matching_name) > 1:
+            namespace_names = [f.__module__.__name__ for f in matching_name]
+            raise FormatRecognitionError(
+                f"Ambiguous extended MIME type '{mime_string}', could refer to "
+                f"{', '.join(repr(f) for f in matching_name)} installed types. "
+                f"Explicitly set the 'iana_mime' attribute on one or all of these types "
+                f"to disambiguate, or uninstall all but one of the following "
+                "namespaces: "
+            )
+        else:
+            klass = next(iter(matching_name))
     else:
         class_name = from_mime_format_name(format_name)
         try:
@@ -131,7 +129,7 @@ def from_mime(mime_string):
     return klass
 
 
-def matching_formats(fspaths: list[Path], standard_only: bool = False):
+def find_matching(fspaths: list[Path], standard_only: bool = False):
     """Detect the corresponding file format from a set of file-system paths
 
     Parameters
@@ -144,7 +142,7 @@ def matching_formats(fspaths: list[Path], standard_only: bool = False):
     fspaths = fspaths_converter(fspaths)
     matches = []
     for frmt in fileformats.core.FileSet.all_formats:
-        if frmt.matches(fspaths) and frmt.mimelike_registry in STANDARD_REGISTRIES:
+        if frmt.matches(fspaths) and frmt.namespace in STANDARD_NAMESPACES:
             matches.append(frmt)
     return matches
 
@@ -258,7 +256,7 @@ class MissingDependencyPlacholder:
         self.pkg_name = pkg_name
         module_parts = module_path.split(".")
         assert module_parts[0] == "fileformats"
-        if module_parts[1] in STANDARD_REGISTRIES:
+        if module_parts[1] in STANDARD_NAMESPACES:
             self.required_in = "fileformats"
         else:
             self.required_in = f"fileformats-{module_parts[1]}"
@@ -273,7 +271,7 @@ class MissingDependencyPlacholder:
         )
 
 
-STANDARD_REGISTRIES = [
+STANDARD_NAMESPACES = [
     "archive",
     "audio",
     "document",

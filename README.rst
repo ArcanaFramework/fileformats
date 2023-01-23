@@ -23,10 +23,10 @@ The file-format types are designed to be used in type validation during the cons
 of data workflows (e.g. Pydra_), and also provide some basic data handling methods (e.g. loading
 data to dictionaries) and conversions between some equivalent types.
 
-Unlike other file-type Python packages, *FileFormats*, supports multi-file
-formats, e.g. with separate header/data files, nested directories, and mechanisms to
-peek at metadata fields to define complex data formats or specific sub-types (e.g.
-functional MRI DICOM file set)
+Unlike other file-type Python packages, *FileFormats*, supports "file-set" data
+formats often found in scientific workflows, e.g. with separate header/data files,
+directories containing certain file types, and mechanisms to peek at metadata fields to
+define complex data formats or specific sub-types (e.g. functional MRI DICOM file set).
 
 File-format types are typically identified by a combination of file extension
 and "magic numbers" where applicable. However, *FileFormats* provides a flexible
