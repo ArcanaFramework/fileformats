@@ -30,3 +30,10 @@ class MswordX(Zip, Document):
     iana_mime = (
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     )
+
+
+class Postscript(Document, WithMagicNumber):
+    ext = ".eps"
+    alternate_exts = (".ps",)
+    magic_number = b"%!"
+    iana_mime = "application/postscript"

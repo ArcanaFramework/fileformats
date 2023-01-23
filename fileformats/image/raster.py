@@ -1,14 +1,28 @@
 from fileformats.core.mixin import WithMagicNumber
-from fileformats.core import mark
+from fileformats.core import mark, MissingExtendedDependency
 from fileformats.core.exceptions import FormatMismatchError
 from .base import Image
+
+try:
+    import imageio
+except ImportError:
+    imageio = MissingExtendedDependency("imageio", __name__)
 
 
 class RasterImage(Image):
     iana_mime = None
+    binary = True
+
+    def load(self):
+        return imageio.imread(self.fspath)
+
+    @classmethod
+    def save_new(cls, fspath, data_array):
+        imageio.imwrite(fspath, data_array)
+        return cls(fspath)
 
 
-class Bmp(RasterImage, WithMagicNumber):
+class Bitmap(RasterImage, WithMagicNumber):
     ext = ".bmp"
     magic_number = b"BM"
     iana_mime = "image/bmp"
@@ -23,7 +37,7 @@ class Gif(RasterImage, WithMagicNumber):
 class Png(RasterImage, WithMagicNumber):
     ext = ".png"
     iana_mime = "image/png"
-    magic_number = b".PNG"
+    magic_number = "89504E470D0A1A0A"
 
 
 class Jpeg(RasterImage, WithMagicNumber):
@@ -31,13 +45,6 @@ class Jpeg(RasterImage, WithMagicNumber):
     alternate_exts = (".jpeg", ".jpe", ".jfif", ".jif")
     iana_mime = "image/jpeg"
     magic_number = "ffd8ffe0"
-
-
-class Postscript(RasterImage, WithMagicNumber):
-    ext = ".eps"
-    alternate_exts = (".ps",)
-    magic_number = b"%!"
-    iana_mime = "application/postscript"
 
 
 class Tiff(RasterImage):
@@ -50,7 +57,7 @@ class Tiff(RasterImage):
 
     @mark.check
     def endianness(self):
-        read_magic = self.read_contents(len(self.magic_number_le))
+        read_magic = self.read_contents(len(self.magic_number_le) // 2)
         if read_magic == bytes.fromhex(self.magic_number_le):
             endianness = "little"
         elif read_magic == bytes.fromhex(self.magic_number_be):

@@ -240,7 +240,7 @@ class classproperty(object):
         return self.f(owner)
 
 
-class MissingDependencyPlacholder:
+class MissingExtendedDependency:
     """Used as a placeholder for package dependencies that are only installed with the
     "extended" install extra.
 

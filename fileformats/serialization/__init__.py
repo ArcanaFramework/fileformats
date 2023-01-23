@@ -1,13 +1,14 @@
 from warnings import warn
+from pathlib import Path
 import json
 from ..core import __version__, mark
 from ..generic import File
-from ..core.utils import MissingDependencyPlacholder
+from ..core.utils import MissingExtendedDependency
 
 try:
     import yaml
 except ImportError:
-    yaml = MissingDependencyPlacholder("yaml", __name__)
+    yaml = MissingExtendedDependency("yaml", __name__)
 
 
 class Serialization(File):
@@ -21,7 +22,7 @@ class Serialization(File):
         raise NotImplementedError
 
     @classmethod
-    def save_new(dct, fspath):
+    def save_new(fspath: Path, dct: dict):
         """Serialise a dictionary to a new file"""
         raise NotImplementedError
 
@@ -40,7 +41,7 @@ class Json(Serialization):
         return dct
 
     @classmethod
-    def save_new(cls, dct, fspath):
+    def save_new(cls, fspath, dct):
         with open(fspath, "w") as f:
             json.dump(dct, f)
         return cls(fspath)
@@ -57,7 +58,7 @@ class Yaml(Serialization):
         return dct
 
     @classmethod
-    def save_new(cls, dct, fspath):
+    def save_new(cls, fspath, dct):
         with open(fspath, "w") as f:
             yaml.dump(dct, f)
         return cls(fspath)
@@ -66,6 +67,8 @@ class Yaml(Serialization):
 try:
     from .converters import *
 except ImportError:
-    f"could not import converters for {__name__}  module, please install with the"
-    f"'extended' install extra to use converters for {__name__}, i.e.\n\n"
-    "$ python3 -m pip install fileformats-medimage[extended]"
+    warn(
+        f"could not import converters for {__name__}  module, please install with the"
+        f"'extended' install extra to use converters for {__name__}, i.e.\n\n"
+        "$ python3 -m pip install fileformats-medimage[extended]"
+    )

@@ -65,6 +65,7 @@ docs = [
 ]
 extended = [
     "pydra >= 0.20.0",
+    "imageio >=2.24.0",
 ]
 
 [project.urls]

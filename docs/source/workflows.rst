@@ -157,3 +157,55 @@ that format objects can be used in place of the path objects themselves, e.g.
 
 Noting that it is only the "primary" path as returned by the ``fspath`` property that
 is rendered.
+
+
+Extended features
+-----------------
+
+In addition to the core features of validation and path handling, once a file format
+is defined, it can be convenient to add methods for loading, saving and converting
+the format into the format class. Such features are added on an as needed basis
+(pull requests welcome, see __developer__), so are by no means comprehensive. To use
+extended features, the ``[extended]`` option should be used when installing the
+relevant package to ensure all required dependencies are installed.
+
+
+There are a few selected converters between standard file-format types, perhaps most usefully
+between archive types and generic file/directories
+
+.. code-block:: python
+
+    from fileformats.archive import Zip
+    from fileformats.generic import Directory
+
+    zip_file = Zip.convert(Directory("/path/to/a/directory"))
+    extracted = Directory.convert(zip_file)
+    copied = extracted.copy_to("/path/to/output")
+
+The converters are implemented in the Pydra_ dataflow framework, and can be linked into
+wider Pydra_ workflows by creating a converter task
+
+.. code-block:: python
+
+    import pydra
+    from pydra.tasks.mypackage import MyTask
+    from fileformats.serialization import Json, Yaml
+
+    wf = pydra.Workflow(name="a_workflow", input_spec=["in_json"])
+    wf.add(
+        Yaml.get_converter(Json, name="json2yaml", in_file=wf.lzin.in_json)
+    )
+    wf.add(
+        MyTask(
+            name="my_task",
+            in_file=wf.json2yaml.lzout.out_file,
+        )
+    )
+    ...
+
+Alternatively, the conversion can be executed outside of a Pydra_ workflow with
+
+.. code-block:: python
+
+    json_file = Json("/path/to/file.json")
+    yaml_file = Yaml.convert(json_file)

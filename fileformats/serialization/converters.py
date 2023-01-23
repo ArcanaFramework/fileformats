@@ -17,4 +17,4 @@ def convert_data_serialization(
     if out_dir is None:
         out_dir = Path(tempfile.mkdtemp())
     output_path = out_dir / (in_file.fspath.stem + output_format.ext)
-    return output_format.save_new(dct, output_path)
+    return output_format.save_new(output_path, dct)
