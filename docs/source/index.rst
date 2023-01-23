@@ -61,5 +61,20 @@ the ``extended`` option.
     developer
 
 
+Quick Example
+-------------
+
+Validate an mp4 audio file
+
+.. code-block:: python
+
+   >>> from fileformats.audio import Mp4
+   >>> mp4_file = Mp4("/path/to/audio.mp4")
+   >>> mp4_file.validate()
+   >>> mp4_file.fspath
+   "/path/to/audio.mp4"
+
+
+
 .. _Pydra: https://pydra.readthedocs.io
 .. _Fastr: https://gitlab.com/radiology/infrastructure/fastr

@@ -2,7 +2,7 @@ Format Identification
 =====================
 
 In addition to simply importing and using a format class in your Python code, format classes
-can be loaded from their ``MIME type`` (see `IANA Media Types`_), or detected from the
+can be loaded from their `MIME type`_ or detected from
 file-system objects.
 
 
@@ -38,7 +38,7 @@ MIME Types
 ----------
 
 Namespaces in the ``fileformats`` package are named after MIME type registries
-as defined by the Internet Assigned Numbering Authority (IANA) (see `IANA Media Types`_).
+as defined by the `Internet Assigned Numbering Authority (IANA) <https://www.iana_mime.org/assignments/media-types/media-types.xhtml>`__.
 The main difference is that there is no "application" registry, which acts as a
 catch-all for any type that doesn't have a formal specification. Instead, types that
 fall under the "application" registry are grouped by the types of data that they
@@ -79,7 +79,8 @@ error will be raised they are loaded from a MIME type.
 .. warning::
     Note that the installation of additional sub-packages may cause detection code to
     break if your code doesn't the potential of new formats being added with the same
-    class name. You may prefer to use "MIME-like" type strings in that case if possible.
+    class name. Therefore, you may prefer to use "MIME-like" type strings (see below)
+    unless IANA compliance is required.
 
 
 MIME-like types
@@ -89,7 +90,7 @@ To avoid the issue with format classes in separate namespaces mapping onto the s
 IANA-style MIME type, and for additional clarity (i.e. not drowning in a sea of
 "application/x-\*" types), it can be preferable in some use cases not to worry with
 closely matching the MIME-type specification for non-standard formats and just use the
-file-formats namespace inplace of the generic "application/x-" prefix. This can be done
+*FileFormats* namespace inplace of the generic "application/x-" prefix. This can be done
 by setting ``iana=False`` in the ``to_mime`` function, e.g.
 
 .. code-block::
@@ -118,4 +119,4 @@ types, so it is possible to roundtrip from both.
     assert from_mime(mimelike_type) is Bzip
 
 
-.. _`IANA Media Types`: https://www.iana_mime.org/assignments/media-types/media-types.xhtml
+.. _`MIME type`: https://www.iana_mime.org/assignments/media-types/media-types.xhtml

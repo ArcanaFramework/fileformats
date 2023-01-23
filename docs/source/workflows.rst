@@ -175,7 +175,7 @@ and converting the data they refer to. Such features are added to selected
 format classes on a needs basis (pull requests welcome 😊, see :ref:`Developer Guide`),
 so are by no means comprehensive, and **are very much provided "as-is"**.
 
-Since these features, typically rely on a wide-range of external libraries, the dependencies
+Since these features, typically rely on a range of external libraries, the dependencies
 are kept separate and only installed if the ``[extended]`` install option is used
 (i.e. ``python3 -m pip install filformats[extended]``).
 
@@ -249,12 +249,12 @@ classmethod
 
     wf = pydra.Workflow(name="a_workflow", input_spec=["in_gif"])
     wf.add(
-        Yaml.get_converter(Png, name="gif2png", in_file=wf.lzin.in_gif)
+        Png.get_converter(Gif, name="gif2png", in_file=wf.lzin.in_gif)
     )
     wf.add(
         MyTask(
             name="my_task",
-            in_file=wf.json2yaml.lzout.out_file,
+            in_file=wf.gif2png.lzout.out_file,
         )
     )
     ...
