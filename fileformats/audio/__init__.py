@@ -1,5 +1,6 @@
 from ..core import __version__
 from fileformats.generic import File
+from fileformats.core.mixin import WithMagicNumber
 
 
 class Audio(File):
@@ -15,9 +16,10 @@ class Mpeg(Audio):
     iana_mime = "audio/mpeg"
 
 
-class Mp4(Audio):
+class Mp4(Audio, WithMagicNumber):
     ext = ".mp4"
     iana_mime = "audio/mp4"
+    magic_number = "6674797069736F6D"
 
 
 class Aac(Audio):
