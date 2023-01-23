@@ -143,13 +143,13 @@ class FileSet:
     def mime(cls):
         """Returns an official MIME type representation of the format, if applicable,
         otherwise a conventional MIME type "extension" of the form "application/x-***"""
-        return to_mime(cls, iana_mime=True)
+        return to_mime(cls, iana=True)
 
     @classmethod
     def mimelike(cls):
         """Returns a "MIME-like" representation, but with a direct mapping between the
         file-type and the fileformats namespace extension it belongs to"""
-        return to_mime(cls, iana_mime=False)
+        return to_mime(cls, iana=False)
 
     @classmethod
     def subclasses(cls):
