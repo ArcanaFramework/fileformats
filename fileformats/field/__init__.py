@@ -4,11 +4,28 @@ from ..core.exceptions import FormatMismatchError
 
 
 @attrs.define
-class SingleField(Field):
+class Singluar(Field):
     pass
 
 
-class Scalar:
+class LogicalMixin:
+    def __bool__(self):
+        return bool(self.value)
+
+    def __and__(self, other):
+        return self.value and other.value
+
+    def __or__(self, other):
+        return self.value or other.value
+
+    def __not__(self):
+        return not self.value
+
+    def __invert__(self):
+        return not self.value
+
+
+class ScalarMixin(LogicalMixin):
     def __add__(self, other):
         return self.value + other
 
@@ -34,34 +51,40 @@ class Scalar:
         return -self.value
 
 
-def boolean_converter(in_value):
-    if isinstance(in_value, str):
-        if in_value.lower() in ("true", "1", "yes"):
+def boolean_converter(value):
+    if isinstance(value, str):
+        if value.lower() in ("true", "1", "yes"):
             value = True
-        elif in_value.lower() in ("false", "0", "no"):
+        elif value.lower() in ("false", "0", "no"):
             value = False
         else:
             raise FormatMismatchError(
-                f"Cannot convert string '{in_value}' to boolean value"
+                f"Cannot convert string '{value}' to boolean value"
             )
     else:
-        value = bool(in_value)
+        value = bool(value)
     return value
 
 
-def array_converter(in_value):
-    if in_value.startswith("[") and in_value.endswith("]"):
-        in_value = in_value[1:-1]
-    return in_value.split(",")
+def array_converter(value):
+    if isinstance(value, str):
+        if value.startswith("[") and value.endswith("]"):
+            value = value[1:-1]
+        value = [v.strip() for v in value.split(",")]
+    else:
+        value = list(value)
+    return value
 
 
 @attrs.define
-class Text(SingleField):
+class Text(Singluar):
+
     value: str = attrs.field(converter=str)
 
 
 @attrs.define
-class Integer(SingleField, Scalar):
+class Integer(Singluar, ScalarMixin):
+
     value: int = attrs.field(converter=float)
 
     def __int__(self):
@@ -69,7 +92,8 @@ class Integer(SingleField, Scalar):
 
 
 @attrs.define
-class Decimal(SingleField, Scalar):
+class Decimal(Singluar, ScalarMixin):
+
     value: float = attrs.field(converter=float)
 
     def __float__(self):
@@ -77,26 +101,15 @@ class Decimal(SingleField, Scalar):
 
 
 @attrs.define
-class Boolean(SingleField):
-    value: bool = attrs.field(converter=float)
+class Boolean(Singluar, LogicalMixin):
+
+    value: bool = attrs.field(converter=boolean_converter)
 
     def __str__(self):
         return str(self.value).lower()
 
     def __bool__(self):
         return self.value
-
-    def __and__(self, other):
-        return self.value and other.value
-
-    def __or__(self, other):
-        return self.value or other.value
-
-    def __not__(self):
-        return not self.value
-
-    def __invert__(self):
-        return not self.value
 
 
 @attrs.define
@@ -124,7 +137,7 @@ class Array(Field):
     @classmethod
     def __class_getitem__(cls, item_type):
         """Set the item type for a newly created dynamically type"""
-        if not isinstance(item_type, SingleField):
+        if not isinstance(item_type, Singluar):
             raise RuntimeError(
                 "Can only provide SingleField type as item types for Array fields, not "
                 f"{item_type}"
