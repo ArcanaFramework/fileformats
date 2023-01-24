@@ -510,3 +510,12 @@ class FileSet(DataType):
     _all_formats = None
     _formats_by_iana_mime = None
     _formats_by_name = None
+
+
+@attrs.define
+class Field(DataType):
+
+    value = attrs.field()
+
+    def __str__(self):
+        return str(self.value)

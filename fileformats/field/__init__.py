@@ -1,15 +1,6 @@
 import attrs
-from ..core import DataType
+from ..core import Field
 from ..core.exceptions import FormatMismatchError
-
-
-@attrs.define
-class Field(DataType):
-
-    value = attrs.field()
-
-    def __str__(self):
-        return str(self.value)
 
 
 @attrs.define

@@ -1,5 +1,5 @@
 from ._version import __version__
-from .base import FileSet, DataType
+from .base import DataType, FileSet, Field
 from .utils import (
     to_mime,
     from_mime,
