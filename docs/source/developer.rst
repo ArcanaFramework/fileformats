@@ -164,7 +164,7 @@ scientific data formats you might need to write custom validators using the
 
 Take for example the `GIS shapefile structure <https://www.earthdatascience.org/courses/earth-analytics/spatial-data-r/shapefile-structure/>`_,
 it is a file-set consisting of 3 to 6 files differentiated by their extensions. To
-implement this class we use the ``required`` decorator. We inherit from the ``WithAdjacents``
+implement this class we use the ``required`` decorator. We inherit from the ``WithAdjacentFiles``
 mixin so that neighbouring files (i.e. files with the same stem but different extension)
 are included when the class is instantiated with just the primary ".shp" file.
 
@@ -172,7 +172,7 @@ are included when the class is instantiated with just the primary ".shp" file.
 
     from fileformats.generic import File
     from fileformats.serialization import Xml
-    from fileformats.mixin import WithAdjacents
+    from fileformats.mixin import WithAdjacentFiles
     from fileformats.core import mark
 
     class GisShapeIndex(File):
@@ -207,7 +207,7 @@ are included when the class is instantiated with just the primary ".shp" file.
         ext = ".shp.xml"
 
 
-    class GisShape(WithAdjacents, File):
+    class GisShape(WithAdjacentFiles, File):
 
         ext = ".shp"  # the main file that will be mapped to fspath
 

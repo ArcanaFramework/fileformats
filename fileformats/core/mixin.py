@@ -50,7 +50,7 @@ class WithAdjacentFiles:
     includes any "adjacent files", i.e. any files with the same stem but different
     extension
 
-    Note that WithAdjacents must come before the primary type in the method-resolution
+    Note that WithAdjacentFiles must come before the primary type in the method-resolution
     order of the class so it can override the '__attrs_post_init__' method in
     post_init_super class (typically FileSet), e.g.
 
