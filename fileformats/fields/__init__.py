@@ -1,3 +1,6 @@
+from ..core import DataType
+
+
 class Field(DataType):
     pass
 
