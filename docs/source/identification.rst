@@ -58,7 +58,7 @@ by the , e.g.
 
     Loaded = from_mime("image/png")
     assert Loaded is Png
-    assert to_mime(Loaded) == "image/png"
+    assert Loaded.mime_type == "image/png"
 
 If the format class doesn't define an ``iana_mime`` attribute (i.e. in the actual class,
 not including ``iana_mime`` attributes defined in base classes), it will be assigned an informal
@@ -97,7 +97,7 @@ by setting ``iana=False`` in the ``to_mime`` function, e.g.
 
     >>> from fileformats.core import to_mime
     >>> from fileformats.archive import Bzip
-    >>> to_mime(Yaml, iana=False)
+    >>> Yaml.mime_like
     "archive/bzip"
 
 The ``from_mime`` function will resolve both official-style MIME types and the MIME-like
@@ -109,12 +109,12 @@ types, so it is possible to roundtrip from both.
     from from fileformats.archive import Bzip
 
     # Using official-style MIME string
-    mime_type = to_mime(Bzip, iana=True)
+    mime_type = Bzip.mime_type
     assert mime_type == "application/x-bzip"
     assert from_mime(mime_type) is Bzip
 
     # Using MIME-like string
-    mimelike_type = to_mime(Bzip, iana=False)
+    mimelike_type = Bzip.mime_like
     assert mimelike_type == "archive/bzip"
     assert from_mime(mimelike_type) is Bzip
 

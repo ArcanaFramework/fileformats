@@ -5,7 +5,7 @@ from fileformats.core.utils import from_mime
 def test_mime_roundtrip():
 
     for klass in FileSet.all_formats:
-        mimetype = klass.mime()
+        mimetype = klass.mime_type
         assert isinstance(mimetype, str)
         reloaded = from_mime(mimetype)
         assert reloaded is klass
@@ -14,7 +14,7 @@ def test_mime_roundtrip():
 def test_mimelike_roundtrip():
 
     for klass in FileSet.all_formats:
-        mimetype = klass.mimelike()
+        mimetype = klass.mime_like
         assert isinstance(mimetype, str)
         reloaded = from_mime(mimetype)
         assert reloaded is klass

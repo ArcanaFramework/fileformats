@@ -2,6 +2,7 @@ from __future__ import annotations
 import os
 from copy import copy
 from inspect import isclass
+import importlib
 import shutil
 from operator import itemgetter
 import itertools
@@ -9,14 +10,19 @@ from pathlib import Path
 import logging
 import attrs
 from .utils import (
-    to_mime,
     subpackages,
     classproperty,
     fspaths_converter,
     to_mime_format_name,
+    from_mime_format_name,
     STANDARD_NAMESPACES,
 )
-from .exceptions import FileFormatsError, FormatMismatchError, FormatConversionError
+from .exceptions import (
+    FileFormatsError,
+    FormatMismatchError,
+    FormatConversionError,
+    FormatRecognitionError,
+)
 
 
 # Tools imported from Arcana, will remove again once file-formats and "cells"
@@ -29,7 +35,141 @@ logger = logging.getLogger("fileformats")
 
 
 class DataType:
-    pass
+    @classproperty
+    def namespace(cls):
+        """The "namespace" the format belongs to under the "fileformats" umbrella
+        namespace"""
+        module_parts = cls.__module__.split(".")
+        if module_parts[0] != "fileformats":
+            raise FileFormatsError(
+                f"Cannot create reversible MIME type for {cls} as it is not in the "
+                "fileformats namespace"
+            )
+        return module_parts[1]
+
+    @classproperty
+    def all_types(self):
+        return itertools.chain(FileSet.all_formats, Field.all_fields)
+
+    @classmethod
+    def subclasses(cls):
+        """Iterate over all installed subclasses"""
+        for subpkg in subpackages():
+            for attr_name in dir(subpkg):
+                attr = getattr(subpkg, attr_name)
+                if isclass(attr) and issubclass(attr, cls):
+                    yield attr
+
+    @classproperty
+    def mime_like(cls):
+        """Generates a "MIME-like" identifier from a format class (i.e.
+        an identifier for a non-MIME class in the MIME style), e.g.
+
+            fileformats.text.Plain to "text/plain"
+
+        and
+
+            fileformats.image.TiffFx to "image/tiff-fx"
+
+        Parameters
+        ----------
+        klass : type(FileSet)
+            FileSet subclass
+        iana_mime : bool
+            whether to use standardised IANA format or a more relaxed type format corresponding
+            to the fileformats extension the type belongs to
+
+        Returns
+        -------
+        type
+            the corresponding file format class
+        """
+        format_name = to_mime_format_name(cls.__name__)
+        namespace_module = importlib.import_module("fileformats." + cls.namespace)
+        if getattr(namespace_module, cls.__name__, None) is not cls:
+            raise FileFormatsError(
+                f"Cannot create reversible MIME type for {cls} as it is not present in a "
+                f"top-level fileformats namespace package '{cls.namespace}'"
+            )
+        mime = f"{cls.namespace}/{format_name}"
+        return mime
+
+    @classmethod
+    def from_mime(cls, mime_string):
+        """Resolves a FileFormat class from a MIME (IANA) or "MIME-like" identifier (i.e.
+        an identifier for a non-MIME class in the MIME style), e.g.
+
+            "text/plain" resolves to fileformats.text.Plain
+
+        and
+
+            "image/tiff-fx" resolves to fileformats.image.TiffFx
+
+        Parameters
+        ----------
+        mime_string : str
+            MIME identifier
+
+        Returns
+        -------
+        type
+            the corresponding file format class
+        """
+        namespace, format_name = mime_string.split("/")
+        try:
+            return FileSet.formats_by_iana_mime[mime_string]
+        except KeyError:
+            pass
+        if namespace == "application":
+            # We treat the "application" namespace as a catch-all for any formats that are
+            # not explicitly covered by the IANA standard (which is kind of how the IANA
+            # treats it). Therefore, we loop through all subclasses across the different
+            # namespaces to find one that matches the name.
+            if not format_name.startswith("x-"):
+                raise FormatRecognitionError(
+                    "Did not find class matching official (i.e. non-extension) MIME type "
+                    f"{mime_string} (i.e. one not starting with 'application/x-'"
+                ) from None
+            format_name = format_name[2:]  # remove "x-" prefix
+            matching_name = FileSet.formats_by_name[format_name]
+            if not matching_name:
+                namespace_names = [n.__name__ for n in subpackages()]
+                class_name = from_mime_format_name(format_name)
+                raise FormatRecognitionError(
+                    f"Did not find class matching extension the class name '{class_name}' "
+                    f"corresponding to MIME type '{mime_string}' "
+                    f"in any of the installed namespaces: {namespace_names}"
+                )
+            elif len(matching_name) > 1:
+                namespace_names = [f.__module__.__name__ for f in matching_name]
+                raise FormatRecognitionError(
+                    f"Ambiguous extended MIME type '{mime_string}', could refer to "
+                    f"{', '.join(repr(f) for f in matching_name)} installed types. "
+                    f"Explicitly set the 'iana_mime' attribute on one or all of these types "
+                    f"to disambiguate, or uninstall all but one of the following "
+                    "namespaces: "
+                )
+            else:
+                klass = next(iter(matching_name))
+        else:
+            class_name = from_mime_format_name(format_name)
+            try:
+                module = importlib.import_module("fileformats." + namespace)
+            except ImportError:
+                raise FormatRecognitionError(
+                    f"Did not find fileformats namespace package corresponding to {namespace} "
+                    f"required to interpret '{mime_string}' MIME, or MIME-like, type. "
+                    f"try installing the namespace package with "
+                    f"'python3 -m pip install fileformats-{namespace}'."
+                ) from None
+            try:
+                klass = getattr(module, class_name)
+            except AttributeError:
+                raise FormatRecognitionError(
+                    f"Did not find '{class_name}' class in fileformats.{namespace} "
+                    f"corresponding to MIME, or MIME-like, type {mime_string}"
+                ) from None
+        return klass
 
 
 @attrs.define
@@ -146,26 +286,28 @@ class FileSet(DataType):
     def __iter__(self):
         return iter(self.fspaths)
 
-    @classmethod
-    def mime(cls):
-        """Returns an official MIME type representation of the format, if applicable,
-        otherwise a conventional MIME type "extension" of the form "application/x-***"""
-        return to_mime(cls, iana=True)
+    @classproperty
+    def mime_type(cls):
+        """Generates a MIME type (IANA) identifier from a format class. If an official
+        IANA MIME type doesn't exist it will create one in the in the MIME style, e.g.
 
-    @classmethod
-    def mimelike(cls):
-        """Returns a "MIME-like" representation, but with a direct mapping between the
-        file-type and the fileformats namespace extension it belongs to"""
-        return to_mime(cls, iana=False)
+            fileformats.text.Plain to "text/plain"
 
-    @classmethod
-    def subclasses(cls):
-        """Iterate over all installed subclasses"""
-        for subpkg in subpackages():
-            for attr_name in dir(subpkg):
-                attr = getattr(subpkg, attr_name)
-                if isclass(attr) and issubclass(attr, cls):
-                    yield attr
+            fileformats.image.TiffFx to "image/tiff-fx"
+
+            fileformats.mynamespace.MyFormat to "application/x-my-format
+
+        Returns
+        -------
+        str
+            the MIME type corresponding to the class
+        """
+        if getattr(cls, "iana_mime", None) is not None:
+            mime_type = cls.iana_mime
+        else:
+            format_name = to_mime_format_name(cls.__name__)
+            mime_type = f"application/x-{format_name}"
+        return mime_type
 
     @classmethod
     def matches(cls, fspaths: set[Path], validate: bool = True) -> bool:
@@ -450,18 +592,6 @@ class FileSet(DataType):
         return converter(name=name, **conv_kwargs)
 
     @classproperty
-    def namespace(cls):
-        """The "namespace" the format belongs to under the "fileformats" umbrella
-        namespace"""
-        module_parts = cls.__module__.split(".")
-        if module_parts[0] != "fileformats":
-            raise FileFormatsError(
-                f"Cannot create reversible MIME type for {cls} as it is not in the "
-                "fileformats namespace"
-            )
-        return module_parts[1]
-
-    @classproperty
     def all_formats(cls):
         """Iterate over all formats in fileformats.* namespaces"""
         if cls._all_formats is None:
@@ -517,5 +647,19 @@ class Field(DataType):
 
     value = attrs.field()
 
+    type = None
+
     def __str__(self):
         return str(self.value)
+
+    @classproperty
+    def all_fields(cls):
+        """Iterate over all formats in fileformats.* namespaces"""
+        if cls._all_fields is None:
+            cls._all_fields = [f for f in Field.subclasses() if f.type is not None]
+        return cls._all_fields
+
+    def validate(self):
+        pass
+
+    _all_fields = None

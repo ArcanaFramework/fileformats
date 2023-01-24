@@ -50,6 +50,33 @@ class ScalarMixin(LogicalMixin):
     def __neg__(self):
         return -self.value
 
+    def __pos__(self):
+        return +self.value
+
+    def __abs__(self):
+        return abs(self.value)
+
+
+def text_converter(value):
+    try:
+        return str(value)
+    except ValueError as e:
+        raise FormatMismatchError(str(e))
+
+
+def integer_converter(value):
+    try:
+        return int(value)
+    except ValueError as e:
+        raise FormatMismatchError(str(e))
+
+
+def decimal_converter(value):
+    try:
+        return float(value)
+    except ValueError as e:
+        raise FormatMismatchError(str(e))
+
 
 def boolean_converter(value):
     if isinstance(value, str):
@@ -62,7 +89,10 @@ def boolean_converter(value):
                 f"Cannot convert string '{value}' to boolean value"
             )
     else:
-        value = bool(value)
+        try:
+            value = bool(value)
+        except ValueError as e:
+            raise FormatMismatchError(str(e))
     return value
 
 
@@ -70,22 +100,31 @@ def array_converter(value):
     if isinstance(value, str):
         if value.startswith("[") and value.endswith("]"):
             value = value[1:-1]
+        elif value.startswith("[") or value.endswith("]"):
+            raise FormatMismatchError(f"Unmatched brackets in array field {value}")
         value = [v.strip() for v in value.split(",")]
     else:
-        value = list(value)
+        try:
+            value = list(value)
+        except ValueError as e:
+            raise FormatMismatchError(str(e))
     return value
 
 
 @attrs.define
 class Text(Singluar):
 
-    value: str = attrs.field(converter=str)
+    value: str = attrs.field(converter=text_converter)
+
+    type = str
 
 
 @attrs.define
 class Integer(Singluar, ScalarMixin):
 
-    value: int = attrs.field(converter=float)
+    value: int = attrs.field(converter=integer_converter)
+
+    type = int
 
     def __int__(self):
         return self.value
@@ -94,7 +133,9 @@ class Integer(Singluar, ScalarMixin):
 @attrs.define
 class Decimal(Singluar, ScalarMixin):
 
-    value: float = attrs.field(converter=float)
+    value: float = attrs.field(converter=decimal_converter)
+
+    type = int
 
     def __float__(self):
         return self.value
@@ -104,6 +145,8 @@ class Decimal(Singluar, ScalarMixin):
 class Boolean(Singluar, LogicalMixin):
 
     value: bool = attrs.field(converter=boolean_converter)
+
+    type = bool
 
     def __str__(self):
         return str(self.value).lower()
@@ -118,6 +161,8 @@ class Array(Field):
     value: list = attrs.field(converter=array_converter)
 
     item_type = None
+
+    type = list
 
     def __attrs_post_init__(self):
         # Ensure items are of the correct type
@@ -134,12 +179,15 @@ class Array(Field):
             + "]"
         )
 
+    def __iter__(self):
+        return iter(self.value)
+
     @classmethod
     def __class_getitem__(cls, item_type):
         """Set the item type for a newly created dynamically type"""
-        if not isinstance(item_type, Singluar):
+        if not issubclass(item_type, Singluar):
             raise RuntimeError(
-                "Can only provide SingleField type as item types for Array fields, not "
+                'Can only provide "Singluar" field type as item types for Array fields, not '
                 f"{item_type}"
             )
         return type(
