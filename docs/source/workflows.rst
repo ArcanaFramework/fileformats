@@ -107,8 +107,8 @@ format class, which for single file formats is typically just the file-system pa
    >>> jpeg_file.fspath
    "/path/to/image.jpg"
 
-However, file-formats that consist of multiple files, which is common in scientific
-data, will define separate required properties for each file. For example, the
+However, file-formats that consist of multiple files (common in scientific
+data) will define separate required properties for each file. For example, the
 Analyze_ neuroimaging format, which stores the image in a file with the extension
 ".img" and metadata in a separate header file with the extension ".hdr".
 
