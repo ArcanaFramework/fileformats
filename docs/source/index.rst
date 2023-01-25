@@ -31,7 +31,7 @@ File-format types are typically identified by a combination of file extensions
 and "magic numbers", where applicable. In addition to these generic methods,
 *FileFormats* provides a flexible framework to conveniently add custom identification
 routines for exotic file formats, e.g. formats that require inspection of headers to
-locate other all members of the "file set".
+locate other members of the "file set".
 
 Installation
 ------------

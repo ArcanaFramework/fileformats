@@ -78,8 +78,9 @@ despite the presence of the ``.DS_Store`` directory and the ``catalog.xml`` file
     ├── 1024.dcm
     └── catalog.xml
 
-In addition, to statically defined Directory formats such as the Dicom example above,
-dynamic directory types can be created on the fly using the __class_getitem__ method,
+In addition to statically defining `Directory` formats such as the Dicom example above,
+dynamic directory types can be created on the fly by providing the content types as
+arguments to the `Directory[]` method,
 e.g.
 
 .. code-block:: python
