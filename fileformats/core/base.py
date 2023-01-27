@@ -35,6 +35,10 @@ logger = logging.getLogger("fileformats")
 
 
 class DataType:
+
+    is_fileset = False
+    is_field = False
+
     @classproperty
     def namespace(cls):
         """The "namespace" the format belongs to under the "fileformats" umbrella
@@ -244,6 +248,8 @@ class FileSet(DataType):
     # NB: each class will have its own version of this dictionary
     converters = {}
 
+    is_fileset = True
+
     def __attrs_post_init__(self):
         self.metadata._fileset = self
         # Check required properties don't raise errors
@@ -393,14 +399,19 @@ class FileSet(DataType):
                 yield attr_name
 
     def copy_to(
-        self, dest_dir: Path, stem: str = None, symlink: bool = False, trim: bool = True
+        self,
+        dest_dir: Path,
+        stem: str = None,
+        symlink: bool = False,
+        trim: bool = True,
+        make_dirs: bool = False,
     ):
         """Copies the file-set to a new directory, optionally renaming the files
         to have consistent name-stems.
 
         Parameters
         ----------
-        parent : str
+        dest_dir : str
             Path to the parent directory to save the file-set
         stem: str, optional
             the file name excluding file extensions, to give the files/dirs in the parent
@@ -409,8 +420,12 @@ class FileSet(DataType):
             Use symbolic links instead of copying files to new location, false by default
         trim : bool, optional
             Only copy the paths in the file-set that are "required" by the format, true by default
+        make_dirs : bool, optional
+            Make the parent destination and all missing ancestors if they are missing, false by default
         """
         dest_dir = Path(dest_dir)  # ensure a Path not a string
+        if make_dirs:
+            dest_dir.mkdir(parents=True, exist_ok=True)
         if symlink:
             copy_dir = copy_file = os.symlink
         else:
@@ -546,8 +561,9 @@ class FileSet(DataType):
 
         Returns
         -------
-        pydra.engine.TaskBase
-            a pydra task or workflow that performs the conversion
+        pydra.engine.TaskBase or None
+            a pydra task or workflow that performs the conversion, or None if no
+            conversion is required
 
         Raises
         ------
@@ -556,6 +572,8 @@ class FileSet(DataType):
         FileFormatConversionError
             ambiguous (i.e. more than one) converters found between source and dest format
         """
+        if source_format is cls or issubclass(source_format, cls):
+            return None
         converter_tuple = None
         # Only access converters to the specific class, not superclasses (which may not
         # be able to convert to the specific type)
@@ -563,8 +581,8 @@ class FileSet(DataType):
             converters = cls.__dict__["converters"]
         except KeyError:
             raise FormatConversionError(
-                f"No converters specified to {cls} format (trying to find one from "
-                f"{source_format}"
+                f"No converters specified to {cls.mime_like} format (trying to find one from "
+                f"{source_format.mime_like}"
             )
         try:
             converter_tuple = converters[source_format]
@@ -574,15 +592,16 @@ class FileSet(DataType):
                 if issubclass(source_format, frmt):
                     available.append(converter)
             if len(available) > 1:
+                available_str = "\n".join(str(a) for a in available)
                 raise FormatConversionError(
-                    f"Ambiguous converters found between {cls.__name__} and "
-                    f"{source_format.__name__}, {available}"
-                )
+                    f"Ambiguous converters found between '{cls.mime_like}' and "
+                    f"'{source_format.mime_like}':\n{available_str}"
+                ) from None
             elif not available:
                 raise FormatConversionError(
-                    f"Could not find converter between {source_format.__name__} and "
-                    f"{cls.__name__} formats"
-                )
+                    f"Could not find converter between '{source_format.mime_like}' and "
+                    f"'{cls.mime_like}' formats"
+                ) from None
             else:
                 converter_tuple = available[0]
         converter, conv_kwargs = converter_tuple
@@ -648,6 +667,7 @@ class Field(DataType):
     value = attrs.field()
 
     type = None
+    is_field = True
 
     def __str__(self):
         return str(self.value)
