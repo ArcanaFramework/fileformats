@@ -52,11 +52,11 @@ Installation
 
 
 Support for converter methods between a few select formats can be installed by
-passing the 'converters' install extra, e.g
+passing the 'extended' install extra, e.g
 
 .. code-block:: bash
 
-    $ python3 -m pip install fileformats[converters]
+    $ python3 -m pip install fileformats[extended]
 
 
 Examples

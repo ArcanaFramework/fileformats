@@ -160,7 +160,7 @@ that format objects can be used in place of the path objects themselves, e.g.
 
     import subprocess
     from fileformats.text import Plain
-    text_file = Plain("/path/to/image.txt")
+    text_file = Plain("/path/to/text-file.txt")
 
     with open(text_file) as f:
         contents = f.read()
@@ -225,6 +225,7 @@ them can then be duck-typed in calling functions/methods. For example, both ``Ya
     def read_json_or_yaml_to_dict(serialized: DataSerialization):
         return serialized.load()
 
+Also, when providing the the ``WithSeparateHeader`` and ``WithSideCar`` mixin classes will
 
 Conversion
 ----------
