@@ -10,7 +10,7 @@ import pydra.engine.specs
 from fileformats.generic import File, Directory
 from fileformats.core.utils import set_cwd
 from fileformats.core import mark
-from fileformats.archive import Zip, Tar, Tar_Gzip
+from fileformats.archive import Zip, Tar, Tar_Gzip, ExtractedFile
 
 
 TAR_COMPRESSION_TYPES = ["", "gz", "bz2", "xz"]
@@ -154,8 +154,8 @@ def _create_tar(
     return out_file
 
 
-@mark.converter(source_format=Tar, target_format=File)
-@mark.converter(source_format=Tar_Gzip, target_format=File)
+@mark.converter(source_format=Tar, target_format=ExtractedFile)
+@mark.converter(source_format=Tar_Gzip, target_format=ExtractedFile)
 @mark.converter(source_format=Tar, target_format=Directory)
 @mark.converter(source_format=Tar_Gzip, target_format=Directory)
 @pydra.mark.task
@@ -293,7 +293,9 @@ def _create_zip(
     return out_file
 
 
-@mark.converter(source_format=Zip, target_format=File, compression=zipfile.ZIP_DEFLATED)
+@mark.converter(
+    source_format=Zip, target_format=ExtractedFile, compression=zipfile.ZIP_DEFLATED
+)
 @mark.converter(
     source_format=Zip, target_format=Directory, compression=zipfile.ZIP_DEFLATED
 )

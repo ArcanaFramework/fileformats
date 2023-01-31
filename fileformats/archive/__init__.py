@@ -43,4 +43,10 @@ class Tar_Gzip(Gzip, Tar):
     iana_mime = "application/x-tar+gzip"
 
 
+class ExtractedFile(File):
+    """An extracted generic file, used as a target for unzip converters"""
+
+    iana_mime = None
+
+
 import_converters(__name__)
