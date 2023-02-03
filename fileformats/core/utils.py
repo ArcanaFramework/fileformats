@@ -188,3 +188,37 @@ def from_mime_format_name(format_name):
     format_name = re.sub(r"(-)(\w)", lambda m: m.group(2).upper(), format_name)
     format_name = re.sub(r"(\+)(\w)", lambda m: "_" + m.group(2).upper(), format_name)
     return format_name
+
+
+def hash_file(fspath, chunk_len, crypto):
+    crypto_obj = crypto()
+    with open(fspath, "rb") as fp:
+        for chunk in iter(lambda: fp.read(chunk_len), b""):
+            crypto_obj.update(chunk)
+    return crypto_obj.hexdigest()
+
+
+def hash_dir(
+    fspath,
+    chunk_len,
+    crypto,
+    ignore_hidden_files=False,
+    ignore_hidden_dirs=False,
+    relative_to=None,
+):
+    if relative_to is None:
+        relative_to = fspath
+    file_hashes = {}
+    for dpath, _, filenames in sorted(os.walk(fspath)):
+        # Sort in-place to guarantee order.
+        filenames.sort()
+        dpath = Path(dpath)
+        if ignore_hidden_dirs and dpath.name.startswith(".") and str(dpath) != fspath:
+            continue
+        for filename in filenames:
+            if ignore_hidden_files and filename.startswith("."):
+                continue
+            file_hashes[dpath.relative_to(relative_to)] = hash_file(
+                dpath / filename, crypto=crypto, chunk_len=chunk_len
+            )
+    return file_hashes

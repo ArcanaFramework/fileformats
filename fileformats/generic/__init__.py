@@ -32,6 +32,9 @@ class FsObject(FileSet, os.PathLike):
         to functions like file 'open'"""
         return str(self)
 
+    def hash_files(self, **kwargs):
+        return super().hash_files(relative_to=self.fspath, **kwargs)
+
 
 @attrs.define
 class File(FsObject):

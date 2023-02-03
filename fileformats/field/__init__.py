@@ -65,6 +65,11 @@ def text_converter(value):
 
 
 def integer_converter(value):
+    if isinstance(value, float):
+        raise FormatMismatchError(
+            f"Cannot convert float ({value}) to integer field without potential loss "
+            "of information"
+        )
     try:
         return int(value)
     except ValueError as e:

@@ -2,11 +2,13 @@ from __future__ import annotations
 import os
 from copy import copy
 from inspect import isclass
+import typing as ty
 import importlib
 import shutil
 from operator import itemgetter
 import itertools
 from pathlib import Path
+import hashlib
 import logging
 import attrs
 from .utils import (
@@ -16,6 +18,8 @@ from .utils import (
     to_mime_format_name,
     from_mime_format_name,
     STANDARD_NAMESPACES,
+    hash_file,
+    hash_dir,
 )
 from .exceptions import (
     FileFormatsError,
@@ -38,6 +42,35 @@ class DataType:
 
     is_fileset = False
     is_field = False
+
+    @classmethod
+    def matches(cls, values, validate: bool = True) -> bool:
+        """Checks whether the given value (fspaths for file-sets) match the datatype
+        specified by the class
+
+        Parameters
+        ----------
+        values : ty.Any
+            values to check whether they match the given datatype
+        checks: bool, optional
+            whether to run in-depth checks to determine whether the values match the
+            datatype, by default True
+
+        Returns
+        -------
+        bool
+        """
+        try:
+            item = cls(values)
+            if validate:
+                item.validate()
+        except FormatMismatchError:
+            return False
+        else:
+            return True
+
+    def validate(self):
+        pass
 
     @classproperty
     def namespace(cls):
@@ -177,45 +210,6 @@ class DataType:
 
 
 @attrs.define
-class Metadata:
-    """Manually set and lazily loaded metadata of a FileSet"""
-
-    loaded: dict = attrs.field(factory=dict, converter=dict)
-    _fileset = attrs.field(default=None, init=False, repr=False)
-
-    def __iter__(self):
-        raise NotImplementedError
-
-    def __getitem__(self, key):
-        try:
-            return self.loaded[key]
-        except KeyError:
-            self.load()
-        return self.loaded[key]
-
-    def load(self, overwrite=False):
-        assert self._fileset is not None
-        if hasattr(self._fileset, "load_metadata"):
-            loaded_dict = self._fileset.load_metadata()
-            if not overwrite:
-                mismatching = [
-                    k
-                    for k in set(self.loaded) & set(loaded_dict)
-                    if self.loaded[k] != loaded_dict[k]
-                ]
-                if mismatching:
-                    raise FileFormatsError(
-                        "Mismatch in values between loaded and loaded metadata values, "
-                        "use 'load(overwrite=True)' to overwrite:\n"
-                        + "\n".join(
-                            f"{k}: loaded={self.loaded[k]}, loaded={loaded_dict[k]}"
-                            for k in mismatching
-                        )
-                    )
-            self.loaded.update(loaded_dict)
-
-
-@attrs.define
 class FileSet(DataType):
     """
     The base class for all format types within the fileformats package. A generic
@@ -227,17 +221,13 @@ class FileSet(DataType):
     ----------
     fspaths : set[Path]
         a set of file-system paths pointing to all the resources in the file-set
-    metadata : dict[str, Any]
-        any metadata that exists outside of the file-set itself. This metadata will be
-        augmented by metadata contained within the files if the `load_metadata` method
-        is implemented in the file-set subclass
     checks : bool
         whether to run in-depth "checks" to verify the file format
     """
 
     fspaths: set[Path] = attrs.field(default=None, converter=fspaths_converter)
-    metadata: Metadata = attrs.field(
-        factory=dict, converter=Metadata, repr=False, kw_only=True
+    _metadata: dict[str, ty.Any] = attrs.field(
+        default=None, init=False, repr=False, eq=False
     )
 
     # Explicitly set the Internet Assigned Numbers Authority (https://iana_mime.org) MIME
@@ -251,7 +241,6 @@ class FileSet(DataType):
     is_fileset = True
 
     def __attrs_post_init__(self):
-        self.metadata._fileset = self
         # Check required properties don't raise errors
         for prop_name in self.required_properties():
             getattr(self, prop_name)
@@ -292,6 +281,12 @@ class FileSet(DataType):
     def __iter__(self):
         return iter(self.fspaths)
 
+    @property
+    def metadata(self):
+        if self._metadata is None and hasattr(self, "load_metadata"):
+            self._metadata = self.load_metadata()
+        return self._metadata
+
     @classproperty
     def mime_type(cls):
         """Generates a MIME type (IANA) identifier from a format class. If an official
@@ -314,31 +309,6 @@ class FileSet(DataType):
             format_name = to_mime_format_name(cls.__name__)
             mime_type = f"application/x-{format_name}"
         return mime_type
-
-    @classmethod
-    def matches(cls, fspaths: set[Path], validate: bool = True) -> bool:
-        """Checks whether the given paths match the format specified by the class
-
-        Parameters
-        ----------
-        fspaths : set[Path]
-            the paths to check whether they match the given format
-        checks: bool, optional
-            whether to run non-essential checks to determine whether the format matches,
-            by default True
-
-        Returns
-        -------
-        bool
-        """
-        try:
-            fileset = cls(fspaths)
-            if validate:
-                fileset.validate()
-        except FormatMismatchError:
-            return False
-        else:
-            return True
 
     @classmethod
     def required_properties(cls):
@@ -612,7 +582,7 @@ class FileSet(DataType):
 
     @classproperty
     def all_formats(cls):
-        """Iterate over all formats in fileformats.* namespaces"""
+        """Iterate over all FileSet formats in fileformats.* namespaces"""
         if cls._all_formats is None:
             cls._all_formats = [
                 f for f in FileSet.subclasses() if f.__dict__.get("iana_mime", True)
@@ -656,6 +626,83 @@ class FileSet(DataType):
             }
         return cls._formats_by_name
 
+    def hash_files(
+        self,
+        crypto=None,
+        chunk_len=8192,
+        relative_to: os.PathLike = None,
+        **kwargs,
+    ):
+        """Calculate hashes for all files within the file set within a dictionary.
+        Hashes for files within directories are nested within separate dictionaries
+        for each (sub)directory.
+
+        Parameters
+        ----------
+        crypto : function, optional
+            the cryptography method used to hash the files, by default hashlib.sha256
+        chunk_len : int, optional
+            the chunk length to break up the file and calculate the hash over, by default 8192
+        relative_to : Path, optional
+            the base path by which to record the file system paths in the dictionary keys
+            to, by default None
+        **kwargs
+            keyword args passed directly through to the ``hash_dir`` function
+
+        Returns
+        -------
+        file_hashes : dict[str, str]
+            hashes for all files in the file-set, addressed by their directory relative
+            to the ``relative_to`` path
+        """
+        if relative_to is None:
+            relative_to = os.path.commonpath(self.fspaths)
+        if crypto is None:
+            crypto = hashlib.sha256
+
+        file_hashes = {}
+        for fspath in self.fspaths:
+            if fspath.is_file():
+                file_hashes[fspath.relative_to(relative_to)] = hash_file(
+                    fspath, chunk_len=chunk_len, crypto=crypto
+                )
+            elif fspath.is_dir():
+                file_hashes.update(
+                    hash_dir(fspath, chunk_len=chunk_len, crypto=crypto, **kwargs)
+                )
+            else:
+                raise RuntimeError(f"Cannot hash {self} as {fspath} no longer exists")
+        return file_hashes
+
+    def hash(self, crypto=None, *args, **kwargs):
+        """Calculate a unique hash for the file-set based on the relative paths and
+        contents of its constituent files
+
+        Parameters
+        ----------
+        crypto : function, optional
+            the cryptography method used to hash the files, by default hashlib.sha256
+        chunk_len : int, optional
+            the chunk length to break up the file and calculate the hash over, by default 8192
+        relative_to : Path, optional
+            the base path by which to record the file system paths in the dictionary keys
+            to, by default None
+        **kwargs
+            keyword args passed directly through to the ``hash_dir`` function
+
+        Returns
+        -------
+        hash : str
+            unique hash for the file-set
+        """
+        if crypto is None:
+            crypto = hashlib.sha256
+        crytpo_obj = crypto()
+        for path, hash in self.hash_files(crypto=crypto, *args, **kwargs).items():
+            crytpo_obj.update(path.encode())
+            crytpo_obj.update(hash.encode())
+        return crytpo_obj.hexdigest()
+
     _all_formats = None
     _formats_by_iana_mime = None
     _formats_by_name = None
@@ -672,14 +719,15 @@ class Field(DataType):
     def __str__(self):
         return str(self.value)
 
+    @property
+    def metadata(self):
+        return {}
+
     @classproperty
     def all_fields(cls):
-        """Iterate over all formats in fileformats.* namespaces"""
+        """Iterate over all field formats in fileformats.* namespaces"""
         if cls._all_fields is None:
             cls._all_fields = [f for f in Field.subclasses() if f.type is not None]
         return cls._all_fields
-
-    def validate(self):
-        pass
 
     _all_fields = None
