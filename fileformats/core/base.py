@@ -257,13 +257,14 @@ class FileSet(DataType):
                 f"The following file system paths provided to {self} do not "
                 f"exist:\n{missing_str}\n\nFrom full list:\n{all_str}"
             )
+            present_parents = set()
             for fspath in missing:
                 if fspath:
                     if fspath.parent.exists():
-                        msg += (
-                            f"\n\nFiles in the directory '{str(fspath.parent)}' are:\n"
-                        )
-                        msg += "\n".join(str(p) for p in fspath.parent.iterdir())
+                        present_parents.add(fspath.parent)
+            for parent in present_parents:
+                msg += f"\n\nFiles in the present parent directory '{str(fspath.parent)}' are:\n"
+                msg += "\n".join(str(p) for p in fspath.parent.iterdir())
             raise FileNotFoundError(msg)
 
     def validate(self):
@@ -336,7 +337,7 @@ class FileSet(DataType):
     def required_paths(self):
         """Returns all fspaths that are required for the format"""
         required = set()
-        for prop_name in self.required_properties:
+        for prop_name in self.required_properties():
             prop = getattr(self, prop_name)
             if prop in self.fspaths:
                 required.add(prop)

@@ -1,5 +1,6 @@
 import os.path
 import sys
+import typing as ty
 import tempfile
 import tarfile
 import zipfile
@@ -55,7 +56,7 @@ ZIP_COMPRESSION_ANNOT = (
         "compression": TAR_COMPRESSION_ANNOT,
         "format": int,
         "ignore_zeros": bool,
-        "return": {"out_file": Tar},
+        "return": {"out_file": Path},
     }
 )
 def tar_file(
@@ -91,7 +92,7 @@ def tar_file(
         "compression": TAR_COMPRESSION_ANNOT,
         "format": int,
         "ignore_zeros": bool,
-        "return": {"out_file": Tar},
+        "return": {"out_file": Path},
     }
 )
 def tar_dir(
@@ -151,7 +152,7 @@ def _create_tar(
         for path in in_file:
             tfile.add(relative_path(path, base_dir), filter=filter)
 
-    return out_file
+    return Path(out_file)
 
 
 @mark.converter(source_format=Tar, target_format=ExtractedFile)
@@ -165,13 +166,14 @@ def extract_tar(
     extract_dir: Directory,
     bufsize: int = 10240,
     compression_type: str = "*",
-):
+) -> ty.Iterable[Path]:
 
     if extract_dir == attrs.NOTHING:
         extract_dir = tempfile.mkdtemp()
     else:
         extract_dir = os.path.abspath(extract_dir)
         os.makedirs(extract_dir, exist_ok=True)
+    extract_dir = Path(extract_dir)
 
     if not compression_type:
         compression_type = ""
@@ -179,7 +181,7 @@ def extract_tar(
     with tarfile.open(in_file, mode=f"r:{compression_type}") as tfile:
         tfile.extractall(path=extract_dir)
 
-    return [os.path.join(extract_dir, f) for f in os.listdir(extract_dir)]
+    return [extract_dir / f for f in os.listdir(extract_dir)]
 
 
 @mark.converter(source_format=File, target_format=Zip)
@@ -190,7 +192,7 @@ def extract_tar(
         "out_file": str,
         "compression": ZIP_COMPRESSION_ANNOT,
         "allowZip64": bool,
-        "return": {"out_file": Zip},
+        "return": {"out_file": Path},
     }
 )
 def zip_file(
@@ -221,7 +223,7 @@ def zip_file(
         "out_file": str,
         "compression": ZIP_COMPRESSION_ANNOT,
         "allowZip64": bool,
-        "return": {"out_file": Zip},
+        "return": {"out_file": Path},
     }
 )
 def zip_dir(
@@ -290,7 +292,7 @@ def _create_zip(
                         zfile.write(relative_path(fpath, base_dir))
             else:
                 zfile.write(relative_path(path, base_dir))
-    return out_file
+    return Path(out_file)
 
 
 @mark.converter(
@@ -308,11 +310,12 @@ def extract_zip(in_file: File, extract_dir: Directory):
     else:
         extract_dir = os.path.abspath(extract_dir)
         os.makedirs(extract_dir, exist_ok=True)
+    extract_dir = Path(extract_dir)
 
     with zipfile.ZipFile(in_file) as zfile:
         zfile.extractall(path=extract_dir)
 
-    return [os.path.join(extract_dir, f) for f in os.listdir(extract_dir)]
+    return [extract_dir / f for f in os.listdir(extract_dir)]
 
 
 def relative_path(path, base_dir):
