@@ -69,7 +69,7 @@ def test_with_separate_header(work_dir):
     write_test_file(hdr_fspath, "\n".join(f"{k}:{v}" for k, v in hdr.items()))
     file = FileWithSeparateHeader(fspath)
     file.validate()
-    assert file.metadata.loaded == hdr
+    assert file.metadata == hdr
 
 
 def test_with_separate_header_fail1(work_dir):

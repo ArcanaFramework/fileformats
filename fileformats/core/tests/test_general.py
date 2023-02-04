@@ -13,12 +13,12 @@ def test_init_args(work_dir):
         File(fspath, fspath)
 
 
-def test_metadata_iterator_fail(work_dir):
-    fspath = work_dir / "test.txt"
-    write_test_file(fspath)
-    file = File(fspath)
-    with pytest.raises(NotImplementedError):
-        iter(file.metadata)
+# def test_metadata_iterator_fail(work_dir):
+#     fspath = work_dir / "test.txt"
+#     write_test_file(fspath)
+#     file = File(fspath)
+#     with pytest.raises(NotImplementedError):
+#         iter(file.metadata)
 
 
 class TestFile(File):
@@ -47,8 +47,8 @@ def test_multiple_matches2(work_dir):
 def test_missing_files(work_dir):
     fspath = work_dir / "test.tst"
     write_test_file(fspath)
-    # with pytest.raises(FileNotFoundError):
-    TestFile([fspath, work_dir / "missing1.txt", work_dir / "missing2.txt"])
+    with pytest.raises(FileNotFoundError):
+        TestFile([fspath, work_dir / "missing1.txt", work_dir / "missing2.txt"])
 
 
 class ImageWithInlineHeader(File):
@@ -63,6 +63,7 @@ class ImageWithInlineHeader(File):
         return {k: int(v) for k, v in (ln.split(":") for ln in hdr.splitlines())}
 
 
+@pytest.mark.xfail(reason="Disabled separate header metadata")
 def test_header_overwrite(work_dir):
 
     fspath = work_dir / "image.img"
