@@ -1,3 +1,4 @@
+from __future__ import annotations
 from ._version import __version__
 from .base import DataType, FileSet, Field
 from .utils import (

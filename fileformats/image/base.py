@@ -1,3 +1,4 @@
+from __future__ import annotations
 from fileformats.generic import File
 
 
