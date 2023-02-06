@@ -349,6 +349,7 @@ class FileSet(DataType):
         """Trims paths in fspaths to only those that are "required" by the format class
         i.e. returned by a required property"""
         self.fspaths = fspaths_converter(self.required_paths())
+        return self
 
     @classmethod
     def checks(cls):
