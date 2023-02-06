@@ -9,7 +9,6 @@ readme = "README.rst"
 requires-python = ">=3.7"
 dependencies = [
     "attrs>=22.1.0",
-    "PyYAML>=6.0",
 ]
 license = {file = "LICENSE"}
 authors = [
@@ -50,12 +49,14 @@ dev = [
     "codespell",
     "flake8",
     "flake8-pyproject",
+    "fileformats[test]",
 ]
 test = [
     "pytest >=6.2.5",
     "pytest-env>=0.6.2",
     "pytest-cov>=2.12.1",
     "codecov",
+    "fileformats[extended]",
 ]
 docs = [
     "packaging",
@@ -70,6 +71,7 @@ docs = [
 extended = [
     "pydra >= 0.20.0",
     "imageio >=2.24.0",
+    "PyYAML>=6.0",
 ]
 
 [project.urls]

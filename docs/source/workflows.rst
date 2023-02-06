@@ -19,20 +19,19 @@ Validation
 ----------
 
 In the basic case, *FileFormats* can be used for checking the format of files and
-directories against known types. There are two layers of checks, ones
-performed on the file-system paths alone, which are run when a format class is
-initiated, e.g.
+directories against known types. Typically, there are two layers of checks, ones
+performed on the file-system paths alone,
 
 .. code-block:: python
 
     from fileformats.image import Jpeg
 
-    jpeg_file = Jpeg("/path/to/image.jpg")  # Checks path for correct extension
-    jpeg_file = Jpeg("/path/to/image.png")  # <-- THIS WILL FAIL as the extension is wrong
+    jpeg_file = Jpeg("/path/to/image.jpg")  # PASSES
+    jpeg_file = Jpeg("/path/to/image.png")  # FAILS!
 
 
 The second layer of checks, which typically require reading the file and peeking at its
-contents for magic numbers and the like, are explicitly run by the ``validate`` method.
+contents for magic numbers and the like
 
 .. code-block:: python
 
@@ -41,8 +40,7 @@ contents for magic numbers and the like, are explicitly run by the ``validate`` 
     with open(fspath, "w") as f:
         f.write("this is not a valid JPEG file")
 
-    jpeg_file = Jpeg(fspath)  # Extension checks out ok
-    jpeg_file.validate()  # <-- THIS WILL FAIL as the magic number isn't present
+    jpeg_file = Jpeg(fspath)  # FAILS!
 
 
 Directories are classified by the contents of the files within them, via the
@@ -78,8 +76,9 @@ despite the presence of the ``.DS_Store`` directory and the ``catalog.xml`` file
     ├── 1024.dcm
     └── catalog.xml
 
-In addition, to statically defined Directory formats such as the Dicom example above,
-dynamic directory types can be created on the fly using the __class_getitem__ method,
+In addition to statically defining `Directory` formats such as the Dicom example above,
+dynamic directory types can be created on the fly by providing the content types as
+arguments to the `Directory[]` method,
 e.g.
 
 .. code-block:: python
@@ -106,8 +105,8 @@ format class, which for single file formats is typically just the file-system pa
    >>> jpeg_file.fspath
    "/path/to/image.jpg"
 
-However, file-formats that consist of multiple files, which is common in scientific
-data, will define separate required properties for each file. For example, the
+However, file-formats that consist of multiple files (common in scientific
+data) will typically define separate required properties for each file. For example, the
 Analyze_ neuroimaging format, which stores the image in a file with the extension
 ".img" and metadata in a separate header file with the extension ".hdr".
 
@@ -128,9 +127,10 @@ attribute from the base class of all file formats ``fileformats.core.base.FileSe
     >>> analyze_file.fspaths
     {"/path/to/neuroimage.hdr", "/path/to/neuroimage.img"}
 
-In the case of file formats with "adjacent" files that share the same file-name stem
-(such as Analyze_) you only need to provide one the primary paths and the header will be
-automatically detected if present and added to the file-set
+In the case of file formats with "adjacent" files that share the same file-name stem,
+i.e. same file path and name minus the file extension (such as Analyze_), you only need
+to provide one the primary path and the header will be automatically detected and added
+to the file-set
 
 .. code-block:: python
 
@@ -158,7 +158,7 @@ that format objects can be used in place of the path objects themselves, e.g.
 
     import subprocess
     from fileformats.text import Plain
-    text_file = Plain("/path/to/image.txt")
+    text_file = Plain("/path/to/text-file.txt")
 
     with open(text_file) as f:
         contents = f.read()
@@ -187,7 +187,7 @@ Metadata
 --------
 
 In addition to ``fspaths``, the base ``FileSet`` class defines a ``metadata`` attribute,
-which can be used to save arbitrary metadata alongside the file paths, which can be
+which can be used to save arbitrary metadata alongside the file paths and can be
 accessed as required, e.g.
 
 .. code-block:: python
@@ -197,8 +197,8 @@ accessed as required, e.g.
     >>> dicom.metadata["sex"]
     "male"
 
-If the format class defines the ``load_metadata`` method, then it is lazily called
-whenever a key doesn't exist in the provided metadata to populate the metadata dictionary,
+If the format class defines the ``load_metadata`` method, then it is called whenever a
+key doesn't exist in the provided metadata to lazily populate the metadata dictionary,
 e.g.
 
 .. code-block:: python
@@ -223,11 +223,12 @@ them can then be duck-typed in calling functions/methods. For example, both ``Ya
     def read_json_or_yaml_to_dict(serialized: DataSerialization):
         return serialized.load()
 
+Also, when providing the the ``WithSeparateHeader`` and ``WithSideCar`` mixin classes will
 
 Conversion
 ----------
 
-Several Conversion methods are available between equivalent file-formats in the standard
+Several conversion methods are available between equivalent file-formats in the standard
 classes. For example, archive types such as ``Zip`` can be converted into and generic
 file/directories using the ``convert`` classmethod of the target format to convert to
 

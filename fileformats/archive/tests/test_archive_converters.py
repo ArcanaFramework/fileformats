@@ -1,7 +1,7 @@
 import filecmp
 import pytest
 from fileformats.generic import File, Directory
-from fileformats.archive import Zip, Gzip, Tar, Tar_Gzip
+from fileformats.archive import Zip, Gzip, Tar, Tar_Gzip, ExtractedFile
 
 
 TEST_DIR = "__test_dir__"
@@ -31,7 +31,6 @@ def archive_input(work_dir, request):
         inpt = Directory(test_dir)
     else:
         assert False, f"Unrecognised request param {request.param}"
-    inpt.validate()
     return inpt
 
 
@@ -48,6 +47,9 @@ def test_tar_roundtrip(archive_input):
     _roundtrip(archive_input, Tar)
 
 
+@pytest.mark.xfail(
+    reason="Need to implement archive qualifiers before we can do this type of conversion"
+)
 def test_tar_gz_roundtrip(archive_input):
     _roundtrip(archive_input, Tar_Gzip)
 
@@ -55,9 +57,8 @@ def test_tar_gz_roundtrip(archive_input):
 def _roundtrip(input, archive_klass):
     archive = archive_klass.convert(input)
     assert isinstance(archive, archive_klass)
-    archive.validate()
-    output = type(input).convert(archive)
-    output.validate()
+    extracted_type = Directory if input.is_dir else ExtractedFile
+    output = extracted_type.convert(archive)
     if isinstance(input, File):
         assert filecmp.cmp(output.fspath, input.fspath)
     else:

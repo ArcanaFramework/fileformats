@@ -52,11 +52,11 @@ Installation
 
 
 Support for converter methods between a few select formats can be installed by
-passing the 'converters' install extra, e.g
+passing the 'extended' install extra, e.g
 
 .. code-block:: bash
 
-    $ python3 -m pip install fileformats[converters]
+    $ python3 -m pip install fileformats[extended]
 
 
 Examples
@@ -80,8 +80,7 @@ Files can then be checked to see whether they are of PNG format by
 
 .. code-block:: python
 
-    png = Png("/path/to/image/file.png")  # Checks the extension (i.e. path-only validation)
-    png.validate()  # Checks the magic number (i.e. deeper file-contents validation)
+    png = Png("/path/to/image/file.png")  # Checks the extension and magic number
 
 which will raise a ``FormatMismatchError`` if initialisation or validation fails, or
 for a boolean method that checks the validation use ``matches``

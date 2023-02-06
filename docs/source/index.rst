@@ -31,7 +31,7 @@ File-format types are typically identified by a combination of file extensions
 and "magic numbers", where applicable. In addition to these generic methods,
 *FileFormats* provides a flexible framework to conveniently add custom identification
 routines for exotic file formats, e.g. formats that require inspection of headers to
-locate other all members of the "file set".
+locate other members of the "file set".
 
 Installation
 ------------
@@ -64,15 +64,25 @@ the ``extended`` option.
 Quick Example
 -------------
 
-Validate an mp4 audio file's file-system path (including extension) and magic number
+Validate an mp4 audio file's extension and magic number simply by instantiating the class.
+
 
 .. code-block:: python
 
    >>> from fileformats.audio import Mp4
-   >>> mp4_file = Mp4("/path/to/audio.mp4")  # check path and extension
-   >>> mp4_file.validate()  # check magic number
+   >>> mp4_file = Mp4("/path/to/audio.mp4")  # checks it exists, its extension and magic number
    >>> mp4_file.fspath
    "/path/to/audio.mp4"
+
+The created `FileSet` object can then be treated like a "path-like" object, e.g. when opening files
+
+   >>> fp = open(mp4_file, "rb")
+   >>> contents = fp.read()
+
+and converts to its path in string templates, e.g.
+
+   >>> import subprocess
+   >>> subprocess.run(f"cp {mp4_file} new-dest.mp4", shell=True)
 
 
 License

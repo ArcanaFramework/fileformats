@@ -164,7 +164,7 @@ scientific data formats you might need to write custom validators using the
 
 Take for example the `GIS shapefile structure <https://www.earthdatascience.org/courses/earth-analytics/spatial-data-r/shapefile-structure/>`_,
 it is a file-set consisting of 3 to 6 files differentiated by their extensions. To
-implement this class we use the ``required`` decorator. We inherit from the ``WithAdjacents``
+implement this class we use the ``required`` decorator. We inherit from the ``WithAdjacentFiles``
 mixin so that neighbouring files (i.e. files with the same stem but different extension)
 are included when the class is instantiated with just the primary ".shp" file.
 
@@ -172,7 +172,7 @@ are included when the class is instantiated with just the primary ".shp" file.
 
     from fileformats.generic import File
     from fileformats.serialization import Xml
-    from fileformats.mixin import WithAdjacents
+    from fileformats.mixin import WithAdjacentFiles
     from fileformats.core import mark
 
     class GisShapeIndex(File):
@@ -207,7 +207,7 @@ are included when the class is instantiated with just the primary ".shp" file.
         ext = ".shp.xml"
 
 
-    class GisShape(WithAdjacents, File):
+    class GisShape(WithAdjacentFiles, File):
 
         ext = ".shp"  # the main file that will be mapped to fspath
 
@@ -252,10 +252,8 @@ value without raising a ``FormatsMismatchError`` for the class to be initiated. 
 properties, that appear in ``fspaths`` attribute of the object are considered to be
 "required paths", and are copied along side the main path in the ``copy_to`` method.
 
-After the format class has been initiated and a cursory validation has been performed
-on the paths provided, deeper checks can be run as part of the ``validate`` method.
-These checks are specified using the ``check`` decorator. Take the ``fileformats.image.Tiff``
-class
+After the required properties have been deeper checks can be by using the ``check``
+decorator. Take the ``fileformats.image.Tiff`` class
 
 .. code-block:: python
 
@@ -286,9 +284,8 @@ class
 
 The ``Tiff`` format class needs to check two different magic numbers, one for big endian
 files and another one for little endian files. Therefore we can't just use the
-``WithMagicNumber`` mixin and have to roll our own, ``endianness`` which will be called
-when ``validate()`` is called because it is decorated with ``fileformats.core.mark.check``.
-Note that this method can also be used to check the endianness of the file if required.
+``WithMagicNumber`` mixin and have to roll our own, ``endianness`` is decorated with
+``fileformats.core.mark.check``.
 
 
 Converters
@@ -376,8 +373,6 @@ simply iterate over paths in the base class and attempt to validate them.
 .. code-block:: python
 
     >>> sub_format = SubFormat(BaseFormat.convert(another_format))
-    >>> sub_format.validate()
-
 
 Shell commands are marked as converters in the same way as function tasks, and existing
 ShellCommandTask classes can be registered by calling the converter method on the ShellCommandTask

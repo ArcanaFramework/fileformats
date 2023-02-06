@@ -1,5 +1,6 @@
 import os.path
 import sys
+import typing as ty
 import tempfile
 import tarfile
 import zipfile
@@ -10,7 +11,7 @@ import pydra.engine.specs
 from fileformats.generic import File, Directory
 from fileformats.core.utils import set_cwd
 from fileformats.core import mark
-from fileformats.archive import Zip, Tar, Tar_Gzip
+from fileformats.archive import Zip, Tar, Tar_Gzip, ExtractedFile
 
 
 TAR_COMPRESSION_TYPES = ["", "gz", "bz2", "xz"]
@@ -52,10 +53,10 @@ ZIP_COMPRESSION_ANNOT = (
         "in_file": pydra.engine.specs.File,
         "out_file": str,
         "filter": str,
-        "compression": TAR_COMPRESSION_ANNOT,
+        "compression": str,  # TAR_COMPRESSION_ANNOT,
         "format": int,
         "ignore_zeros": bool,
-        "return": {"out_file": Tar},
+        "return": {"out_file": Path},
     }
 )
 def tar_file(
@@ -88,10 +89,10 @@ def tar_file(
         "in_file": pydra.engine.specs.Directory,
         "out_file": str,
         "filter": str,
-        "compression": TAR_COMPRESSION_ANNOT,
+        "compression": str,  # TAR_COMPRESSION_ANNOT,
         "format": int,
         "ignore_zeros": bool,
-        "return": {"out_file": Tar},
+        "return": {"out_file": Path},
     }
 )
 def tar_dir(
@@ -151,11 +152,11 @@ def _create_tar(
         for path in in_file:
             tfile.add(relative_path(path, base_dir), filter=filter)
 
-    return out_file
+    return Path(out_file)
 
 
-@mark.converter(source_format=Tar, target_format=File)
-@mark.converter(source_format=Tar_Gzip, target_format=File)
+@mark.converter(source_format=Tar, target_format=ExtractedFile)
+@mark.converter(source_format=Tar_Gzip, target_format=ExtractedFile)
 @mark.converter(source_format=Tar, target_format=Directory)
 @mark.converter(source_format=Tar_Gzip, target_format=Directory)
 @pydra.mark.task
@@ -165,13 +166,14 @@ def extract_tar(
     extract_dir: Directory,
     bufsize: int = 10240,
     compression_type: str = "*",
-):
+) -> ty.Iterable[Path]:
 
     if extract_dir == attrs.NOTHING:
         extract_dir = tempfile.mkdtemp()
     else:
         extract_dir = os.path.abspath(extract_dir)
         os.makedirs(extract_dir, exist_ok=True)
+    extract_dir = Path(extract_dir)
 
     if not compression_type:
         compression_type = ""
@@ -179,7 +181,7 @@ def extract_tar(
     with tarfile.open(in_file, mode=f"r:{compression_type}") as tfile:
         tfile.extractall(path=extract_dir)
 
-    return [os.path.join(extract_dir, f) for f in os.listdir(extract_dir)]
+    return [extract_dir / f for f in os.listdir(extract_dir)]
 
 
 @mark.converter(source_format=File, target_format=Zip)
@@ -188,9 +190,9 @@ def extract_tar(
     {
         "in_file": pydra.engine.specs.File,
         "out_file": str,
-        "compression": ZIP_COMPRESSION_ANNOT,
+        "compression": int,  # ZIP_COMPRESSION_ANNOT,
         "allowZip64": bool,
-        "return": {"out_file": Zip},
+        "return": {"out_file": Path},
     }
 )
 def zip_file(
@@ -219,9 +221,9 @@ def zip_file(
     {
         "in_file": pydra.engine.specs.Directory,
         "out_file": str,
-        "compression": ZIP_COMPRESSION_ANNOT,
+        "compression": int,  # ZIP_COMPRESSION_ANNOT,
         "allowZip64": bool,
-        "return": {"out_file": Zip},
+        "return": {"out_file": Path},
     }
 )
 def zip_dir(
@@ -290,10 +292,12 @@ def _create_zip(
                         zfile.write(relative_path(fpath, base_dir))
             else:
                 zfile.write(relative_path(path, base_dir))
-    return out_file
+    return Path(out_file)
 
 
-@mark.converter(source_format=Zip, target_format=File, compression=zipfile.ZIP_DEFLATED)
+@mark.converter(
+    source_format=Zip, target_format=ExtractedFile, compression=zipfile.ZIP_DEFLATED
+)
 @mark.converter(
     source_format=Zip, target_format=Directory, compression=zipfile.ZIP_DEFLATED
 )
@@ -306,11 +310,12 @@ def extract_zip(in_file: File, extract_dir: Directory):
     else:
         extract_dir = os.path.abspath(extract_dir)
         os.makedirs(extract_dir, exist_ok=True)
+    extract_dir = Path(extract_dir)
 
     with zipfile.ZipFile(in_file) as zfile:
         zfile.extractall(path=extract_dir)
 
-    return [os.path.join(extract_dir, f) for f in os.listdir(extract_dir)]
+    return [extract_dir / f for f in os.listdir(extract_dir)]
 
 
 def relative_path(path, base_dir):

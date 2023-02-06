@@ -1,4 +1,3 @@
-from __future__ import annotations
 import attrs
 from pydra.engine import Workflow
 import pydra.engine.core

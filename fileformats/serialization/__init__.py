@@ -1,4 +1,3 @@
-from warnings import warn
 from pathlib import Path
 import json
 from ..core import __version__, mark

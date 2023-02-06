@@ -31,9 +31,7 @@ def test_json_to_yaml(work_dir):
     with open(in_file, "w") as f:
         f.write(SAMPLE_JSON)
     jsn = Json(in_file)
-    jsn.validate()
     yml = Yaml.convert(jsn)
-    yml.validate()
     assert yml.contents == SAMPLE_YAML
 
 
@@ -42,7 +40,5 @@ def test_yaml_to_json(work_dir):
     with open(in_file, "w") as f:
         f.write(SAMPLE_JSON)
     yml = Yaml(in_file)
-    yml.validate()
-    jsn = Json.convert(yml)
-    jsn.validate()
+    Json.convert(yml)
     assert yml.contents == SAMPLE_JSON

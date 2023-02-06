@@ -1,6 +1,3 @@
-from __future__ import annotations
-
-
 class FileFormatsError(RuntimeError):
     "Base exception class"
 

@@ -1,4 +1,3 @@
-from __future__ import annotations
 import inspect
 import attrs
 from .base import FileSet, REQUIRED_ANNOTATION, CHECK_ANNOTATION

@@ -16,6 +16,7 @@ def Foo():
     class Foo_(File):
 
         ext = ".foo"
+        mime_like = "tests/foo"
 
     return Foo_
 
@@ -25,6 +26,7 @@ def Bar():
     class Bar_(File):
 
         ext = ".bar"
+        mime_like = "tests/bar"
 
     return Bar_
 
@@ -34,6 +36,7 @@ def Baz():
     class Baz_(File):
 
         ext = ".baz"
+        mime_like = "tests/baz"
 
     return Baz_
 
@@ -43,6 +46,7 @@ def Qux():
     class Qux_(File):
 
         ext = ".qux"
+        mime_like = "tests/qux"
 
     return Qux_
 
@@ -53,7 +57,7 @@ def foo_bar_converter(Foo, Bar, work_dir):
     @pydra.mark.task
     @pydra.mark.annotate({"return": {"out_file": Bar}})
     def foo_bar_converter_(in_file: Foo):
-        return write_test_file(work_dir / "bar.bar", in_file.contents)
+        return Bar(write_test_file(work_dir / "bar.bar", in_file.contents))
 
     return foo_bar_converter_
 
@@ -65,7 +69,7 @@ def baz_bar_converter(Baz, Bar, work_dir):
     @pydra.mark.annotate({"return": {"out": Bar}})
     def baz_bar_converter_(in_file: Baz):
         assert in_file
-        return write_test_file(work_dir / "bar.bar", in_file.contents)
+        return Bar(write_test_file(work_dir / "bar.bar", in_file.contents))
 
     return baz_bar_converter_
 

@@ -1,4 +1,3 @@
-from __future__ import annotations
 import os
 from pathlib import Path
 import attrs
@@ -89,16 +88,6 @@ class File(FsObject):
             contents = f.read(size)
         return contents
 
-    def required_paths(self):
-        all_fspaths = set(Path(p) for p in self.fspaths)
-        for prop_name in self.required_properties():
-            try:
-                prop = Path(getattr(self, prop_name))
-            except TypeError:
-                continue
-            if prop in all_fspaths:
-                yield prop
-
     @classproperty
     def possible_exts(cls):
         possible = [cls.ext]
@@ -107,6 +96,22 @@ class File(FsObject):
         except AttributeError:
             pass
         return possible
+
+    @property
+    def actual_ext(self):
+        "The actual file extension (out of the main and alternate extensions possible)"
+        try:
+            return next(e for e in self.possible_exts if self.fspath.name.endswith(e))
+        except StopIteration:
+            assert False, (
+                f"extension of fspath {self.fspath} is not in possible extensions for "
+                f"{type(self)} class: {self.possible_exts}. This should have been "
+                "checked at initialisation"
+            )
+
+    @property
+    def stem(self):
+        return self.fspath.name[: -len(self.actual_ext)]
 
 
 @attrs.define
@@ -158,8 +163,12 @@ class Directory(FsObject):
 
     @mark.check
     def validate_contents(self):
-        for content in self.contents:
-            content.validate()
+        list(self.contents)
+
+    def hash_files(self, relative_to=None, **kwargs):
+        if relative_to is None:
+            relative_to = self.fspath
+        return super().hash_files(relative_to=relative_to, **kwargs)
 
     @classmethod
     def __class_getitem__(cls, *content_types):

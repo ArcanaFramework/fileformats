@@ -1,22 +1,31 @@
-from __future__ import annotations
 import os
 from copy import copy
 from inspect import isclass
+import typing as ty
+import importlib
 import shutil
 from operator import itemgetter
 import itertools
 from pathlib import Path
+import hashlib
 import logging
 import attrs
 from .utils import (
-    to_mime,
     subpackages,
     classproperty,
     fspaths_converter,
     to_mime_format_name,
+    from_mime_format_name,
     STANDARD_NAMESPACES,
+    hash_file,
+    hash_dir,
 )
-from .exceptions import FileFormatsError, FormatMismatchError, FormatConversionError
+from .exceptions import (
+    FileFormatsError,
+    FormatMismatchError,
+    FormatConversionError,
+    FormatRecognitionError,
+)
 
 
 # Tools imported from Arcana, will remove again once file-formats and "cells"
@@ -28,47 +37,172 @@ CHECK_ANNOTATION = "__fileformats_check__"
 logger = logging.getLogger("fileformats")
 
 
-@attrs.define
-class Metadata:
-    """Manually set and lazily loaded metadata of a FileSet"""
+class DataType:
 
-    loaded: dict = attrs.field(factory=dict, converter=dict)
-    _fileset = attrs.field(default=None, init=False, repr=False)
+    is_fileset = False
+    is_field = False
 
-    def __iter__(self):
-        raise NotImplementedError
+    @classmethod
+    def matches(cls, values) -> bool:
+        """Checks whether the given value (fspaths for file-sets) match the datatype
+        specified by the class
 
-    def __getitem__(self, key):
+        Parameters
+        ----------
+        values : ty.Any
+            values to check whether they match the given datatype
+
+        Returns
+        -------
+        matches : bool
+            whether the datatype matches the provided values
+        """
         try:
-            return self.loaded[key]
-        except KeyError:
-            self.load()
-        return self.loaded[key]
+            cls(values)
+        except FormatMismatchError:
+            return False
+        else:
+            return True
 
-    def load(self, overwrite=False):
-        assert self._fileset is not None
-        if hasattr(self._fileset, "load_metadata"):
-            loaded_dict = self._fileset.load_metadata()
-            if not overwrite:
-                mismatching = [
-                    k
-                    for k in set(self.loaded) & set(loaded_dict)
-                    if self.loaded[k] != loaded_dict[k]
-                ]
-                if mismatching:
-                    raise FileFormatsError(
-                        "Mismatch in values between loaded and loaded metadata values, "
-                        "use 'load(overwrite=True)' to overwrite:\n"
-                        + "\n".join(
-                            f"{k}: loaded={self.loaded[k]}, loaded={loaded_dict[k]}"
-                            for k in mismatching
-                        )
-                    )
-            self.loaded.update(loaded_dict)
+    @classproperty
+    def namespace(cls):
+        """The "namespace" the format belongs to under the "fileformats" umbrella
+        namespace"""
+        module_parts = cls.__module__.split(".")
+        if module_parts[0] != "fileformats":
+            raise FileFormatsError(
+                f"Cannot create reversible MIME type for {cls} as it is not in the "
+                "fileformats namespace"
+            )
+        return module_parts[1]
+
+    @classproperty
+    def all_types(self):
+        return itertools.chain(FileSet.all_formats, Field.all_fields)
+
+    @classmethod
+    def subclasses(cls):
+        """Iterate over all installed subclasses"""
+        for subpkg in subpackages():
+            for attr_name in dir(subpkg):
+                attr = getattr(subpkg, attr_name)
+                if isclass(attr) and issubclass(attr, cls):
+                    yield attr
+
+    @classproperty
+    def mime_like(cls):
+        """Generates a "MIME-like" identifier from a format class (i.e.
+        an identifier for a non-MIME class in the MIME style), e.g.
+
+            fileformats.text.Plain to "text/plain"
+
+        and
+
+            fileformats.image.TiffFx to "image/tiff-fx"
+
+        Parameters
+        ----------
+        klass : type(FileSet)
+            FileSet subclass
+        iana_mime : bool
+            whether to use standardised IANA format or a more relaxed type format corresponding
+            to the fileformats extension the type belongs to
+
+        Returns
+        -------
+        type
+            the corresponding file format class
+        """
+        format_name = to_mime_format_name(cls.__name__)
+        namespace_module = importlib.import_module("fileformats." + cls.namespace)
+        if getattr(namespace_module, cls.__name__, None) is not cls:
+            raise FileFormatsError(
+                f"Cannot create reversible MIME type for {cls} as it is not present in a "
+                f"top-level fileformats namespace package '{cls.namespace}'"
+            )
+        mime = f"{cls.namespace}/{format_name}"
+        return mime
+
+    @classmethod
+    def from_mime(cls, mime_string):
+        """Resolves a FileFormat class from a MIME (IANA) or "MIME-like" identifier (i.e.
+        an identifier for a non-MIME class in the MIME style), e.g.
+
+            "text/plain" resolves to fileformats.text.Plain
+
+        and
+
+            "image/tiff-fx" resolves to fileformats.image.TiffFx
+
+        Parameters
+        ----------
+        mime_string : str
+            MIME identifier
+
+        Returns
+        -------
+        type
+            the corresponding file format class
+        """
+        namespace, format_name = mime_string.split("/")
+        try:
+            return FileSet.formats_by_iana_mime[mime_string]
+        except KeyError:
+            pass
+        if namespace == "application":
+            # We treat the "application" namespace as a catch-all for any formats that are
+            # not explicitly covered by the IANA standard (which is kind of how the IANA
+            # treats it). Therefore, we loop through all subclasses across the different
+            # namespaces to find one that matches the name.
+            if not format_name.startswith("x-"):
+                raise FormatRecognitionError(
+                    "Did not find class matching official (i.e. non-extension) MIME type "
+                    f"{mime_string} (i.e. one not starting with 'application/x-'"
+                ) from None
+            format_name = format_name[2:]  # remove "x-" prefix
+            matching_name = FileSet.formats_by_name[format_name]
+            if not matching_name:
+                namespace_names = [n.__name__ for n in subpackages()]
+                class_name = from_mime_format_name(format_name)
+                raise FormatRecognitionError(
+                    f"Did not find class matching extension the class name '{class_name}' "
+                    f"corresponding to MIME type '{mime_string}' "
+                    f"in any of the installed namespaces: {namespace_names}"
+                )
+            elif len(matching_name) > 1:
+                namespace_names = [f.__module__.__name__ for f in matching_name]
+                raise FormatRecognitionError(
+                    f"Ambiguous extended MIME type '{mime_string}', could refer to "
+                    f"{', '.join(repr(f) for f in matching_name)} installed types. "
+                    f"Explicitly set the 'iana_mime' attribute on one or all of these types "
+                    f"to disambiguate, or uninstall all but one of the following "
+                    "namespaces: "
+                )
+            else:
+                klass = next(iter(matching_name))
+        else:
+            class_name = from_mime_format_name(format_name)
+            try:
+                module = importlib.import_module("fileformats." + namespace)
+            except ImportError:
+                raise FormatRecognitionError(
+                    f"Did not find fileformats namespace package corresponding to {namespace} "
+                    f"required to interpret '{mime_string}' MIME, or MIME-like, type. "
+                    f"try installing the namespace package with "
+                    f"'python3 -m pip install fileformats-{namespace}'."
+                ) from None
+            try:
+                klass = getattr(module, class_name)
+            except AttributeError:
+                raise FormatRecognitionError(
+                    f"Did not find '{class_name}' class in fileformats.{namespace} "
+                    f"corresponding to MIME, or MIME-like, type {mime_string}"
+                ) from None
+        return klass
 
 
 @attrs.define
-class FileSet:
+class FileSet(DataType):
     """
     The base class for all format types within the fileformats package. A generic
     representation of a collection of files related to a single data resource. A
@@ -79,17 +213,13 @@ class FileSet:
     ----------
     fspaths : set[Path]
         a set of file-system paths pointing to all the resources in the file-set
-    metadata : dict[str, Any]
-        any metadata that exists outside of the file-set itself. This metadata will be
-        augmented by metadata contained within the files if the `load_metadata` method
-        is implemented in the file-set subclass
     checks : bool
         whether to run in-depth "checks" to verify the file format
     """
 
-    fspaths: set[Path] = attrs.field(default=None, converter=fspaths_converter)
-    metadata: Metadata = attrs.field(
-        factory=dict, converter=Metadata, repr=False, kw_only=True
+    fspaths: ty.FrozenSet[Path] = attrs.field(default=None, converter=fspaths_converter)
+    _metadata: ty.Dict[str, ty.Any] = attrs.field(
+        default=None, init=False, repr=False, eq=False
     )
 
     # Explicitly set the Internet Assigned Numbers Authority (https://iana_mime.org) MIME
@@ -100,11 +230,15 @@ class FileSet:
     # NB: each class will have its own version of this dictionary
     converters = {}
 
+    is_fileset = True
+
     def __attrs_post_init__(self):
-        self.metadata._fileset = self
         # Check required properties don't raise errors
         for prop_name in self.required_properties():
             getattr(self, prop_name)
+        # Loop through all attributes and find methods marked by CHECK_ANNOTATION
+        for check in self.checks():
+            getattr(self, check)()
 
     @fspaths.validator
     def validate_fspaths(self, _, fspaths):
@@ -118,75 +252,47 @@ class FileSet:
                 f"The following file system paths provided to {self} do not "
                 f"exist:\n{missing_str}\n\nFrom full list:\n{all_str}"
             )
+            present_parents = set()
             for fspath in missing:
                 if fspath:
                     if fspath.parent.exists():
-                        msg += (
-                            f"\n\nFiles in the directory '{str(fspath.parent)}' are:\n"
-                        )
-                        msg += "\n".join(str(p) for p in fspath.parent.iterdir())
+                        present_parents.add(fspath.parent)
+            for parent in present_parents:
+                msg += f"\n\nFiles in the present parent directory '{str(fspath.parent)}' are:\n"
+                msg += "\n".join(str(p) for p in fspath.parent.iterdir())
             raise FileNotFoundError(msg)
-
-    def validate(self):
-        """Run all checks over the file-set to see whether it matches the specified format
-
-        Raises
-        ------
-        FormatMismatchError
-            if a check fails then a FormatMismatchError will be raised
-        """
-        # Loop through all attributes and find methods marked by CHECK_ANNOTATION
-        for check in self.checks():
-            getattr(self, check)()
 
     def __iter__(self):
         return iter(self.fspaths)
 
-    @classmethod
-    def mime(cls):
-        """Returns an official MIME type representation of the format, if applicable,
-        otherwise a conventional MIME type "extension" of the form "application/x-***"""
-        return to_mime(cls, iana=True)
+    @property
+    def metadata(self):
+        if self._metadata is None and hasattr(self, "load_metadata"):
+            self._metadata = self.load_metadata()
+        return self._metadata
 
-    @classmethod
-    def mimelike(cls):
-        """Returns a "MIME-like" representation, but with a direct mapping between the
-        file-type and the fileformats namespace extension it belongs to"""
-        return to_mime(cls, iana=False)
+    @classproperty
+    def mime_type(cls):
+        """Generates a MIME type (IANA) identifier from a format class. If an official
+        IANA MIME type doesn't exist it will create one in the in the MIME style, e.g.
 
-    @classmethod
-    def subclasses(cls):
-        """Iterate over all installed subclasses"""
-        for subpkg in subpackages():
-            for attr_name in dir(subpkg):
-                attr = getattr(subpkg, attr_name)
-                if isclass(attr) and issubclass(attr, cls):
-                    yield attr
+            fileformats.text.Plain to "text/plain"
 
-    @classmethod
-    def matches(cls, fspaths: set[Path], validate: bool = True) -> bool:
-        """Checks whether the given paths match the format specified by the class
+            fileformats.image.TiffFx to "image/tiff-fx"
 
-        Parameters
-        ----------
-        fspaths : set[Path]
-            the paths to check whether they match the given format
-        checks: bool, optional
-            whether to run non-essential checks to determine whether the format matches,
-            by default True
+            fileformats.mynamespace.MyFormat to "application/x-my-format
 
         Returns
         -------
-        bool
+        str
+            the MIME type corresponding to the class
         """
-        try:
-            fileset = cls(fspaths)
-            if validate:
-                fileset.validate()
-        except FormatMismatchError:
-            return False
+        if getattr(cls, "iana_mime", None) is not None:
+            mime_type = cls.iana_mime
         else:
-            return True
+            format_name = to_mime_format_name(cls.__name__)
+            mime_type = f"application/x-{format_name}"
+        return mime_type
 
     @classmethod
     def required_properties(cls):
@@ -211,18 +317,23 @@ class FileSet:
                 else:
                     yield attr_name
 
-    def required_paths(self):
+    def required_paths(self) -> ty.Set[Path]:
         """Returns all fspaths that are required for the format"""
         required = set()
-        for prop_name in self.required_properties:
-            prop = getattr(self, prop_name)
+        for prop_name in self.required_properties():
+            try:
+                prop = Path(getattr(self, prop_name))
+            except TypeError:
+                continue
             if prop in self.fspaths:
                 required.add(prop)
+        return required
 
     def trim_paths(self):
         """Trims paths in fspaths to only those that are "required" by the format class
         i.e. returned by a required property"""
-        self.fspaths = self.required_paths()
+        self.fspaths = fspaths_converter(self.required_paths())
+        return self
 
     @classmethod
     def checks(cls):
@@ -247,14 +358,19 @@ class FileSet:
                 yield attr_name
 
     def copy_to(
-        self, dest_dir: Path, stem: str = None, symlink: bool = False, trim: bool = True
+        self,
+        dest_dir: Path,
+        stem: str = None,
+        symlink: bool = False,
+        trim: bool = True,
+        make_dirs: bool = False,
     ):
         """Copies the file-set to a new directory, optionally renaming the files
         to have consistent name-stems.
 
         Parameters
         ----------
-        parent : str
+        dest_dir : str
             Path to the parent directory to save the file-set
         stem: str, optional
             the file name excluding file extensions, to give the files/dirs in the parent
@@ -263,8 +379,12 @@ class FileSet:
             Use symbolic links instead of copying files to new location, false by default
         trim : bool, optional
             Only copy the paths in the file-set that are "required" by the format, true by default
+        make_dirs : bool, optional
+            Make the parent destination and all missing ancestors if they are missing, false by default
         """
         dest_dir = Path(dest_dir)  # ensure a Path not a string
+        if make_dirs:
+            dest_dir.mkdir(parents=True, exist_ok=True)
         if symlink:
             copy_dir = copy_file = os.symlink
         else:
@@ -332,7 +452,7 @@ class FileSet:
         return matches[0]
 
     @classmethod
-    def matching_exts(cls, fspaths: set[Path], exts: list[str]) -> list[Path]:
+    def matching_exts(cls, fspaths: ty.Set[Path], exts: ty.List[str]) -> ty.List[Path]:
         """Returns the paths out of the candidates provided that matches the
         given extension (by default the extension of the class)
 
@@ -400,8 +520,9 @@ class FileSet:
 
         Returns
         -------
-        pydra.engine.TaskBase
-            a pydra task or workflow that performs the conversion
+        pydra.engine.TaskBase or None
+            a pydra task or workflow that performs the conversion, or None if no
+            conversion is required
 
         Raises
         ------
@@ -410,6 +531,8 @@ class FileSet:
         FileFormatConversionError
             ambiguous (i.e. more than one) converters found between source and dest format
         """
+        if source_format is cls or issubclass(source_format, cls):
+            return None
         converter_tuple = None
         # Only access converters to the specific class, not superclasses (which may not
         # be able to convert to the specific type)
@@ -417,8 +540,8 @@ class FileSet:
             converters = cls.__dict__["converters"]
         except KeyError:
             raise FormatConversionError(
-                f"No converters specified to {cls} format (trying to find one from "
-                f"{source_format}"
+                f"No converters specified to {cls.mime_like} format (trying to find one from "
+                f"{source_format.mime_like}"
             )
         try:
             converter_tuple = converters[source_format]
@@ -428,15 +551,16 @@ class FileSet:
                 if issubclass(source_format, frmt):
                     available.append(converter)
             if len(available) > 1:
+                available_str = "\n".join(str(a) for a in available)
                 raise FormatConversionError(
-                    f"Ambiguous converters found between {cls.__name__} and "
-                    f"{source_format.__name__}, {available}"
-                )
+                    f"Ambiguous converters found between '{cls.mime_like}' and "
+                    f"'{source_format.mime_like}':\n{available_str}"
+                ) from None
             elif not available:
                 raise FormatConversionError(
-                    f"Could not find converter between {source_format.__name__} and "
-                    f"{cls.__name__} formats"
-                )
+                    f"Could not find converter between '{source_format.mime_like}' and "
+                    f"'{cls.mime_like}' formats"
+                ) from None
             else:
                 converter_tuple = available[0]
         converter, conv_kwargs = converter_tuple
@@ -446,20 +570,8 @@ class FileSet:
         return converter(name=name, **conv_kwargs)
 
     @classproperty
-    def namespace(cls):
-        """The "namespace" the format belongs to under the "fileformats" umbrella
-        namespace"""
-        module_parts = cls.__module__.split(".")
-        if module_parts[0] != "fileformats":
-            raise FileFormatsError(
-                f"Cannot create reversible MIME type for {cls} as it is not in the "
-                "fileformats namespace"
-            )
-        return module_parts[1]
-
-    @classproperty
     def all_formats(cls):
-        """Iterate over all formats in fileformats.* namespaces"""
+        """Iterate over all FileSet formats in fileformats.* namespaces"""
         if cls._all_formats is None:
             cls._all_formats = [
                 f for f in FileSet.subclasses() if f.__dict__.get("iana_mime", True)
@@ -503,6 +615,119 @@ class FileSet:
             }
         return cls._formats_by_name
 
+    def hash_files(
+        self,
+        crypto=None,
+        chunk_len=8192,
+        relative_to: os.PathLike = None,
+        **kwargs,
+    ):
+        """Calculate hashes for all files within the file set within a dictionary.
+        Hashes for files within directories are nested within separate dictionaries
+        for each (sub)directory.
+
+        Parameters
+        ----------
+        crypto : function, optional
+            the cryptography method used to hash the files, by default hashlib.sha256
+        chunk_len : int, optional
+            the chunk length to break up the file and calculate the hash over, by default 8192
+        relative_to : Path, optional
+            the base path by which to record the file system paths in the dictionary keys
+            to, by default None
+        **kwargs
+            keyword args passed directly through to the ``hash_dir`` function
+
+        Returns
+        -------
+        file_hashes : dict[str, str]
+            hashes for all files in the file-set, addressed by their directory relative
+            to the ``relative_to`` path
+        """
+        if relative_to is None:
+            relative_to = Path(os.path.commonpath(self.fspaths))
+            if all(p.is_file() and p.parent == relative_to for p in self.fspaths):
+                relative_to /= os.path.commonprefix(
+                    [p.name for p in self.fspaths]
+                ).rstrip(".")
+        if crypto is None:
+            crypto = hashlib.sha256
+
+        file_hashes = {}
+        for key, fspath in sorted(
+            ((str(p)[len(str(relative_to)) :], p) for p in self.fspaths),
+            key=itemgetter(0),
+        ):
+            if fspath.is_file():
+                file_hashes[key] = hash_file(fspath, chunk_len=chunk_len, crypto=crypto)
+            elif fspath.is_dir():
+                file_hashes.update(
+                    hash_dir(
+                        fspath,
+                        chunk_len=chunk_len,
+                        crypto=crypto,
+                        relative_to=relative_to,
+                        **kwargs,
+                    )
+                )
+            else:
+                raise RuntimeError(f"Cannot hash {self} as {fspath} no longer exists")
+        return file_hashes
+
+    def hash(self, crypto=None, *args, **kwargs):
+        """Calculate a unique hash for the file-set based on the relative paths and
+        contents of its constituent files
+
+        Parameters
+        ----------
+        crypto : function, optional
+            the cryptography method used to hash the files, by default hashlib.sha256
+        chunk_len : int, optional
+            the chunk length to break up the file and calculate the hash over, by default 8192
+        relative_to : Path, optional
+            the base path by which to record the file system paths in the dictionary keys
+            to, by default None
+        **kwargs
+            keyword args passed directly through to the ``hash_dir`` function
+
+        Returns
+        -------
+        hash : str
+            unique hash for the file-set
+        """
+        if crypto is None:
+            crypto = hashlib.sha256
+        crytpo_obj = crypto()
+        for path, hash in self.hash_files(crypto=crypto, *args, **kwargs).items():
+            crytpo_obj.update(path.encode())
+            crytpo_obj.update(hash.encode())
+        return crytpo_obj.hexdigest()
+
     _all_formats = None
     _formats_by_iana_mime = None
     _formats_by_name = None
+
+
+@attrs.define
+class Field(DataType):
+
+    value = attrs.field()
+
+    type = None
+    is_field = True
+
+    def __str__(self):
+        return str(self.value)
+
+    @property
+    def metadata(self):
+        return {}
+
+    @classproperty
+    def all_fields(cls):
+        """Iterate over all field formats in fileformats.* namespaces"""
+        if cls._all_fields is None:
+            cls._all_fields = [f for f in Field.subclasses() if f.type is not None]
+        return cls._all_fields
+
+    _all_fields = None
