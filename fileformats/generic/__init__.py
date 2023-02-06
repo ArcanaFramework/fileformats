@@ -92,16 +92,6 @@ class File(FsObject):
             contents = f.read(size)
         return contents
 
-    def required_paths(self):
-        all_fspaths = set(Path(p) for p in self.fspaths)
-        for prop_name in self.required_properties():
-            try:
-                prop = Path(getattr(self, prop_name))
-            except TypeError:
-                continue
-            if prop in all_fspaths:
-                yield prop
-
     @classproperty
     def possible_exts(cls):
         possible = [cls.ext]

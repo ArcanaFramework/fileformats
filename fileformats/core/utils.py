@@ -101,7 +101,7 @@ def fspaths_converter(fspaths):
     """Ensures fs-paths are a set of pathlib.Path"""
     if isinstance(fspaths, (str, Path, bytes)):
         fspaths = [fspaths]
-    return set((Path(p) if isinstance(p, str) else p).absolute() for p in fspaths)
+    return set(Path(p).absolute() for p in fspaths)
 
 
 class classproperty(object):

@@ -338,9 +338,13 @@ class FileSet(DataType):
         """Returns all fspaths that are required for the format"""
         required = set()
         for prop_name in self.required_properties():
-            prop = getattr(self, prop_name)
+            try:
+                prop = Path(getattr(self, prop_name))
+            except TypeError:
+                continue
             if prop in self.fspaths:
                 required.add(prop)
+        return required
 
     def trim_paths(self):
         """Trims paths in fspaths to only those that are "required" by the format class
