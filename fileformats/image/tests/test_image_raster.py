@@ -12,13 +12,11 @@ def png_path():
 
 def test_tiff_endianness(png_path):
     png = Png(png_path)
-    tiff = Tiff.convert(png)
-    tiff.validate()
+    Tiff.convert(png)
 
 
 def test_tiff_fail(png_path, work_dir):
     bad_tiff_path = work_dir / "bad_tiff.tiff"
     shutil.copyfile(png_path, bad_tiff_path)
-    bad_tiff = Tiff(bad_tiff_path)
     with pytest.raises(FormatMismatchError):
-        bad_tiff.validate()
+        Tiff(bad_tiff_path)

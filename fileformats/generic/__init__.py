@@ -111,7 +111,7 @@ class File(FsObject):
 
     @property
     def stem(self):
-        return self.fspath[: -len(self.actual_ext)]
+        return self.fspath.name[: -len(self.actual_ext)]
 
 
 @attrs.define
@@ -163,8 +163,7 @@ class Directory(FsObject):
 
     @mark.check
     def validate_contents(self):
-        for content in self.contents:
-            content.validate()
+        list(self.contents)
 
     def hash_files(self, relative_to=None, **kwargs):
         if relative_to is None:

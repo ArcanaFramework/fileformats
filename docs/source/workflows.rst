@@ -19,20 +19,19 @@ Validation
 ----------
 
 In the basic case, *FileFormats* can be used for checking the format of files and
-directories against known types. There are two layers of checks, ones
-performed on the file-system paths alone, which are run when a format class is
-initiated, e.g.
+directories against known types. Typically, there are two layers of checks, ones
+performed on the file-system paths alone,
 
 .. code-block:: python
 
     from fileformats.image import Jpeg
 
-    jpeg_file = Jpeg("/path/to/image.jpg")  # Checks path for correct extension
-    jpeg_file = Jpeg("/path/to/image.png")  # <-- THIS WILL FAIL as the extension is wrong
+    jpeg_file = Jpeg("/path/to/image.jpg")  # PASSES
+    jpeg_file = Jpeg("/path/to/image.png")  # FAILS!
 
 
 The second layer of checks, which typically require reading the file and peeking at its
-contents for magic numbers and the like, are explicitly run by the ``validate`` method.
+contents for magic numbers and the like
 
 .. code-block:: python
 
@@ -41,8 +40,7 @@ contents for magic numbers and the like, are explicitly run by the ``validate`` 
     with open(fspath, "w") as f:
         f.write("this is not a valid JPEG file")
 
-    jpeg_file = Jpeg(fspath)  # Extension checks out ok
-    jpeg_file.validate()  # <-- THIS WILL FAIL as the magic number isn't present
+    jpeg_file = Jpeg(fspath)  # FAILS!
 
 
 Directories are classified by the contents of the files within them, via the

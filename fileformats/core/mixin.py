@@ -1,7 +1,6 @@
 from pathlib import Path
 from . import mark
 from .base import FileSet
-from .utils import fspaths_converter
 from .exceptions import FileFormatsError, FormatMismatchError
 
 
@@ -70,7 +69,7 @@ class WithAdjacentFiles:
 
     def __attrs_post_init__(self):
         if len(self.fspaths) == 1:
-            self.fspaths = fspaths_converter(self.fspaths + self.get_adjacent_files())
+            self.fspaths |= self.get_adjacent_files()
             trim = True
         else:
             trim = False

@@ -31,7 +31,6 @@ def archive_input(work_dir, request):
         inpt = Directory(test_dir)
     else:
         assert False, f"Unrecognised request param {request.param}"
-    inpt.validate()
     return inpt
 
 
@@ -58,10 +57,8 @@ def test_tar_gz_roundtrip(archive_input):
 def _roundtrip(input, archive_klass):
     archive = archive_klass.convert(input)
     assert isinstance(archive, archive_klass)
-    archive.validate()
     extracted_type = Directory if input.is_dir else ExtractedFile
     output = extracted_type.convert(archive)
-    output.validate()
     if isinstance(input, File):
         assert filecmp.cmp(output.fspath, input.fspath)
     else:

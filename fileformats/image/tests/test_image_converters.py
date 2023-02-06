@@ -15,18 +15,12 @@ def png() -> Png:
 
 
 def test_jpg_to_gif(jpg):
-    jpg.validate()
-    gif = Gif.convert(jpg)
-    gif.validate()
+    Gif.convert(jpg)
 
 
 def test_png_to_tiff(png):
-    png.validate()
-    tiff = Tiff.convert(png)
-    tiff.validate()
+    Tiff.convert(png)
 
 
 def test_png_to_bitmap(png):
-    png.validate()
-    bmp = Bitmap.convert(png)
-    bmp.validate()
+    Bitmap.convert(png)

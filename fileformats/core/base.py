@@ -43,7 +43,7 @@ class DataType:
     is_field = False
 
     @classmethod
-    def matches(cls, values, validate: bool = True) -> bool:
+    def matches(cls, values) -> bool:
         """Checks whether the given value (fspaths for file-sets) match the datatype
         specified by the class
 
@@ -51,25 +51,18 @@ class DataType:
         ----------
         values : ty.Any
             values to check whether they match the given datatype
-        checks: bool, optional
-            whether to run in-depth checks to determine whether the values match the
-            datatype, by default True
 
         Returns
         -------
-        bool
+        matches : bool
+            whether the datatype matches the provided values
         """
         try:
-            item = cls(values)
-            if validate:
-                item.validate()
+            cls(values)
         except FormatMismatchError:
             return False
         else:
             return True
-
-    def validate(self):
-        pass
 
     @classproperty
     def namespace(cls):
@@ -243,6 +236,9 @@ class FileSet(DataType):
         # Check required properties don't raise errors
         for prop_name in self.required_properties():
             getattr(self, prop_name)
+        # Loop through all attributes and find methods marked by CHECK_ANNOTATION
+        for check in self.checks():
+            getattr(self, check)()
 
     @fspaths.validator
     def validate_fspaths(self, _, fspaths):
@@ -265,18 +261,6 @@ class FileSet(DataType):
                 msg += f"\n\nFiles in the present parent directory '{str(fspath.parent)}' are:\n"
                 msg += "\n".join(str(p) for p in fspath.parent.iterdir())
             raise FileNotFoundError(msg)
-
-    def validate(self):
-        """Run all checks over the file-set to see whether it matches the specified format
-
-        Raises
-        ------
-        FormatMismatchError
-            if a check fails then a FormatMismatchError will be raised
-        """
-        # Loop through all attributes and find methods marked by CHECK_ANNOTATION
-        for check in self.checks():
-            getattr(self, check)()
 
     def __iter__(self):
         return iter(self.fspaths)
