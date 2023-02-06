@@ -1,6 +1,7 @@
 from pathlib import Path
 from . import mark
 from .base import FileSet
+from .utils import fspaths_converter
 from .exceptions import FileFormatsError, FormatMismatchError
 
 
@@ -45,9 +46,9 @@ class WithMagicNumber:
 
 class WithAdjacentFiles:
     """
-    If only one fspath is provided to the __init__ of the class, this mixin automatically
-    includes any "adjacent files", i.e. any files with the same stem but different
-    extension
+    If only the main fspath is provided to the __init__ of the class, this mixin
+    automatically includes any "adjacent files", i.e. any files with the same stem but
+    different extensions
 
     Note that WithAdjacentFiles must come before the primary type in the method-resolution
     order of the class so it can override the '__attrs_post_init__' method in
@@ -69,7 +70,7 @@ class WithAdjacentFiles:
 
     def __attrs_post_init__(self):
         if len(self.fspaths) == 1:
-            self.fspaths.update(self.get_adjacent_files())
+            self.fspaths = fspaths_converter(self.fspaths + self.get_adjacent_files())
             trim = True
         else:
             trim = False
@@ -78,23 +79,16 @@ class WithAdjacentFiles:
             self.trim_paths()
 
     def get_adjacent_files(self) -> set[Path]:
-        for ext in self.possible_exts:
-            if not self.fspath.name.endswith(ext):
-                continue
-            stem = self.fspath.name[: -(len(ext))]
-            adjacents = set()
-            for sibling in self.fspath.parent.iterdir():
-                if (
-                    sibling is not self.fspath
-                    and sibling.is_file()
-                    and sibling.name.startswith(stem)
-                ):
-                    adjacents.add(sibling)
-            return adjacents
-        assert False, (
-            f"extension of fspath {self.fspath} is not in possible extensions for "
-            f"{type(self)} class: {self.possible_exts}"
-        )
+        stem = self.stem
+        adjacents = set()
+        for sibling in self.fspath.parent.iterdir():
+            if (
+                sibling is not self.fspath
+                and sibling.is_file()
+                and sibling.name.startswith(stem)
+            ):
+                adjacents.add(sibling)
+        return adjacents
 
 
 class WithSeparateHeader(WithAdjacentFiles):

@@ -31,9 +31,6 @@ class FsObject(FileSet, os.PathLike):
         to functions like file 'open'"""
         return str(self)
 
-    def hash_files(self, **kwargs):
-        return super().hash_files(relative_to=self.fspath, **kwargs)
-
 
 @attrs.define
 class File(FsObject):
@@ -100,6 +97,22 @@ class File(FsObject):
             pass
         return possible
 
+    @property
+    def actual_ext(self):
+        "The actual file extension (out of the main and alternate extensions possible)"
+        try:
+            return next(e for e in self.possible_exts if self.fspath.name.endswith(e))
+        except StopIteration:
+            assert False, (
+                f"extension of fspath {self.fspath} is not in possible extensions for "
+                f"{type(self)} class: {self.possible_exts}. This should have been "
+                "checked at initialisation"
+            )
+
+    @property
+    def stem(self):
+        return self.fspath[: -len(self.actual_ext)]
+
 
 @attrs.define
 class Directory(FsObject):
@@ -152,6 +165,11 @@ class Directory(FsObject):
     def validate_contents(self):
         for content in self.contents:
             content.validate()
+
+    def hash_files(self, relative_to=None, **kwargs):
+        if relative_to is None:
+            relative_to = self.fspath
+        return super().hash_files(relative_to=relative_to, **kwargs)
 
     @classmethod
     def __class_getitem__(cls, *content_types):

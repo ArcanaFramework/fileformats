@@ -100,7 +100,7 @@ def fspaths_converter(fspaths):
     """Ensures fs-paths are a set of pathlib.Path"""
     if isinstance(fspaths, (str, Path, bytes)):
         fspaths = [fspaths]
-    return set(Path(p).absolute() for p in fspaths)
+    return frozenset(Path(p).absolute() for p in fspaths)
 
 
 class classproperty(object):
@@ -217,7 +217,7 @@ def hash_dir(
         for filename in filenames:
             if ignore_hidden_files and filename.startswith("."):
                 continue
-            file_hashes[dpath.relative_to(relative_to)] = hash_file(
+            file_hashes[str(dpath.relative_to(relative_to))] = hash_file(
                 dpath / filename, crypto=crypto, chunk_len=chunk_len
             )
     return file_hashes

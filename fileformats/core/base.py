@@ -224,7 +224,7 @@ class FileSet(DataType):
         whether to run in-depth "checks" to verify the file format
     """
 
-    fspaths: set[Path] = attrs.field(default=None, converter=fspaths_converter)
+    fspaths: frozenset[Path] = attrs.field(default=None, converter=fspaths_converter)
     _metadata: dict[str, ty.Any] = attrs.field(
         default=None, init=False, repr=False, eq=False
     )
@@ -333,7 +333,7 @@ class FileSet(DataType):
                 else:
                     yield attr_name
 
-    def required_paths(self):
+    def required_paths(self) -> set[Path]:
         """Returns all fspaths that are required for the format"""
         required = set()
         for prop_name in self.required_properties():
@@ -348,7 +348,7 @@ class FileSet(DataType):
     def trim_paths(self):
         """Trims paths in fspaths to only those that are "required" by the format class
         i.e. returned by a required property"""
-        self.fspaths = self.required_paths()
+        self.fspaths = fspaths_converter(self.required_paths())
 
     @classmethod
     def checks(cls):
@@ -660,19 +660,30 @@ class FileSet(DataType):
             to the ``relative_to`` path
         """
         if relative_to is None:
-            relative_to = os.path.commonpath(self.fspaths)
+            relative_to = Path(os.path.commonpath(self.fspaths))
+            if all(p.is_file() and p.parent == relative_to for p in self.fspaths):
+                relative_to /= os.path.commonprefix(
+                    [p.name for p in self.fspaths]
+                ).rstrip(".")
         if crypto is None:
             crypto = hashlib.sha256
 
         file_hashes = {}
-        for fspath in self.fspaths:
+        for key, fspath in sorted(
+            ((str(p)[len(str(relative_to)) :], p) for p in self.fspaths),
+            key=itemgetter(0),
+        ):
             if fspath.is_file():
-                file_hashes[fspath.relative_to(relative_to)] = hash_file(
-                    fspath, chunk_len=chunk_len, crypto=crypto
-                )
+                file_hashes[key] = hash_file(fspath, chunk_len=chunk_len, crypto=crypto)
             elif fspath.is_dir():
                 file_hashes.update(
-                    hash_dir(fspath, chunk_len=chunk_len, crypto=crypto, **kwargs)
+                    hash_dir(
+                        fspath,
+                        chunk_len=chunk_len,
+                        crypto=crypto,
+                        relative_to=relative_to,
+                        **kwargs,
+                    )
                 )
             else:
                 raise RuntimeError(f"Cannot hash {self} as {fspath} no longer exists")
