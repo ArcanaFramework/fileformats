@@ -37,10 +37,10 @@ flag
 MIME Types
 ----------
 
-Namespaces in the ``fileformats`` package are named after MIME type registries
+Namespaces in the ``fileformats`` package are largely named after MIME type registries
 as defined by the `Internet Assigned Numbering Authority (IANA) <https://www.iana_mime.org/assignments/media-types/media-types.xhtml>`__.
-The main difference is that there is no "application" registry, which acts as a
-catch-all for any type that doesn't have a formal specification. Instead, types that
+The difference is that there is no "application" registry, which acts as a
+bit of a catch-all in the MIME-type specification. Instead, types that
 fall under the "application" registry are grouped by the types of data that they
 store, e.g. ``fileformats.archive`` for (typically compressed) archives such as
 zip, bzip, gzip, etc..., ``fileformats.document`` for PDFs, word docs,
@@ -54,27 +54,27 @@ by the , e.g.
 .. code-block:: python
 
     from fileformats.core import to_mime, from_mime
-    from fileformats.image import Png
+    from fileformats.document import MswordX
 
-    Loaded = from_mime("image/png")
-    assert Loaded is Png
-    assert to_mime(Loaded) == "image/png"
+    Loaded = from_mime("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+    assert Loaded is MswordX
+    assert Loaded.mime_type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 
 If the format class doesn't define an ``iana_mime`` attribute (i.e. in the actual class,
 not including ``iana_mime`` attributes defined in base classes), it will be assigned an informal
 MIME-type of "application/x-<transformed-class-name>", where *transformed-class-name*
 is the name of the format class converted from "PascalCase" to "kebab-case", with the
-first underscore encountered in a class name converted to a "+" and subsequent underscores
-converted to ".", e.g.
+single underscores converterd to "." and a double underscores converted to "+" (there
+should be only one), e.g.
 
 .. code-block::
 
-    >>> Nifti_Gzip_Bids.mime
-    "application/x-nifti+gzip.bids"
+    >>> Nifti__Gzip_Json.mime_type
+    "application/x-nifti+gzip.json"
 
 Note that if there are two file-formats with the same class name in different sub-packages
 then the ``iana_mime`` attribute will need to be set on at least one of them otherwise an
-error will be raised they are loaded from a MIME type.
+error will be raised when they are loaded from a MIME type.
 
 .. warning::
     Note that the installation of additional sub-packages may cause detection code to
@@ -87,18 +87,21 @@ MIME-like types
 ---------------
 
 To avoid the issue with format classes in separate namespaces mapping onto the same
-IANA-style MIME type, and for additional clarity (i.e. not drowning in a sea of
-"application/x-\*" types), it can be preferable in some use cases not to worry with
-closely matching the MIME-type specification for non-standard formats and just use the
-*FileFormats* namespace inplace of the generic "application/x-" prefix. This can be done
-by setting ``iana=False`` in the ``to_mime`` function, e.g.
+IANA-style MIME type, as well as improving readability of the MIME string (i.e. not
+drowning in a sea of "application/x-\*" types), it can be preferable in some use cases
+not to worry with closely matching the MIME-type specification for non-standard formats
+and just use the *FileFormats* namespace inplace of the generic "application/x-" prefix.
+This is accessed via the ``mime_like`` class-property.
 
 .. code-block::
 
     >>> from fileformats.core import to_mime
     >>> from fileformats.archive import Bzip
-    >>> to_mime(Yaml, iana=False)
+    >>> from fileformats.serialization import Json
+    >>> Bzip.mime_like
     "archive/bzip"
+    >>> Json.mime_like
+    "serialization/json"
 
 The ``from_mime`` function will resolve both official-style MIME types and the MIME-like
 types, so it is possible to roundtrip from both.
@@ -109,12 +112,12 @@ types, so it is possible to roundtrip from both.
     from from fileformats.archive import Bzip
 
     # Using official-style MIME string
-    mime_type = to_mime(Bzip, iana=True)
+    mime_type = Bzip.mime_type
     assert mime_type == "application/x-bzip"
     assert from_mime(mime_type) is Bzip
 
     # Using MIME-like string
-    mimelike_type = to_mime(Bzip, iana=False)
+    mimelike_type = Bzip.mime_like
     assert mimelike_type == "archive/bzip"
     assert from_mime(mimelike_type) is Bzip
 

@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Format Identification" href="identification.html" /><link rel="prev" title="FileFormats" href="index.html" />
 
     <!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07 -->
-        <title>Data Workflows - FileFormats v0.3.3</title>
+        <title>Data Workflows - FileFormats v0.4.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -129,7 +129,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">FileFormats v0.3.3</div></a>
+      <a href="index.html"><div class="brand">FileFormats v0.4.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -152,7 +152,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">FileFormats v0.3.3</span>
+  <span class="sidebar-brand-text">FileFormats v0.4.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -201,36 +201,36 @@
           <section id="data-workflows">
 <h1>Data Workflows<a class="headerlink" href="#data-workflows" title="Permalink to this heading">#</a></h1>
 <p><em>FileFormats</em> is primarily designed for the typing of data workflows to ensure
-that data is transferred between workflow nodes in compatible formats.</p>
+that data is transferred between workflow nodes in compatible formats. See <a class="reference external" href="https://pydra.readthedocs.io">Pydra</a>
+and <a class="reference external" href="https://gitlab.com/radiology/infrastructure/fastr">Fastr</a> for examples of compatible workflow engines.</p>
 <section id="base-features">
 <h2>Base features<a class="headerlink" href="#base-features" title="Permalink to this heading">#</a></h2>
 <p>Base features are available for all types within <em>FileFormats</em> and its extension
-packages using the base install.</p>
+packages using the base install. They are designed to be broadly available for a large
+range of types and very light-weight in terms of external dependencies.</p>
 <section id="validation">
 <h3>Validation<a class="headerlink" href="#validation" title="Permalink to this heading">#</a></h3>
 <p>In the basic case, <em>FileFormats</em> can be used for checking the format of files and
-directories against known types. There are two layers of checks, ones
-performed on the file-system paths alone, which are run when a format class is
-initiated, e.g.</p>
+directories against known types. Typically, there are two layers of checks, ones
+performed on the file-system paths alone,</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.image</span> <span class="kn">import</span> <span class="n">Jpeg</span>
 
-<span class="n">jpeg_file</span> <span class="o">=</span> <span class="n">Jpeg</span><span class="p">(</span><span class="s2">&quot;/path/to/image.jpg&quot;</span><span class="p">)</span>  <span class="c1"># Checks path for correct extension</span>
-<span class="n">jpeg_file</span> <span class="o">=</span> <span class="n">Jpeg</span><span class="p">(</span><span class="s2">&quot;/path/to/image.png&quot;</span><span class="p">)</span>  <span class="c1"># &lt;-- THIS WILL FAIL as the extension is wrong</span>
+<span class="n">jpeg_file</span> <span class="o">=</span> <span class="n">Jpeg</span><span class="p">(</span><span class="s2">&quot;/path/to/image.jpg&quot;</span><span class="p">)</span>  <span class="c1"># PASSES</span>
+<span class="n">jpeg_file</span> <span class="o">=</span> <span class="n">Jpeg</span><span class="p">(</span><span class="s2">&quot;/path/to/image.png&quot;</span><span class="p">)</span>  <span class="c1"># FAILS!</span>
 </pre></div>
 </div>
 <p>The second layer of checks, which typically require reading the file and peeking at its
-contents for magic numbers and the like, are explicitly run by the <code class="docutils literal notranslate"><span class="pre">validate</span></code> method.</p>
+contents for magic numbers and the like</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fspath</span> <span class="o">=</span> <span class="s2">&quot;/path/to/fake-image.jpg&quot;</span>
 
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fspath</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;this is not a valid JPEG file&quot;</span><span class="p">)</span>
 
-<span class="n">jpeg_file</span> <span class="o">=</span> <span class="n">Jpeg</span><span class="p">(</span><span class="n">fspath</span><span class="p">)</span>  <span class="c1"># Extension checks out ok</span>
-<span class="n">jpeg_file</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>  <span class="c1"># &lt;-- THIS WILL FAIL as the magic number isn&#39;t present</span>
+<span class="n">jpeg_file</span> <span class="o">=</span> <span class="n">Jpeg</span><span class="p">(</span><span class="n">fspath</span><span class="p">)</span>  <span class="c1"># FAILS!</span>
 </pre></div>
 </div>
-<p>Directory are classified by the contents of the files within them, via the <code class="docutils literal notranslate"><span class="pre">content_types</span></code>
-class attribute, e.g.</p>
+<p>Directories are classified by the contents of the files within them, via the
+<code class="docutils literal notranslate"><span class="pre">content_types</span></code> class attribute, e.g.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.generic</span> <span class="kn">import</span> <span class="n">File</span><span class="p">,</span> <span class="n">Directory</span>
 
 <span class="k">class</span> <span class="nc">DicomFile</span><span class="p">(</span><span class="n">File</span><span class="p">):</span>
@@ -257,8 +257,9 @@ despite the presence of the <code class="docutils literal notranslate"><span cla
 └── catalog.xml
 </pre></div>
 </div>
-<p>In addition, to statically defined Directory formats such as the Dicom example above,
-dynamic directory types can be created on the fly using the __class_getitem__ method,
+<p>In addition to statically defining <cite>Directory</cite> formats such as the Dicom example above,
+dynamic directory types can be created on the fly by providing the content types as
+arguments to the <cite>Directory[]</cite> method,
 e.g.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.generic</span> <span class="kn">import</span> <span class="n">Directory</span>
 <span class="kn">from</span> <span class="nn">fileformats.image</span> <span class="kn">import</span> <span class="n">Png</span>
@@ -280,8 +281,8 @@ format class, which for single file formats is typically just the file-system pa
 <span class="go">&quot;/path/to/image.jpg&quot;</span>
 </pre></div>
 </div>
-<p>However, file-formats that consist of multiple files, which is common in scientific
-data, will define separate required properties for each file. For example, the
+<p>However, file-formats that consist of multiple files (common in scientific
+data) will typically define separate required properties for each file. For example, the
 <a class="reference external" href="https://en.wikipedia.org/wiki/Analyze_(imaging_software)">Analyze</a> neuroimaging format, which stores the image in a file with the extension
 &quot;.img&quot; and metadata in a separate header file with the extension &quot;.hdr&quot;.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.medimage</span> <span class="kn">import</span> <span class="n">Analyze</span>
@@ -298,9 +299,10 @@ attribute from the base class of all file formats <code class="docutils literal 
 <span class="go">{&quot;/path/to/neuroimage.hdr&quot;, &quot;/path/to/neuroimage.img&quot;}</span>
 </pre></div>
 </div>
-<p>In the case of file formats with &quot;adjacent&quot; files that share the same file-name stem
-(such as <a class="reference external" href="https://en.wikipedia.org/wiki/Analyze_(imaging_software)">Analyze</a>) you only need to provide one the primary paths and the header will be
-automatically detected if present and added to the file-set</p>
+<p>In the case of file formats with &quot;adjacent&quot; files that share the same file-name stem,
+i.e. same file path and name minus the file extension (such as <a class="reference external" href="https://en.wikipedia.org/wiki/Analyze_(imaging_software)">Analyze</a>), you only need
+to provide one the primary path and the header will be automatically detected and added
+to the file-set</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.medimage</span> <span class="kn">import</span> <span class="n">Analyze</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">analyze_file</span> <span class="o">=</span> <span class="n">Analyze</span><span class="p">(</span><span class="s2">&quot;/path/to/neuroimage.img&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">analyze_file</span><span class="o">.</span><span class="n">fspaths</span>
@@ -321,7 +323,7 @@ implementation of the <code class="docutils literal notranslate"><span class="pr
 that format objects can be used in place of the path objects themselves, e.g.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">from</span> <span class="nn">fileformats.text</span> <span class="kn">import</span> <span class="n">Plain</span>
-<span class="n">text_file</span> <span class="o">=</span> <span class="n">Plain</span><span class="p">(</span><span class="s2">&quot;/path/to/image.txt&quot;</span><span class="p">)</span>
+<span class="n">text_file</span> <span class="o">=</span> <span class="n">Plain</span><span class="p">(</span><span class="s2">&quot;/path/to/text-file.txt&quot;</span><span class="p">)</span>
 
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">text_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">contents</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
@@ -346,7 +348,7 @@ are kept separate and only installed if the <code class="docutils literal notran
 <section id="metadata">
 <h3>Metadata<a class="headerlink" href="#metadata" title="Permalink to this heading">#</a></h3>
 <p>In addition to <code class="docutils literal notranslate"><span class="pre">fspaths</span></code>, the base <code class="docutils literal notranslate"><span class="pre">FileSet</span></code> class defines a <code class="docutils literal notranslate"><span class="pre">metadata</span></code> attribute,
-which can be used to save arbitrary metadata alongside the file paths, which can be
+which can be used to save arbitrary metadata alongside the file paths and can be
 accessed as required, e.g.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.medimage</span> <span class="kn">import</span> <span class="n">Dicom</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dicom</span> <span class="o">=</span> <span class="n">Dicom</span><span class="p">(</span><span class="s2">&quot;/path/to/dicom-dir&quot;</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;sex&quot;</span><span class="p">:</span> <span class="s2">&quot;male&quot;</span><span class="p">,</span> <span class="s2">&quot;handedness&quot;</span><span class="p">:</span> <span class="s2">&quot;right&quot;</span><span class="p">})</span>
@@ -354,8 +356,8 @@ accessed as required, e.g.</p>
 <span class="go">&quot;male&quot;</span>
 </pre></div>
 </div>
-<p>If the format class defines the <code class="docutils literal notranslate"><span class="pre">load_metadata</span></code> method, then it is lazily called
-whenever a key doesn't exist in the provided metadata to populate the metadata dictionary,
+<p>If the format class defines the <code class="docutils literal notranslate"><span class="pre">load_metadata</span></code> method, then it is called whenever a
+key doesn't exist in the provided metadata to lazily populate the metadata dictionary,
 e.g.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dicom</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;SeriesDescription&quot;</span><span class="p">]</span>
 <span class="go">&quot;localizer&quot;</span>
@@ -375,10 +377,11 @@ them can then be duck-typed in calling functions/methods. For example, both <cod
     <span class="k">return</span> <span class="n">serialized</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 </pre></div>
 </div>
+<p>Also, when providing the the <code class="docutils literal notranslate"><span class="pre">WithSeparateHeader</span></code> and <code class="docutils literal notranslate"><span class="pre">WithSideCar</span></code> mixin classes will</p>
 </section>
 <section id="conversion">
 <h3>Conversion<a class="headerlink" href="#conversion" title="Permalink to this heading">#</a></h3>
-<p>Several Conversion methods are available between equivalent file-formats in the standard
+<p>Several conversion methods are available between equivalent file-formats in the standard
 classes. For example, archive types such as <code class="docutils literal notranslate"><span class="pre">Zip</span></code> can be converted into and generic
 file/directories using the <code class="docutils literal notranslate"><span class="pre">convert</span></code> classmethod of the target format to convert to</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.archive</span> <span class="kn">import</span> <span class="n">Zip</span>

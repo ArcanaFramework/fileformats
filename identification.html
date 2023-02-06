@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Developer Guide" href="developer.html" /><link rel="prev" title="Data Workflows" href="workflows.html" />
 
     <!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07 -->
-        <title>Format Identification - FileFormats v0.3.3</title>
+        <title>Format Identification - FileFormats v0.4.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -129,7 +129,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">FileFormats v0.3.3</div></a>
+      <a href="index.html"><div class="brand">FileFormats v0.4.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -152,7 +152,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">FileFormats v0.3.3</span>
+  <span class="sidebar-brand-text">FileFormats v0.4.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -228,10 +228,10 @@ flag</p>
 </section>
 <section id="mime-types">
 <h2>MIME Types<a class="headerlink" href="#mime-types" title="Permalink to this heading">#</a></h2>
-<p>Namespaces in the <code class="docutils literal notranslate"><span class="pre">fileformats</span></code> package are named after MIME type registries
+<p>Namespaces in the <code class="docutils literal notranslate"><span class="pre">fileformats</span></code> package are largely named after MIME type registries
 as defined by the <a class="reference external" href="https://www.iana_mime.org/assignments/media-types/media-types.xhtml">Internet Assigned Numbering Authority (IANA)</a>.
-The main difference is that there is no &quot;application&quot; registry, which acts as a
-catch-all for any type that doesn't have a formal specification. Instead, types that
+The difference is that there is no &quot;application&quot; registry, which acts as a
+bit of a catch-all in the MIME-type specification. Instead, types that
 fall under the &quot;application&quot; registry are grouped by the types of data that they
 store, e.g. <code class="docutils literal notranslate"><span class="pre">fileformats.archive</span></code> for (typically compressed) archives such as
 zip, bzip, gzip, etc..., <code class="docutils literal notranslate"><span class="pre">fileformats.document</span></code> for PDFs, word docs,
@@ -241,26 +241,26 @@ zip, bzip, gzip, etc..., <code class="docutils literal notranslate"><span class=
 is present in the type class, it should correspond to a formally recognised MIME type
 by the , e.g.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">to_mime</span><span class="p">,</span> <span class="n">from_mime</span>
-<span class="kn">from</span> <span class="nn">fileformats.image</span> <span class="kn">import</span> <span class="n">Png</span>
+<span class="kn">from</span> <span class="nn">fileformats.document</span> <span class="kn">import</span> <span class="n">MswordX</span>
 
-<span class="n">Loaded</span> <span class="o">=</span> <span class="n">from_mime</span><span class="p">(</span><span class="s2">&quot;image/png&quot;</span><span class="p">)</span>
-<span class="k">assert</span> <span class="n">Loaded</span> <span class="ow">is</span> <span class="n">Png</span>
-<span class="k">assert</span> <span class="n">to_mime</span><span class="p">(</span><span class="n">Loaded</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;image/png&quot;</span>
+<span class="n">Loaded</span> <span class="o">=</span> <span class="n">from_mime</span><span class="p">(</span><span class="s2">&quot;application/vnd.openxmlformats-officedocument.wordprocessingml.document&quot;</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">Loaded</span> <span class="ow">is</span> <span class="n">MswordX</span>
+<span class="k">assert</span> <span class="n">Loaded</span><span class="o">.</span><span class="n">mime_type</span> <span class="o">==</span> <span class="s2">&quot;application/vnd.openxmlformats-officedocument.wordprocessingml.document&quot;</span>
 </pre></div>
 </div>
 <p>If the format class doesn't define an <code class="docutils literal notranslate"><span class="pre">iana_mime</span></code> attribute (i.e. in the actual class,
 not including <code class="docutils literal notranslate"><span class="pre">iana_mime</span></code> attributes defined in base classes), it will be assigned an informal
 MIME-type of &quot;application/x-&lt;transformed-class-name&gt;&quot;, where <em>transformed-class-name</em>
 is the name of the format class converted from &quot;PascalCase&quot; to &quot;kebab-case&quot;, with the
-first underscore encountered in a class name converted to a &quot;+&quot; and subsequent underscores
-converted to &quot;.&quot;, e.g.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Nifti_Gzip_Bids</span><span class="o">.</span><span class="n">mime</span>
-<span class="go">&quot;application/x-nifti+gzip.bids&quot;</span>
+single underscores converterd to &quot;.&quot; and a double underscores converted to &quot;+&quot; (there
+should be only one), e.g.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Nifti__Gzip_Json</span><span class="o">.</span><span class="n">mime_type</span>
+<span class="go">&quot;application/x-nifti+gzip.json&quot;</span>
 </pre></div>
 </div>
 <p>Note that if there are two file-formats with the same class name in different sub-packages
 then the <code class="docutils literal notranslate"><span class="pre">iana_mime</span></code> attribute will need to be set on at least one of them otherwise an
-error will be raised they are loaded from a MIME type.</p>
+error will be raised when they are loaded from a MIME type.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Note that the installation of additional sub-packages may cause detection code to
@@ -272,15 +272,18 @@ unless IANA compliance is required.</p>
 <section id="mime-like-types">
 <h2>MIME-like types<a class="headerlink" href="#mime-like-types" title="Permalink to this heading">#</a></h2>
 <p>To avoid the issue with format classes in separate namespaces mapping onto the same
-IANA-style MIME type, and for additional clarity (i.e. not drowning in a sea of
-&quot;application/x-*&quot; types), it can be preferable in some use cases not to worry with
-closely matching the MIME-type specification for non-standard formats and just use the
-<em>FileFormats</em> namespace inplace of the generic &quot;application/x-&quot; prefix. This can be done
-by setting <code class="docutils literal notranslate"><span class="pre">iana=False</span></code> in the <code class="docutils literal notranslate"><span class="pre">to_mime</span></code> function, e.g.</p>
+IANA-style MIME type, as well as improving readability of the MIME string (i.e. not
+drowning in a sea of &quot;application/x-*&quot; types), it can be preferable in some use cases
+not to worry with closely matching the MIME-type specification for non-standard formats
+and just use the <em>FileFormats</em> namespace inplace of the generic &quot;application/x-&quot; prefix.
+This is accessed via the <code class="docutils literal notranslate"><span class="pre">mime_like</span></code> class-property.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">to_mime</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.archive</span> <span class="kn">import</span> <span class="n">Bzip</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">to_mime</span><span class="p">(</span><span class="n">Yaml</span><span class="p">,</span> <span class="n">iana</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.serialization</span> <span class="kn">import</span> <span class="n">Json</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Bzip</span><span class="o">.</span><span class="n">mime_like</span>
 <span class="go">&quot;archive/bzip&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Json</span><span class="o">.</span><span class="n">mime_like</span>
+<span class="go">&quot;serialization/json&quot;</span>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">from_mime</span></code> function will resolve both official-style MIME types and the MIME-like
@@ -289,12 +292,12 @@ types, so it is possible to roundtrip from both.</p>
 <span class="kn">from</span> <span class="nn">from</span> <span class="n">fileformats</span><span class="o">.</span><span class="n">archive</span> <span class="kn">import</span> <span class="nn">Bzip</span>
 
 <span class="c1"># Using official-style MIME string</span>
-<span class="n">mime_type</span> <span class="o">=</span> <span class="n">to_mime</span><span class="p">(</span><span class="n">Bzip</span><span class="p">,</span> <span class="n">iana</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">mime_type</span> <span class="o">=</span> <span class="n">Bzip</span><span class="o">.</span><span class="n">mime_type</span>
 <span class="k">assert</span> <span class="n">mime_type</span> <span class="o">==</span> <span class="s2">&quot;application/x-bzip&quot;</span>
 <span class="k">assert</span> <span class="n">from_mime</span><span class="p">(</span><span class="n">mime_type</span><span class="p">)</span> <span class="ow">is</span> <span class="n">Bzip</span>
 
 <span class="c1"># Using MIME-like string</span>
-<span class="n">mimelike_type</span> <span class="o">=</span> <span class="n">to_mime</span><span class="p">(</span><span class="n">Bzip</span><span class="p">,</span> <span class="n">iana</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">mimelike_type</span> <span class="o">=</span> <span class="n">Bzip</span><span class="o">.</span><span class="n">mime_like</span>
 <span class="k">assert</span> <span class="n">mimelike_type</span> <span class="o">==</span> <span class="s2">&quot;archive/bzip&quot;</span>
 <span class="k">assert</span> <span class="n">from_mime</span><span class="p">(</span><span class="n">mimelike_type</span><span class="p">)</span> <span class="ow">is</span> <span class="n">Bzip</span>
 </pre></div>

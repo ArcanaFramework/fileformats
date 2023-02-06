@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="prev" title="Format Identification" href="identification.html" />
 
     <!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07 -->
-        <title>Developer Guide - FileFormats v0.3.3</title>
+        <title>Developer Guide - FileFormats v0.4.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -129,7 +129,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">FileFormats v0.3.3</div></a>
+      <a href="index.html"><div class="brand">FileFormats v0.4.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -152,7 +152,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">FileFormats v0.3.3</span>
+  <span class="sidebar-brand-text">FileFormats v0.4.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -208,7 +208,7 @@ still being flexible enough handle any weird whacky file formats used in obscure
 <p>Format classes not covered by <a class="reference external" href="https://www.iana_mime.org/assignments/media-types/media-types.xhtml">IANA Media Types</a> should be implemented in a separate
 <em>FileFormats</em> extension packages. New extension packages can be conveniently created from
 the FileFormats extension template, <a class="reference external" href="https://github.com/ArcanaFramework/fileformats-medimage">https://github.com/ArcanaFramework/fileformats-medimage</a>,
-including CI/CD workflows and tests.</p>
+including CI/CD workflows.</p>
 <p>Extension packages add a new unique format namespace under the <code class="docutils literal notranslate"><span class="pre">fileformats</span></code> namespace package.
 For example, the <a class="reference external" href="https://github.com/ArcanaFramework/fileformats-medimage">FileFormats Medimage Extension</a>
 implements a range of file formats used in medical imaging research under the
@@ -335,12 +335,12 @@ scientific data formats you might need to write custom validators using the
 <code class="docutils literal notranslate"><span class="pre">&#64;fileformats.core.mark.required</span></code> and <code class="docutils literal notranslate"><span class="pre">&#64;fileformats.core.mark.check</span></code> decorators.</p>
 <p>Take for example the <a class="reference external" href="https://www.earthdatascience.org/courses/earth-analytics/spatial-data-r/shapefile-structure/">GIS shapefile structure</a>,
 it is a file-set consisting of 3 to 6 files differentiated by their extensions. To
-implement this class we use the <code class="docutils literal notranslate"><span class="pre">required</span></code> decorator. We inherit from the <code class="docutils literal notranslate"><span class="pre">WithAdjacents</span></code>
+implement this class we use the <code class="docutils literal notranslate"><span class="pre">required</span></code> decorator. We inherit from the <code class="docutils literal notranslate"><span class="pre">WithAdjacentFiles</span></code>
 mixin so that neighbouring files (i.e. files with the same stem but different extension)
 are included when the class is instantiated with just the primary &quot;.shp&quot; file.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.generic</span> <span class="kn">import</span> <span class="n">File</span>
 <span class="kn">from</span> <span class="nn">fileformats.serialization</span> <span class="kn">import</span> <span class="n">Xml</span>
-<span class="kn">from</span> <span class="nn">fileformats.mixin</span> <span class="kn">import</span> <span class="n">WithAdjacents</span>
+<span class="kn">from</span> <span class="nn">fileformats.mixin</span> <span class="kn">import</span> <span class="n">WithAdjacentFiles</span>
 <span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">mark</span>
 
 <span class="k">class</span> <span class="nc">GisShapeIndex</span><span class="p">(</span><span class="n">File</span><span class="p">):</span>
@@ -375,7 +375,7 @@ are included when the class is instantiated with just the primary &quot;.shp&quo
     <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.shp.xml&quot;</span>
 
 
-<span class="k">class</span> <span class="nc">GisShape</span><span class="p">(</span><span class="n">WithAdjacents</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">GisShape</span><span class="p">(</span><span class="n">WithAdjacentFiles</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
 
     <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.shp&quot;</span>  <span class="c1"># the main file that will be mapped to fspath</span>
 
@@ -420,10 +420,8 @@ are included when the class is instantiated with just the primary &quot;.shp&quo
 value without raising a <code class="docutils literal notranslate"><span class="pre">FormatsMismatchError</span></code> for the class to be initiated. Required
 properties, that appear in <code class="docutils literal notranslate"><span class="pre">fspaths</span></code> attribute of the object are considered to be
 &quot;required paths&quot;, and are copied along side the main path in the <code class="docutils literal notranslate"><span class="pre">copy_to</span></code> method.</p>
-<p>After the format class has been initiated and a cursory validation has been performed
-on the paths provided, deeper checks can be run as part of the <code class="docutils literal notranslate"><span class="pre">validate</span></code> method.
-These checks are specified using the <code class="docutils literal notranslate"><span class="pre">check</span></code> decorator. Take the <code class="docutils literal notranslate"><span class="pre">fileformats.image.Tiff</span></code>
-class</p>
+<p>After the required properties have been deeper checks can be by using the <code class="docutils literal notranslate"><span class="pre">check</span></code>
+decorator. Take the <code class="docutils literal notranslate"><span class="pre">fileformats.image.Tiff</span></code> class</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Tiff</span><span class="p">(</span><span class="n">RasterImage</span><span class="p">):</span>
 
    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.tiff&quot;</span>
@@ -451,9 +449,8 @@ class</p>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">Tiff</span></code> format class needs to check two different magic numbers, one for big endian
 files and another one for little endian files. Therefore we can't just use the
-<code class="docutils literal notranslate"><span class="pre">WithMagicNumber</span></code> mixin and have to roll our own, <code class="docutils literal notranslate"><span class="pre">endianness</span></code> which will be called
-when <code class="docutils literal notranslate"><span class="pre">validate()</span></code> is called because it is decorated with <code class="docutils literal notranslate"><span class="pre">fileformats.core.mark.check</span></code>.
-Note that this method can also be used to check the endianness of the file if required.</p>
+<code class="docutils literal notranslate"><span class="pre">WithMagicNumber</span></code> mixin and have to roll our own, <code class="docutils literal notranslate"><span class="pre">endianness</span></code> is decorated with
+<code class="docutils literal notranslate"><span class="pre">fileformats.core.mark.check</span></code>.</p>
 </section>
 <section id="converters">
 <h2>Converters<a class="headerlink" href="#converters" title="Permalink to this heading">#</a></h2>
@@ -528,7 +525,6 @@ captured by transformation to the base class. However, you can attempt to &quot;
 base class to a sub-class simply by providing the base class as an input, since it will
 simply iterate over paths in the base class and attempt to validate them.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sub_format</span> <span class="o">=</span> <span class="n">SubFormat</span><span class="p">(</span><span class="n">BaseFormat</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">another_format</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sub_format</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>Shell commands are marked as converters in the same way as function tasks, and existing
