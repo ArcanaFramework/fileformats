@@ -217,8 +217,8 @@ class FileSet(DataType):
         whether to run in-depth "checks" to verify the file format
     """
 
-    fspaths: frozenset[Path] = attrs.field(default=None, converter=fspaths_converter)
-    _metadata: dict[str, ty.Any] = attrs.field(
+    fspaths: ty.FrozenSet[Path] = attrs.field(default=None, converter=fspaths_converter)
+    _metadata: ty.Dict[str, ty.Any] = attrs.field(
         default=None, init=False, repr=False, eq=False
     )
 
@@ -317,7 +317,7 @@ class FileSet(DataType):
                 else:
                     yield attr_name
 
-    def required_paths(self) -> set[Path]:
+    def required_paths(self) -> ty.Set[Path]:
         """Returns all fspaths that are required for the format"""
         required = set()
         for prop_name in self.required_properties():
@@ -452,7 +452,7 @@ class FileSet(DataType):
         return matches[0]
 
     @classmethod
-    def matching_exts(cls, fspaths: set[Path], exts: list[str]) -> list[Path]:
+    def matching_exts(cls, fspaths: ty.Set[Path], exts: ty.List[str]) -> ty.List[Path]:
         """Returns the paths out of the candidates provided that matches the
         given extension (by default the extension of the class)
 

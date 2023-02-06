@@ -1,4 +1,5 @@
 from pathlib import Path
+import typing as ty
 from . import mark
 from .base import FileSet
 from .exceptions import FileFormatsError, FormatMismatchError
@@ -77,7 +78,7 @@ class WithAdjacentFiles:
         if trim:
             self.trim_paths()
 
-    def get_adjacent_files(self) -> set[Path]:
+    def get_adjacent_files(self) -> ty.Set[Path]:
         stem = self.stem
         adjacents = set()
         for sibling in self.fspath.parent.iterdir():

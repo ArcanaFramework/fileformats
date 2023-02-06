@@ -1,6 +1,7 @@
 import importlib
 from warnings import warn
 from pathlib import Path
+import typing as ty
 import re
 import os
 import traceback
@@ -12,7 +13,7 @@ from fileformats.core.exceptions import (
 import fileformats.core
 
 
-def find_matching(fspaths: list[Path], standard_only: bool = False):
+def find_matching(fspaths: ty.List[Path], standard_only: bool = False):
     """Detect the corresponding file format from a set of file-system paths
 
     Parameters
@@ -25,16 +26,18 @@ def find_matching(fspaths: list[Path], standard_only: bool = False):
     fspaths = fspaths_converter(fspaths)
     matches = []
     for frmt in fileformats.core.FileSet.all_formats:
-        if frmt.matches(fspaths) and frmt.namespace in STANDARD_NAMESPACES:
+        if frmt.matches(fspaths) and (
+            not standard_only or frmt.namespace in STANDARD_NAMESPACES
+        ):
             matches.append(frmt)
     return matches
 
 
-def from_mime(mime_str):
+def from_mime(mime_str: str):
     return fileformats.core.DataType.from_mime(mime_str)
 
 
-def splitext(fspath, multi=False):
+def splitext(fspath: Path, multi=False):
     """splits an extension from the file stem, taking into consideration multi-part
     extensions such as ".nii.gz".
 
@@ -79,7 +82,7 @@ def subpackages():
 
 
 @contextmanager
-def set_cwd(path):
+def set_cwd(path: Path):
     """Sets the current working directory to `path` and back to original
     working directory on exit
 
@@ -96,9 +99,13 @@ def set_cwd(path):
         os.chdir(pwd)
 
 
-def fspaths_converter(fspaths):
+def fspaths_converter(
+    fspaths: ty.Union[
+        ty.Iterable[ty.Union[str, os.PathLike, bytes]], str, os.PathLike, bytes
+    ]
+):
     """Ensures fs-paths are a set of pathlib.Path"""
-    if isinstance(fspaths, (str, Path, bytes)):
+    if isinstance(fspaths, (str, os.PathLike, bytes)):
         fspaths = [fspaths]
     return frozenset(Path(p).absolute() for p in fspaths)
 
@@ -142,7 +149,7 @@ class MissingExtendedDependency:
         )
 
 
-def import_converters(module_name):
+def import_converters(module_name: str):
     """Attempts to import converters and raises warning if they can be imported"""
     try:
         importlib.import_module(module_name + ".converters")
@@ -173,14 +180,14 @@ STANDARD_NAMESPACES = [
 ]
 
 
-def to_mime_format_name(format_name):
+def to_mime_format_name(format_name: str):
     format_name = format_name[0].lower() + format_name[1:]
     format_name = re.sub("_([A-Z])", lambda m: "+" + m.group(1).lower(), format_name)
     format_name = re.sub("([A-Z])", lambda m: "-" + m.group(1).lower(), format_name)
     return format_name
 
 
-def from_mime_format_name(format_name):
+def from_mime_format_name(format_name: str):
     if format_name.startswith("x-"):
         format_name = format_name[2:]
     format_name = format_name.capitalize()
@@ -189,7 +196,7 @@ def from_mime_format_name(format_name):
     return format_name
 
 
-def hash_file(fspath, chunk_len, crypto):
+def hash_file(fspath: Path, chunk_len: int, crypto: ty.Callable):
     crypto_obj = crypto()
     with open(fspath, "rb") as fp:
         for chunk in iter(lambda: fp.read(chunk_len), b""):
@@ -198,12 +205,12 @@ def hash_file(fspath, chunk_len, crypto):
 
 
 def hash_dir(
-    fspath,
-    chunk_len,
-    crypto,
-    ignore_hidden_files=False,
-    ignore_hidden_dirs=False,
-    relative_to=None,
+    fspath: Path,
+    chunk_len: int,
+    crypto: ty.Callable,
+    ignore_hidden_files: bool = False,
+    ignore_hidden_dirs: bool = False,
+    relative_to: Path = None,
 ):
     if relative_to is None:
         relative_to = fspath

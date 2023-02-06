@@ -53,7 +53,7 @@ ZIP_COMPRESSION_ANNOT = (
         "in_file": pydra.engine.specs.File,
         "out_file": str,
         "filter": str,
-        "compression": TAR_COMPRESSION_ANNOT,
+        "compression": str,  # TAR_COMPRESSION_ANNOT,
         "format": int,
         "ignore_zeros": bool,
         "return": {"out_file": Path},
@@ -89,7 +89,7 @@ def tar_file(
         "in_file": pydra.engine.specs.Directory,
         "out_file": str,
         "filter": str,
-        "compression": TAR_COMPRESSION_ANNOT,
+        "compression": str,  # TAR_COMPRESSION_ANNOT,
         "format": int,
         "ignore_zeros": bool,
         "return": {"out_file": Path},
@@ -190,7 +190,7 @@ def extract_tar(
     {
         "in_file": pydra.engine.specs.File,
         "out_file": str,
-        "compression": ZIP_COMPRESSION_ANNOT,
+        "compression": int,  # ZIP_COMPRESSION_ANNOT,
         "allowZip64": bool,
         "return": {"out_file": Path},
     }
@@ -221,7 +221,7 @@ def zip_file(
     {
         "in_file": pydra.engine.specs.Directory,
         "out_file": str,
-        "compression": ZIP_COMPRESSION_ANNOT,
+        "compression": int,  # ZIP_COMPRESSION_ANNOT,
         "allowZip64": bool,
         "return": {"out_file": Path},
     }
