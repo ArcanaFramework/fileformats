@@ -1,4 +1,3 @@
-from __future__ import annotations
 import importlib
 from warnings import warn
 from pathlib import Path

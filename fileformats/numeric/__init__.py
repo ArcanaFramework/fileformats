@@ -1,4 +1,3 @@
-from __future__ import annotations
 from ..core import __version__
 from fileformats.generic import File
 

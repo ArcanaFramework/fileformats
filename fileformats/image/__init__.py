@@ -1,4 +1,3 @@
-from __future__ import annotations
 from ..core import __version__, import_converters
 from .raster import RasterImage, Bitmap, Gif, Jpeg, Png, Tiff
 from .vector import VectorImage, Svg

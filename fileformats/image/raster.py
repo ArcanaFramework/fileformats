@@ -1,4 +1,3 @@
-from __future__ import annotations
 from fileformats.core.mixin import WithMagicNumber
 from fileformats.core import mark, MissingExtendedDependency
 from fileformats.core.exceptions import FormatMismatchError

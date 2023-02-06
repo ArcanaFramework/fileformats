@@ -1,4 +1,3 @@
-from __future__ import annotations
 import attrs
 from ..core import Field
 from ..core.exceptions import FormatMismatchError

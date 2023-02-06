@@ -1,4 +1,3 @@
-from __future__ import annotations
 from ..core import __version__, import_converters
 from warnings import warn
 from fileformats.generic import File

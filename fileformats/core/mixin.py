@@ -1,4 +1,3 @@
-from __future__ import annotations
 from pathlib import Path
 from . import mark
 from .base import FileSet

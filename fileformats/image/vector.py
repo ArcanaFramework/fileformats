@@ -1,4 +1,3 @@
-from __future__ import annotations
 from .base import Image
 from fileformats.serialization import Xml
 
