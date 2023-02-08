@@ -4,17 +4,13 @@ import attrs
 from .exceptions import FileFormatsError
 
 
-if ty.TYPE_CHECKING:
-    import pydra.engine.core
-
-
 @attrs.define
 class ConverterWrapper:
     """Wraps a converter task in a workflow so that the in_file and out_file names can
     be mapped onto their standardised names, "in_file" and "out_file" if necessary
     """
 
-    task_spec: pydra.engine.core.TaskBase
+    task_spec: ty.Callable
     in_file: str = None
     out_file: str = None
 
@@ -48,7 +44,7 @@ class _GenericConversionTarget:
     @classmethod
     def get_converter_tuples(
         cls, source_format: type, target_format: type
-    ) -> ty.List[ty.Tuple[pydra.engine.core.TaskBase, ty.Dict[str, ty.Any]]]:
+    ) -> ty.List[ty.Tuple[ty.Callable, ty.Dict[str, ty.Any]]]:
         # check to see whether there are converters from a base class of the source
         # format
         available_converters = []
@@ -67,7 +63,7 @@ class _GenericConversionTarget:
     def register_converter(
         cls,
         source_format: type,
-        converter_tuple: ty.Tuple[pydra.engine.core.TaskBase, ty.Dict[str, ty.Any]],
+        converter_tuple: ty.Tuple[ty.Callable, ty.Dict[str, ty.Any]],
     ):
         """Registers a converter task within a class attribute. Called by the @fileformats.mark.converter
         decorator.

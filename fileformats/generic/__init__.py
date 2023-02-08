@@ -5,6 +5,7 @@ from ..core.base import FileSet
 from ..core.exceptions import FormatMismatchError
 from ..core import mark
 from ..core.utils import splitext, classproperty
+from ..core.mixin import WithQualifiers
 
 
 @attrs.define
@@ -115,10 +116,14 @@ class File(FsObject):
 
 
 @attrs.define
-class Directory(FsObject):
+class Directory(WithQualifiers, FsObject):
     """Generic directory type"""
 
-    content_types = ()
+    # WithQualifiers-required class attrs
+    qualifiers_attr_name = "children_types"
+    children_types = ()
+    allowed_qualifier_types = (FileSet,)
+
     is_dir = True
     iana_mime = None
 
@@ -134,7 +139,7 @@ class Directory(FsObject):
             )
         fspath = dirs[0]
         missing = []
-        for content_type in self.content_types:
+        for content_type in self.children_types:
             match = False
             for p in fspath.iterdir():
                 try:
@@ -154,7 +159,7 @@ class Directory(FsObject):
 
     @property
     def contents(self):
-        for content_type in self.content_types:
+        for content_type in self.children_types:
             for p in self.fspath.iterdir():
                 try:
                     yield content_type([p])
@@ -163,7 +168,9 @@ class Directory(FsObject):
 
     @mark.check
     def validate_contents(self):
-        not_found = set(self.content_types)
+        if not self.children_types:
+            return
+        not_found = set(self.children_types)
         for fspath in self.fspath.iterdir():
             for content_type in list(not_found):
                 if content_type.matches(fspath):

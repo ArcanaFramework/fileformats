@@ -89,7 +89,7 @@ def test_file_cast(work_dir):
 
 class TestDir(Directory):
 
-    content_types = (TestFile,)
+    children_types = (TestFile,)
 
 
 def test_dir_contents(work_dir):
@@ -129,7 +129,7 @@ def test_double_ext_fail(work_dir):
 
 class NestedDirFormat(Directory):
 
-    content_types = (TestFile, DoubleExtFileFormat, TestDir)
+    children_types = (TestFile, DoubleExtFileFormat, TestDir)
 
 
 def test_nested_directories(work_dir):
@@ -228,7 +228,7 @@ class FooWithSideCar(WithSideCar, TestFile):
 
 class DirContainingSideCars(Directory):
 
-    content_types = (FooWithSideCar,)
+    children_types = (FooWithSideCar,)
 
 
 def test_dir_containing_side_cars(work_dir):

@@ -29,9 +29,6 @@ from .exceptions import (
     FormatRecognitionError,
 )
 
-if ty.TYPE_CHECKING:
-    import pydra.engine.core
-
 # Tools imported from Arcana, will remove again once file-formats and "cells"
 # have been split
 REQUIRED_ANNOTATION = "__fileformats_required__"
@@ -604,7 +601,7 @@ class FileSet(DataType):
     @classmethod
     def get_converter_tuples(
         cls, source_format: type
-    ) -> ty.List[ty.Tuple[pydra.engine.core.TaskBase, ty.Dict[str, ty.Any]]]:
+    ) -> ty.List[ty.Tuple[ty.Callable, ty.Dict[str, ty.Any]]]:
         """Search the registered converters to find any matches and return list of
         task and associated key-word args to perform the conversion between source and
         target formats
@@ -624,7 +621,7 @@ class FileSet(DataType):
         for src_frmt, converter in converters_dict.items():
             if source_format.is_subtype_of(src_frmt):
                 available.append(converter)
-        if not available and getattr(source_format, "wildcard_content_types", []):
+        if not available and hasattr(source_format, "unqualified"):
             available = _GenericConversionTarget.get_converter_tuple(
                 source_format, target_format=cls
             )
@@ -634,7 +631,7 @@ class FileSet(DataType):
     def register_converter(
         cls,
         source_format: type,
-        converter_tuple: ty.Tuple[pydra.engine.core.TaskBase, ty.Dict[str, ty.Any]],
+        converter_tuple: ty.Tuple[ty.Callable, ty.Dict[str, ty.Any]],
     ):
         """Registers a converter task within a class attribute. Called by the @fileformats.mark.converter
         decorator.

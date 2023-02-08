@@ -44,7 +44,7 @@ contents for magic numbers and the like
 
 
 Directories are classified by the contents of the files within them, via the
-``content_types`` class attribute, e.g.
+``children_types`` class attribute, e.g.
 
 .. code-block:: python
 
@@ -54,7 +54,7 @@ Directories are classified by the contents of the files within them, via the
         ext = ".dcm"
 
     class Dicom(Directory):
-        content_types = (DicomFile,)
+        children_types = (DicomFile,)
 
 
 Note that only one file within the directory needs to match the specified content type

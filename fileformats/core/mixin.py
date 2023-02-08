@@ -3,14 +3,10 @@ import inspect
 import typing as ty
 from collections import Counter
 from . import mark
-from .base import FileSet, DataType
+from .base import FileSet
 from .utils import classproperty
 from .converter import _GenericConversionTarget
 from .exceptions import FileFormatsError, FormatMismatchError
-
-
-if ty.TYPE_CHECKING:
-    import pydra.engine.core
 
 
 class WithMagicNumber:
@@ -188,19 +184,22 @@ class WithQualifiers:
 
     Class Attrs
     -----------
-    qualifier_attr_name : str
+    qualifiers_attr_name : str, optional
         the attribute name to store the qualifiers at within the qualified class. This
         should be used instead of referencing the ``qualifiers`` attribute as subclasses
         may also define qualifiers, whichi will override the ``qualifiers`` attribute.
         A default value should also be set in the unqualified base for this attribute,
-        which is either ``()`` if ``multiple_qualifiers`` is true and ``None`` otherwise
+        which is either ``()`` if ``multiple_qualifiers`` is true and ``None`` otherwise,
+        by default "content_types"
+    <qualifiers-attr-name> : tuple[type, ...] or None
+        pass a default value to the attribute referenced by 'qualifiers_attr_name'
     multiple_qualifiers : bool, optional
-        whether or not multiple content types are permitted for the container type
-    allowed_qualifiers : tuple[type,...], optional
+        whether or not multiple content types are permitted for the container type, True
+    allowed_qualifier_types : tuple[type,...], optional
         the allowable types (+ subclasses) for the content types. If None all types
         are allowed
     ordered_qualifiers : bool, optional
-        whether the order of the content types is important or not
+        whether the order of the content types is important or not, by default false
     """
 
     qualifiers = ()  # qualifiers set in the current class
@@ -210,6 +209,8 @@ class WithQualifiers:
     # ensures that ``assert MyFormat[Qualifier] is MyFormat[Qualifier]``
 
     # Default values for class attrs
+    qualifiers_attr_name = "content_types"
+    content_types = ()
     multiple_qualifiers = True
     allowed_qualifier_types = None
     ordered_qualifiers = False
@@ -238,7 +239,7 @@ class WithQualifiers:
         return frozenset(q for q in qualifiers if not isinstance(q, ty.TypeVar))
 
     @classmethod
-    def __class_getitem__(cls, *qualifiers):
+    def __class_getitem__(cls, qualifiers):
         """Set the content types for a newly created dynamically type"""
         # if hasattr(cls, "unqualified"):
         #     raise FileFormatsError(
@@ -246,22 +247,27 @@ class WithQualifiers:
         #         f"{qualifiers}, as ``unqualified`` is already set on {cls} from "
         #         "one of its base classes"
         #     )
-        not_allowed = [
-            q
-            for q in qualifiers
-            if not (
-                isinstance(q, ty.TypeVar)
-                or all(q.is_subtype_of(t) for t in cls.allowed_qualifier_types),
-            )
-        ]
-        if not_allowed:
-            raise FileFormatsError(
-                f"Invalid content types provided to {cls} (must be subclasses of "
-                f"{cls.allowed_qualifier_types}): {not_allowed}"
-            )
+        if isinstance(qualifiers, ty.Iterable):
+            qualifiers = tuple(qualifiers)
+        else:
+            qualifiers = (qualifiers,)
+        if cls.allowed_qualifier_types:
+            not_allowed = [
+                q
+                for q in qualifiers
+                if not (
+                    isinstance(q, ty.TypeVar)
+                    or any(q.is_subtype_of(t) for t in cls.allowed_qualifier_types)
+                )
+            ]
+            if not_allowed:
+                raise FileFormatsError(
+                    f"Invalid content types provided to {cls} (must be subclasses of "
+                    f"{cls.allowed_qualifier_types}): {not_allowed}"
+                )
         # Sort content types if order isn't important
         if cls.multiple_qualifiers and not cls.ordered_qualifiers:
-            repetitions = [t for t, c in Counter(qualifiers) if c > 1]
+            repetitions = [t for t, c in Counter(qualifiers).items() if c > 1]
             if repetitions:
                 raise FileFormatsError(
                     f"Cannot have more than one occurrence of a qualifier ({repetitions}) "
@@ -271,18 +277,18 @@ class WithQualifiers:
 
         # Make sure that the "qualified" dictionary is present in this class not super
         # classes
-        if "qualified" not in cls.__dict__:
+        if "_qualified" not in cls.__dict__:
             cls._qualified = {}
         try:
             # Load previously created type so we can do ``assert MyType[Integer] is MyType[Integer]``
             qualified = cls._qualified[qualifiers]
         except KeyError:
-            content_type_str = "_".join(t.__name__ for t in qualifiers)
+            qualifiers_str = "_".join(t.__name__ for t in qualifiers)
             qualified = type(
-                f"{content_type_str}__{cls.__name__}",
+                f"{qualifiers_str}__{cls.__name__}",
                 (cls,),
                 {
-                    cls.qualifier_attr_name: (
+                    cls.qualifiers_attr_name: (
                         qualifiers if cls.multiple_qualifiers else qualifiers[0]
                     ),
                     "unqualified": cls,
@@ -295,7 +301,7 @@ class WithQualifiers:
     @classmethod
     def get_converter_tuples(
         cls, source_format: type
-    ) -> ty.List[ty.Tuple[pydra.engine.core.TaskBase, ty.Dict[str, ty.Any]]]:
+    ) -> ty.List[ty.Tuple[ty.Callable, ty.Dict[str, ty.Any]]]:
         """Search the registered converters to find an appropriate task and associated
         key-word args to perform the conversion between source and target formats
 
@@ -382,26 +388,26 @@ class WithQualifiers:
 
     @classmethod
     def is_subtype_of(cls, super_type: type):
-        if DataType.is_subtype_of(super_type):
+        if super().is_subtype_of(super_type):
             return True
         # Check to see whether the unqualified types are equivalent
-        if not (
-            cls.is_qualified
-            and super_type.is_qualified
-            and cls.unqualified.is_subtype_of(super_type.unqualified)
+        if (
+            not cls.is_qualified
+            or not super_type.is_qualified
+            or not cls.unqualified.is_subtype_of(super_type.unqualified)
         ):
             return False
         if cls.ordered_qualifiers:
             is_subtype = cls.qualifiers == super_type.qualifiers
         else:
-            is_subtype = cls.qualifiers.issubset(super_type.qualifiers)
+            is_subtype = super_type.qualifiers.issubset(cls.qualifiers)
         return is_subtype
 
     @classmethod
     def register_converter(
         cls,
         source_format: type,
-        converter_tuple: ty.Tuple[pydra.engine.core.TaskBase, ty.Dict[str, ty.Any]],
+        converter_tuple: ty.Tuple[ty.Callable, ty.Dict[str, ty.Any]],
     ):
         """Registers a converter task within a class attribute. Called by the @fileformats.mark.converter
         decorator.
