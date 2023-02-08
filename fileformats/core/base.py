@@ -1,4 +1,5 @@
 import os
+import inspect
 from copy import copy
 from inspect import isclass
 import typing as ty
@@ -20,6 +21,7 @@ from .utils import (
     hash_file,
     hash_dir,
 )
+from .converter import _GenericConversionTarget
 from .exceptions import (
     FileFormatsError,
     FormatMismatchError,
@@ -27,6 +29,8 @@ from .exceptions import (
     FormatRecognitionError,
 )
 
+if ty.TYPE_CHECKING:
+    import pydra.engine.core
 
 # Tools imported from Arcana, will remove again once file-formats and "cells"
 # have been split
@@ -38,7 +42,6 @@ logger = logging.getLogger("fileformats")
 
 
 class DataType:
-
     is_fileset = False
     is_field = False
 
@@ -63,6 +66,32 @@ class DataType:
             return False
         else:
             return True
+
+    @classmethod
+    def is_subtype_of(cls, super_type: type, allow_same: bool = True):
+        """Check to see whether datatype class is a subtype of a given super class.
+        In this case the subtype is expected to be able to be treated as if it was
+        the super class.
+
+        Overridden in the ``WithQualifiers`` mixin to add support for
+        qualified subtypes
+
+        Parameters
+        ----------
+        super_type : type
+            the class to check whether the given class is a subtype of
+        allow_same : bool, optional
+            whether there is a match if the classes are the same, by default True
+
+        Returns
+        -------
+        is_subtype : bool
+            whether or not the current class can be considered a subtype of the super (or
+            is the super itself)
+        """
+        if allow_same and cls is super_type:
+            return True
+        return issubclass(cls, super_type)
 
     @classproperty
     def namespace(cls):
@@ -219,7 +248,11 @@ class FileSet(DataType):
 
     fspaths: ty.FrozenSet[Path] = attrs.field(default=None, converter=fspaths_converter)
     _metadata: ty.Dict[str, ty.Any] = attrs.field(
-        default=None, init=False, repr=False, eq=False
+        default=None,
+        init=False,
+        repr=False,
+        eq=False,
+        hash=False,
     )
 
     # Explicitly set the Internet Assigned Numbers Authority (https://iana_mime.org) MIME
@@ -531,43 +564,108 @@ class FileSet(DataType):
         FileFormatConversionError
             ambiguous (i.e. more than one) converters found between source and dest format
         """
-        if source_format is cls or issubclass(source_format, cls):
+        if source_format.is_subtype_of(cls):
             return None
-        converter_tuple = None
-        # Only access converters to the specific class, not superclasses (which may not
-        # be able to convert to the specific type)
+        converters = cls.get_converters_dict()
         try:
-            converters = cls.__dict__["converters"]
+            converter, conv_kwargs = converters[source_format]
         except KeyError:
-            raise FormatConversionError(
-                f"No converters specified to {cls.mime_like} format (trying to find one from "
-                f"{source_format.mime_like}"
-            )
-        try:
-            converter_tuple = converters[source_format]
-        except KeyError:  # check to see whether there are converters from a base class
-            available = []
-            for frmt, converter in converters.items():
-                if issubclass(source_format, frmt):
-                    available.append(converter)
-            if len(available) > 1:
-                available_str = "\n".join(str(a) for a in available)
+            available_converters = cls.get_converter_tuples(source_format)
+            if len(available_converters) > 1:
+                available_str = "\n".join(str(a) for a in available_converters)
                 raise FormatConversionError(
                     f"Ambiguous converters found between '{cls.mime_like}' and "
                     f"'{source_format.mime_like}':\n{available_str}"
                 ) from None
-            elif not available:
+            elif not available_converters:
                 raise FormatConversionError(
                     f"Could not find converter between '{source_format.mime_like}' and "
                     f"'{cls.mime_like}' formats"
                 ) from None
-            else:
-                converter_tuple = available[0]
-        converter, conv_kwargs = converter_tuple
+            converter, conv_kwargs = available_converters[0]
         if kwargs:
             conv_kwargs = copy(conv_kwargs)
             conv_kwargs.update(kwargs)
         return converter(name=name, **conv_kwargs)
+
+    @classmethod
+    def get_converters_dict(cls, klass=None):
+        # Only access converters to the specific class, not superclasses (which may not
+        # be able to convert to the specific type)
+        if klass is None:
+            klass = cls
+        try:
+            converters_dict = klass.__dict__["converters"]
+        except KeyError:
+            converters_dict = {}
+            klass.converters = converters_dict
+        return converters_dict
+
+    @classmethod
+    def get_converter_tuples(
+        cls, source_format: type
+    ) -> ty.List[ty.Tuple[pydra.engine.core.TaskBase, ty.Dict[str, ty.Any]]]:
+        """Search the registered converters to find any matches and return list of
+        task and associated key-word args to perform the conversion between source and
+        target formats
+
+        Parameters
+        ----------
+        source_format : type(FileSet)
+            the source format to convert from
+
+        Returns
+        -------
+        available : list[tuple[TaskBase, dict[str, Any]]]
+            list of available converters between the source and target formats
+        """
+        converters_dict = cls.get_converters_dict()
+        available = []
+        for src_frmt, converter in converters_dict.items():
+            if source_format.is_subtype_of(src_frmt):
+                available.append(converter)
+        if not available and getattr(source_format, "wildcard_content_types", []):
+            available = _GenericConversionTarget.get_converter_tuple(
+                source_format, target_format=cls
+            )
+        return available
+
+    @classmethod
+    def register_converter(
+        cls,
+        source_format: type,
+        converter_tuple: ty.Tuple[pydra.engine.core.TaskBase, ty.Dict[str, ty.Any]],
+    ):
+        """Registers a converter task within a class attribute. Called by the @fileformats.mark.converter
+        decorator.
+
+        Parameters
+        ----------
+        source_format : type
+            the source format to register a converter from
+        task_spec : ty.Callable
+            a callable that resolves to a Pydra task
+        converter_kwargs : dict
+            additional keyword arguments to be passed to the task spec at initialisation
+            time
+
+        Raises
+        ------
+        FormatConversionError
+            if there is already a converter registered between the two types
+        """
+        converters_dict = cls.get_converters_dict()
+        if source_format in converters_dict:
+            prev_registered_task = cls.converters[source_format][0]
+            msg = (
+                f"There is already a converter registered between {cls.__name__} "
+                f"and {cls.__name__}: {prev_registered_task}"
+            )
+            src_file = inspect.getsourcefile(prev_registered_task)
+            src_line = inspect.getsourcelines(prev_registered_task)[-1]
+            msg += f" (defined at line {src_line} of {src_file})"
+            raise FormatConversionError(msg)
+        converters_dict[source_format] = converter_tuple
 
     @classproperty
     def all_formats(cls):
@@ -710,7 +808,6 @@ class FileSet(DataType):
 
 @attrs.define
 class Field(DataType):
-
     value = attrs.field()
 
     type = None

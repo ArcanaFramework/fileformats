@@ -1,6 +1,7 @@
-import inspect
+import typing as ty
 import attrs
 from .base import FileSet, REQUIRED_ANNOTATION, CHECK_ANNOTATION
+from .converter import ConverterWrapper, _GenericConversionTarget
 from .exceptions import FormatConversionError
 
 
@@ -88,7 +89,7 @@ def converter(
             except KeyError:
                 # If there isn't an 'out_file' field but there is only one output field
                 # with the default name of 'out' use that instead
-                if list(outputs_dict.keys()) == ["out"]:
+                if out_file == "out_file" and list(outputs_dict.keys()) == ["out"]:
                     out_file_local = "out"
                     target = outputs_dict["out"].type
                 else:
@@ -100,25 +101,15 @@ def converter(
                 f"Target file format {target.__name__} is not of sub-class of "
                 "FileSet"
             )
-        # Ensure "converters" dict is defined in the target class and not in a superclass
-        if "converters" not in target.__dict__:
-            target.converters = {}
-        if source in target.converters:
-            msg = (
-                f"There is already a converter registered between {source.__name__} "
-                f"and {target.__name__}: {target.converters[source]}"
-            )
-            src_file = inspect.getsourcefile(target.converters[source])
-            src_line = inspect.getsourcelines(target.converters[source])[-1]
-            msg += f" (defined at line {src_line} of {src_file})"
-            raise FormatConversionError(msg)
         if in_file != "in_file" or out_file != "out_file":
-            from .converter import ConverterWrapper
-
             task_spec = ConverterWrapper(
                 task_spec, in_file=in_file, out_file=out_file_local
             )
-        target.converters[source] = (task_spec, converter_kwargs)
+        if isinstance(target, ty.TypeVar):
+            target = _GenericConversionTarget
+        target.register_converter(
+            source_format=source, converter_tuple=(task_spec, converter_kwargs)
+        )
         return task_spec
 
     return decorator if task_spec is None else decorator(task_spec)

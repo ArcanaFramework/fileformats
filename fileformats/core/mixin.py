@@ -1,8 +1,16 @@
 from pathlib import Path
+import inspect
 import typing as ty
+from collections import Counter
 from . import mark
-from .base import FileSet
+from .base import FileSet, DataType
+from .utils import classproperty
+from .converter import _GenericConversionTarget
 from .exceptions import FileFormatsError, FormatMismatchError
+
+
+if ty.TYPE_CHECKING:
+    import pydra.engine.core
 
 
 class WithMagicNumber:
@@ -158,3 +166,301 @@ class WithSideCar(WithAdjacentFiles):
             )
         metadata.update(side_car_data)
         return metadata
+
+
+class WithQualifiers:
+    """Mixin class for adding the ability to qualify the format class to designate the
+    type of information stored within the format, e.g. ``Directory[Png, Gif]`` for a
+    directory containing PNG and GIF files, ``Zip[DataFile]`` for a zipped data file,
+    ``Array[Integer]`` for an array containing integers, or DicomDir[T1w, Brain] for a
+    T1-weighted MRI scan of the brain in DICOM format.
+
+        class MyFormatWithContents(WithContents, File):
+
+            ext = ".myf
+
+
+        def my_func(file: MyFormatWithContents[Integer]):
+            ...
+
+    A unique class will be returned (i.e. multiple calls with the same arguments will
+    return the same class)
+
+    Class Attrs
+    -----------
+    qualifier_attr_name : str
+        the attribute name to store the qualifiers at within the qualified class. This
+        should be used instead of referencing the ``qualifiers`` attribute as subclasses
+        may also define qualifiers, whichi will override the ``qualifiers`` attribute.
+        A default value should also be set in the unqualified base for this attribute,
+        which is either ``()`` if ``multiple_qualifiers`` is true and ``None`` otherwise
+    multiple_qualifiers : bool, optional
+        whether or not multiple content types are permitted for the container type
+    allowed_qualifiers : tuple[type,...], optional
+        the allowable types (+ subclasses) for the content types. If None all types
+        are allowed
+    ordered_qualifiers : bool, optional
+        whether the order of the content types is important or not
+    """
+
+    qualifiers = ()  # qualifiers set in the current class
+    _qualified = {}
+    # dict of previously created qualified subclasses. If an existing class with matching
+    # qualifiers has been created it is returned instead of creating a new type. This
+    # ensures that ``assert MyFormat[Qualifier] is MyFormat[Qualifier]``
+
+    # Default values for class attrs
+    multiple_qualifiers = True
+    allowed_qualifier_types = None
+    ordered_qualifiers = False
+
+    def __attrs_pre_init__(self):
+        if self.wildcard_qualifiers():
+            raise FileFormatsError(
+                f"Can instantiate {type(self)} class as it has wildcard qualifiers "
+                "and therefore should only be used for converter specifications"
+            )
+
+    @classproperty
+    def is_qualified(cls):
+        return "unqualified" in cls.__dict__
+
+    @classmethod
+    def wildcard_qualifiers(cls, qualifiers=None):
+        if qualifiers is None:
+            qualifiers = cls.qualifiers if cls.is_qualified else ()
+        return frozenset(t for t in qualifiers if isinstance(t, ty.TypeVar))
+
+    @classmethod
+    def non_wildcard_qualifiers(cls, qualifiers=None):
+        if qualifiers is None:
+            qualifiers = cls.qualifiers if cls.is_qualified else ()
+        return frozenset(q for q in qualifiers if not isinstance(q, ty.TypeVar))
+
+    @classmethod
+    def __class_getitem__(cls, *qualifiers):
+        """Set the content types for a newly created dynamically type"""
+        # if hasattr(cls, "unqualified"):
+        #     raise FileFormatsError(
+        #         f"Cannot define a qualified subclass of {cls} with content types "
+        #         f"{qualifiers}, as ``unqualified`` is already set on {cls} from "
+        #         "one of its base classes"
+        #     )
+        not_allowed = [
+            q
+            for q in qualifiers
+            if not (
+                isinstance(q, ty.TypeVar)
+                or all(q.is_subtype_of(t) for t in cls.allowed_qualifier_types),
+            )
+        ]
+        if not_allowed:
+            raise FileFormatsError(
+                f"Invalid content types provided to {cls} (must be subclasses of "
+                f"{cls.allowed_qualifier_types}): {not_allowed}"
+            )
+        # Sort content types if order isn't important
+        if cls.multiple_qualifiers and not cls.ordered_qualifiers:
+            repetitions = [t for t, c in Counter(qualifiers) if c > 1]
+            if repetitions:
+                raise FileFormatsError(
+                    f"Cannot have more than one occurrence of a qualifier ({repetitions}) "
+                    f"for {cls} class when {cls.__name__}.ordered_qualifiers is false"
+                )
+            qualifiers = frozenset(qualifiers)
+
+        # Make sure that the "qualified" dictionary is present in this class not super
+        # classes
+        if "qualified" not in cls.__dict__:
+            cls._qualified = {}
+        try:
+            # Load previously created type so we can do ``assert MyType[Integer] is MyType[Integer]``
+            qualified = cls._qualified[qualifiers]
+        except KeyError:
+            content_type_str = "_".join(t.__name__ for t in qualifiers)
+            qualified = type(
+                f"{content_type_str}__{cls.__name__}",
+                (cls,),
+                {
+                    cls.qualifier_attr_name: (
+                        qualifiers if cls.multiple_qualifiers else qualifiers[0]
+                    ),
+                    "unqualified": cls,
+                    "qualifiers": qualifiers,
+                },
+            )
+            cls._qualified[qualifiers] = qualified
+        return qualified
+
+    @classmethod
+    def get_converter_tuples(
+        cls, source_format: type
+    ) -> ty.List[ty.Tuple[pydra.engine.core.TaskBase, ty.Dict[str, ty.Any]]]:
+        """Search the registered converters to find an appropriate task and associated
+        key-word args to perform the conversion between source and target formats
+
+        Parameters
+        ----------
+        source_format : type(FileSet)
+            the source format to convert from
+        """
+        # Try to see if a converter has been defined to the exact type
+        available_converters = super().get_converter_tuples(source_format)
+        # Failing that, see if there is a generic conversion between the container type
+        # the source format (or subclass of) defined with matching wildcards in the source
+        # and target formats
+        if not available_converters and cls.is_qualified and source_format.is_qualified:
+            converters_dict = FileSet.get_converters_dict(cls.unqualified)
+            for template_source_format, converter in converters_dict.items():
+                if len(converter) == 3:  # was defined with wildcard qualifiers
+                    converter, conv_kwargs, template_qualifiers = converter
+                    wildcard_match = True
+                    if template_source_format is _GenericConversionTarget:
+                        assert tuple(cls.wildcard_qualifiers(template_qualifiers)) == (
+                            template_source_format,
+                        )
+                        non_wildcards = cls.non_wildcard_qualifiers(template_qualifiers)
+                        to_match = tuple(set(cls.qualifiers).difference(non_wildcards))
+                        if len(to_match) > 1:
+                            wildcard_match = False
+                        else:
+                            wildcard_match = source_format.is_subtype_of(to_match[0])
+                    elif source_format.unqualified.is_subtype_of(
+                        template_source_format.unqualified
+                    ):
+                        assert cls.wildcard_qualifiers(
+                            template_qualifiers
+                        ) == cls.wildcard_qualifiers(template_source_format.qualifiers)
+                        if cls.ordered_qualifiers:
+                            if len(cls.qualifiers) != len(template_qualifiers) or len(
+                                source_format.qualifiers
+                            ) != len(template_source_format.qualifiers):
+                                wildcard_match = False
+                            else:
+                                wildcard_map = {}
+                                for actual, template in zip(
+                                    source_format.qualifiers,
+                                    template_source_format.qualifiers,
+                                ):
+                                    if isinstance(template, ty.TypeVar):
+                                        wildcard_map[template] = actual
+                                for actual, template in zip(
+                                    cls.qualifiers, template_qualifiers
+                                ):
+                                    if not actual.is_subtype_of(template):
+                                        if not (
+                                            isinstance(template, ty.TypeVar)
+                                            and actual in wildcard_map
+                                            and actual.is_subtype_of(
+                                                wildcard_map[actual]
+                                            )
+                                        ):
+                                            wildcard_match = False
+                                            break
+                        else:
+                            non_wildcards = cls.non_wildcard_qualifiers(
+                                template_qualifiers
+                            )
+                            src_non_wildcards = cls.non_wildcard_qualifiers(
+                                template_source_format.qualifiers
+                            )
+                            if not non_wildcards.issubset(
+                                set(cls.qualifiers)
+                            ) or not src_non_wildcards.issubset(
+                                set(source_format.qualifiers)
+                            ):
+                                wildcard_match = False
+                            else:
+                                to_match = set(cls.qualifiers).difference(non_wildcards)
+                                from_types = set(source_format.qualifiers).difference(
+                                    src_non_wildcards
+                                )
+                                wildcard_match = to_match.issubset(from_types)
+                    if wildcard_match:
+                        available_converters.append((converter, conv_kwargs))
+        return available_converters
+
+    @classmethod
+    def is_subtype_of(cls, super_type: type):
+        if DataType.is_subtype_of(super_type):
+            return True
+        # Check to see whether the unqualified types are equivalent
+        if not (
+            cls.is_qualified
+            and super_type.is_qualified
+            and cls.unqualified.is_subtype_of(super_type.unqualified)
+        ):
+            return False
+        if cls.ordered_qualifiers:
+            is_subtype = cls.qualifiers == super_type.qualifiers
+        else:
+            is_subtype = cls.qualifiers.issubset(super_type.qualifiers)
+        return is_subtype
+
+    @classmethod
+    def register_converter(
+        cls,
+        source_format: type,
+        converter_tuple: ty.Tuple[pydra.engine.core.TaskBase, ty.Dict[str, ty.Any]],
+    ):
+        """Registers a converter task within a class attribute. Called by the @fileformats.mark.converter
+        decorator.
+
+        Parameters
+        ----------
+        source_format : type
+            the source format to register a converter from
+        task_spec : ty.Callable
+            a callable that resolves to a Pydra task
+        converter_kwargs : dict
+            additional keyword arguments to be passed to the task spec at initialisation
+            time
+
+        Raises
+        ------
+        FormatConversionError
+            if there is already a converter registered between the two types
+        """
+        # Ensure "converters" dict is defined in the target class and not in a superclass
+        if cls.wildcard_qualifiers():
+            if isinstance(source_format, ty.TypeVar):
+                if len(cls.wildcard_qualifiers()) > 1:
+                    raise FileFormatsError(
+                        "Can only have one wildcard qualifier when registering a converter "
+                        f"to {cls} from a generic type, found {cls.wildcard_qualifiers()}"
+                    )
+            elif not source_format.is_qualified:
+                raise FileFormatsError(
+                    "Can only use wildcard qualifiers when registering a converter "
+                    f"from a generic type or similarly qualified type, not {source_format}"
+                )
+            else:
+                if cls.wildcard_qualifiers() != source_format.wildcard_qualifiers():
+                    raise FileFormatsError(
+                        f"Mismatching wildcards between source format, {source_format} "
+                        f"({list(source_format.wildcard_qualifiers())}), and target "
+                        f"{cls} ({cls.wildcard_qualifiers()})"
+                    )
+                prev_registered = (
+                    f
+                    for f in cls.converters
+                    if f.non_wildcard_qualifiers()
+                    == source_format.non_wildcard_qualifiers()
+                )
+                assert len(prev_registered) <= 1
+                prev_registered = prev_registered[0]
+                if prev_registered:
+                    prev_registered_task = cls.converters[prev_registered][0]
+                    msg = (
+                        f"There is already a converter registered from {prev_registered.qualified} "
+                        f"to {cls.qualified} with non-wildcard qualifiers "
+                        f"{list(prev_registered.non_wilcard_qualifiers())}"
+                    )
+                    src_file = inspect.getsourcefile(prev_registered_task)
+                    src_line = inspect.getsourcelines(prev_registered_task)[-1]
+                    msg += f" (defined at line {src_line} of {src_file})"
+                    raise FileFormatsError(msg)
+            converters_dict = cls.get_converters_dict()
+            converters_dict[source_format] = converter_tuple + (cls.qualifiers,)
+        else:
+            super().register_converter(source_format, converter_tuple)

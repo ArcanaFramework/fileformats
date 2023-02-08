@@ -163,19 +163,20 @@ class Directory(FsObject):
 
     @mark.check
     def validate_contents(self):
-        list(self.contents)
+        not_found = set(self.content_types)
+        for fspath in self.fspath.iterdir():
+            for content_type in list(not_found):
+                if content_type.matches(fspath):
+                    not_found.remove(content_type)
+                    if not not_found:
+                        return
+        assert not_found
+        raise FormatMismatchError(
+            f"Did not find the required content types, {not_found}, within the "
+            f"directory {self.fspath} of {self}"
+        )
 
     def hash_files(self, relative_to=None, **kwargs):
         if relative_to is None:
             relative_to = self.fspath
         return super().hash_files(relative_to=relative_to, **kwargs)
-
-    @classmethod
-    def __class_getitem__(cls, *content_types):
-        """Set the content types for a newly created dynamically type"""
-        content_type_str = "_".join(t.__name__ for t in content_types)
-        return type(
-            f"{cls.__name__}_containing_{content_type_str}",
-            (cls,),
-            {"content_types": content_types},
-        )
