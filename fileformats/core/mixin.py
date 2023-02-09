@@ -1,10 +1,9 @@
 from pathlib import Path
-import inspect
 import typing as ty
 from collections import Counter
 from . import mark
 from .base import FileSet
-from .utils import classproperty
+from .utils import classproperty, describe_task
 from .converter import SubtypeVar
 from .exceptions import FileFormatsError, FormatMismatchError, FormatRecognitionError
 
@@ -264,15 +263,21 @@ class WithQualifiers:
                     f"{cls.allowed_qualifiers}): {not_allowed}"
                 )
         # Sort content types if order isn't important
-        if cls.multiple_qualifiers and not cls.ordered_qualifiers:
-            repetitions = [t for t, c in Counter(qualifiers).items() if c > 1]
-            if repetitions:
+        if cls.multiple_qualifiers:
+            if not cls.ordered_qualifiers:
+                repetitions = [t for t, c in Counter(qualifiers).items() if c > 1]
+                if repetitions:
+                    raise FileFormatsError(
+                        f"Cannot have more than one occurrence of a qualifier "
+                        f"({repetitions}) for {cls} class when "
+                        f"{cls.__name__}.ordered_qualifiers is false"
+                    )
+                qualifiers = frozenset(qualifiers)
+        else:
+            if len(qualifiers) > 1:
                 raise FileFormatsError(
-                    f"Cannot have more than one occurrence of a qualifier ({repetitions}) "
-                    f"for {cls} class when {cls.__name__}.ordered_qualifiers is false"
+                    f"Multiple qualifiers not permitted for {cls} types, provided: ({qualifiers})"
                 )
-            qualifiers = frozenset(qualifiers)
-
         # Make sure that the "qualified" dictionary is present in this class not super
         # classes
         if "_qualified_subtypes" not in cls.__dict__:
@@ -420,7 +425,13 @@ class WithQualifiers:
         if cls.ordered_qualifiers:
             is_subtype = cls.qualifiers == super_type.qualifiers
         else:
-            is_subtype = super_type.qualifiers.issubset(cls.qualifiers)
+            if super_type.qualifiers.issubset(cls.qualifiers):
+                is_subtype = True
+            else:
+                is_subtype = all(
+                    any(q.is_subtype_of(s) for q in cls.qualifiers)
+                    for s in super_type.qualifiers
+                )
         return is_subtype
 
     @classmethod
@@ -476,16 +487,12 @@ class WithQualifiers:
                 assert len(prev_registered) <= 1
                 prev = prev_registered[0] if prev_registered else None
                 if prev:
-                    prev_task = cls.converters[prev][0]
-                    msg = (
+                    raise FileFormatsError(
                         f"There is already a converter registered from {prev.qualified} "
                         f"to {cls.qualified} with non-wildcard qualifiers "
-                        f"{list(prev_registered.non_wilcard_qualifiers())}"
+                        f"{list(prev_registered.non_wilcard_qualifiers())}: "
+                        + describe_task(cls.converters[prev][0])
                     )
-                    src_file = inspect.getsourcefile(prev_task)
-                    src_line = inspect.getsourcelines(prev_task)[-1]
-                    msg += f" (defined at line {src_line} of {src_file})"
-                    raise FileFormatsError(msg)
             converters_dict = cls.unqualified.get_converters_dict()
             converters_dict[source_format] = converter_tuple + (cls.qualifiers,)
         else:

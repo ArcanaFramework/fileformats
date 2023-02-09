@@ -1,6 +1,6 @@
 import pytest
 import pydra.mark
-from fileformats.core import from_mime
+from fileformats.core import from_mime, DataType, FileSet
 from fileformats.core.mark import converter
 from fileformats.archive import Zip
 from fileformats.generic import Directory
@@ -23,11 +23,14 @@ from fileformats.testing import (
     J,
     K,
     L,
-    # M,
+    M,
     N,
     TestField,
-    AnyDataType,
 )
+
+
+AnyDataType = DataType.type_var("AnyDataType")
+AnyFileSet = FileSet.type_var("AnyFileSet")
 
 
 def test_qualified_equivalence():
@@ -39,6 +42,7 @@ def test_qualified_equivalence():
     assert F[A] is not F[B]
     assert F[AnyDataType] is F[AnyDataType]
     assert F[AnyDataType] is not F[A]
+    assert F[AnyDataType] is not F[AnyFileSet]
 
 
 def test_subtype_testing():
@@ -56,6 +60,9 @@ def test_subtype_testing():
     assert J[A].is_subtype_of(H[A])
     assert J[A, B, C].is_subtype_of(H[A, B])
     assert not J[A].is_subtype_of(H[B])
+    assert FileSet.is_subtype_of(DataType)
+    assert AnyFileSet.is_subtype_of(AnyDataType)
+    assert F[AnyFileSet].is_subtype_of(F[AnyDataType])
 
 
 def test_qualifier_fails():
@@ -79,6 +86,10 @@ def test_qualifier_fails():
         "Default value for qualifiers attribute 'new_qualifiers_attr' needs to be set"
         in str(e)
     )
+
+    with pytest.raises(FileFormatsError) as e:
+        M[A, B]
+    assert "Multiple qualifiers not permitted for " in str(e)
 
 
 def test_qualifier_converters():
@@ -145,10 +156,47 @@ def test_arrays():
     assert list(from_mime("field/integer+array")("1,2,3,4,5")) == [1, 2, 3, 4, 5]
 
 
+# Template-from-template conversions
+
+
 @converter
 @pydra.mark.task
 def f2n_template(in_file: F[AnyDataType]) -> N[AnyDataType]:
     return in_file
+
+
+def test_wildcard_template_from_template_conversion():
+    H[A].get_converter(F[A])
+    with pytest.raises(FormatConversionError):
+        H[B].get_converter(F[A])
+
+
+# Template from generic type to template
+
+
+@converter
+@pydra.mark.task
+def generic2f(in_file: AnyDataType) -> F[AnyDataType]:
+    return in_file
+
+
+@converter
+@pydra.mark.task
+def generic2n(in_file: AnyDataType) -> N[AnyDataType]:
+    return in_file
+
+
+def test_wildcard_template_from_generic_conversion():
+
+    F[J].get_converter(J)
+    F[J, H].get_converter(J)
+    with pytest.raises(FormatConversionError):
+        F[K, H].get_converter(J)
+
+    N[J].get_converter(J)
+
+
+# Generic from template to  type
 
 
 @converter
@@ -159,30 +207,18 @@ def f2generic(in_file: F[AnyDataType]) -> AnyDataType:
 
 @converter
 @pydra.mark.task
-def generic2f(in_file: AnyDataType) -> F[AnyDataType]:
+def n2generic(in_file: N[AnyDataType, H]) -> AnyDataType:
     return in_file
 
 
-def test_template_conversion():
-
-    H[A].get_converter(F[A])
-    with pytest.raises(FormatConversionError):
-        H[B].get_converter(F[A])
-
-
-def test_to_generic_conversion():
-
+def test_wildcard_generic_from_template_conversion():
     J.get_converter(F[J])
     with pytest.raises(FormatConversionError):
         J.get_converter(F[K])
-    with pytest.raises(FormatConversionError):
-        K.get_converter(F[J])
 
 
-def test_from_generic_conversion():
+def test_wildcard_generic_from_multi_template_conversion():
 
-    F[J].get_converter(J)
+    J.get_converter(N[J, H])
     with pytest.raises(FormatConversionError):
-        F[K].get_converter(J)
-    with pytest.raises(FormatConversionError):
-        F[J].get_converter(K)
+        J.get_converter(N[J, K])

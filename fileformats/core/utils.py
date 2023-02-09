@@ -1,6 +1,7 @@
 import importlib
 from warnings import warn
 from pathlib import Path
+import inspect
 import typing as ty
 import re
 import os
@@ -257,3 +258,20 @@ def add_exc_note(e, note):
     else:
         e.args = (e.args[0] + "\n" + note,)
     return e
+
+
+def describe_task(task):
+    """Returns the name of a Pydra task and where it was defined for debugging purposes
+
+    Parameters
+    ----------
+    task : pydra.engine.core.TaskBase
+        the task to describe
+    """
+    from fileformats.core.converter import ConverterWrapper
+
+    if isinstance(task, ConverterWrapper):
+        task = task.task_spec
+    src_file = inspect.getsourcefile(task)
+    src_line = inspect.getsourcelines(task)[-1]
+    return f"{task} (defined at line {src_line} of {src_file})"

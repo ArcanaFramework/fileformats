@@ -1,5 +1,4 @@
 import os
-import inspect
 from copy import copy
 from inspect import isclass
 import typing as ty
@@ -21,6 +20,7 @@ from .utils import (
     hash_file,
     hash_dir,
     add_exc_note,
+    describe_task,
 )
 from .converter import SubtypeVar
 from .exceptions import (
@@ -93,6 +93,8 @@ class DataType:
         """
         if allow_same and cls is super_type:
             return True
+        if isinstance(super_type, SubtypeVar):
+            super_type = super_type.base
         return issubclass(cls, super_type)
 
     @classproperty
@@ -622,7 +624,9 @@ class FileSet(DataType):
         except KeyError:
             available_converters = cls.get_converter_tuples(source_format)
             if len(available_converters) > 1:
-                available_str = "\n".join(str(a) for a in available_converters)
+                available_str = "\n".join(
+                    describe_task(a[0]) for a in available_converters
+                )
                 raise FormatConversionError(
                     f"Ambiguous converters found between '{cls.mime_like}' and "
                     f"'{source_format.mime_like}':\n{available_str}"
@@ -707,14 +711,10 @@ class FileSet(DataType):
         converters_dict = cls.get_converters_dict()
         if source_format in converters_dict:
             prev_registered_task = cls.converters[source_format][0]
-            msg = (
+            raise FormatConversionError(
                 f"There is already a converter registered between {cls.__name__} "
-                f"and {cls.__name__}: {prev_registered_task}"
+                f"and {cls.__name__}: {describe_task(prev_registered_task)}"
             )
-            src_file = inspect.getsourcefile(prev_registered_task)
-            src_line = inspect.getsourcelines(prev_registered_task)[-1]
-            msg += f" (defined at line {src_line} of {src_file})"
-            raise FormatConversionError(msg)
         converters_dict[source_format] = converter_tuple
 
     @classproperty

@@ -1,6 +1,6 @@
-import inspect
 import typing as ty
 import attrs
+from .utils import describe_task
 from .exceptions import FileFormatsError
 
 
@@ -87,8 +87,14 @@ class SubtypeVar:
         available_converters = []
         if source_format.is_qualified:
             for template_source_format, converter in cls.converters.items():
+                if not template_source_format.unqualified.is_subtype_of(
+                    source_format.unqualified
+                ):
+                    continue
                 assert len(template_source_format.wildcard_qualifiers()) == 1
-                non_wildcards = source_format.non_wildcard_qualifiers()
+                non_wildcards = template_source_format.non_wildcard_qualifiers()
+                if not non_wildcards.issubset(source_format.qualifiers):
+                    continue
                 from_types = tuple(
                     set(source_format.qualifiers).difference(non_wildcards)
                 )
@@ -135,14 +141,10 @@ class SubtypeVar:
         if prev_registered:
             prev = prev_registered[0]
             prev_task = cls.converters[prev][0]
-            msg = (
-                f"There is already a converter registered from {prev_registered} "
-                f"to the generic type '{tuple(prev_registered.wilcard_qualifiers())[0]}':"
-                f"{prev_task}"
+            raise FileFormatsError(
+                f"There is already a converter registered from {prev} "
+                f"to the generic type '{tuple(prev.wilcard_qualifiers())[0]}':"
+                f"{describe_task(prev_task)}"
             )
-            src_file = inspect.getsourcefile(prev_task)
-            src_line = inspect.getsourcelines(prev_task)[-1]
-            msg += f" (defined at line {src_line} of {src_file})"
-            raise FileFormatsError(msg)
 
         cls.converters[source_format] = converter_tuple
