@@ -76,9 +76,10 @@ def test_qualifier_converters():
     H[A].get_converter(F[A])
     assert F[A].get_converter(G[A]) is None
     assert F.get_converter(G[A]) is None
-    assert F[A].get_converter(F[E]) is None
     with pytest.raises(FormatConversionError):
-        assert F[A].get_converter(G) is None
+        F[A].get_converter(F[E])
+    with pytest.raises(FormatConversionError):
+        F[A].get_converter(G)
 
 
 def test_mime_rountrips():
@@ -93,4 +94,5 @@ def test_mime_rountrips():
 
 def test_inherited_qualifiers():
 
-    assert from_mime(Zip[G].mime_like) == Zip[G]
+    assert Zip[G].mime_like == "testing/g+zip"
+    assert from_mime("testing/g+zip") is Zip[G]
