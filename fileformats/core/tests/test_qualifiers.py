@@ -11,7 +11,23 @@ from fileformats.core.exceptions import (
     FormatRecognitionError,
     FormatMismatchError,
 )
-from fileformats.testing import A, B, C, D, E, F, G, H, J, K, L, TestField, AnyDataType
+from fileformats.testing import (
+    A,
+    B,
+    C,
+    D,
+    E,
+    F,
+    G,
+    H,
+    J,
+    K,
+    L,
+    # M,
+    N,
+    TestField,
+    AnyDataType,
+)
 
 
 def test_qualified_equivalence():
@@ -131,7 +147,7 @@ def test_arrays():
 
 @converter
 @pydra.mark.task
-def f2h_template(in_file: F[AnyDataType]) -> H[AnyDataType]:
+def f2n_template(in_file: F[AnyDataType]) -> N[AnyDataType]:
     return in_file
 
 

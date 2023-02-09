@@ -95,7 +95,7 @@ def converter(
                     raise
         else:
             target = target_format
-        if not issubclass(target, DataType):
+        if not target.is_subtype_of(DataType):
             raise FormatConversionError(
                 f"Target file format '{target.__name__}' is not of subtype of "
                 "fileformats.core.DataType"

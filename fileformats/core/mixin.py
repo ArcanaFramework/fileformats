@@ -335,13 +335,13 @@ class WithQualifiers:
         # Failing that, see if there is a generic conversion between the container type
         # the source format (or subclass of) defined with matching wildcards in the source
         # and target formats
-        if not available_converters and cls.is_qualified and source_format.is_qualified:
+        if not available_converters and cls.is_qualified:
             converters_dict = FileSet.get_converters_dict(cls.unqualified)
             for template_source_format, converter in converters_dict.items():
                 if len(converter) == 3:  # was defined with wildcard qualifiers
                     converter, conv_kwargs, template_qualifiers = converter
                     wildcard_match = True
-                    if template_source_format is SubtypeVar:
+                    if isinstance(template_source_format, SubtypeVar):
                         assert tuple(cls.wildcard_qualifiers(template_qualifiers)) == (
                             template_source_format,
                         )
@@ -413,7 +413,7 @@ class WithQualifiers:
         # Check to see whether the unqualified types are equivalent
         if (
             not cls.is_qualified
-            or not super_type.is_qualified
+            or not getattr(super_type, "is_qualified", False)
             or not cls.unqualified.is_subtype_of(super_type.unqualified)
         ):
             return False

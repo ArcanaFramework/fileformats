@@ -27,7 +27,6 @@ class ConverterWrapper:
         return wf
 
 
-@attrs
 class SubtypeVar:
     """To handle the case where the target format is a placeholder (type-var) defined by
     by its relationship to the source format, e.g.
@@ -40,13 +39,23 @@ class SubtypeVar:
         ...
     """
 
-    name: str
-    base: type
-
     converters = {}
 
-    @classmethod
-    def is_subtype_of(cls, super_type: type, allow_same: bool = True):
+    def __init__(self, name: str, base: type):
+        self.name = name
+        self.base = base
+
+    def __str__(self):
+        return f"{self.base.__name__}:{self.name}"
+
+    def __hash__(self):
+        return hash((type(self), self.base, self.name))
+
+    @property
+    def __name__(self):
+        return self.name
+
+    def is_subtype_of(self, super_type: type, allow_same: bool = True):
         """Check to see whether datatype class is a subtype of a given super class.
         In this case the subtype is expected to be able to be treated as if it was
         the super class.
@@ -67,7 +76,7 @@ class SubtypeVar:
             whether or not the current class can be considered a subtype of the super (or
             is the super itself)
         """
-        return cls.base.is_subtype_of(super_type, allow_same=allow_same)
+        return self.base.is_subtype_of(super_type, allow_same=allow_same)
 
     @classmethod
     def get_converter_tuples(
@@ -79,7 +88,7 @@ class SubtypeVar:
         if source_format.is_qualified:
             for template_source_format, converter in cls.converters.items():
                 assert len(template_source_format.wildcard_qualifiers()) == 1
-                non_wildcards = source_format.non_wildcard_qualifiers(source_format)
+                non_wildcards = source_format.non_wildcard_qualifiers()
                 from_types = tuple(
                     set(source_format.qualifiers).difference(non_wildcards)
                 )
@@ -117,22 +126,22 @@ class SubtypeVar:
                 "Cannot register a conversion to a generic type from a type with more "
                 f"than one wildcard {source_format} ({list(source_format.wildcard_qualifiers())})"
             )
-        prev_registered = (
+        prev_registered = [
             f
             for f in cls.converters
             if f.non_wildcard_qualifiers() == source_format.non_wildcard_qualifiers()
-        )
+        ]
         assert len(prev_registered) <= 1
-        prev_registered = prev_registered[0]
         if prev_registered:
-            prev_registered_task = cls.converters[prev_registered][0]
+            prev = prev_registered[0]
+            prev_task = cls.converters[prev][0]
             msg = (
                 f"There is already a converter registered from {prev_registered} "
                 f"to the generic type '{tuple(prev_registered.wilcard_qualifiers())[0]}':"
-                f"{prev_registered_task}"
+                f"{prev_task}"
             )
-            src_file = inspect.getsourcefile(prev_registered_task)
-            src_line = inspect.getsourcelines(prev_registered_task)[-1]
+            src_file = inspect.getsourcefile(prev_task)
+            src_line = inspect.getsourcelines(prev_task)[-1]
             msg += f" (defined at line {src_line} of {src_file})"
             raise FileFormatsError(msg)
 
