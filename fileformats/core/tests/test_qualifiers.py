@@ -25,6 +25,7 @@ from fileformats.testing import (
     L,
     M,
     N,
+    P,
     TestField,
 )
 
@@ -162,6 +163,18 @@ def test_arrays():
 @converter
 @pydra.mark.task
 def f2n_template(in_file: F[SpecificDataType]) -> N[SpecificDataType]:
+    return in_file
+
+
+@converter
+@pydra.mark.task
+def f2p_template(in_file: F[SpecificDataType]) -> P[SpecificDataType]:
+    return in_file
+
+
+@converter
+@pydra.mark.task
+def p2n_template(in_file: P[SpecificDataType]) -> N[SpecificDataType]:
     return in_file
 
 

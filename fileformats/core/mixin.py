@@ -491,16 +491,19 @@ class WithQualifiers:
                 prev_registered = [
                     f
                     for f in cls.converters
-                    if f.non_wildcard_qualifiers()
-                    == source_format.non_wildcard_qualifiers()
+                    if (
+                        source_format.unqualified.is_subtype_of(f.unqualified)
+                        and f.non_wildcard_qualifiers()
+                        == source_format.non_wildcard_qualifiers()
+                    )
                 ]
                 assert len(prev_registered) <= 1
                 prev = prev_registered[0] if prev_registered else None
                 if prev:
                     raise FileFormatsError(
-                        f"There is already a converter registered from {prev.qualified} "
-                        f"to {cls.qualified} with non-wildcard qualifiers "
-                        f"{list(prev_registered.non_wilcard_qualifiers())}: "
+                        f"There is already a converter registered from {prev.unqualified} "
+                        f"to {cls.unqualified} with non-wildcard qualifiers "
+                        f"{list(prev.non_wildcard_qualifiers())}: "
                         + describe_task(cls.converters[prev][0])
                     )
             converters_dict = cls.unqualified.get_converters_dict()
