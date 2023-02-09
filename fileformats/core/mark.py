@@ -1,7 +1,6 @@
-import typing as ty
 import attrs
-from .base import FileSet, REQUIRED_ANNOTATION, CHECK_ANNOTATION
-from .converter import ConverterWrapper, _GenericConversionTarget
+from .base import DataType, REQUIRED_ANNOTATION, CHECK_ANNOTATION
+from .converter import ConverterWrapper
 from .exceptions import FormatConversionError
 
 
@@ -96,17 +95,15 @@ def converter(
                     raise
         else:
             target = target_format
-        if not issubclass(target, FileSet):
+        if not issubclass(target, DataType):
             raise FormatConversionError(
-                f"Target file format {target.__name__} is not of sub-class of "
-                "FileSet"
+                f"Target file format '{target.__name__}' is not of subtype of "
+                "fileformats.core.DataType"
             )
-        if in_file != "in_file" or out_file != "out_file":
+        if in_file != "in_file" or out_file_local != "out_file":
             task_spec = ConverterWrapper(
                 task_spec, in_file=in_file, out_file=out_file_local
             )
-        if isinstance(target, ty.TypeVar):
-            target = _GenericConversionTarget
         target.register_converter(
             source_format=source, converter_tuple=(task_spec, converter_kwargs)
         )

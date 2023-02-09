@@ -1,6 +1,7 @@
 from pathlib import Path
 import json
-from ..core import __version__, mark
+from ..core import __version__, mark, DataType
+from ..core.mixin import WithQualifiers
 from ..generic import File
 from ..core.utils import MissingExtendedDependency, import_converters
 
@@ -10,8 +11,22 @@ except ImportError:
     yaml = MissingExtendedDependency("yaml", __name__)
 
 
-class DataSerialization(File):
+class BaseSchema(DataType):
+    """Base class for all serialization schemas (can be used for abstract schemas that
+    don't actually have a formal definition)"""
+
+    pass
+
+
+class DataSerialization(WithQualifiers, File):
     "Base class for text-based hierarchical data-serialization formats, e.g. JSON, YAML"
+
+    # Qualifiers class attrs
+    qualifiers_attr_name = "schema"
+    schema = None
+    multiple_qualifiers = False
+    allowed_qualifiers = (BaseSchema,)
+    generically_qualified = True
 
     iana_mime = None
 

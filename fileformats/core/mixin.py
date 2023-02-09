@@ -5,7 +5,7 @@ from collections import Counter
 from . import mark
 from .base import FileSet
 from .utils import classproperty
-from .converter import _GenericConversionTarget
+from .converter import SubtypeVar
 from .exceptions import FileFormatsError, FormatMismatchError, FormatRecognitionError
 
 
@@ -237,13 +237,13 @@ class WithQualifiers:
     def wildcard_qualifiers(cls, qualifiers=None):
         if qualifiers is None:
             qualifiers = cls.qualifiers if cls.is_qualified else ()
-        return frozenset(t for t in qualifiers if isinstance(t, ty.TypeVar))
+        return frozenset(t for t in qualifiers if isinstance(t, SubtypeVar))
 
     @classmethod
     def non_wildcard_qualifiers(cls, qualifiers=None):
         if qualifiers is None:
             qualifiers = cls.qualifiers if cls.is_qualified else ()
-        return frozenset(q for q in qualifiers if not isinstance(q, ty.TypeVar))
+        return frozenset(q for q in qualifiers if not isinstance(q, SubtypeVar))
 
     @classmethod
     def __class_getitem__(cls, qualifiers):
@@ -256,10 +256,7 @@ class WithQualifiers:
             not_allowed = [
                 q
                 for q in qualifiers
-                if not (
-                    isinstance(q, ty.TypeVar)
-                    or any(q.is_subtype_of(t) for t in cls.allowed_qualifiers)
-                )
+                if not any(q.is_subtype_of(t) for t in cls.allowed_qualifiers)
             ]
             if not_allowed:
                 raise FileFormatsError(
@@ -284,27 +281,32 @@ class WithQualifiers:
             # Load previously created type so we can do ``assert MyType[Integer] is MyType[Integer]``
             qualified = cls._qualified_subtypes[qualifiers]
         except KeyError:
-            class_attrs = {
-                "unqualified": cls,
-                "qualifiers": qualifiers,
-            }
-            if "qualifiers_attr_name" in cls.__dict__:
-                try:
-                    qualifiers_attr = getattr(cls, cls.qualifiers_attr_name)
-                except AttributeError:
+            if not hasattr(cls, "qualifiers_attr_name"):
+                raise FileFormatsError(
+                    f"{cls} needs to define the 'qualifiers_attr_name' class attribute "
+                    "with the name of the (different) class attribute to hold the "
+                    "qualified types"
+                )
+            try:
+                qualifiers_attr = getattr(cls, cls.qualifiers_attr_name)
+            except AttributeError:
+                raise FileFormatsError(
+                    f"Default value for qualifiers attribute "
+                    f"'{cls.qualifiers_attr_name}' needs to be set in {cls}"
+                )
+            else:
+                if qualifiers_attr:
                     raise FileFormatsError(
                         f"Default value for qualifiers attribute "
                         f"'{cls.qualifiers_attr_name}' needs to be set in {cls}"
                     )
-                else:
-                    if qualifiers_attr:
-                        raise FileFormatsError(
-                            f"Default value for qualifiers attribute "
-                            f"'{cls.qualifiers_attr_name}' needs to be set in {cls}"
-                        )
-                class_attrs[cls.qualifiers_attr_name] = (
-                    qualifiers if cls.multiple_qualifiers else qualifiers[0]
-                )
+            class_attrs = {
+                "unqualified": cls,
+                "qualifiers": qualifiers,
+            }
+            class_attrs[cls.qualifiers_attr_name] = (
+                qualifiers if cls.multiple_qualifiers else qualifiers[0]
+            )
             qualifier_names = [t.__name__ for t in qualifiers]
             if not cls.ordered_qualifiers:
                 qualifier_names.sort()
@@ -339,7 +341,7 @@ class WithQualifiers:
                 if len(converter) == 3:  # was defined with wildcard qualifiers
                     converter, conv_kwargs, template_qualifiers = converter
                     wildcard_match = True
-                    if template_source_format is _GenericConversionTarget:
+                    if template_source_format is SubtypeVar:
                         assert tuple(cls.wildcard_qualifiers(template_qualifiers)) == (
                             template_source_format,
                         )
@@ -366,14 +368,14 @@ class WithQualifiers:
                                     source_format.qualifiers,
                                     template_source_format.qualifiers,
                                 ):
-                                    if isinstance(template, ty.TypeVar):
+                                    if isinstance(template, SubtypeVar):
                                         wildcard_map[template] = actual
                                 for actual, template in zip(
                                     cls.qualifiers, template_qualifiers
                                 ):
                                     if not actual.is_subtype_of(template):
                                         if not (
-                                            isinstance(template, ty.TypeVar)
+                                            isinstance(template, SubtypeVar)
                                             and actual in wildcard_map
                                             and actual.is_subtype_of(
                                                 wildcard_map[actual]
@@ -447,7 +449,7 @@ class WithQualifiers:
         """
         # Ensure "converters" dict is defined in the target class and not in a superclass
         if cls.wildcard_qualifiers():
-            if isinstance(source_format, ty.TypeVar):
+            if isinstance(source_format, SubtypeVar):
                 if len(cls.wildcard_qualifiers()) > 1:
                     raise FileFormatsError(
                         "Can only have one wildcard qualifier when registering a converter "
@@ -465,26 +467,26 @@ class WithQualifiers:
                         f"({list(source_format.wildcard_qualifiers())}), and target "
                         f"{cls} ({cls.wildcard_qualifiers()})"
                     )
-                prev_registered = (
+                prev_registered = [
                     f
                     for f in cls.converters
                     if f.non_wildcard_qualifiers()
                     == source_format.non_wildcard_qualifiers()
-                )
+                ]
                 assert len(prev_registered) <= 1
-                prev_registered = prev_registered[0]
-                if prev_registered:
-                    prev_registered_task = cls.converters[prev_registered][0]
+                prev = prev_registered[0] if prev_registered else None
+                if prev:
+                    prev_task = cls.converters[prev][0]
                     msg = (
-                        f"There is already a converter registered from {prev_registered.qualified} "
+                        f"There is already a converter registered from {prev.qualified} "
                         f"to {cls.qualified} with non-wildcard qualifiers "
                         f"{list(prev_registered.non_wilcard_qualifiers())}"
                     )
-                    src_file = inspect.getsourcefile(prev_registered_task)
-                    src_line = inspect.getsourcelines(prev_registered_task)[-1]
+                    src_file = inspect.getsourcefile(prev_task)
+                    src_line = inspect.getsourcelines(prev_task)[-1]
                     msg += f" (defined at line {src_line} of {src_file})"
                     raise FileFormatsError(msg)
-            converters_dict = cls.get_converters_dict()
+            converters_dict = cls.unqualified.get_converters_dict()
             converters_dict[source_format] = converter_tuple + (cls.qualifiers,)
         else:
             super().register_converter(source_format, converter_tuple)

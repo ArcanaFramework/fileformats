@@ -22,7 +22,7 @@ from .utils import (
     hash_dir,
     add_exc_note,
 )
-from .converter import _GenericConversionTarget
+from .converter import SubtypeVar
 from .exceptions import (
     FileFormatsError,
     FormatMismatchError,
@@ -42,6 +42,10 @@ logger = logging.getLogger("fileformats")
 class DataType:
     is_fileset = False
     is_field = False
+
+    @classmethod
+    def type_var(cls, name):
+        return SubtypeVar(name, cls)
 
     @classmethod
     def matches(cls, values) -> bool:
@@ -671,7 +675,7 @@ class FileSet(DataType):
             if source_format.is_subtype_of(src_frmt):
                 available.append(converter)
         if not available and hasattr(source_format, "unqualified"):
-            available = _GenericConversionTarget.get_converter_tuples(
+            available = SubtypeVar.get_converter_tuples(
                 source_format, target_format=cls
             )
         return available

@@ -9,6 +9,8 @@ from fileformats.core.mixin import WithMagicNumber
 class Archive(WithQualifiers, File):
     "Base class for compressed archives"
 
+    qualifiers_attr_name = "archived_type"
+    archived_type = None
     multiple_qualifiers = False
     allowed_qualifiers = (FileSet,)
     generically_qualified = True
