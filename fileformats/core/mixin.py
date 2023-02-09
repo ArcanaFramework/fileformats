@@ -292,6 +292,11 @@ class WithQualifiers:
                     "with the name of the (different) class attribute to hold the "
                     "qualified types"
                 )
+            if cls.qualifiers_attr_name is None:
+                raise FileFormatsError(
+                    f"Inherited qualifiers have been disabled in {cls} (by setting "
+                    f'"qualifiers_attr_name)" to None)'
+                )
             try:
                 qualifiers_attr = getattr(cls, cls.qualifiers_attr_name)
             except AttributeError:

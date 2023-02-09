@@ -11,11 +11,23 @@ except ImportError:
     yaml = MissingExtendedDependency("yaml", __name__)
 
 
-class BaseSchema(DataType):
+class Schema(DataType):
     """Base class for all serialization schemas (can be used for abstract schemas that
     don't actually have a formal definition)"""
 
     pass
+
+
+class JsonSchema(Schema):
+    pass
+
+
+class XmlSchema(Schema):
+    pass
+
+
+class InformalSchema(Schema):
+    "Not actually a strict schema, just a set of conventions on how to structure the serialization"
 
 
 class DataSerialization(WithQualifiers, File):
@@ -25,7 +37,7 @@ class DataSerialization(WithQualifiers, File):
     qualifiers_attr_name = "schema"
     schema = None
     multiple_qualifiers = False
-    allowed_qualifiers = (BaseSchema,)
+    allowed_qualifiers = (Schema,)
     generically_qualified = True
 
     iana_mime = None
@@ -43,10 +55,12 @@ class DataSerialization(WithQualifiers, File):
 
 class Xml(DataSerialization):
     ext = ".xml"
+    allowed_qualifiers = (XmlSchema, InformalSchema)
 
 
 class Json(DataSerialization):
     ext = ".json"
+    allowed_qualifiers = (JsonSchema, InformalSchema)
 
     @mark.check
     def load(self):
