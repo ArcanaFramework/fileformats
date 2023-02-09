@@ -345,7 +345,7 @@ class WithQualifiers:
             for template_source_format, converter in converters_dict.items():
                 if len(converter) == 3:  # was defined with wildcard qualifiers
                     converter, conv_kwargs, template_qualifiers = converter
-                    wildcard_match = True
+                    # Attempt conversion from generic type to template match
                     if isinstance(template_source_format, SubtypeVar):
                         assert tuple(cls.wildcard_qualifiers(template_qualifiers)) == (
                             template_source_format,
@@ -356,7 +356,10 @@ class WithQualifiers:
                             wildcard_match = False
                         else:
                             wildcard_match = source_format.is_subtype_of(to_match[0])
-                    elif source_format.unqualified.is_subtype_of(
+                    # Attempt template to template conversion match
+                    elif getattr(
+                        source_format, "is_qualified", False
+                    ) and source_format.unqualified.is_subtype_of(
                         template_source_format.unqualified
                     ):
                         assert cls.wildcard_qualifiers(
@@ -407,6 +410,8 @@ class WithQualifiers:
                                     src_non_wildcards
                                 )
                                 wildcard_match = to_match.issubset(from_types)
+                    else:
+                        wildcard_match = False
                     if wildcard_match:
                         available_converters.append((converter, conv_kwargs))
         return available_converters

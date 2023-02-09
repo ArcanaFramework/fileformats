@@ -48,6 +48,9 @@ class SubtypeVar:
     def __str__(self):
         return f"{self.base.__name__}:{self.name}"
 
+    def __repr__(self):
+        return f"SubtypeVar({str(self)})"
+
     def __hash__(self):
         return hash((type(self), self.base, self.name))
 
