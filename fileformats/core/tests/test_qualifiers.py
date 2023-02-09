@@ -2,6 +2,7 @@ import pytest
 import pydra.mark
 from fileformats.core import from_mime
 from fileformats.core.mark import converter
+from fileformats.archive import Zip
 from fileformats.generic import Directory
 from fileformats.field import Array
 from fileformats.core.exceptions import (
@@ -88,3 +89,8 @@ def test_mime_rountrips():
     with pytest.raises(FormatRecognitionError) as e:
         Array[TestField].mime_like
     assert "Cannot create reversible MIME type for " in str(e)
+
+
+def test_inherited_qualifiers():
+
+    assert from_mime(Zip[G].mime_like) == Zip[G]

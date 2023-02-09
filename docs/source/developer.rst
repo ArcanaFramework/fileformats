@@ -52,7 +52,7 @@ to inherit from the ``fileformats.generic.File`` class and set the ``ext`` attr,
 
 Likewise if the format you are defining is a directory containing one or more files of
 a given type you can just inherit from the ``fileformats.generic.Directory`` class and
-set the ``children_types`` attributes
+set the ``content_types`` attributes
 
 .. code-block:: python
 
@@ -61,7 +61,7 @@ set the ``children_types`` attributes
 
 
     class MyDirFormat(File):
-        children_types = (Markdown, Html)
+        content_types = (Markdown, Html)
 
 
 Standard mixins

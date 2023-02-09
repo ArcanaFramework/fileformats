@@ -172,7 +172,6 @@ STANDARD_NAMESPACES = [
     "archive",
     "audio",
     "document",
-    "generic",
     "image",
     "numeric",
     "serialization",

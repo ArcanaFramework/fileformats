@@ -113,16 +113,13 @@ class File(FsObject):
 
 
 @attrs.define
-class Directory(WithQualifiers, FsObject):
-    """Generic directory type"""
-
-    # WithQualifiers-required class attrs
-    qualifiers_attr_name = "children_types"
-    children_types = ()
-    allowed_qualifiers = (FileSet,)
-    generically_qualified = True
+class BaseDirectory(FsObject):
+    """Base directory to be overridden by subtypes that represent directories but don't
+    want to inherit content type "qualifers" (i.e. most of them)"""
 
     is_dir = True
+
+    content_types = ()
 
     @mark.required
     @property
@@ -136,7 +133,7 @@ class Directory(WithQualifiers, FsObject):
             )
         fspath = dirs[0]
         missing = []
-        for content_type in self.children_types:
+        for content_type in self.content_types:
             match = False
             for p in fspath.iterdir():
                 try:
@@ -156,7 +153,7 @@ class Directory(WithQualifiers, FsObject):
 
     @property
     def contents(self):
-        for content_type in self.children_types:
+        for content_type in self.content_types:
             for p in self.fspath.iterdir():
                 try:
                     yield content_type([p])
@@ -165,9 +162,9 @@ class Directory(WithQualifiers, FsObject):
 
     @mark.check
     def validate_contents(self):
-        if not self.children_types:
+        if not self.content_types:
             return
-        not_found = set(self.children_types)
+        not_found = set(self.content_types)
         for fspath in self.fspath.iterdir():
             for content_type in list(not_found):
                 if content_type.matches(fspath):
@@ -184,3 +181,12 @@ class Directory(WithQualifiers, FsObject):
         if relative_to is None:
             relative_to = self.fspath
         return super().hash_files(relative_to=relative_to, **kwargs)
+
+
+class Directory(WithQualifiers, BaseDirectory):
+    """Generic directory, which can be qualified by the formats of its contents"""
+
+    # WithQualifiers-required class attrs
+    qualifiers_attr_name = "content_types"
+    allowed_qualifiers = (FileSet,)
+    generically_qualified = True

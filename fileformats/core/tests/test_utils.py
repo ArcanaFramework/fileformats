@@ -81,7 +81,7 @@ def test_format_detection(work_dir):
     with open(text_file, "w") as f:
         f.write("sample text")
 
-    detected = find_matching(text_file)
+    detected = find_matching(text_file, standard_only=True)
     assert len(detected) == 1
     assert detected[0] is fileformats.text.Plain
 

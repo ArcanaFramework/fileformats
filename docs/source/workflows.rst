@@ -44,17 +44,17 @@ contents for magic numbers and the like
 
 
 Directories are classified by the contents of the files within them, via the
-``children_types`` class attribute, e.g.
+``content_types`` class attribute, e.g.
 
 .. code-block:: python
 
-    from fileformats.generic import File, Directory
+    from fileformats.generic import File, BaseDirectory
 
     class DicomFile(File):
         ext = ".dcm"
 
-    class Dicom(Directory):
-        children_types = (DicomFile,)
+    class  Dicom(BaseBaseDirectory):
+        content_types = (DicomFile,)
 
 
 Note that only one file within the directory needs to match the specified content type

@@ -268,7 +268,7 @@ class DataType:
             cls._generically_qualified_by_name = {
                 to_mime_format_name(f.__name__): f
                 for f in FileSet.all_formats
-                if "generically_qualified" in f.__dict__
+                if getattr(f, "generically_qualified", False)
             }
         return cls._generically_qualified_by_name
 

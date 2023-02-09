@@ -1,11 +1,18 @@
 from ..core import __version__, import_converters
 from warnings import warn
+from fileformats.core import FileSet
+from fileformats.core.mixin import WithQualifiers
 from fileformats.generic import File
 from fileformats.core.mixin import WithMagicNumber
 
 
-class Archive(File):
+class Archive(WithQualifiers, File):
     "Base class for compressed archives"
+
+    multiple_qualifiers = False
+    allowed_qualifiers = (FileSet,)
+    generically_qualified = True
+
     binary = True
     iana_mime = None
 

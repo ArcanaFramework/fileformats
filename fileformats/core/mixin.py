@@ -289,11 +289,19 @@ class WithQualifiers:
                 "qualifiers": qualifiers,
             }
             if "qualifiers_attr_name" in cls.__dict__:
-                if not hasattr(cls, cls.qualifiers_attr_name):
+                try:
+                    qualifiers_attr = getattr(cls, cls.qualifiers_attr_name)
+                except AttributeError:
                     raise FileFormatsError(
                         f"Default value for qualifiers attribute "
                         f"'{cls.qualifiers_attr_name}' needs to be set in {cls}"
                     )
+                else:
+                    if qualifiers_attr:
+                        raise FileFormatsError(
+                            f"Default value for qualifiers attribute "
+                            f"'{cls.qualifiers_attr_name}' needs to be set in {cls}"
+                        )
                 class_attrs[cls.qualifiers_attr_name] = (
                     qualifiers if cls.multiple_qualifiers else qualifiers[0]
                 )
