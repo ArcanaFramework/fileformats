@@ -9,6 +9,7 @@ import pkgutil
 from contextlib import contextmanager
 from fileformats.core.exceptions import (
     MissingExtendedDepenciesError,
+    FileFormatsError,
 )
 import fileformats.core
 
@@ -181,8 +182,14 @@ STANDARD_NAMESPACES = [
 
 
 def to_mime_format_name(format_name: str):
+    if "___" in format_name:
+        raise FileFormatsError(
+            f"Cannot convert name of format class {format_name} to mime string as it "
+            "contains triple underscore"
+        )
     format_name = format_name[0].lower() + format_name[1:]
-    format_name = re.sub("_([A-Z])", lambda m: "+" + m.group(1).lower(), format_name)
+    format_name = re.sub("__([A-Z])", lambda m: "+" + m.group(1).lower(), format_name)
+    format_name = re.sub("_([A-Z])", lambda m: "." + m.group(1).lower(), format_name)
     format_name = re.sub("([A-Z])", lambda m: "-" + m.group(1).lower(), format_name)
     return format_name
 
@@ -191,8 +198,9 @@ def from_mime_format_name(format_name: str):
     if format_name.startswith("x-"):
         format_name = format_name[2:]
     format_name = format_name.capitalize()
+    format_name = re.sub(r"(\.)(\w)", lambda m: m.group(2).upper(), format_name)
+    format_name = re.sub(r"(\+)(\w)", lambda m: m.group(2).upper(), format_name)
     format_name = re.sub(r"(-)(\w)", lambda m: m.group(2).upper(), format_name)
-    format_name = re.sub(r"(\+)(\w)", lambda m: "_" + m.group(2).upper(), format_name)
     return format_name
 
 
@@ -228,3 +236,25 @@ def hash_dir(
                 dpath / filename, crypto=crypto, chunk_len=chunk_len
             )
     return file_hashes
+
+
+def add_exc_note(e, note):
+    """Adds a note to an exception in a Python <3.11 compatible way
+
+    Parameters
+    ----------
+    e : Exception
+        the exception to add the note to
+    note : str
+        the note to add
+
+    Returns
+    -------
+    Exception
+        returns the exception again
+    """
+    if hasattr(e, "add_note"):
+        e.add_note(note)
+    else:
+        e.args = (e.args[0] + "\n" + note,)
+    return e

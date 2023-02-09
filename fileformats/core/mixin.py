@@ -185,35 +185,42 @@ class WithQualifiers:
     Class Attrs
     -----------
     qualifiers_attr_name : str, optional
-        the attribute name to store the qualifiers at within the qualified class. This
-        should be used instead of referencing the ``qualifiers`` attribute as subclasses
-        may also define qualifiers, whichi will override the ``qualifiers`` attribute.
+        an attribute name to store the qualifiers at within the qualified class. This
+        should be used if you need to reference the ``qualifiers`` attribute directly
+        in any validation/other methods (i.e. in most cases), to handle the case of
+        diamond inheritance between two classes that can be qualified.
         A default value should also be set in the unqualified base for this attribute,
-        which is either ``()`` if ``multiple_qualifiers`` is true and ``None`` otherwise,
-        by default "content_types"
-    <qualifiers-attr-name> : tuple[type, ...] or None
+        which is either ``()`` if ``multiple_qualifiers`` is true and ``None`` otherwise
+    <qualifiers-attr-name> : tuple[type, ...] or None, optional
         pass a default value to the attribute referenced by 'qualifiers_attr_name'
     multiple_qualifiers : bool, optional
         whether or not multiple content types are permitted for the container type, True
-    allowed_qualifier_types : tuple[type,...], optional
+    allowed_qualifiers : tuple[type,...], optional
         the allowable types (+ subclasses) for the content types. If None all types
         are allowed
     ordered_qualifiers : bool, optional
         whether the order of the content types is important or not, by default false
+    genericly_qualified : bool, optional
+        whether the class can be qualified by qualifiers in any namespace (true) or just the
+        namespace it belongs to (false). If true, then the namespace of the genericly
+        qualified class is omitted from the "mime-like" string. Note that the
+        class' name therefore needs to be globally unique amongst all other genericly
+        qualified classes and so it should be used sparingly, i.e., highly generic
+        formats that are unambiguous across all namespaces, such as "directory", "zip",
+        "gzip", "json", "yaml", etc...
     """
 
     qualifiers = ()  # qualifiers set in the current class
-    _qualified = {}
-    # dict of previously created qualified subclasses. If an existing class with matching
+    _qualified_subtypes = {}
+    # dict of previously created qualified subtypes. If an existing class with matching
     # qualifiers has been created it is returned instead of creating a new type. This
     # ensures that ``assert MyFormat[Qualifier] is MyFormat[Qualifier]``
 
     # Default values for class attrs
-    qualifiers_attr_name = "content_types"
-    content_types = ()
     multiple_qualifiers = True
-    allowed_qualifier_types = None
+    allowed_qualifiers = None
     ordered_qualifiers = False
+    generically_qualified = False
 
     def __attrs_pre_init__(self):
         if self.wildcard_qualifiers():
@@ -241,29 +248,23 @@ class WithQualifiers:
     @classmethod
     def __class_getitem__(cls, qualifiers):
         """Set the content types for a newly created dynamically type"""
-        # if hasattr(cls, "unqualified"):
-        #     raise FileFormatsError(
-        #         f"Cannot define a qualified subclass of {cls} with content types "
-        #         f"{qualifiers}, as ``unqualified`` is already set on {cls} from "
-        #         "one of its base classes"
-        #     )
         if isinstance(qualifiers, ty.Iterable):
             qualifiers = tuple(qualifiers)
         else:
             qualifiers = (qualifiers,)
-        if cls.allowed_qualifier_types:
+        if cls.allowed_qualifiers:
             not_allowed = [
                 q
                 for q in qualifiers
                 if not (
                     isinstance(q, ty.TypeVar)
-                    or any(q.is_subtype_of(t) for t in cls.allowed_qualifier_types)
+                    or any(q.is_subtype_of(t) for t in cls.allowed_qualifiers)
                 )
             ]
             if not_allowed:
                 raise FileFormatsError(
                     f"Invalid content types provided to {cls} (must be subclasses of "
-                    f"{cls.allowed_qualifier_types}): {not_allowed}"
+                    f"{cls.allowed_qualifiers}): {not_allowed}"
                 )
         # Sort content types if order isn't important
         if cls.multiple_qualifiers and not cls.ordered_qualifiers:
@@ -277,25 +278,34 @@ class WithQualifiers:
 
         # Make sure that the "qualified" dictionary is present in this class not super
         # classes
-        if "_qualified" not in cls.__dict__:
-            cls._qualified = {}
+        if "_qualified_subtypes" not in cls.__dict__:
+            cls._qualified_subtypes = {}
         try:
             # Load previously created type so we can do ``assert MyType[Integer] is MyType[Integer]``
-            qualified = cls._qualified[qualifiers]
+            qualified = cls._qualified_subtypes[qualifiers]
         except KeyError:
-            qualifiers_str = "_".join(t.__name__ for t in qualifiers)
+            class_attrs = {
+                "unqualified": cls,
+                "qualifiers": qualifiers,
+            }
+            if "qualifiers_attr_name" in cls.__dict__:
+                if not hasattr(cls, cls.qualifiers_attr_name):
+                    raise FileFormatsError(
+                        f"Default value for qualifiers attribute "
+                        f"'{cls.qualifiers_attr_name}' needs to be set in {cls}"
+                    )
+                class_attrs[cls.qualifiers_attr_name] = (
+                    qualifiers if cls.multiple_qualifiers else qualifiers[0]
+                )
+            qualifier_names = [t.__name__ for t in qualifiers]
+            if not cls.ordered_qualifiers:
+                qualifier_names.sort()
             qualified = type(
-                f"{qualifiers_str}__{cls.__name__}",
+                f"{'_'.join(qualifier_names)}__{cls.__name__}",
                 (cls,),
-                {
-                    cls.qualifiers_attr_name: (
-                        qualifiers if cls.multiple_qualifiers else qualifiers[0]
-                    ),
-                    "unqualified": cls,
-                    "qualifiers": qualifiers,
-                },
+                class_attrs,
             )
-            cls._qualified[qualifiers] = qualified
+            cls._qualified_subtypes[qualifiers] = qualified
         return qualified
 
     @classmethod
@@ -470,3 +480,27 @@ class WithQualifiers:
             converters_dict[source_format] = converter_tuple + (cls.qualifiers,)
         else:
             super().register_converter(source_format, converter_tuple)
+
+    @classproperty
+    def namespace(cls):
+        """The "namespace" the format belongs to under the "fileformats" umbrella
+        namespace"""
+        if cls.is_qualified:
+            namespaces = set(t.namespace for t in cls.qualifiers)
+            if not cls.generically_qualified:
+                namespaces.add(cls.unqualified.namespace)
+            if len(namespaces) == 1:
+                return next(iter(namespaces))
+            else:
+                msg = (
+                    "Cannot create reversible MIME type for because did not find a "
+                    f"common namespace between all qualifiers {list(cls.qualifiers)}"
+                )
+                if cls.generically_qualified:
+                    msg += (
+                        f" and (non genericly qualified) base class {cls.unqualified}"
+                    )
+                raise FileFormatsError(msg + f", found:\n{list(namespaces)}")
+        else:
+            namespace = super().namespace
+        return namespace

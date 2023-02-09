@@ -20,6 +20,7 @@ from .utils import (
     STANDARD_NAMESPACES,
     hash_file,
     hash_dir,
+    add_exc_note,
 )
 from .converter import _GenericConversionTarget
 from .exceptions import (
@@ -139,14 +140,18 @@ class DataType:
         type
             the corresponding file format class
         """
-        format_name = to_mime_format_name(cls.__name__)
-        namespace_module = importlib.import_module("fileformats." + cls.namespace)
-        if getattr(namespace_module, cls.__name__, None) is not cls:
-            raise FileFormatsError(
-                f"Cannot create reversible MIME type for {cls} as it is not present in a "
-                f"top-level fileformats namespace package '{cls.namespace}'"
+        mime = f"{cls.namespace}/{to_mime_format_name(cls.__name__)}"
+        try:
+            cls.from_mime(mime)
+        except FormatRecognitionError as e:
+            add_exc_note(
+                e,
+                (
+                    f"Cannot create reversible MIME type for {cls} as it is not present "
+                    f"in a top-level fileformats namespace package '{cls.namespace}'"
+                ),
             )
-        mime = f"{cls.namespace}/{format_name}"
+            raise e
         return mime
 
     @classmethod
@@ -220,11 +225,54 @@ class DataType:
             try:
                 klass = getattr(module, class_name)
             except AttributeError:
-                raise FormatRecognitionError(
-                    f"Did not find '{class_name}' class in fileformats.{namespace} "
-                    f"corresponding to MIME, or MIME-like, type {mime_string}"
-                ) from None
+                if "+" in format_name:
+                    qualifier_names, qualified_name = format_name.split("+")
+                    try:
+                        qualifiers = [
+                            getattr(module, from_mime_format_name(q))
+                            for q in qualifier_names.split(".")
+                        ]
+                    except AttributeError:
+                        raise FormatRecognitionError(
+                            f"Could not load qualifiers [{qualifier_names}] from "
+                            f"fileformats.{namespace}, corresponding to MIME, "
+                            f"or MIME-like, type {mime_string}"
+                        ) from None
+                    try:
+                        qualified = getattr(
+                            module, from_mime_format_name(qualified_name)
+                        )
+                    except AttributeError:
+                        try:
+                            qualified = cls.generically_qualified_by_name[
+                                qualified_name
+                            ]
+                        except KeyError:
+                            raise FormatRecognitionError(
+                                f"Could not load qualified class {qualified_name} from "
+                                f"fileformats.{namespace} or list of generic types "
+                                f"({list(cls.generically_qualified_by_name)}), "
+                                f"corresponding to MIME, or MIME-like, type {mime_string}"
+                            ) from None
+                    klass = qualified[qualifiers]
+                else:
+                    raise FormatRecognitionError(
+                        f"Did not find '{class_name}' class in fileformats.{namespace} "
+                        f"corresponding to MIME, or MIME-like, type {mime_string}"
+                    ) from None
         return klass
+
+    @classproperty
+    def generically_qualified_by_name(cls):
+        if cls._generically_qualified_by_name is None:
+            cls._generically_qualified_by_name = {
+                to_mime_format_name(f.__name__): f
+                for f in FileSet.all_formats
+                if getattr(f, "genericly_qualified", False)
+            }
+        return cls._generically_qualified_by_name
+
+    _generically_qualified_by_name = None  # Register all generically qualified types
 
 
 @attrs.define
@@ -535,7 +583,7 @@ class FileSet(DataType):
         return out_file
 
     @classmethod
-    def get_converter(cls, source_format: type, name: str, **kwargs):
+    def get_converter(cls, source_format: type, name: str = "converter", **kwargs):
         """Get a converter that converts from the source format type
         into the format specified by the class
 
@@ -622,7 +670,7 @@ class FileSet(DataType):
             if source_format.is_subtype_of(src_frmt):
                 available.append(converter)
         if not available and hasattr(source_format, "unqualified"):
-            available = _GenericConversionTarget.get_converter_tuple(
+            available = _GenericConversionTarget.get_converter_tuples(
                 source_format, target_format=cls
             )
         return available

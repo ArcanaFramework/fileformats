@@ -122,7 +122,7 @@ class Directory(WithQualifiers, FsObject):
     # WithQualifiers-required class attrs
     qualifiers_attr_name = "children_types"
     children_types = ()
-    allowed_qualifier_types = (FileSet,)
+    allowed_qualifiers = (FileSet,)
 
     is_dir = True
     iana_mime = None

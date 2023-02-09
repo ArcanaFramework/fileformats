@@ -1,67 +1,8 @@
-import typing as ty
 import pytest
-from fileformats.core import DataType
-from fileformats.generic import File
-from fileformats.core.mixin import WithQualifiers
-from fileformats.core.exceptions import FileFormatsError
-
-
-AnyDataType = ty.TypeVar("AnyDataType")
-
-
-class FileClassifier(DataType):
-    pass
-
-
-class A(FileClassifier):
-    pass
-
-
-class B(FileClassifier):
-    pass
-
-
-class C(FileClassifier):
-    pass
-
-
-class D(FileClassifier):
-    pass
-
-
-class F(WithQualifiers, File):
-    pass
-
-
-class G(F):
-    pass
-
-
-class H(WithQualifiers, File):
-
-    allowed_qualifier_types = (A, B, C)
-
-
-class J(H):
-    pass
-
-
-class K(WithQualifiers, File):
-
-    qualifiers_attr_name = "new_contents_type"
-    new_content_types = ()
-    ordered_qualifiers = True
-
-
-class L(WithQualifiers, File):
-
-    multiple_qualifiers = False
-
-
-# @attrs.define
-# class J(WithQualifiers, I):
-#     qualifiers_attr_name = "new_content_types"
-#     new_content_types = ()
+import pydra.mark
+from fileformats.core.mark import converter
+from fileformats.core.exceptions import FileFormatsError, FormatConversionError
+from fileformats.testing import A, B, C, D, E, F, G, H, J, K, L, AnyDataType
 
 
 def test_qualified_equivalence():
@@ -83,8 +24,8 @@ def test_subtype_testing():
     assert not H[A].is_subtype_of(F)
     assert not H[A].is_subtype_of(F[A])
     assert J[A, B].is_subtype_of(J[A])
-    assert not J[A].is_subtype_of(J[A, B])
     assert not J[B].is_subtype_of(J[A])
+    assert not J[A].is_subtype_of(J[A, B])
     assert J[A].is_subtype_of(H[A])
     assert J[A, B, C].is_subtype_of(H[A, B])
     assert not J[A].is_subtype_of(H[B])
@@ -92,12 +33,35 @@ def test_subtype_testing():
 
 def test_qualifier_fails():
 
-    H[A, B, C]
+    H[A, B, C]  # A, B, C are all allowable qualifier
+    F[D]  # F has no restriction on qualifier types
 
     with pytest.raises(FileFormatsError):
-        H[D]
+        H[D]  # D is not in list of allowable qualifier types for H
 
     with pytest.raises(FileFormatsError):
-        H[A, B, A]
+        H[A, B, A]  # unordered qualifiers don't allow repeats
 
-    K[A, B, A]
+    K[A, B, A]  # ordered qualifiers allow repeats
+
+    with pytest.raises(FileFormatsError):
+        L[A]  # Missing default value for "new_qualifiers_type"
+
+
+def test_qualifier_converters():
+    @converter
+    @converter(source_format=F[A], target_format=H[A])
+    @pydra.mark.task
+    def f2h(in_file: F) -> H:
+        return in_file
+
+    H.get_converter(F)
+    assert F.get_converter(G) is None  # G is subtype of F
+    with pytest.raises(FormatConversionError):  # Cannot convert to more specific type
+        G.get_converter(F)
+    H[A].get_converter(F[A])
+    assert F[A].get_converter(G[A]) is None
+    assert F.get_converter(G[A]) is None
+    assert F[A].get_converter(F[E]) is None
+    with pytest.raises(FormatConversionError):
+        assert F[A].get_converter(G) is None
