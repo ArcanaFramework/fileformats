@@ -198,8 +198,8 @@ def from_mime_format_name(format_name: str):
     if format_name.startswith("x-"):
         format_name = format_name[2:]
     format_name = format_name.capitalize()
-    format_name = re.sub(r"(\.)(\w)", lambda m: m.group(2).upper(), format_name)
-    format_name = re.sub(r"(\+)(\w)", lambda m: m.group(2).upper(), format_name)
+    format_name = re.sub(r"(\.)(\w)", lambda m: "_" + m.group(2).upper(), format_name)
+    format_name = re.sub(r"(\+)(\w)", lambda m: "__" + m.group(2).upper(), format_name)
     format_name = re.sub(r"(-)(\w)", lambda m: m.group(2).upper(), format_name)
     return format_name
 

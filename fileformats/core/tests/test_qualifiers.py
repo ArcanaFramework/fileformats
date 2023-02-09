@@ -1,8 +1,15 @@
 import pytest
 import pydra.mark
+from fileformats.core import from_mime
 from fileformats.core.mark import converter
-from fileformats.core.exceptions import FileFormatsError, FormatConversionError
-from fileformats.testing import A, B, C, D, E, F, G, H, J, K, L, AnyDataType
+from fileformats.generic import Directory
+from fileformats.field import Array
+from fileformats.core.exceptions import (
+    FileFormatsError,
+    FormatConversionError,
+    FormatRecognitionError,
+)
+from fileformats.testing import A, B, C, D, E, F, G, H, J, K, L, TestField, AnyDataType
 
 
 def test_qualified_equivalence():
@@ -36,16 +43,22 @@ def test_qualifier_fails():
     H[A, B, C]  # A, B, C are all allowable qualifier
     F[D]  # F has no restriction on qualifier types
 
-    with pytest.raises(FileFormatsError):
-        H[D]  # D is not in list of allowable qualifier types for H
+    with pytest.raises(FileFormatsError) as e:
+        H[D]
+    assert "Invalid content types provided to" in str(e)
 
-    with pytest.raises(FileFormatsError):
-        H[A, B, A]  # unordered qualifiers don't allow repeats
+    with pytest.raises(FileFormatsError) as e:
+        H[A, B, A]
+    assert "Cannot have more than one occurrence of a qualifier" in str(e)
 
     K[A, B, A]  # ordered qualifiers allow repeats
 
-    with pytest.raises(FileFormatsError):
-        L[A]  # Missing default value for "new_qualifiers_type"
+    with pytest.raises(FileFormatsError) as e:
+        L[A]
+    assert (
+        "Default value for qualifiers attribute 'new_qualifiers_attr' needs to be set"
+        in str(e)
+    )
 
 
 def test_qualifier_converters():
@@ -65,3 +78,13 @@ def test_qualifier_converters():
     assert F[A].get_converter(F[E]) is None
     with pytest.raises(FormatConversionError):
         assert F[A].get_converter(G) is None
+
+
+def test_mime_rountrips():
+
+    assert Directory[F].mime_like == "testing/f+directory"
+    assert from_mime("testing/f+directory") is Directory[F]
+
+    with pytest.raises(FormatRecognitionError) as e:
+        Array[TestField].mime_like
+    assert "Cannot create reversible MIME type for " in str(e)

@@ -12,8 +12,6 @@ from ..core.mixin import WithQualifiers
 class FsObject(FileSet, os.PathLike):
     "Generic file-system object, can be either a file or a directory"
 
-    iana_mime = None
-
     @mark.required
     @property
     def fspath(self):
@@ -40,7 +38,6 @@ class File(FsObject):
     ext = ""
     binary = False
     is_dir = False
-    iana_mime = None
 
     @mark.required
     @property
@@ -123,9 +120,9 @@ class Directory(WithQualifiers, FsObject):
     qualifiers_attr_name = "children_types"
     children_types = ()
     allowed_qualifiers = (FileSet,)
+    generically_qualified = True
 
     is_dir = True
-    iana_mime = None
 
     @mark.required
     @property

@@ -249,7 +249,7 @@ class DataType:
                             ]
                         except KeyError:
                             raise FormatRecognitionError(
-                                f"Could not load qualified class {qualified_name} from "
+                                f"Could not load qualified class '{qualified_name}' from "
                                 f"fileformats.{namespace} or list of generic types "
                                 f"({list(cls.generically_qualified_by_name)}), "
                                 f"corresponding to MIME, or MIME-like, type {mime_string}"
@@ -268,7 +268,7 @@ class DataType:
             cls._generically_qualified_by_name = {
                 to_mime_format_name(f.__name__): f
                 for f in FileSet.all_formats
-                if getattr(f, "genericly_qualified", False)
+                if "generically_qualified" in f.__dict__
             }
         return cls._generically_qualified_by_name
 
@@ -301,7 +301,8 @@ class FileSet(DataType):
     )
 
     # Explicitly set the Internet Assigned Numbers Authority (https://iana_mime.org) MIME
-    # type to None for any base classes that should not correspond to a MIME type.
+    # type to None for any base classes that should not correspond to a MIME or MIME-like
+    # type.
     iana_mime = None
 
     # Store converters registered by @converter decorator that convert to FileSet
@@ -716,9 +717,9 @@ class FileSet(DataType):
     def all_formats(cls):
         """Iterate over all FileSet formats in fileformats.* namespaces"""
         if cls._all_formats is None:
-            cls._all_formats = [
+            cls._all_formats = set(
                 f for f in FileSet.subclasses() if f.__dict__.get("iana_mime", True)
-            ]
+            )
         return cls._all_formats
 
     @classproperty

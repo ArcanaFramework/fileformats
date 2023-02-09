@@ -6,7 +6,7 @@ from . import mark
 from .base import FileSet
 from .utils import classproperty
 from .converter import _GenericConversionTarget
-from .exceptions import FileFormatsError, FormatMismatchError
+from .exceptions import FileFormatsError, FormatMismatchError, FormatRecognitionError
 
 
 class WithMagicNumber:
@@ -500,7 +500,7 @@ class WithQualifiers:
                     msg += (
                         f" and (non genericly qualified) base class {cls.unqualified}"
                     )
-                raise FileFormatsError(msg + f", found:\n{list(namespaces)}")
+                raise FormatRecognitionError(msg + f", found:\n{list(namespaces)}")
         else:
             namespace = super().namespace
         return namespace
