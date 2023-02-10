@@ -383,19 +383,23 @@ class WithQualifiers:
                                 ):
                                     if isinstance(template, SubtypeVar):
                                         wildcard_map[template] = actual
+                                wildcard_match = True
                                 for actual, template in zip(
                                     cls.qualifiers, template_qualifiers
                                 ):
-                                    if not actual.is_subtype_of(template):
-                                        if not (
-                                            isinstance(template, SubtypeVar)
-                                            and actual in wildcard_map
-                                            and actual.is_subtype_of(
-                                                wildcard_map[actual]
-                                            )
-                                        ):
+                                    if isinstance(template, SubtypeVar):
+                                        try:
+                                            reference = wildcard_map[template]
+                                        except KeyError:
                                             wildcard_match = False
                                             break
+                                        else:
+                                            if not actual.is_subtype_of(reference):
+                                                wildcard_match = False
+                                                break
+                                    elif not actual.is_subtype_of(template):
+                                        wildcard_match = False
+                                        break
                         else:
                             non_wildcards = cls.non_wildcard_qualifiers(
                                 template_qualifiers
@@ -433,7 +437,13 @@ class WithQualifiers:
         ):
             return False
         if cls.ordered_qualifiers:
-            is_subtype = cls.qualifiers == super_type.qualifiers
+            if len(cls.qualifiers) != len(super_type.qualifiers):
+                is_subtype = False
+            else:
+                is_subtype = all(
+                    q.is_subtype_of(s)
+                    for q, s in zip(cls.qualifiers, super_type.qualifiers)
+                )
         else:
             if super_type.qualifiers.issubset(cls.qualifiers):
                 is_subtype = True

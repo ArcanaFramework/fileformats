@@ -26,6 +26,8 @@ from fileformats.testing import (
     M,
     N,
     P,
+    Q,
+    R,
     TestField,
 )
 
@@ -64,6 +66,9 @@ def test_subtype_testing():
     assert FileSet.is_subtype_of(DataType)
     assert SpecificFileSet.is_subtype_of(SpecificDataType)
     assert F[SpecificFileSet].is_subtype_of(F[SpecificDataType])
+    assert L[A, E].is_subtype_of(L[A, C])
+    assert not L[E, A].is_subtype_of(L[A, C])
+    assert K[A, E, B].is_subtype_of(K[A, C, B])
 
 
 def test_qualifier_fails():
@@ -82,7 +87,7 @@ def test_qualifier_fails():
     K[A, B, A]  # ordered qualifiers allow repeats
 
     with pytest.raises(FileFormatsError) as e:
-        L[A]
+        Q[A]
     assert (
         "Default value for qualifiers attribute 'new_qualifiers_attr' needs to be set"
         in str(e)
@@ -93,18 +98,22 @@ def test_qualifier_fails():
     assert "Multiple qualifiers not permitted for " in str(e)
 
 
+@converter
+@converter(source_format=F[A], target_format=H[A])  # Additional converter
+@pydra.mark.task
+def f2h(in_file: F) -> H:
+    return in_file
+
+
 def test_qualifier_converters():
-    @converter
-    @converter(source_format=F[A], target_format=H[A])
-    @pydra.mark.task
-    def f2h(in_file: F) -> H:
-        return in_file
 
     H.get_converter(F)
     assert F.get_converter(G) is None  # G is subtype of F
     with pytest.raises(FormatConversionError):  # Cannot convert to more specific type
         G.get_converter(F)
     H[A].get_converter(F[A])
+    with pytest.raises(FormatConversionError):
+        H[B].get_converter(F[B])
     assert F[A].get_converter(G[A]) is None
     assert F.get_converter(G[A]) is None
     with pytest.raises(FormatConversionError):
@@ -113,13 +122,40 @@ def test_qualifier_converters():
         F[A].get_converter(G)
 
 
+@converter(source_format=K[A, B], target_format=L[A, B])
+@converter(source_format=K[C, D], target_format=L[D, C])
+@converter(source_format=K[A, B, C], target_format=L[A, B])
+@converter(source_format=K[A, C, B], target_format=L[C, A])
+@pydra.mark.task
+def k2l(in_file: K) -> L:
+    return in_file
+
+
+def test_ordered_qualifier_converters():
+    L[A, B].get_converter(K[A, B])
+    with pytest.raises(FormatConversionError):
+        L[B, A].get_converter(K[A, B])
+    L[D, C].get_converter(K[C, D])
+    with pytest.raises(FormatConversionError):
+        L[C, D].get_converter(K[C, D])
+
+    L[C, A].get_converter(K[A, C, B])
+    L[C, A].get_converter(K[A, E, B])  # E is a subtype of C
+
+
 def test_mime_rountrips():
 
     assert Directory[F].mime_like == "testing/f+directory"
     assert from_mime("testing/f+directory") is Directory[F]
 
+    # Directory is unordered so sort qualifiers to create unique mime
     assert Directory[H, F].mime_like == "testing/f.h+directory"
     assert from_mime("testing/f.h+directory") is Directory[F, H]
+
+    # K is ordered
+    assert K[B, A].mime_like == "testing/b.a+k"
+    assert from_mime("testing/b.a+k") is K[B, A]
+    assert from_mime("testing/b.a+k") is not K[A, B]
 
     with pytest.raises(FormatRecognitionError) as e:
         Array[TestField].mime_like
@@ -145,10 +181,12 @@ def test_arrays():
     assert list(Array[Decimal]("[1.5, 2.2]")) == [1.5, 2.2]
     assert list(Array[Text]("[1.5, 2.2]")) == ["1.5", "2.2"]
 
-    assert list(Array[Boolean]("yes, no, 0, False, True, true")) == [
+    assert list(Array[Boolean]("yes, YES, no, 0, 1, False, True, true")) == [
+        True,
         True,
         False,
         False,
+        True,
         False,
         True,
         True,
@@ -239,3 +277,15 @@ def test_wildcard_generic_from_multi_template_conversion():
     J.get_converter(N[J, H])
     with pytest.raises(FormatConversionError):
         J.get_converter(N[J, K])
+
+
+@converter
+@pydra.mark.task
+def l2r(in_file: L[A, SpecificDataType, C]) -> R[A, SpecificDataType, C, D]:
+    return in_file
+
+
+def test_wildcard_ordered_qualifier_converters():
+    R[A, B, C, D].get_converter(L[A, B, C])
+    with pytest.raises(FormatConversionError):
+        R[A, E, C, D].get_converter(L[A, B, C])
