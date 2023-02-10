@@ -5,13 +5,12 @@ from ..core.base import FileSet
 from ..core.exceptions import FormatMismatchError
 from ..core import mark
 from ..core.utils import splitext, classproperty
+from ..core.mixin import WithQualifiers
 
 
 @attrs.define
 class FsObject(FileSet, os.PathLike):
     "Generic file-system object, can be either a file or a directory"
-
-    iana_mime = None
 
     @mark.required
     @property
@@ -39,7 +38,6 @@ class File(FsObject):
     ext = ""
     binary = False
     is_dir = False
-    iana_mime = None
 
     @mark.required
     @property
@@ -115,12 +113,13 @@ class File(FsObject):
 
 
 @attrs.define
-class Directory(FsObject):
-    """Generic directory type"""
+class BaseDirectory(FsObject):
+    """Base directory to be overridden by subtypes that represent directories but don't
+    want to inherit content type "qualifers" (i.e. most of them)"""
+
+    is_dir = True
 
     content_types = ()
-    is_dir = True
-    iana_mime = None
 
     @mark.required
     @property
@@ -163,19 +162,31 @@ class Directory(FsObject):
 
     @mark.check
     def validate_contents(self):
-        list(self.contents)
+        if not self.content_types:
+            return
+        not_found = set(self.content_types)
+        for fspath in self.fspath.iterdir():
+            for content_type in list(not_found):
+                if content_type.matches(fspath):
+                    not_found.remove(content_type)
+                    if not not_found:
+                        return
+        assert not_found
+        raise FormatMismatchError(
+            f"Did not find the required content types, {not_found}, within the "
+            f"directory {self.fspath} of {self}"
+        )
 
     def hash_files(self, relative_to=None, **kwargs):
         if relative_to is None:
             relative_to = self.fspath
         return super().hash_files(relative_to=relative_to, **kwargs)
 
-    @classmethod
-    def __class_getitem__(cls, *content_types):
-        """Set the content types for a newly created dynamically type"""
-        content_type_str = "_".join(t.__name__ for t in content_types)
-        return type(
-            f"{cls.__name__}_containing_{content_type_str}",
-            (cls,),
-            {"content_types": content_types},
-        )
+
+class Directory(WithQualifiers, BaseDirectory):
+    """Generic directory, which can be qualified by the formats of its contents"""
+
+    # WithQualifiers-required class attrs
+    qualifiers_attr_name = "content_types"
+    allowed_qualifiers = (FileSet,)
+    generically_qualified = True

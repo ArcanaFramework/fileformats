@@ -1,6 +1,7 @@
-import inspect
+import importlib
 import attrs
-from .base import FileSet, REQUIRED_ANNOTATION, CHECK_ANNOTATION
+from .base import DataType, REQUIRED_ANNOTATION, CHECK_ANNOTATION
+from .converter import ConverterWrapper
 from .exceptions import FormatConversionError
 
 
@@ -88,37 +89,32 @@ def converter(
             except KeyError:
                 # If there isn't an 'out_file' field but there is only one output field
                 # with the default name of 'out' use that instead
-                if list(outputs_dict.keys()) == ["out"]:
+                if out_file == "out_file" and list(outputs_dict.keys()) == ["out"]:
                     out_file_local = "out"
                     target = outputs_dict["out"].type
                 else:
                     raise
         else:
             target = target_format
-        if not issubclass(target, FileSet):
+        # Handle string annotations
+        if isinstance(source, str) or isinstance(target, str):
+            module_dict = importlib.import_module(task_spec.__module__).__dict__
+            if isinstance(source, str):
+                source = eval(source, module_dict)
+            if isinstance(target, str):
+                target = eval(target, module_dict)
+        if not target.is_subtype_of(DataType):
             raise FormatConversionError(
-                f"Target file format {target.__name__} is not of sub-class of "
-                "FileSet"
+                f"Target file format '{target.__name__}' is not of subtype of "
+                "fileformats.core.DataType"
             )
-        # Ensure "converters" dict is defined in the target class and not in a superclass
-        if "converters" not in target.__dict__:
-            target.converters = {}
-        if source in target.converters:
-            msg = (
-                f"There is already a converter registered between {source.__name__} "
-                f"and {target.__name__}: {target.converters[source]}"
-            )
-            src_file = inspect.getsourcefile(target.converters[source])
-            src_line = inspect.getsourcelines(target.converters[source])[-1]
-            msg += f" (defined at line {src_line} of {src_file})"
-            raise FormatConversionError(msg)
-        if in_file != "in_file" or out_file != "out_file":
-            from .converter import ConverterWrapper
-
+        if in_file != "in_file" or out_file_local != "out_file":
             task_spec = ConverterWrapper(
                 task_spec, in_file=in_file, out_file=out_file_local
             )
-        target.converters[source] = (task_spec, converter_kwargs)
+        target.register_converter(
+            source_format=source, converter_tuple=(task_spec, converter_kwargs)
+        )
         return task_spec
 
     return decorator if task_spec is None else decorator(task_spec)

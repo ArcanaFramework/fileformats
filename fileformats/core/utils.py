@@ -1,14 +1,14 @@
 import importlib
-from warnings import warn
 from pathlib import Path
+import inspect
 import typing as ty
 import re
 import os
-import traceback
 import pkgutil
 from contextlib import contextmanager
 from fileformats.core.exceptions import (
     MissingExtendedDepenciesError,
+    FileFormatsError,
 )
 import fileformats.core
 
@@ -149,29 +149,10 @@ class MissingExtendedDependency:
         )
 
 
-def import_converters(module_name: str):
-    """Attempts to import converters and raises warning if they can be imported"""
-    try:
-        importlib.import_module(module_name + ".converters")
-    except ImportError:
-        namespace = module_name.split(".")[1]
-        if namespace in STANDARD_NAMESPACES:
-            subpkg = ""
-        else:
-            subpkg = f"-{namespace}"
-        warn(
-            f"could not import converters for {module_name} module, please install with "
-            f"the 'extended' install option to use converters for {module_name}, i.e.\n\n"
-            f"$ python3 -m pip install fileformats{subpkg}[extended]:\n\n"
-            f"Import error was:\n{traceback.format_exc()}"
-        )
-
-
 STANDARD_NAMESPACES = [
     "archive",
     "audio",
     "document",
-    "generic",
     "image",
     "numeric",
     "serialization",
@@ -181,8 +162,14 @@ STANDARD_NAMESPACES = [
 
 
 def to_mime_format_name(format_name: str):
+    if "___" in format_name:
+        raise FileFormatsError(
+            f"Cannot convert name of format class {format_name} to mime string as it "
+            "contains triple underscore"
+        )
     format_name = format_name[0].lower() + format_name[1:]
-    format_name = re.sub("_([A-Z])", lambda m: "+" + m.group(1).lower(), format_name)
+    format_name = re.sub("__([A-Z])", lambda m: "+" + m.group(1).lower(), format_name)
+    format_name = re.sub("_([A-Z])", lambda m: "." + m.group(1).lower(), format_name)
     format_name = re.sub("([A-Z])", lambda m: "-" + m.group(1).lower(), format_name)
     return format_name
 
@@ -191,8 +178,9 @@ def from_mime_format_name(format_name: str):
     if format_name.startswith("x-"):
         format_name = format_name[2:]
     format_name = format_name.capitalize()
+    format_name = re.sub(r"(\.)(\w)", lambda m: "_" + m.group(2).upper(), format_name)
+    format_name = re.sub(r"(\+)(\w)", lambda m: "__" + m.group(2).upper(), format_name)
     format_name = re.sub(r"(-)(\w)", lambda m: m.group(2).upper(), format_name)
-    format_name = re.sub(r"(\+)(\w)", lambda m: "_" + m.group(2).upper(), format_name)
     return format_name
 
 
@@ -228,3 +216,46 @@ def hash_dir(
                 dpath / filename, crypto=crypto, chunk_len=chunk_len
             )
     return file_hashes
+
+
+def add_exc_note(e, note):
+    """Adds a note to an exception in a Python <3.11 compatible way
+
+    Parameters
+    ----------
+    e : Exception
+        the exception to add the note to
+    note : str
+        the note to add
+
+    Returns
+    -------
+    Exception
+        returns the exception again
+    """
+    if hasattr(e, "add_note"):
+        e.add_note(note)
+    else:
+        e.args = (e.args[0] + "\n" + note,)
+    return e
+
+
+def describe_task(task):
+    """Returns the name of a Pydra task and where it was defined for debugging purposes
+
+    Parameters
+    ----------
+    task : pydra.engine.core.TaskBase
+        the task to describe
+    """
+    from fileformats.core.converter import ConverterWrapper
+
+    if isinstance(task, ConverterWrapper):
+        task = task.task_spec
+    if inspect.isfunction(task):
+        import cloudpickle
+
+        task = cloudpickle.loads(task().inputs._func)
+    src_file = inspect.getsourcefile(task)
+    src_line = inspect.getsourcelines(task)[-1]
+    return f"{task} (defined at line {src_line} of {src_file})"

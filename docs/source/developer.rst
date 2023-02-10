@@ -427,19 +427,10 @@ such as in the ``mrconvert`` converter in the ``fileformats-medimage`` package.
 
 
 Since converter tasks rely on Pydra_, which should be added as an "extended" dependency,
-there is a helping function ``fileformats.core.import_converters``, which should be used
-to import the converters into the namespace subpackage ``__init__.py``. This will catch
-an import error and raise an informative warning. For example, it is used in the
-``__init__.py`` of ``fileformats.image``.
-
-
- .. code-block:: python
-
-    from ..core import __version__, import_converters
-    from .raster import RasterImage, Bitmap, Gif, Jpeg, Png, Tiff
-    from .vector import VectorImage, Svg
-
-    import_converters(__name__)
+they are not loaded by default. However, if there is a package at
+``fileformats.<namespace>.converters``, it will be attempted to be imported and throw
+a warning if the import fails, when get_converter is called on a format in that
+namespace.
 
 
 .. note::

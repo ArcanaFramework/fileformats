@@ -1,5 +1,5 @@
 import pytest
-from fileformats.generic import File, Directory
+from fileformats.generic import File, Directory, BaseDirectory
 from fileformats.core.exceptions import FormatMismatchError
 from fileformats.core.mixin import WithSideCar
 from conftest import write_test_file
@@ -87,7 +87,7 @@ def test_file_cast(work_dir):
     assert File(file).fspath == fspath
 
 
-class TestDir(Directory):
+class TestDir(BaseDirectory):
 
     content_types = (TestFile,)
 
@@ -127,7 +127,7 @@ def test_double_ext_fail(work_dir):
     assert not DoubleExtFileFormat.matches(fspath)
 
 
-class NestedDirFormat(Directory):
+class NestedDirFormat(BaseDirectory):
 
     content_types = (TestFile, DoubleExtFileFormat, TestDir)
 
@@ -226,7 +226,7 @@ class FooWithSideCar(WithSideCar, TestFile):
     side_car_type = Bar
 
 
-class DirContainingSideCars(Directory):
+class DirContainingSideCars(BaseDirectory):
 
     content_types = (FooWithSideCar,)
 

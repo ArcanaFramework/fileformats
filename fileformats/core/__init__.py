@@ -4,5 +4,4 @@ from .utils import (
     from_mime,
     find_matching,
     MissingExtendedDependency,
-    import_converters,
 )

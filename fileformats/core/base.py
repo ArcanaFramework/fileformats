@@ -1,6 +1,8 @@
 import os
 from copy import copy
 from inspect import isclass
+from warnings import warn
+import traceback
 import typing as ty
 import importlib
 import shutil
@@ -19,14 +21,16 @@ from .utils import (
     STANDARD_NAMESPACES,
     hash_file,
     hash_dir,
+    add_exc_note,
+    describe_task,
 )
+from .converter import SubtypeVar
 from .exceptions import (
     FileFormatsError,
     FormatMismatchError,
     FormatConversionError,
     FormatRecognitionError,
 )
-
 
 # Tools imported from Arcana, will remove again once file-formats and "cells"
 # have been split
@@ -38,9 +42,12 @@ logger = logging.getLogger("fileformats")
 
 
 class DataType:
-
     is_fileset = False
     is_field = False
+
+    @classmethod
+    def type_var(cls, name):
+        return SubtypeVar(name, cls)
 
     @classmethod
     def matches(cls, values) -> bool:
@@ -63,6 +70,34 @@ class DataType:
             return False
         else:
             return True
+
+    @classmethod
+    def is_subtype_of(cls, super_type: type, allow_same: bool = True):
+        """Check to see whether datatype class is a subtype of a given super class.
+        In this case the subtype is expected to be able to be treated as if it was
+        the super class.
+
+        Overridden in the ``WithQualifiers`` mixin to add support for
+        qualified subtypes
+
+        Parameters
+        ----------
+        super_type : type
+            the class to check whether the given class is a subtype of
+        allow_same : bool, optional
+            whether there is a match if the classes are the same, by default True
+
+        Returns
+        -------
+        is_subtype : bool
+            whether or not the current class can be considered a subtype of the super (or
+            is the super itself)
+        """
+        if allow_same and cls is super_type:
+            return True
+        if isinstance(super_type, SubtypeVar):
+            super_type = super_type.base
+        return issubclass(cls, super_type)
 
     @classproperty
     def namespace(cls):
@@ -113,14 +148,18 @@ class DataType:
         type
             the corresponding file format class
         """
-        format_name = to_mime_format_name(cls.__name__)
-        namespace_module = importlib.import_module("fileformats." + cls.namespace)
-        if getattr(namespace_module, cls.__name__, None) is not cls:
-            raise FileFormatsError(
-                f"Cannot create reversible MIME type for {cls} as it is not present in a "
-                f"top-level fileformats namespace package '{cls.namespace}'"
+        mime = f"{cls.namespace}/{to_mime_format_name(cls.__name__)}"
+        try:
+            cls.from_mime(mime)
+        except FormatRecognitionError as e:
+            add_exc_note(
+                e,
+                (
+                    f"Cannot create reversible MIME type for {cls} as it is not present "
+                    f"in a top-level fileformats namespace package '{cls.namespace}'"
+                ),
             )
-        mime = f"{cls.namespace}/{format_name}"
+            raise e
         return mime
 
     @classmethod
@@ -194,11 +233,54 @@ class DataType:
             try:
                 klass = getattr(module, class_name)
             except AttributeError:
-                raise FormatRecognitionError(
-                    f"Did not find '{class_name}' class in fileformats.{namespace} "
-                    f"corresponding to MIME, or MIME-like, type {mime_string}"
-                ) from None
+                if "+" in format_name:
+                    qualifier_names, qualified_name = format_name.split("+")
+                    try:
+                        qualifiers = [
+                            getattr(module, from_mime_format_name(q))
+                            for q in qualifier_names.split(".")
+                        ]
+                    except AttributeError:
+                        raise FormatRecognitionError(
+                            f"Could not load qualifiers [{qualifier_names}] from "
+                            f"fileformats.{namespace}, corresponding to MIME, "
+                            f"or MIME-like, type {mime_string}"
+                        ) from None
+                    try:
+                        qualified = getattr(
+                            module, from_mime_format_name(qualified_name)
+                        )
+                    except AttributeError:
+                        try:
+                            qualified = cls.generically_qualified_by_name[
+                                qualified_name
+                            ]
+                        except KeyError:
+                            raise FormatRecognitionError(
+                                f"Could not load qualified class '{qualified_name}' from "
+                                f"fileformats.{namespace} or list of generic types "
+                                f"({list(cls.generically_qualified_by_name)}), "
+                                f"corresponding to MIME, or MIME-like, type {mime_string}"
+                            ) from None
+                    klass = qualified[qualifiers]
+                else:
+                    raise FormatRecognitionError(
+                        f"Did not find '{class_name}' class in fileformats.{namespace} "
+                        f"corresponding to MIME, or MIME-like, type {mime_string}"
+                    ) from None
         return klass
+
+    @classproperty
+    def generically_qualified_by_name(cls):
+        if cls._generically_qualified_by_name is None:
+            cls._generically_qualified_by_name = {
+                to_mime_format_name(f.__name__): f
+                for f in FileSet.all_formats
+                if getattr(f, "generically_qualified", False)
+            }
+        return cls._generically_qualified_by_name
+
+    _generically_qualified_by_name = None  # Register all generically qualified types
 
 
 @attrs.define
@@ -219,11 +301,16 @@ class FileSet(DataType):
 
     fspaths: ty.FrozenSet[Path] = attrs.field(default=None, converter=fspaths_converter)
     _metadata: ty.Dict[str, ty.Any] = attrs.field(
-        default=None, init=False, repr=False, eq=False
+        default=None,
+        init=False,
+        repr=False,
+        eq=False,
+        hash=False,
     )
 
     # Explicitly set the Internet Assigned Numbers Authority (https://iana_mime.org) MIME
-    # type to None for any base classes that should not correspond to a MIME type.
+    # type to None for any base classes that should not correspond to a MIME or MIME-like
+    # type.
     iana_mime = None
 
     # Store converters registered by @converter decorator that convert to FileSet
@@ -505,7 +592,7 @@ class FileSet(DataType):
         return out_file
 
     @classmethod
-    def get_converter(cls, source_format: type, name: str, **kwargs):
+    def get_converter(cls, source_format: type, name: str = "converter", **kwargs):
         """Get a converter that converts from the source format type
         into the format specified by the class
 
@@ -531,51 +618,149 @@ class FileSet(DataType):
         FileFormatConversionError
             ambiguous (i.e. more than one) converters found between source and dest format
         """
-        if source_format is cls or issubclass(source_format, cls):
+        if source_format.is_subtype_of(cls):
             return None
-        converter_tuple = None
-        # Only access converters to the specific class, not superclasses (which may not
-        # be able to convert to the specific type)
+        converters = (
+            cls.get_converters_dict()
+        )  # triggers loading of standard converters
+        # Ensure converters from source format is loaded
+        source_format.import_standard_converters()
         try:
-            converters = cls.__dict__["converters"]
+            unqualified = source_format.unqualified
+        except AttributeError:
+            pass
+        else:
+            unqualified.import_standard_converters()
+        try:
+            converter, conv_kwargs = converters[source_format]
         except KeyError:
-            raise FormatConversionError(
-                f"No converters specified to {cls.mime_like} format (trying to find one from "
-                f"{source_format.mime_like}"
-            )
-        try:
-            converter_tuple = converters[source_format]
-        except KeyError:  # check to see whether there are converters from a base class
-            available = []
-            for frmt, converter in converters.items():
-                if issubclass(source_format, frmt):
-                    available.append(converter)
-            if len(available) > 1:
-                available_str = "\n".join(str(a) for a in available)
+            available_converters = cls.get_converter_tuples(source_format)
+            if len(available_converters) > 1:
+                available_str = "\n".join(
+                    describe_task(a[0]) for a in available_converters
+                )
                 raise FormatConversionError(
                     f"Ambiguous converters found between '{cls.mime_like}' and "
                     f"'{source_format.mime_like}':\n{available_str}"
                 ) from None
-            elif not available:
+            elif not available_converters:
                 raise FormatConversionError(
                     f"Could not find converter between '{source_format.mime_like}' and "
                     f"'{cls.mime_like}' formats"
                 ) from None
-            else:
-                converter_tuple = available[0]
-        converter, conv_kwargs = converter_tuple
+            converter, conv_kwargs = available_converters[0]
         if kwargs:
             conv_kwargs = copy(conv_kwargs)
             conv_kwargs.update(kwargs)
         return converter(name=name, **conv_kwargs)
 
+    @classmethod
+    def get_converters_dict(cls, klass=None):
+        # Only access converters to the specific class, not superclasses (which may not
+        # be able to convert to the specific type)
+        if klass is None:
+            klass = cls
+        try:
+            converters_dict = klass.__dict__["converters"]
+        except KeyError:
+            converters_dict = {}
+            klass.converters = converters_dict
+            klass.import_standard_converters()
+        return converters_dict
+
+    @classmethod
+    def import_standard_converters(cls):
+        """Attempts to import standard converters for the format class, which are
+        located at `fileformats.<namespace>.converters`
+        """
+        standard_converters_module = f"fileformats.{cls.namespace}.converters"
+        try:
+            importlib.import_module(standard_converters_module)
+        except ImportError as e:
+            if str(e) != f"No module named '{standard_converters_module}'":
+                if cls.namespace in STANDARD_NAMESPACES:
+                    pkg = "fileformats"
+                else:
+                    pkg = f"fileformats-{cls.namespace}"
+                warn(
+                    f"Could not import standard converters for '{cls.namespace}' namespace, "
+                    f"please install '{pkg}' with the 'extended' install option to "
+                    f"use converters for {cls.namespace}, i.e.\n\n"
+                    f"    $ python3 -m pip install '{pkg}[extended]':\n\n"
+                    f"Import error was:\n{traceback.format_exc()}"
+                )
+
+    @classmethod
+    def get_converter_tuples(
+        cls, source_format: type
+    ) -> ty.List[ty.Tuple[ty.Callable, ty.Dict[str, ty.Any]]]:
+        """Search the registered converters to find any matches and return list of
+        task and associated key-word args to perform the conversion between source and
+        target formats
+
+        Parameters
+        ----------
+        source_format : type(FileSet)
+            the source format to convert from
+
+        Returns
+        -------
+        available : list[tuple[TaskBase, dict[str, Any]]]
+            list of available converters between the source and target formats
+        """
+        converters_dict = cls.get_converters_dict()
+        available = []
+        for src_frmt, converter in converters_dict.items():
+            if len(converter) == 2:  # Ignore converters with wildcards at this point
+                if source_format.is_subtype_of(src_frmt):
+                    available.append(converter)
+        if not available and hasattr(source_format, "unqualified"):
+            available = SubtypeVar.get_converter_tuples(
+                source_format, target_format=cls
+            )
+        return available
+
+    @classmethod
+    def register_converter(
+        cls,
+        source_format: type,
+        converter_tuple: ty.Tuple[ty.Callable, ty.Dict[str, ty.Any]],
+    ):
+        """Registers a converter task within a class attribute. Called by the @fileformats.mark.converter
+        decorator.
+
+        Parameters
+        ----------
+        source_format : type
+            the source format to register a converter from
+        task_spec : ty.Callable
+            a callable that resolves to a Pydra task
+        converter_kwargs : dict
+            additional keyword arguments to be passed to the task spec at initialisation
+            time
+
+        Raises
+        ------
+        FormatConversionError
+            if there is already a converter registered between the two types
+        """
+        converters_dict = cls.get_converters_dict()
+        # If no converters are loaded, attempt to load from the standard location
+        if source_format in converters_dict:
+            prev = cls.converters[source_format][0]
+            raise FormatConversionError(
+                f"There is already a converter registered between {source_format.__name__} "
+                f"and {cls.__name__}: {describe_task(prev)}"
+            )
+        converters_dict[source_format] = converter_tuple
+
     @classproperty
     def all_formats(cls):
         """Iterate over all FileSet formats in fileformats.* namespaces"""
         if cls._all_formats is None:
-            cls._all_formats = [
+            cls._all_formats = set(
                 f for f in FileSet.subclasses() if f.__dict__.get("iana_mime", True)
-            ]
+            )
         return cls._all_formats
 
     @classproperty
@@ -710,7 +895,6 @@ class FileSet(DataType):
 
 @attrs.define
 class Field(DataType):
-
     value = attrs.field()
 
     type = None

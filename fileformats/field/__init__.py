@@ -1,5 +1,6 @@
 import attrs
 from ..core import Field
+from ..core.mixin import WithQualifiers
 from ..core.exceptions import FormatMismatchError
 
 
@@ -121,7 +122,7 @@ class Text(Singluar):
 
     value: str = attrs.field(converter=text_converter)
 
-    type = str
+    raw_type = str
 
 
 @attrs.define
@@ -129,7 +130,7 @@ class Integer(Singluar, ScalarMixin):
 
     value: int = attrs.field(converter=integer_converter)
 
-    type = int
+    raw_type = int
 
     def __int__(self):
         return self.value
@@ -140,7 +141,7 @@ class Decimal(Singluar, ScalarMixin):
 
     value: float = attrs.field(converter=decimal_converter)
 
-    type = int
+    raw_type = int
 
     def __float__(self):
         return self.value
@@ -149,9 +150,9 @@ class Decimal(Singluar, ScalarMixin):
 @attrs.define
 class Boolean(Singluar, LogicalMixin):
 
-    value: bool = attrs.field(converter=boolean_converter)
+    raw_type = bool
 
-    type = bool
+    value: bool = attrs.field(converter=boolean_converter)
 
     def __str__(self):
         return str(self.value).lower()
@@ -161,13 +162,17 @@ class Boolean(Singluar, LogicalMixin):
 
 
 @attrs.define
-class Array(Field):
+class Array(WithQualifiers, Field):
 
-    value: list = attrs.field(converter=array_converter)
-
+    # WithQualifiers class attrs
+    qualifiers_attr_name = "item_type"
+    multiple_qualifiers = False
+    allowed_qualifiers = (Singluar,)
     item_type = None
 
-    type = list
+    raw_type = list
+
+    value: list = attrs.field(converter=array_converter)
 
     def __attrs_post_init__(self):
         # Ensure items are of the correct type
@@ -186,17 +191,3 @@ class Array(Field):
 
     def __iter__(self):
         return iter(self.value)
-
-    @classmethod
-    def __class_getitem__(cls, item_type):
-        """Set the item type for a newly created dynamically type"""
-        if not issubclass(item_type, Singluar):
-            raise RuntimeError(
-                'Can only provide "Singluar" field type as item types for Array fields, not '
-                f"{item_type}"
-            )
-        return type(
-            f"{item_type.__name__}_{cls.__name__}",
-            (cls,),
-            {"item_type": item_type},
-        )

@@ -1,8 +1,9 @@
 from pathlib import Path
 import json
-from ..core import __version__, mark
+from ..core import __version__, mark, DataType
+from ..core.mixin import WithQualifiers
 from ..generic import File
-from ..core.utils import MissingExtendedDependency, import_converters
+from ..core.utils import MissingExtendedDependency
 
 try:
     import yaml
@@ -10,8 +11,34 @@ except ImportError:
     yaml = MissingExtendedDependency("yaml", __name__)
 
 
-class DataSerialization(File):
+class Schema(DataType):
+    """Base class for all serialization schemas (can be used for abstract schemas that
+    don't actually have a formal definition)"""
+
+    pass
+
+
+class JsonSchema(Schema):
+    pass
+
+
+class XmlSchema(Schema):
+    pass
+
+
+class InformalSchema(Schema):
+    "Not actually a strict schema, just a set of conventions on how to structure the serialization"
+
+
+class DataSerialization(WithQualifiers, File):
     "Base class for text-based hierarchical data-serialization formats, e.g. JSON, YAML"
+
+    # Qualifiers class attrs
+    qualifiers_attr_name = "schema"
+    schema = None
+    multiple_qualifiers = False
+    allowed_qualifiers = (Schema,)
+    generically_qualified = True
 
     iana_mime = None
 
@@ -28,10 +55,12 @@ class DataSerialization(File):
 
 class Xml(DataSerialization):
     ext = ".xml"
+    allowed_qualifiers = (XmlSchema, InformalSchema)
 
 
 class Json(DataSerialization):
     ext = ".json"
+    allowed_qualifiers = (JsonSchema, InformalSchema)
 
     @mark.check
     def load(self):
@@ -61,6 +90,3 @@ class Yaml(DataSerialization):
         with open(fspath, "w") as f:
             yaml.dump(dct, f)
         return cls(fspath)
-
-
-import_converters(__name__)

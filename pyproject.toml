@@ -49,6 +49,7 @@ dev = [
     "codespell",
     "flake8",
     "flake8-pyproject",
+    "fileformats[extended]",
     "fileformats[test]",
 ]
 test = [
@@ -56,7 +57,7 @@ test = [
     "pytest-env>=0.6.2",
     "pytest-cov>=2.12.1",
     "codecov",
-    "fileformats[extended]",
+    "fileformats-testing",
 ]
 docs = [
     "packaging",
@@ -83,6 +84,9 @@ source = "vcs"
 
 [tool.hatch.build.hooks.vcs]
 version-file = "fileformats/core/_version.py"
+
+[tool.hatch.metadata]
+allow-direct-references = true
 
 [tool.hatch.build]
 packages = [
