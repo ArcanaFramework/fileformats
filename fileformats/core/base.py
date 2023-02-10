@@ -620,7 +620,17 @@ class FileSet(DataType):
         """
         if source_format.is_subtype_of(cls):
             return None
-        converters = cls.get_converters_dict()
+        converters = (
+            cls.get_converters_dict()
+        )  # triggers loading of standard converters
+        # Ensure converters from source format is loaded
+        source_format.import_standard_converters()
+        try:
+            unqualified = source_format.unqualified
+        except AttributeError:
+            pass
+        else:
+            unqualified.import_standard_converters()
         try:
             converter, conv_kwargs = converters[source_format]
         except KeyError:
@@ -655,23 +665,30 @@ class FileSet(DataType):
         except KeyError:
             converters_dict = {}
             klass.converters = converters_dict
-            standard_converters_module = f"fileformats.{klass.namespace}.converters"
-            try:
-                importlib.import_module(standard_converters_module)
-            except ImportError as e:
-                if str(e) != f"No module named '{standard_converters_module}'":
-                    if klass.namespace in STANDARD_NAMESPACES:
-                        pkg = "fileformats"
-                    else:
-                        pkg = f"fileformats-{klass.namespace}"
-                    warn(
-                        f"Could not import standard converters for '{klass.namespace}' namespace, "
-                        f"please install '{pkg}' with the 'extended' install option to "
-                        f"use converters for {klass.namespace}, i.e.\n\n"
-                        f"    $ python3 -m pip install '{pkg}[extended]':\n\n"
-                        f"Import error was:\n{traceback.format_exc()}"
-                    )
+            klass.import_standard_converters()
         return converters_dict
+
+    @classmethod
+    def import_standard_converters(cls):
+        """Attempts to import standard converters for the format class, which are
+        located at `fileformats.<namespace>.converters`
+        """
+        standard_converters_module = f"fileformats.{cls.namespace}.converters"
+        try:
+            importlib.import_module(standard_converters_module)
+        except ImportError as e:
+            if str(e) != f"No module named '{standard_converters_module}'":
+                if cls.namespace in STANDARD_NAMESPACES:
+                    pkg = "fileformats"
+                else:
+                    pkg = f"fileformats-{cls.namespace}"
+                warn(
+                    f"Could not import standard converters for '{cls.namespace}' namespace, "
+                    f"please install '{pkg}' with the 'extended' install option to "
+                    f"use converters for {cls.namespace}, i.e.\n\n"
+                    f"    $ python3 -m pip install '{pkg}[extended]':\n\n"
+                    f"Import error was:\n{traceback.format_exc()}"
+                )
 
     @classmethod
     def get_converter_tuples(
