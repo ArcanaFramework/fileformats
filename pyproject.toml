@@ -57,7 +57,7 @@ test = [
     "pytest-env>=0.6.2",
     "pytest-cov>=2.12.1",
     "codecov",
-    "fileformats-testing",
+    "fileformats_testing @ https://github.com/ArcanaFramework/fileformats-testing.git",
 ]
 docs = [
     "packaging",
@@ -84,6 +84,9 @@ source = "vcs"
 
 [tool.hatch.build.hooks.vcs]
 version-file = "fileformats/core/_version.py"
+
+[tool.hatch.metadata]
+allow-direct-references = true
 
 [tool.hatch.build]
 packages = [
