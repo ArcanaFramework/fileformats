@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="prev" title="Format Identification" href="identification.html" />
 
     <!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07 -->
-        <title>Developer Guide - FileFormats v0.4.0</title>
+        <title>Developer Guide - FileFormats v0.4.1</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -129,7 +129,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">FileFormats v0.4.0</div></a>
+      <a href="index.html"><div class="brand">FileFormats v0.4.1</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -152,7 +152,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">FileFormats v0.4.0</span>
+  <span class="sidebar-brand-text">FileFormats v0.4.1</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -575,19 +575,10 @@ such as in the <code class="docutils literal notranslate"><span class="pre">mrco
 </pre></div>
 </div>
 <p>Since converter tasks rely on <a class="reference external" href="https://pydra.readthedocs.io">Pydra</a>, which should be added as an &quot;extended&quot; dependency,
-there is a helping function <code class="docutils literal notranslate"><span class="pre">fileformats.core.import_converters</span></code>, which should be used
-to import the converters into the namespace subpackage <code class="docutils literal notranslate"><span class="pre">__init__.py</span></code>. This will catch
-an import error and raise an informative warning. For example, it is used in the
-<code class="docutils literal notranslate"><span class="pre">__init__.py</span></code> of <code class="docutils literal notranslate"><span class="pre">fileformats.image</span></code>.</p>
-<blockquote>
-<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">..core</span> <span class="kn">import</span> <span class="n">__version__</span><span class="p">,</span> <span class="n">import_converters</span>
-<span class="kn">from</span> <span class="nn">.raster</span> <span class="kn">import</span> <span class="n">RasterImage</span><span class="p">,</span> <span class="n">Bitmap</span><span class="p">,</span> <span class="n">Gif</span><span class="p">,</span> <span class="n">Jpeg</span><span class="p">,</span> <span class="n">Png</span><span class="p">,</span> <span class="n">Tiff</span>
-<span class="kn">from</span> <span class="nn">.vector</span> <span class="kn">import</span> <span class="n">VectorImage</span><span class="p">,</span> <span class="n">Svg</span>
-
-<span class="n">import_converters</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
-</pre></div>
-</div>
-</div></blockquote>
+they are not loaded by default. However, if there is a package at
+<code class="docutils literal notranslate"><span class="pre">fileformats.&lt;namespace&gt;.converters</span></code>, it will be attempted to be imported and throw
+a warning if the import fails, when get_converter is called on a format in that
+namespace.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>If the converters aren't imported successfully, then you will receive a

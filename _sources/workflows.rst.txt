@@ -48,12 +48,12 @@ Directories are classified by the contents of the files within them, via the
 
 .. code-block:: python
 
-    from fileformats.generic import File, Directory
+    from fileformats.generic import File, BaseDirectory
 
     class DicomFile(File):
         ext = ".dcm"
 
-    class Dicom(Directory):
+    class  Dicom(BaseBaseDirectory):
         content_types = (DicomFile,)
 
 
