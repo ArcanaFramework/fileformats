@@ -1,11 +1,9 @@
 import importlib
-from warnings import warn
 from pathlib import Path
 import inspect
 import typing as ty
 import re
 import os
-import traceback
 import pkgutil
 from contextlib import contextmanager
 from fileformats.core.exceptions import (
@@ -151,24 +149,6 @@ class MissingExtendedDependency:
         )
 
 
-def import_converters(module_name: str):
-    """Attempts to import converters and raises warning if they can be imported"""
-    try:
-        importlib.import_module(module_name + ".converters")
-    except ImportError:
-        namespace = module_name.split(".")[1]
-        if namespace in STANDARD_NAMESPACES:
-            subpkg = ""
-        else:
-            subpkg = f"-{namespace}"
-        warn(
-            f"could not import converters for {module_name} module, please install with "
-            f"the 'extended' install option to use converters for {module_name}, i.e.\n\n"
-            f"$ python3 -m pip install fileformats{subpkg}[extended]:\n\n"
-            f"Import error was:\n{traceback.format_exc()}"
-        )
-
-
 STANDARD_NAMESPACES = [
     "archive",
     "audio",
@@ -272,6 +252,10 @@ def describe_task(task):
 
     if isinstance(task, ConverterWrapper):
         task = task.task_spec
+    if inspect.isfunction(task):
+        import cloudpickle
+
+        task = cloudpickle.loads(task().inputs._func)
     src_file = inspect.getsourcefile(task)
     src_line = inspect.getsourcelines(task)[-1]
     return f"{task} (defined at line {src_line} of {src_file})"

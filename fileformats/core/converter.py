@@ -138,7 +138,11 @@ class SubtypeVar:
         prev_registered = [
             f
             for f in cls.converters
-            if f.non_wildcard_qualifiers() == source_format.non_wildcard_qualifiers()
+            if (
+                f.unqualified is source_format.unqualified
+                and f.non_wildcard_qualifiers()
+                == source_format.non_wildcard_qualifiers()
+            )
         ]
         assert len(prev_registered) <= 1
         if prev_registered:
@@ -146,7 +150,7 @@ class SubtypeVar:
             prev_task = cls.converters[prev][0]
             raise FileFormatsError(
                 f"There is already a converter registered from {prev} "
-                f"to the generic type '{tuple(prev.wilcard_qualifiers())[0]}':"
+                f"to the generic type '{tuple(prev.wildcard_qualifiers())[0]}':"
                 f"{describe_task(prev_task)}"
             )
 

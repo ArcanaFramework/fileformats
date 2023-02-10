@@ -3,7 +3,7 @@ import json
 from ..core import __version__, mark, DataType
 from ..core.mixin import WithQualifiers
 from ..generic import File
-from ..core.utils import MissingExtendedDependency, import_converters
+from ..core.utils import MissingExtendedDependency
 
 try:
     import yaml
@@ -90,6 +90,3 @@ class Yaml(DataSerialization):
         with open(fspath, "w") as f:
             yaml.dump(dct, f)
         return cls(fspath)
-
-
-import_converters(__name__)

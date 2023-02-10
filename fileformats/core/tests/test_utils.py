@@ -4,7 +4,6 @@ from fileformats.core.mixin import WithSeparateHeader
 from fileformats.core.utils import (
     find_matching,
     MissingExtendedDependency,
-    import_converters,
 )
 from fileformats.core.exceptions import MissingExtendedDepenciesError
 import fileformats.text
@@ -92,10 +91,3 @@ def test_missing_dependency():
 
     with pytest.raises(MissingExtendedDepenciesError):
         missing_dep.an_attr
-
-
-def test_import_converters_warning():
-    with pytest.warns(
-        UserWarning, match="could not import converters for fileformats.notimportable"
-    ):
-        import_converters("fileformats.notimportable")

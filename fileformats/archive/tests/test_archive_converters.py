@@ -1,7 +1,8 @@
 import filecmp
 import pytest
 from fileformats.generic import File, Directory
-from fileformats.archive import Zip, Gzip, Tar, Tar_Gzip, ExtractedFile
+from fileformats.archive import Zip, Gzip, Tar, TarGzip
+from fileformats.text import Plain as PlainText
 
 
 TEST_DIR = "__test_dir__"
@@ -16,7 +17,7 @@ def archive_input(work_dir, request):
         test_file = work_dir / TEST_FILE
         with open(test_file, "w") as f:
             f.write("test file contents")
-        inpt = File(test_file)
+        inpt = PlainText(test_file)
     elif request.param == "directory":
         test_dir = work_dir / TEST_DIR
         test_dir.mkdir()
@@ -47,18 +48,17 @@ def test_tar_roundtrip(archive_input):
     _roundtrip(archive_input, Tar)
 
 
-@pytest.mark.xfail(
-    reason="Need to implement archive qualifiers before we can do this type of conversion"
-)
 def test_tar_gz_roundtrip(archive_input):
-    _roundtrip(archive_input, Tar_Gzip)
+    _roundtrip(archive_input, TarGzip)
 
 
 def _roundtrip(input, archive_klass):
-    archive = archive_klass.convert(input)
+    archive_klass.convert(input)  # test generic archive
+    # Create qualified archive that can be reversed
+    compressed_type = Directory if input.is_dir else PlainText
+    archive = archive_klass[compressed_type].convert(input)
     assert isinstance(archive, archive_klass)
-    extracted_type = Directory if input.is_dir else ExtractedFile
-    output = extracted_type.convert(archive)
+    output = compressed_type.convert(archive)
     if isinstance(input, File):
         assert filecmp.cmp(output.fspath, input.fspath)
     else:

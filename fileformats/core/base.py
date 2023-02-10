@@ -1,6 +1,8 @@
 import os
 from copy import copy
 from inspect import isclass
+from warnings import warn
+import traceback
 import typing as ty
 import importlib
 import shutil
@@ -653,6 +655,22 @@ class FileSet(DataType):
         except KeyError:
             converters_dict = {}
             klass.converters = converters_dict
+            standard_converters_module = f"fileformats.{klass.namespace}.converters"
+            try:
+                importlib.import_module(standard_converters_module)
+            except ImportError as e:
+                if str(e) != f"No module named '{standard_converters_module}'":
+                    if klass.namespace in STANDARD_NAMESPACES:
+                        pkg = "fileformats"
+                    else:
+                        pkg = f"fileformats-{klass.namespace}"
+                    warn(
+                        f"Could not import standard converters for '{klass.namespace}' namespace, "
+                        f"please install '{pkg}' with the 'extended' install option to "
+                        f"use converters for {klass.namespace}, i.e.\n\n"
+                        f"    $ python3 -m pip install '{pkg}[extended]':\n\n"
+                        f"Import error was:\n{traceback.format_exc()}"
+                    )
         return converters_dict
 
     @classmethod
@@ -676,8 +694,9 @@ class FileSet(DataType):
         converters_dict = cls.get_converters_dict()
         available = []
         for src_frmt, converter in converters_dict.items():
-            if source_format.is_subtype_of(src_frmt):
-                available.append(converter)
+            if len(converter) == 2:  # Ignore converters with wildcards at this point
+                if source_format.is_subtype_of(src_frmt):
+                    available.append(converter)
         if not available and hasattr(source_format, "unqualified"):
             available = SubtypeVar.get_converter_tuples(
                 source_format, target_format=cls
@@ -709,11 +728,12 @@ class FileSet(DataType):
             if there is already a converter registered between the two types
         """
         converters_dict = cls.get_converters_dict()
+        # If no converters are loaded, attempt to load from the standard location
         if source_format in converters_dict:
-            prev_registered_task = cls.converters[source_format][0]
+            prev = cls.converters[source_format][0]
             raise FormatConversionError(
-                f"There is already a converter registered between {cls.__name__} "
-                f"and {cls.__name__}: {describe_task(prev_registered_task)}"
+                f"There is already a converter registered between {source_format.__name__} "
+                f"and {cls.__name__}: {describe_task(prev)}"
             )
         converters_dict[source_format] = converter_tuple
 

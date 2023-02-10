@@ -1,4 +1,4 @@
-from ..core import __version__, import_converters
+from fileformats.core import __version__
 from warnings import warn
 from fileformats.core import FileSet
 from fileformats.core.mixin import WithQualifiers
@@ -45,17 +45,10 @@ class Tar(WithMagicNumber, Archive):
     iana_mime = "application/x-tar"
 
 
-class Tar_Gzip(Gzip, Tar):
+class TarGzip(WithMagicNumber, Archive):
+    # FIXME: Should capture the relationship to Gzip and Tar somehow, but a bit
+    # tricky to get it right
     ext = ".tar.gz"
+    magic_number = "1F8B08"
     alternate_exts = (".tgz",)
-    magic_number_offset = 0
     iana_mime = "application/x-tar+gzip"
-
-
-class ExtractedFile(File):
-    """An extracted generic file, used as a target for unzip converters"""
-
-    iana_mime = None
-
-
-import_converters(__name__)
