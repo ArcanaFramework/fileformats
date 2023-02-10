@@ -1,3 +1,4 @@
+from __future__ import annotations
 import pytest
 import pydra.mark
 from fileformats.core import from_mime, DataType, FileSet
@@ -96,6 +97,9 @@ def test_qualifier_fails():
     with pytest.raises(FileFormatsError) as e:
         M[A, B]
     assert "Multiple qualifiers not permitted for " in str(e)
+
+
+# (source_format=F, target_format=H)
 
 
 @converter

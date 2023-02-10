@@ -1,3 +1,4 @@
+import importlib
 import attrs
 from .base import DataType, REQUIRED_ANNOTATION, CHECK_ANNOTATION
 from .converter import ConverterWrapper
@@ -95,6 +96,13 @@ def converter(
                     raise
         else:
             target = target_format
+        # Handle string annotations
+        if isinstance(source, str) or isinstance(target, str):
+            module_dict = importlib.import_module(task_spec.__module__).__dict__
+            if isinstance(source, str):
+                source = eval(source, module_dict)
+            if isinstance(target, str):
+                target = eval(target, module_dict)
         if not target.is_subtype_of(DataType):
             raise FormatConversionError(
                 f"Target file format '{target.__name__}' is not of subtype of "
