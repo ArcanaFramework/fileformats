@@ -70,6 +70,7 @@ def test_subtype_testing():
     assert L[A, E].is_subtype_of(L[A, C])
     assert not L[E, A].is_subtype_of(L[A, C])
     assert K[A, E, B].is_subtype_of(K[A, C, B])
+    assert N[J, K].is_subtype_of(N[J, H])  # J is subclass of H,
 
 
 def test_qualifier_fails():
@@ -266,7 +267,7 @@ def f2generic(in_file: F[SpecificDataType]) -> SpecificDataType:
 
 @converter
 @pydra.mark.task
-def n2generic(in_file: N[SpecificDataType, H]) -> SpecificDataType:
+def n2generic(in_file: N[SpecificDataType, G]) -> SpecificDataType:
     return in_file
 
 
@@ -278,7 +279,7 @@ def test_wildcard_generic_from_template_conversion():
 
 def test_wildcard_generic_from_multi_template_conversion():
 
-    J.get_converter(N[J, H])
+    J.get_converter(N[J, G])
     with pytest.raises(FormatConversionError):
         J.get_converter(N[J, K])
 

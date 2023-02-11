@@ -105,7 +105,9 @@ def fspaths_converter(
     ]
 ):
     """Ensures fs-paths are a set of pathlib.Path"""
-    if isinstance(fspaths, (str, os.PathLike, bytes)):
+    if isinstance(fspaths, (str, os.PathLike, bytes)) and not isinstance(
+        fspaths, fileformats.core.FileSet
+    ):
         fspaths = [fspaths]
     return frozenset(Path(p).absolute() for p in fspaths)
 

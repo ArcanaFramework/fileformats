@@ -1,7 +1,7 @@
 import pytest
 from fileformats.generic import File, Directory, BaseDirectory
 from fileformats.core.exceptions import FormatMismatchError
-from fileformats.core.mixin import WithSideCar
+from fileformats.core.mixin import WithSideCars
 from conftest import write_test_file
 
 
@@ -163,7 +163,7 @@ def test_nested_directories_fail2(work_dir):
     assert not NestedDirFormat.matches(fspath)
 
 
-# class FileWithSideCar(File):
+# class FileWithSideCars(File):
 
 #     ext = ".foo"
 
@@ -178,7 +178,7 @@ def test_nested_directories_fail2(work_dir):
 #     write_test_file(fspath)
 #     bar_fspath = work_dir / "test.bar"
 #     write_test_file(bar_fspath)
-#     file = FileWithSideCar([fspath, bar_fspath])
+#     file = FileWithSideCars([fspath, bar_fspath])
 #     assert file.bar == bar_fspath
 
 
@@ -187,7 +187,7 @@ def test_nested_directories_fail2(work_dir):
 #     write_test_file(fspath)
 #     bar_fspath = work_dir / "whoopwhoop.bar"
 #     write_test_file(bar_fspath)
-#     file = FileWithSideCar([fspath, bar_fspath])
+#     file = FileWithSideCars([fspath, bar_fspath])
 #     assert file.fspath == fspath
 #     assert file.bar == bar_fspath
 
@@ -197,7 +197,7 @@ def test_nested_directories_fail2(work_dir):
 #     write_test_file(fspath)
 #     bar_fspath = work_dir / "test.bar"
 #     write_test_file(bar_fspath)
-#     file = FileWithSideCar(fspath)
+#     file = FileWithSideCars(fspath)
 #     assert file.fspath == fspath
 #     assert file.bar == bar_fspath
 
@@ -205,7 +205,7 @@ def test_nested_directories_fail2(work_dir):
 # def test_side_car_fail(work_dir):
 #     fspath = work_dir / "test.foo"
 #     write_test_file(fspath)
-#     assert not FileWithSideCar.matches(fspath)
+#     assert not FileWithSideCars.matches(fspath)
 
 
 # def test_side_car_fail2(work_dir):
@@ -213,7 +213,7 @@ def test_nested_directories_fail2(work_dir):
 #     write_test_file(fspath)
 #     fspath = work_dir / "test.bad"
 #     write_test_file(fspath)
-#     assert not FileWithSideCar.matches(fspath)
+#     assert not FileWithSideCars.matches(fspath)
 
 
 class Bar(File):
@@ -221,14 +221,14 @@ class Bar(File):
     ext = ".bar"
 
 
-class FooWithSideCar(WithSideCar, TestFile):
+class FooWithSideCars(WithSideCars, TestFile):
 
-    side_car_type = Bar
+    side_car_types = (Bar,)
 
 
 class DirContainingSideCars(BaseDirectory):
 
-    content_types = (FooWithSideCar,)
+    content_types = (FooWithSideCars,)
 
 
 def test_dir_containing_side_cars(work_dir):

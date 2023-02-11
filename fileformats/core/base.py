@@ -408,12 +408,17 @@ class FileSet(DataType):
         """Returns all fspaths that are required for the format"""
         required = set()
         for prop_name in self.required_properties():
-            try:
-                prop = Path(getattr(self, prop_name))
-            except TypeError:
-                continue
-            if prop in self.fspaths:
-                required.add(prop)
+            prop = getattr(self, prop_name)
+            paths = []
+            if isinstance(prop, os.PathLike):
+                paths = [Path(prop)]
+            elif isinstance(prop, ty.Iterable):
+                for p in prop:
+                    if isinstance(p, os.PathLike):
+                        paths.append(Path(p))
+            for path in paths:
+                if path in self.fspaths:
+                    required.add(path)
         return required
 
     def trim_paths(self):
@@ -622,8 +627,8 @@ class FileSet(DataType):
             return None
         converters = (
             cls.get_converters_dict()
-        )  # triggers loading of standard converters
-        # Ensure converters from source format is loaded
+        )  # triggers loading of standard converters for target format
+        # Ensure standard converters from source format are loaded
         source_format.import_standard_converters()
         try:
             unqualified = source_format.unqualified
@@ -632,8 +637,10 @@ class FileSet(DataType):
         else:
             unqualified.import_standard_converters()
         try:
-            converter, conv_kwargs = converters[source_format]
+            converter_tuple = converters[source_format]
         except KeyError:
+            # If no direct mapping check for mapping from source super types and wildcard
+            # matches
             available_converters = cls.get_converter_tuples(source_format)
             if len(available_converters) > 1:
                 available_str = "\n".join(
@@ -648,8 +655,12 @@ class FileSet(DataType):
                     f"Could not find converter between '{source_format.mime_like}' and "
                     f"'{cls.mime_like}' formats"
                 ) from None
-            converter, conv_kwargs = available_converters[0]
+            converter_tuple = available_converters[0]
+            # Store mapping for future reference
+            converters[source_format] = converter_tuple
+        converter, conv_kwargs = converter_tuple
         if kwargs:
+            # Merge kwargs provided to get_conveter with stored kwargs
             conv_kwargs = copy(conv_kwargs)
             conv_kwargs.update(kwargs)
         return converter(name=name, **conv_kwargs)
