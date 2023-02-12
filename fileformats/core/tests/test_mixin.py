@@ -1,9 +1,8 @@
-import pytest
 from conftest import write_test_file
 from fileformats.generic import File
 from fileformats.core import mark
-from fileformats.core.mixin import WithMagicNumber, WithSeparateHeader, WithSideCar
-from fileformats.core.exceptions import FormatMismatchError, FileFormatsError
+from fileformats.core.mixin import WithMagicNumber, WithSeparateHeader, WithSideCars
+from fileformats.core.exceptions import FormatMismatchError
 
 
 class FileWithMagicNumber(WithMagicNumber, File):
@@ -111,11 +110,11 @@ class ImageWithInlineHeader(File):
         return dict(ln.split(":") for ln in hdr.splitlines())
 
 
-class FileWithSideCar(WithSideCar, ImageWithInlineHeader):
+class FileWithSideCars(WithSideCars, ImageWithInlineHeader):
 
     ext = ".img"
     primary_type = ImageWithInlineHeader
-    side_car_type = Header
+    side_car_types = (Header,)
 
     experiment_type_key = "experiment-type"
     experiment_type = "sample-experiment-type"
@@ -132,10 +131,10 @@ class FileWithSideCar(WithSideCar, ImageWithInlineHeader):
     @mark.check
     def check_experiment_type(self):
         """Loaded from side-car"""
-        if self.metadata[self.experiment_type_key] != self.experiment_type:
+        if self.metadata["header"][self.experiment_type_key] != self.experiment_type:
             raise FormatMismatchError(
                 f"Mismatch in '{self.experiment_type_key}', expected {self.experiment_type}, "
-                f"found {self.metadata[self.experiment_type_key]}"
+                f"found {self.metadata['header'][self.experiment_type_key]}"
             )
 
 
@@ -156,12 +155,12 @@ def test_with_side_car(work_dir):
     )
     side_car_fs_path = work_dir / "image.hdr"
     side_car = {
-        FileWithSideCar.experiment_type_key: FileWithSideCar.experiment_type,
+        FileWithSideCars.experiment_type_key: FileWithSideCars.experiment_type,
     }
     write_test_file(
         side_car_fs_path, "\n".join(f"{k}:{v}" for k, v in side_car.items())
     )
-    assert FileWithSideCar.matches([fspath, side_car_fs_path])
+    assert FileWithSideCars.matches([fspath, side_car_fs_path])
 
 
 def test_with_side_car_fail1(work_dir):
@@ -181,12 +180,12 @@ def test_with_side_car_fail1(work_dir):
     )
     side_car_fs_path = work_dir / "image.hdr"
     side_car = {
-        FileWithSideCar.experiment_type_key: FileWithSideCar.experiment_type,
+        FileWithSideCars.experiment_type_key: FileWithSideCars.experiment_type,
     }
     write_test_file(
         side_car_fs_path, "\n".join(f"{k}:{v}" for k, v in side_car.items())
     )
-    assert not FileWithSideCar.matches([fspath, side_car_fs_path])
+    assert not FileWithSideCars.matches([fspath, side_car_fs_path])
 
 
 def test_with_side_car_fail2(work_dir):
@@ -206,12 +205,12 @@ def test_with_side_car_fail2(work_dir):
     )
     side_car_fs_path = work_dir / "image.hdr"
     side_car = {
-        FileWithSideCar.experiment_type_key: FileWithSideCar.experiment_type,
+        FileWithSideCars.experiment_type_key: FileWithSideCars.experiment_type,
     }
     write_test_file(
         side_car_fs_path, "\n".join(f"{k}:{v}" for k, v in side_car.items())
     )
-    assert not FileWithSideCar.matches([fspath, side_car_fs_path])
+    assert not FileWithSideCars.matches([fspath, side_car_fs_path])
 
 
 def test_with_side_car_fail3(work_dir):
@@ -231,37 +230,9 @@ def test_with_side_car_fail3(work_dir):
     )
     side_car_fs_path = work_dir / "image.hdr"
     side_car = {
-        FileWithSideCar.experiment_type_key: "bad-experiment-type",  # NB: bad type
+        FileWithSideCars.experiment_type_key: "bad-experiment-type",  # NB: bad type
     }
     write_test_file(
         side_car_fs_path, "\n".join(f"{k}:{v}" for k, v in side_car.items())
     )
-    assert not FileWithSideCar.matches([fspath, side_car_fs_path])
-
-
-def test_with_side_car_fail_overlap(work_dir):
-
-    fspath = work_dir / "image.img"
-    hdr = {
-        ImageWithInlineHeader.image_type_key: ImageWithInlineHeader.image_type,
-        "dims": "10,20,30",  # NB: overlaps with header
-    }
-    write_test_file(
-        fspath,
-        (
-            "\n".join(f"{k}:{v}" for k, v in hdr.items()).encode("utf-8")
-            + ImageWithInlineHeader.header_separator
-            + b"SOMERANDOMBYTESDATA"
-        ),
-        binary=True,
-    )
-    side_car_fs_path = work_dir / "image.hdr"
-    side_car = {
-        FileWithSideCar.experiment_type_key: FileWithSideCar.experiment_type,
-        "dims": "10,20,30",  # NB: overlaps with header
-    }
-    write_test_file(
-        side_car_fs_path, "\n".join(f"{k}:{v}" for k, v in side_car.items())
-    )
-    with pytest.raises(FileFormatsError):
-        assert FileWithSideCar.matches([fspath, side_car_fs_path])
+    assert not FileWithSideCars.matches([fspath, side_car_fs_path])

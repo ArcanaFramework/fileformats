@@ -3,7 +3,7 @@ import typing as ty
 from collections import Counter
 from . import mark
 from .base import FileSet
-from .utils import classproperty, describe_task
+from .utils import classproperty, describe_task, to_mime_format_name
 from .converter import SubtypeVar
 from .exceptions import FileFormatsError, FormatMismatchError, FormatRecognitionError
 
@@ -120,46 +120,44 @@ class WithSeparateHeader(WithAdjacentFiles):
         return self.header.load()
 
 
-class WithSideCar(WithAdjacentFiles):
+class WithSideCars(WithAdjacentFiles):
     """Mixin class for Files with a "side-car" file that augments the inline metadata
     (typically with the same file stem but differing extension).
 
-    Note that WithSideCar must come before the primary type in the method-resolution
+    Note that WithSideCars must come before the primary type in the method-resolution
     order of the class so it can override the '__attrs_post_init__' and 'load_metadata'
     methods, e.g.
 
-        class MyFileFormatWithSideCar(WithSideCar, MyFileFormat):
+        class MyFileFormatWithSideCars(WithSideCars, MyFileFormat):
 
             primary_type = MyFileFormat
-            side_car_type = MySideCarType
+            side_car_types = (MySideCarType,)
 
     Class Attrs
     -----------
     primary_type : type
         the file-format of the primary file (used to read the inline metadata), can be
         the base class that implements 'load_metadata'
-    side_car_type : type
-        the file-format of the header file
+    side_car_types : tuple[type, ...]
+        the file-formats of the expected side-car files
     """
 
     @mark.required
     @property
-    def side_car(self):
-        return self.side_car_type(self.select_by_ext(self.side_car_type))
+    def side_cars(self):
+        return [tp(self.select_by_ext(tp)) for tp in self.side_car_types]
 
     def load_metadata(self):
         metadata = self.primary_type.load_metadata(self)
-        side_car_data = self.side_car.load()
-        overlap = set(metadata) & set(side_car_data)
-        if overlap:
-            raise FileFormatsError(
-                "Detected overlap between header values and side-car values:\n"
-                "\n".join(
-                    f"{k}: header={metadata[k]}, side-car={side_car_data[k]}"
-                    for k in overlap
-                )
-            )
-        metadata.update(side_car_data)
+        for side_car in self.side_cars:
+            try:
+                side_car_metadata = side_car.load()
+            except AttributeError:
+                continue
+            else:
+                metadata[
+                    to_mime_format_name(type(side_car).__name__)
+                ] = side_car_metadata
         return metadata
 
 
@@ -265,6 +263,7 @@ class WithQualifiers:
         # Sort content types if order isn't important
         if cls.multiple_qualifiers:
             if not cls.ordered_qualifiers:
+                # TODO: should check to see if qualifiers are subclasses of each other
                 repetitions = [t for t, c in Counter(qualifiers).items() if c > 1]
                 if repetitions:
                     raise FileFormatsError(

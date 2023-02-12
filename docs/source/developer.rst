@@ -122,7 +122,7 @@ return a dictionary containing metadata for the file-set.
     '0001'
 
 
-Similar to ``WithSeparateHeader``, ``WithSideCar`` can be used to define a format that
+Similar to ``WithSeparateHeader``, ``WithSideCars`` can be used to define a format that
 contains some metadata within the main file, and additional metadata in a separate
 "side-car" file. It can be used the same as ``WithSeparateHeader``, however, the
 type of the primary file that reads the metadata from the binary file with ``load_metadata``
@@ -131,7 +131,7 @@ must also be defined in ``primary_type``
 .. code-block:: python
 
     from fileformats.generic import File
-    from fileformats.core.mixin import WithSideCar
+    from fileformats.core.mixin import WithSideCars
     from fileformats.serialization import Json
 
     class FormatWithoutSideCar(File):
@@ -142,10 +142,10 @@ must also be defined in ``primary_type``
            ... load metadata in binary...
 
 
-    class FormatWithSideCar(WithSideCar, File):
+    class FormatWithSideCars(WithSideCars, File):
         ext = ".fws"
         primary_type = FormatWithoutSideCar
-        side_car_type = Json
+        side_car_types = (Json,)
 
 
 .. warning::
