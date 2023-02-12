@@ -336,7 +336,7 @@ class FileSet(DataType):
             missing_str = "\n".join(str(p) for p in missing)
             all_str = "\n".join(str(p) for p in fspaths)
             msg = (
-                f"The following file system paths provided to {self} do not "
+                f"The following file system paths provided to {type(self)} do not "
                 f"exist:\n{missing_str}\n\nFrom full list:\n{all_str}"
             )
             present_parents = set()
