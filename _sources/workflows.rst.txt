@@ -223,7 +223,7 @@ them can then be duck-typed in calling functions/methods. For example, both ``Ya
     def read_json_or_yaml_to_dict(serialized: DataSerialization):
         return serialized.load()
 
-Also, when providing the the ``WithSeparateHeader`` and ``WithSideCar`` mixin classes will
+Also, when providing the the ``WithSeparateHeader`` and ``WithSideCars`` mixin classes will
 
 Conversion
 ----------
