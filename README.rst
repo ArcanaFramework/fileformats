@@ -10,7 +10,7 @@ FileFormats
 .. image:: https://img.shields.io/pypi/v/fileformats.svg
    :target: https://pypi.python.org/pypi/fileformats/
    :alt: Latest Version
-.. image:: https://img.shields.io/github/stars/ArcanaFramework/fileformats.svg
+.. image:: https://img.shields.io/github/stars/ArcanaFramework/fileformats.svg?label=github
    :alt: GitHub stars
    :target: https://github.com/ArcanaFramework/fileformats
 .. image:: https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat
