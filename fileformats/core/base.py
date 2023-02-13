@@ -410,7 +410,9 @@ class FileSet(DataType):
         for prop_name in self.required_properties():
             prop = getattr(self, prop_name)
             paths = []
-            if isinstance(prop, os.PathLike):
+            if hasattr(prop, "required_paths"):
+                paths = prop.required_paths()
+            elif isinstance(prop, os.PathLike):
                 paths = [Path(prop)]
             elif isinstance(prop, ty.Iterable):
                 for p in prop:
@@ -488,7 +490,10 @@ class FileSet(DataType):
         else:
             fspaths_to_copy = self.fspaths
         for fspath in fspaths_to_copy:
-            new_fname = stem + ".".join(fspath.suffixes) if stem else fspath.name
+            if stem:
+                new_fname = stem + "".join(fspath.suffixes)
+            else:
+                new_fname = fspath.name
             new_path = dest_dir / new_fname
             if fspath.is_dir():
                 copy_dir(fspath, new_path)
