@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 import attrs
 from ..core.base import FileSet
-from ..core.exceptions import FormatMismatchError
+from ..core.exceptions import FormatMismatchError, FileFormatsError
 from ..core import mark
 from ..core.utils import splitext, classproperty
 from ..core.mixin import WithQualifiers
@@ -35,7 +35,6 @@ class FsObject(FileSet, os.PathLike):
 class File(FsObject):
     """Generic file type"""
 
-    ext = ""
     binary = False
     is_dir = False
 
@@ -44,10 +43,16 @@ class File(FsObject):
     def fspath(self):
         fspath = self.select_by_ext()
         if not fspath.is_file():
-            raise FormatMismatchError(
-                f'Path that matches extension of "{type(self)}", {fspath}, is not a '
-                "file in {repr(self)}"
-            )
+            if not fspath.exists():
+                raise FileFormatsError(
+                    f"Selected fspath for {type(self)}, '{str(fspath)}', does not exist"
+                )
+            else:
+                msg = ", it is a directory" if fspath.is_dir() else ""
+                raise FormatMismatchError(
+                    f'Path that matches extension of "{type(self)}", {fspath}, is not a '
+                    "file in {repr(self)}" + msg
+                )
         return fspath
 
     @classmethod
@@ -97,7 +102,7 @@ class File(FsObject):
 
     @property
     def actual_ext(self):
-        "The actual file extension (out of the main and alternate extensions possible)"
+        "The actual file extension (out of the primary  and alternate extensions possible)"
         try:
             return next(e for e in self.possible_exts if self.fspath.name.endswith(e))
         except StopIteration:

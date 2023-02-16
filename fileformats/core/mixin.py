@@ -86,9 +86,9 @@ class WithAdjacentFiles:
         adjacents = set()
         for sibling in self.fspath.parent.iterdir():
             if (
-                sibling is not self.fspath
+                sibling != self.fspath
                 and sibling.is_file()
-                and sibling.name.startswith(stem)
+                and sibling.name.startswith(stem + ".")
             ):
                 adjacents.add(sibling)
         return adjacents
