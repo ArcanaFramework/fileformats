@@ -35,7 +35,6 @@ class FsObject(FileSet, os.PathLike):
 class File(FsObject):
     """Generic file type"""
 
-    ext = ""
     binary = False
     is_dir = False
 
@@ -103,7 +102,7 @@ class File(FsObject):
 
     @property
     def actual_ext(self):
-        "The actual file extension (out of the main and alternate extensions possible)"
+        "The actual file extension (out of the primary  and alternate extensions possible)"
         try:
             return next(e for e in self.possible_exts if self.fspath.name.endswith(e))
         except StopIteration:

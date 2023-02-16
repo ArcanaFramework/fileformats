@@ -312,6 +312,7 @@ class FileSet(DataType):
     # type to None for any base classes that should not correspond to a MIME or MIME-like
     # type.
     iana_mime = None
+    ext = ""
 
     # Store converters registered by @converter decorator that convert to FileSet
     # NB: each class will have its own version of this dictionary
@@ -345,8 +346,10 @@ class FileSet(DataType):
                     if fspath.parent.exists():
                         present_parents.add(fspath.parent)
             for parent in present_parents:
-                msg += f"\n\nFiles in the present parent directory '{str(fspath.parent)}' are:\n"
-                msg += "\n".join(str(p) for p in fspath.parent.iterdir())
+                msg += (
+                    f"\n\nFiles in the present parent directory '{str(parent)}' are:\n"
+                )
+                msg += "\n".join(str(p) for p in parent.iterdir())
             raise FileNotFoundError(msg)
 
     def __iter__(self):
@@ -851,12 +854,15 @@ class FileSet(DataType):
                 relative_to /= os.path.commonprefix(
                     [p.name for p in self.fspaths]
                 ).rstrip(".")
+        relative_to = str(relative_to)
+        if Path(relative_to).is_dir() and not relative_to.endswith(os.path.sep):
+            relative_to += os.path.sep
         if crypto is None:
             crypto = hashlib.sha256
 
         file_hashes = {}
         for key, fspath in sorted(
-            ((str(p)[len(str(relative_to)) :], p) for p in self.fspaths),
+            ((str(p)[len(relative_to) :], p) for p in self.fspaths),
             key=itemgetter(0),
         ):
             if fspath.is_file():

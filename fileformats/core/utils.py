@@ -214,7 +214,7 @@ def hash_dir(
         for filename in filenames:
             if ignore_hidden_files and filename.startswith("."):
                 continue
-            file_hashes[str(dpath.relative_to(relative_to))] = hash_file(
+            file_hashes[str((dpath / filename).relative_to(relative_to))] = hash_file(
                 dpath / filename, crypto=crypto, chunk_len=chunk_len
             )
     return file_hashes
