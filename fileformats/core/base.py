@@ -335,10 +335,9 @@ class FileSet(DataType):
         missing = [p for p in fspaths if not p or not p.exists()]
         if missing:
             missing_str = "\n".join(str(p) for p in missing)
-            all_str = "\n".join(str(p) for p in fspaths)
             msg = (
                 f"The following file system paths provided to {type(self)} do not "
-                f"exist:\n{missing_str}\n\nFrom full list:\n{all_str}"
+                f"exist:\n\n{missing_str}\n\n"
             )
             present_parents = set()
             for fspath in missing:
