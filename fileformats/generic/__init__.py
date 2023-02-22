@@ -44,9 +44,13 @@ class File(FsObject):
         fspath = self.select_by_ext()
         if not fspath.is_file():
             if not fspath.exists():
-                raise FileFormatsError(
+                msg = (
                     f"Selected fspath for {type(self)}, '{str(fspath)}', does not exist"
                 )
+                if fspath.parent.exists():
+                    neighbours = [p.name for p in fspath.parent.iterdir()]
+                    msg += f". Found neighbouring files {neighbours}"
+                raise FileFormatsError(msg)
             else:
                 msg = ", it is a directory" if fspath.is_dir() else ""
                 raise FormatMismatchError(
