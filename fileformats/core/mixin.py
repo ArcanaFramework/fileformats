@@ -163,7 +163,7 @@ class WithSideCars(WithAdjacentFiles):
 
 class WithQualifiers:
     """Mixin class for adding the ability to qualify the format class to designate the
-    type of information stored within the format, e.g. ``Directory[Png, Gif]`` for a
+    type of information stored within the format, e.g. ``DirectoryContaining[Png, Gif]`` for a
     directory containing PNG and GIF files, ``Zip[DataFile]`` for a zipped data file,
     ``Array[Integer]`` for an array containing integers, or DicomDir[T1w, Brain] for a
     T1-weighted MRI scan of the brain in DICOM format.
@@ -217,7 +217,7 @@ class WithQualifiers:
     multiple_qualifiers = True
     allowed_qualifiers = None
     ordered_qualifiers = False
-    generically_qualified = False
+    generically_qualifies = False
 
     def __attrs_pre_init__(self):
         if self.wildcard_qualifiers():
@@ -526,7 +526,7 @@ class WithQualifiers:
         namespace"""
         if cls.is_qualified:
             namespaces = set(t.namespace for t in cls.qualifiers)
-            if not cls.generically_qualified:
+            if not cls.generically_qualifies:
                 namespaces.add(cls.unqualified.namespace)
             if len(namespaces) == 1:
                 return next(iter(namespaces))
@@ -535,7 +535,7 @@ class WithQualifiers:
                     "Cannot create reversible MIME type for because did not find a "
                     f"common namespace between all qualifiers {list(cls.qualifiers)}"
                 )
-                if cls.generically_qualified:
+                if cls.generically_qualifies:
                     msg += (
                         f" and (non genericly qualified) base class {cls.unqualified}"
                     )

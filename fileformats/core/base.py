@@ -252,14 +252,14 @@ class DataType:
                         )
                     except AttributeError:
                         try:
-                            qualified = cls.generically_qualified_by_name[
+                            qualified = cls.generically_qualifies_by_name[
                                 qualified_name
                             ]
                         except KeyError:
                             raise FormatRecognitionError(
                                 f"Could not load qualified class '{qualified_name}' from "
                                 f"fileformats.{namespace} or list of generic types "
-                                f"({list(cls.generically_qualified_by_name)}), "
+                                f"({list(cls.generically_qualifies_by_name)}), "
                                 f"corresponding to MIME, or MIME-like, type {mime_string}"
                             ) from None
                     klass = qualified[qualifiers]
@@ -271,16 +271,16 @@ class DataType:
         return klass
 
     @classproperty
-    def generically_qualified_by_name(cls):
-        if cls._generically_qualified_by_name is None:
-            cls._generically_qualified_by_name = {
+    def generically_qualifies_by_name(cls):
+        if cls._generically_qualifies_by_name is None:
+            cls._generically_qualifies_by_name = {
                 to_mime_format_name(f.__name__): f
                 for f in FileSet.all_formats
-                if getattr(f, "generically_qualified", False)
+                if getattr(f, "generically_qualifies", False)
             }
-        return cls._generically_qualified_by_name
+        return cls._generically_qualifies_by_name
 
-    _generically_qualified_by_name = None  # Register all generically qualified types
+    _generically_qualifies_by_name = None  # Register all generically qualified types
 
 
 @attrs.define
@@ -350,9 +350,6 @@ class FileSet(DataType):
                 )
                 msg += "\n".join(str(p) for p in parent.iterdir())
             raise FileNotFoundError(msg)
-
-    def __iter__(self):
-        return iter(self.fspaths)
 
     @property
     def metadata(self):

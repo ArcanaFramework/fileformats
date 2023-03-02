@@ -1,5 +1,5 @@
 import pytest
-from fileformats.generic import File, Directory, BaseDirectory
+from fileformats.generic import File, Directory, DirectoryContaining
 from fileformats.core.exceptions import FormatMismatchError
 from fileformats.core.mixin import WithSideCars
 from conftest import write_test_file
@@ -43,14 +43,14 @@ def test_dynamic_dir(work_dir):
 
     fspath = work_dir / "test-dir"
     write_test_file(fspath / "test.foo")
-    assert Directory[TestFile].matches(fspath)
+    assert DirectoryContaining[TestFile].matches(fspath)
 
 
 def test_dynamic_dir_fail(work_dir):
 
     fspath = work_dir / "test-dir"
     write_test_file(fspath / "test.bad")
-    assert not Directory[TestFile].matches(fspath)
+    assert not DirectoryContaining[TestFile].matches(fspath)
 
 
 class TestFile(File):
@@ -87,7 +87,7 @@ def test_file_cast(work_dir):
     assert File(file).fspath == fspath
 
 
-class TestDir(BaseDirectory):
+class TestDir(Directory):
 
     content_types = (TestFile,)
 
@@ -127,7 +127,7 @@ def test_double_ext_fail(work_dir):
     assert not DoubleExtFileFormat.matches(fspath)
 
 
-class NestedDirFormat(BaseDirectory):
+class NestedDirFormat(Directory):
 
     content_types = (TestFile, DoubleExtFileFormat, TestDir)
 
@@ -226,7 +226,7 @@ class FooWithSideCars(WithSideCars, TestFile):
     side_car_types = (Bar,)
 
 
-class DirContainingSideCars(BaseDirectory):
+class DirContainingSideCars(Directory):
 
     content_types = (FooWithSideCars,)
 
