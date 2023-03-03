@@ -72,7 +72,7 @@ class DataType:
             return True
 
     @classmethod
-    def is_subtype_of(cls, super_type: type, allow_same: bool = True):
+    def issubtype(cls, super_type: type, allow_same: bool = True):
         """Check to see whether datatype class is a subtype of a given super class.
         In this case the subtype is expected to be able to be treated as if it was
         the super class.
@@ -627,7 +627,7 @@ class FileSet(DataType):
         FileFormatConversionError
             ambiguous (i.e. more than one) converters found between source and dest format
         """
-        if source_format.is_subtype_of(cls):
+        if source_format.issubtype(cls):
             return None
         converters = (
             cls.get_converters_dict()
@@ -727,7 +727,7 @@ class FileSet(DataType):
         available = []
         for src_frmt, converter in converters_dict.items():
             if len(converter) == 2:  # Ignore converters with wildcards at this point
-                if source_format.is_subtype_of(src_frmt):
+                if source_format.issubtype(src_frmt):
                     available.append(converter)
         if not available and hasattr(source_format, "unqualified"):
             available = SubtypeVar.get_converter_tuples(

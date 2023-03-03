@@ -253,7 +253,7 @@ class WithQualifiers:
             not_allowed = [
                 q
                 for q in qualifiers
-                if not any(q.is_subtype_of(t) for t in cls.allowed_qualifiers)
+                if not any(q.issubtype(t) for t in cls.allowed_qualifiers)
             ]
             if not_allowed:
                 raise FileFormatsError(
@@ -359,11 +359,11 @@ class WithQualifiers:
                         if len(to_match) > 1:
                             wildcard_match = False
                         else:
-                            wildcard_match = source_format.is_subtype_of(to_match[0])
+                            wildcard_match = source_format.issubtype(to_match[0])
                     # Attempt template to template conversion match
                     elif getattr(
                         source_format, "is_qualified", False
-                    ) and source_format.unqualified.is_subtype_of(
+                    ) and source_format.unqualified.issubtype(
                         template_source_format.unqualified
                     ):
                         assert cls.wildcard_qualifiers(
@@ -393,10 +393,10 @@ class WithQualifiers:
                                             wildcard_match = False
                                             break
                                         else:
-                                            if not actual.is_subtype_of(reference):
+                                            if not actual.issubtype(reference):
                                                 wildcard_match = False
                                                 break
-                                    elif not actual.is_subtype_of(template):
+                                    elif not actual.issubtype(template):
                                         wildcard_match = False
                                         break
                         else:
@@ -425,14 +425,14 @@ class WithQualifiers:
         return available_converters
 
     @classmethod
-    def is_subtype_of(cls, super_type: type):
-        if super().is_subtype_of(super_type):
+    def issubtype(cls, super_type: type):
+        if super().issubtype(super_type):
             return True
         # Check to see whether the unqualified types are equivalent
         if (
             not cls.is_qualified
             or not getattr(super_type, "is_qualified", False)
-            or not cls.unqualified.is_subtype_of(super_type.unqualified)
+            or not cls.unqualified.issubtype(super_type.unqualified)
         ):
             return False
         if cls.ordered_qualifiers:
@@ -440,7 +440,7 @@ class WithQualifiers:
                 is_subtype = False
             else:
                 is_subtype = all(
-                    q.is_subtype_of(s)
+                    q.issubtype(s)
                     for q, s in zip(cls.qualifiers, super_type.qualifiers)
                 )
         else:
@@ -448,7 +448,7 @@ class WithQualifiers:
                 is_subtype = True
             else:
                 is_subtype = all(
-                    any(q.is_subtype_of(s) for q in cls.qualifiers)
+                    any(q.issubtype(s) for q in cls.qualifiers)
                     for s in super_type.qualifiers
                 )
         return is_subtype
@@ -501,7 +501,7 @@ class WithQualifiers:
                     f
                     for f in cls.converters
                     if (
-                        source_format.unqualified.is_subtype_of(f.unqualified)
+                        source_format.unqualified.issubtype(f.unqualified)
                         and f.non_wildcard_qualifiers()
                         == source_format.non_wildcard_qualifiers()
                     )

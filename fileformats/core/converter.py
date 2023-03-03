@@ -58,7 +58,7 @@ class SubtypeVar:
     def __name__(self):
         return self.name
 
-    def is_subtype_of(self, super_type: type, allow_same: bool = True):
+    def issubtype(self, super_type: type, allow_same: bool = True):
         """Check to see whether datatype class is a subtype of a given super class.
         In this case the subtype is expected to be able to be treated as if it was
         the super class.
@@ -79,7 +79,7 @@ class SubtypeVar:
             whether or not the current class can be considered a subtype of the super (or
             is the super itself)
         """
-        return self.base.is_subtype_of(super_type, allow_same=allow_same)
+        return self.base.issubtype(super_type, allow_same=allow_same)
 
     @classmethod
     def get_converter_tuples(
@@ -90,7 +90,7 @@ class SubtypeVar:
         available_converters = []
         if source_format.is_qualified:
             for template_source_format, converter in cls.converters.items():
-                if not template_source_format.unqualified.is_subtype_of(
+                if not template_source_format.unqualified.issubtype(
                     source_format.unqualified
                 ):
                     continue
@@ -101,7 +101,7 @@ class SubtypeVar:
                 from_types = tuple(
                     set(source_format.qualifiers).difference(non_wildcards)
                 )
-                if any(q.is_subtype_of(target_format) for q in from_types):
+                if any(q.issubtype(target_format) for q in from_types):
                     available_converters.append(converter)
         return available_converters
 
