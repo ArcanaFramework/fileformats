@@ -79,6 +79,8 @@ def integer_converter(value):
 
 
 def decimal_converter(value):
+    if isinstance(value, Decimal):
+        return value.value
     try:
         return Decimal_(value)
     except ValueError as e:

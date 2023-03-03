@@ -320,6 +320,9 @@ class FileSet(DataType):
 
     is_fileset = True
 
+    def __hash__(self):
+        return hash(sorted(self.fspaths))
+
     def __attrs_post_init__(self):
         # Check required properties don't raise errors
         for prop_name in self.required_properties():
