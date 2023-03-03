@@ -107,14 +107,15 @@ class File(FsObject):
     @property
     def actual_ext(self):
         "The actual file extension (out of the primary  and alternate extensions possible)"
-        try:
-            return next(e for e in self.possible_exts if self.fspath.name.endswith(e))
-        except StopIteration:
+        matching = [e for e in self.possible_exts if self.fspath.name.endswith(e)]
+        if not matching:
             assert False, (
                 f"extension of fspath {self.fspath} is not in possible extensions for "
                 f"{type(self)} class: {self.possible_exts}. This should have been "
                 "checked at initialisation"
             )
+        # Return the longest matching extension, useful for optional extensions
+        return sorted(matching, key=lambda x: len(x))[-1]
 
     @property
     def stem(self):

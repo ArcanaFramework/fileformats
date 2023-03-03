@@ -70,12 +70,3 @@ class Tiff(RasterImage):
                 f"'{self.magic_number_be}'"
             )
         return endianness
-
-
-class Dicom(WithMagicNumber):
-
-    iana_mime = "application/dicom"
-    magic_number = b"DICM"
-    magic_number_offset = 128
-
-    alternate_exts = (".dcm",)  # dcm is recommended not required
