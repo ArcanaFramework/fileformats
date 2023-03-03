@@ -38,7 +38,7 @@ class DataSerialization(WithQualifiers, File):
     schema = None
     multiple_qualifiers = False
     allowed_qualifiers = (Schema,)
-    generically_qualified = True
+    generically_qualifies = True
 
     iana_mime = None
 

@@ -157,8 +157,8 @@ def _create_tar(
         ignore_zeros=ignore_zeros,
         encoding=encoding,
     ) as tfile, set_cwd(base_dir):
-        for path in in_file:
-            tfile.add(relative_path(path, base_dir), filter=filter)
+        for fspath in in_file.fspaths:
+            tfile.add(relative_path(fspath, base_dir), filter=filter)
 
     return Path(out_file)
 
@@ -291,16 +291,16 @@ def _create_zip(
         compresslevel=compresslevel,
         **zip_kwargs,
     ) as zfile, set_cwd(base_dir):
-        for path in in_file:
-            path = Path(path)
-            if path.is_dir():
-                for dpath, _, files in os.walk(path):
+        for fspath in in_file.fspaths:
+            fspath = Path(fspath)
+            if fspath.is_dir():
+                for dpath, _, files in os.walk(fspath):
                     zfile.write(relative_path(dpath, base_dir))
                     for fname in files:
                         fpath = os.path.join(dpath, fname)
                         zfile.write(relative_path(fpath, base_dir))
             else:
-                zfile.write(relative_path(path, base_dir))
+                zfile.write(relative_path(fspath, base_dir))
     return Path(out_file)
 
 

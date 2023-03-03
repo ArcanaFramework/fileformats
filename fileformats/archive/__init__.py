@@ -13,7 +13,7 @@ class Archive(WithQualifiers, File):
     archived_type = None
     multiple_qualifiers = False
     allowed_qualifiers = (FileSet,)
-    generically_qualified = True
+    generically_qualifies = True
 
     binary = True
     iana_mime = None

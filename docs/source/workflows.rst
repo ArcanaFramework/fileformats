@@ -48,13 +48,14 @@ Directories are classified by the contents of the files within them, via the
 
 .. code-block:: python
 
-    from fileformats.generic import File, BaseDirectory
+    from fileformats.generic import File, Directory
 
-    class DicomFile(File):
-        ext = ".dcm"
+    class Dicom(WithMagicNumber, File):
+        magic_number = b"DICM"
+        magic_number_offset = 128
 
-    class  Dicom(BaseBaseDirectory):
-        content_types = (DicomFile,)
+    class  DicomDir(Directory):
+        content_types = (Dicom,)
 
 
 Note that only one file within the directory needs to match the specified content type
@@ -78,7 +79,7 @@ despite the presence of the ``.DS_Store`` directory and the ``catalog.xml`` file
 
 In addition to statically defining `Directory` formats such as the Dicom example above,
 dynamic directory types can be created on the fly by providing the content types as
-arguments to the `Directory[]` method,
+arguments to the `DirectoryContaining[]` method,
 e.g.
 
 .. code-block:: python
@@ -87,7 +88,7 @@ e.g.
     from fileformats.image import Png
     from fileformats.text import Csv
 
-    def my_task(image_dir: Directory[Png]) -> Csv:
+    def my_task(image_dir: DirectoryContaining[Png]) -> Csv:
         ... task implementation ...
 
 
