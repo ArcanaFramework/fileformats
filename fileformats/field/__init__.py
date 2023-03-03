@@ -1,4 +1,5 @@
 import attrs
+from decimal import Decimal as Decimal_
 from ..core import Field
 from ..core.mixin import WithQualifiers
 from ..core.exceptions import FormatMismatchError
@@ -79,7 +80,7 @@ def integer_converter(value):
 
 def decimal_converter(value):
     try:
-        return float(value)
+        return Decimal_(value)
     except ValueError as e:
         raise FormatMismatchError(str(e))
 
@@ -135,16 +136,25 @@ class Integer(Singluar, ScalarMixin):
     def __int__(self):
         return self.value
 
+    def __float__(self):
+        return float(self.value)
+
+    def __bool__(self):
+        return bool(self.value)
+
 
 @attrs.define
 class Decimal(Singluar, ScalarMixin):
 
-    value: float = attrs.field(converter=decimal_converter)
+    value: Decimal_ = attrs.field(converter=decimal_converter)
 
-    raw_type = int
+    raw_type = float
 
     def __float__(self):
-        return self.value
+        return float(self.value)
+
+    def __bool__(self):
+        return bool(self.value)
 
 
 @attrs.define
