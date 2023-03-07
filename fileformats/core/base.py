@@ -320,6 +320,9 @@ class FileSet(DataType):
 
     is_fileset = True
 
+    def __hash__(self):
+        return hash(sorted(self.fspaths))
+
     def __attrs_post_init__(self):
         # Check required properties don't raise errors
         for prop_name in self.required_properties():
@@ -457,6 +460,7 @@ class FileSet(DataType):
         symlink: bool = False,
         trim: bool = True,
         make_dirs: bool = False,
+        overwrite: bool = False,
     ):
         """Copies the file-set to a new directory, optionally renaming the files
         to have consistent name-stems.
@@ -474,6 +478,8 @@ class FileSet(DataType):
             Only copy the paths in the file-set that are "required" by the format, true by default
         make_dirs : bool, optional
             Make the parent destination and all missing ancestors if they are missing, false by default
+        overwrite : bool, optional
+            whether to overwrite existing files/directories if present
         """
         dest_dir = Path(dest_dir)  # ensure a Path not a string
         if make_dirs:
@@ -484,16 +490,32 @@ class FileSet(DataType):
             copy_dir = shutil.copytree
             copy_file = shutil.copyfile
         new_paths = []
-        if trim:
+        if trim and self.required_paths():
             fspaths_to_copy = self.required_paths()
         else:
             fspaths_to_copy = self.fspaths
+        if not fspaths_to_copy:
+            raise FileFormatsError(
+                f"Cannot copy {self} because none of the fspaths in the file-set are "
+                "required. Set trim=False to copy all file-paths"
+            )
         for fspath in fspaths_to_copy:
             if stem:
                 new_fname = stem + "".join(fspath.suffixes)
             else:
                 new_fname = fspath.name
             new_path = dest_dir / new_fname
+            if new_path.exists():
+                if overwrite:
+                    if fspath.is_dir():
+                        shutil.rmtree(new_path)
+                    else:
+                        os.unlink(new_path)
+                else:
+                    raise FileFormatsError(
+                        f"Destination path '{str(new_path)}' exists, set "
+                        "'overwrite' to overwrite it"
+                    )
             if fspath.is_dir():
                 copy_dir(fspath, new_path)
             else:

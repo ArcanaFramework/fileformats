@@ -1,4 +1,5 @@
 from __future__ import annotations
+import decimal
 import pytest
 import pydra.mark
 from fileformats.core import from_mime, DataType, FileSet
@@ -38,7 +39,6 @@ SpecificFileSet = FileSet.type_var("SpecificFileSet")
 
 
 def test_qualified_equivalence():
-
     assert F is F
     assert F[A] is F[A]
     assert F[A, B] is F[B, A]
@@ -50,7 +50,6 @@ def test_qualified_equivalence():
 
 
 def test_subtype_testing():
-
     assert G.issubtype(F)
     assert not F.issubtype(G)
     assert J.issubtype(J)
@@ -74,7 +73,6 @@ def test_subtype_testing():
 
 
 def test_qualifier_fails():
-
     H[A, B, C]  # A, B, C are all allowable qualifier
     F[D]  # F has no restriction on qualifier types
 
@@ -111,7 +109,6 @@ def f2h(in_file: F) -> H:
 
 
 def test_qualifier_converters():
-
     H.get_converter(F)
     assert F.get_converter(G) is None  # G is subtype of F
     with pytest.raises(FormatConversionError):  # Cannot convert to more specific type
@@ -149,7 +146,6 @@ def test_ordered_qualifier_converters():
 
 
 def test_mime_rountrips():
-
     assert DirectoryContaining[F].mime_like == "testing/f+directory-containing"
     assert from_mime("testing/f+directory-containing") is DirectoryContaining[F]
 
@@ -168,22 +164,32 @@ def test_mime_rountrips():
 
 
 def test_inherited_qualifiers():
-
     assert Zip[G].mime_like == "testing/g+zip"
     assert from_mime("testing/g+zip") is Zip[G]
 
 
 def test_arrays():
-
     Array[Integer]([1, 2, 3, 4])
     with pytest.raises(FormatMismatchError) as e:
         Array[Integer]([1.5, 2.2])
     assert "Cannot convert float (1.5) to integer field" in str(e)
 
-    assert list(Array[Decimal]([1.5, 2.2])) == [1.5, 2.2]
-    assert list(Array[Decimal](["1.5", "2.2"])) == [1.5, 2.2]
-    assert list(Array[Decimal]("1.5, 2.2")) == [1.5, 2.2]
-    assert list(Array[Decimal]("[1.5, 2.2]")) == [1.5, 2.2]
+    assert list(Array[Decimal](["1.5", "2.2"])) == [
+        decimal.Decimal("1.5"),
+        decimal.Decimal("2.2"),
+    ]
+    assert list(Array[Decimal](["1.5", "2.2"])) == [
+        decimal.Decimal("1.5"),
+        decimal.Decimal("2.2"),
+    ]
+    assert list(Array[Decimal]("1.5, 2.2")) == [
+        decimal.Decimal("1.5"),
+        decimal.Decimal("2.2"),
+    ]
+    assert list(Array[Decimal]("[1.5, 2.2]")) == [
+        decimal.Decimal("1.5"),
+        decimal.Decimal("2.2"),
+    ]
     assert list(Array[Text]("[1.5, 2.2]")) == ["1.5", "2.2"]
 
     assert list(Array[Boolean]("yes, YES, no, 0, 1, False, True, true")) == [
@@ -243,7 +249,6 @@ def generic2n(in_file: SpecificDataType) -> N[SpecificDataType, H]:
 
 
 def test_wildcard_template_from_generic_conversion():
-
     F[J].get_converter(J)
     with pytest.raises(FormatConversionError):
         F[K].get_converter(J)
@@ -278,7 +283,6 @@ def test_wildcard_generic_from_template_conversion():
 
 
 def test_wildcard_generic_from_multi_template_conversion():
-
     J.get_converter(N[J, G])
     with pytest.raises(FormatConversionError):
         J.get_converter(N[J, K])
