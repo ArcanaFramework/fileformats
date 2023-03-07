@@ -1,4 +1,5 @@
 from __future__ import annotations
+import decimal
 import pytest
 import pydra.mark
 from fileformats.core import from_mime, DataType, FileSet
@@ -180,7 +181,10 @@ def test_arrays():
         Array[Integer]([1.5, 2.2])
     assert "Cannot convert float (1.5) to integer field" in str(e)
 
-    assert list(Array[Decimal]([1.5, 2.2])) == [1.5, 2.2]
+    assert list(Array[Decimal]([1.5, 2.2])) == [
+        decimal.Decimal("1.5"),
+        decimal.Decimal("2.2"),
+    ]
     assert list(Array[Decimal](["1.5", "2.2"])) == [1.5, 2.2]
     assert list(Array[Decimal]("1.5, 2.2")) == [1.5, 2.2]
     assert list(Array[Decimal]("[1.5, 2.2]")) == [1.5, 2.2]
