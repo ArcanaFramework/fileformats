@@ -13,7 +13,9 @@ from fileformats.core.exceptions import (
 import fileformats.core
 
 
-def find_matching(fspaths: ty.List[Path], standard_only: bool = False):
+def find_matching(
+    fspaths: ty.List[Path], standard_only: bool = False, include_generic: bool = False
+):
     """Detect the corresponding file format from a set of file-system paths
 
     Parameters
@@ -21,13 +23,19 @@ def find_matching(fspaths: ty.List[Path], standard_only: bool = False):
     fspaths : list[Path]
         file-system paths to detect the format of
     standard_only : bool, optional
-        If you only want to return matches from the "standard" IANA types
+        If you only want to return matches from the "standard" IANA types, by default False
+    include_generic : bool, optional
+        Include generic file-set types (i.e ones within the fileformats.generic package),
+        by default False
     """
     fspaths = fspaths_converter(fspaths)
     matches = []
     for frmt in fileformats.core.FileSet.all_formats:
-        if frmt.matches(fspaths) and (
-            not standard_only or frmt.namespace in STANDARD_NAMESPACES
+        namespace = frmt.namespace
+        if (
+            frmt.matches(fspaths)
+            and (not standard_only or namespace in STANDARD_NAMESPACES)
+            and (include_generic or namespace != "generic")
         ):
             matches.append(frmt)
     return matches

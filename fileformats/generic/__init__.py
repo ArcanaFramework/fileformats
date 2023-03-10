@@ -30,6 +30,10 @@ class FsObject(FileSet, os.PathLike):
         to functions like file 'open'"""
         return str(self)
 
+    @property
+    def stem(self):
+        return self.fspath.with_suffix("").name
+
 
 @attrs.define
 class File(FsObject):
