@@ -183,7 +183,12 @@ class DataType:
         type
             the corresponding file format class
         """
-        namespace, format_name = mime_string.split("/")
+        try:
+            namespace, format_name = mime_string.split("/")
+        except ValueError:
+            raise FormatRecognitionError(
+                f"Format '{mime_string}' is not a valid MIME-like format of <namespace>/<format>"
+            )
         try:
             return FileSet.formats_by_iana_mime[mime_string]
         except KeyError:
