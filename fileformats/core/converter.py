@@ -11,8 +11,8 @@ class ConverterWrapper:
     """
 
     task_spec: ty.Callable
-    in_file: str = None
-    out_file: str = None
+    in_file: ty.Optional[str] = None
+    out_file: ty.Optional[str] = None
 
     def __call__(self, name=None, **kwargs):
         from pydra.engine import Workflow
