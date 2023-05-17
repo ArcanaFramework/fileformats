@@ -84,6 +84,8 @@ def subpackages():
     module
         all modules within the package
     """
+    import fileformats
+
     for mod_info in pkgutil.iter_modules(
         fileformats.__path__, prefix=fileformats.__package__ + "."
     ):
