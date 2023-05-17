@@ -1,3 +1,4 @@
+from __future__ import annotations
 import importlib
 from pathlib import Path
 import inspect
@@ -10,7 +11,9 @@ from fileformats.core.exceptions import (
     MissingExtendedDepenciesError,
     FileFormatsError,
 )
-import fileformats.core
+
+if ty.TYPE_CHECKING:
+    import fileformats.core
 
 
 def find_matching(
@@ -109,9 +112,15 @@ def set_cwd(path: Path):
 
 def fspaths_converter(
     fspaths: ty.Union[
-        ty.Iterable[ty.Union[str, os.PathLike, bytes]], str, os.PathLike, bytes
+        ty.Iterable[ty.Union[str, os.PathLike, bytes]],
+        str,
+        os.PathLike,
+        bytes,
+        fileformats.core.FileSet,
     ]
 ):
+    import fileformats.core
+
     """Ensures fs-paths are a set of pathlib.Path"""
     if isinstance(fspaths, fileformats.core.FileSet):
         fspaths = fspaths.fspaths
@@ -208,7 +217,7 @@ def hash_dir(
     crypto: ty.Callable,
     ignore_hidden_files: bool = False,
     ignore_hidden_dirs: bool = False,
-    relative_to: Path = None,
+    relative_to: ty.Optional[Path] = None,
 ):
     if relative_to is None:
         relative_to = fspath

@@ -1,4 +1,5 @@
 from pathlib import Path
+import typing as ty
 import tempfile
 import pydra.mark
 import pydra.engine.specs
@@ -11,7 +12,7 @@ from . import DataSerialization, Json, Yaml
 @pydra.mark.task
 @pydra.mark.annotate({"return": {"out_file": DataSerialization}})
 def convert_data_serialization(
-    in_file: DataSerialization, output_format: type, out_dir: Path = None
+    in_file: DataSerialization, output_format: type, out_dir: ty.Optional[Path] = None
 ):
     dct = in_file.load()
     if out_dir is None:

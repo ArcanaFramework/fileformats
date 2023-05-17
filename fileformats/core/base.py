@@ -461,7 +461,7 @@ class FileSet(DataType):
     def copy_to(
         self,
         dest_dir: Path,
-        stem: str = None,
+        stem: ty.Optional[str] = None,
         symlink: bool = False,
         trim: bool = True,
         make_dirs: bool = False,
@@ -528,7 +528,9 @@ class FileSet(DataType):
             new_paths.append(new_path)
         return type(self)(new_paths)
 
-    def select_by_ext(self, fileformat: type = None, allow_none: bool = False) -> Path:
+    def select_by_ext(
+        self, fileformat: ty.Optional[type] = None, allow_none: bool = False
+    ) -> Path:
         """Selects a single path from a set of file-system paths based on the file
         extension
 
