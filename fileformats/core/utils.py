@@ -11,9 +11,7 @@ from fileformats.core.exceptions import (
     MissingExtendedDepenciesError,
     FileFormatsError,
 )
-
-if ty.TYPE_CHECKING:
-    import fileformats.core
+import fileformats.core
 
 
 def find_matching(
@@ -84,8 +82,6 @@ def subpackages():
     module
         all modules within the package
     """
-    import fileformats
-
     for mod_info in pkgutil.iter_modules(
         fileformats.__path__, prefix=fileformats.__package__ + "."
     ):
