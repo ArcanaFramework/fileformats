@@ -1,5 +1,5 @@
-import attrs
 import decimal
+import attrs
 from ..core import Field
 from ..core.mixin import WithQualifiers
 from ..core.exceptions import FormatMismatchError
@@ -125,7 +125,7 @@ class Text(Singluar):
 
     value: str = attrs.field(converter=text_converter)
 
-    raw_type = str
+    primitive = str
 
 
 @attrs.define
@@ -133,7 +133,7 @@ class Integer(Singluar, ScalarMixin):
 
     value: int = attrs.field(converter=integer_converter)
 
-    raw_type = int
+    primitive = int
 
     def __int__(self):
         return self.value
@@ -150,7 +150,7 @@ class Decimal(Singluar, ScalarMixin):
 
     value: decimal.Decimal = attrs.field(converter=decimal_converter)
 
-    raw_type = float
+    primitive = float
 
     def __float__(self):
         return float(self.value)
@@ -162,7 +162,7 @@ class Decimal(Singluar, ScalarMixin):
 @attrs.define
 class Boolean(Singluar, LogicalMixin):
 
-    raw_type = bool
+    primitive = bool
 
     value: bool = attrs.field(converter=boolean_converter)
 
@@ -182,7 +182,7 @@ class Array(WithQualifiers, Field):
     allowed_qualifiers = (Singluar,)
     item_type = None
 
-    raw_type = list
+    primitive = list
 
     value: list = attrs.field(converter=array_converter)
 

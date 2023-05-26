@@ -1,3 +1,4 @@
+from __future__ import annotations
 import os
 from copy import copy
 from inspect import isclass
@@ -123,6 +124,15 @@ class DataType:
                 attr = getattr(subpkg, attr_name)
                 if isclass(attr) and issubclass(attr, cls):
                     yield attr
+
+    @classmethod
+    def get_converter(cls, source_format: type, name: str = "converter", **kwargs):
+        if source_format.issubtype(cls):
+            return None
+        else:
+            raise FormatConversionError(
+                f"Cannot converter between '{cls.mime_like}' and '{source_format.mime_like}'"
+            )
 
     @classproperty
     def mime_like(cls):
@@ -906,7 +916,7 @@ class FileSet(DataType):
                 raise RuntimeError(f"Cannot hash {self} as {fspath} no longer exists")
         return file_hashes
 
-    def hash(self, crypto=None, *args, **kwargs):
+    def hash(self, crypto=None, **kwargs):
         """Calculate a unique hash for the file-set based on the relative paths and
         contents of its constituent files
 
@@ -930,7 +940,7 @@ class FileSet(DataType):
         if crypto is None:
             crypto = hashlib.sha256
         crytpo_obj = crypto()
-        for path, hash in self.hash_files(crypto=crypto, *args, **kwargs).items():
+        for path, hash in self.hash_files(crypto=crypto, **kwargs).items():
             crytpo_obj.update(path.encode())
             crytpo_obj.update(hash.encode())
         return crytpo_obj.hexdigest()
@@ -946,6 +956,7 @@ class Field(DataType):
 
     type = None
     is_field = True
+    primitive = None
 
     def __str__(self):
         return str(self.value)
@@ -955,10 +966,22 @@ class Field(DataType):
         return {}
 
     @classproperty
-    def all_fields(cls):
+    def all_fields(cls) -> list[ty.Type[Field]]:  # pylint: disable=no-self-argument
         """Iterate over all field formats in fileformats.* namespaces"""
-        if cls._all_fields is None:
-            cls._all_fields = [f for f in Field.subclasses() if f.type is not None]
-        return cls._all_fields
+        import fileformats.field  # noqa
+
+        return [f for f in Field.subclasses() if f.primitive is not None]
+
+    @classmethod
+    def from_primitive(cls, dtype: type):
+        try:
+            datatype = next(iter(f for f in cls.all_fields if f.primitive is dtype))
+        except StopIteration as e:
+            field_types_str = ", ".join(t.__name__ for t in cls.all_fields)
+            raise FileFormatsError(
+                f"{dtype} doesn't not correspond to a valid fileformats field type "
+                f"({field_types_str})"
+            ) from e
+        return datatype
 
     _all_fields = None
