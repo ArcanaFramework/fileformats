@@ -24,6 +24,8 @@ class WithMagicNumber:
     """
 
     magic_number_offset = 0
+    binary: bool
+    magic_number: ty.Union[str, int]
 
     @mark.check
     def check_magic_number(self):
@@ -70,6 +72,7 @@ class WithAdjacentFiles:
     """
 
     post_init_super = FileSet
+    fspaths: ty.FrozenSet[Path]
 
     def __attrs_post_init__(self):
         if len(self.fspaths) == 1:
@@ -82,11 +85,11 @@ class WithAdjacentFiles:
             self.trim_paths()
 
     def get_adjacent_files(self) -> ty.Set[Path]:
-        stem = self.stem
+        stem = self.stem  # pylint: disable=no-member
         adjacents = set()
-        for sibling in self.fspath.parent.iterdir():
+        for sibling in self.fspath.parent.iterdir():  # pylint: disable=no-member
             if (
-                sibling != self.fspath
+                sibling != self.fspath  # pylint: disable=no-member
                 and sibling.is_file()
                 and sibling.name.startswith(stem + ".")
             ):
@@ -215,7 +218,7 @@ class WithQualifiers:
 
     # Default values for class attrs
     multiple_qualifiers = True
-    allowed_qualifiers = None
+    allowed_qualifiers: ty.Optional[ty.Tuple[ty.Type[ty.Any]]] = None
     ordered_qualifiers = False
     generically_qualifies = False
 
@@ -227,7 +230,7 @@ class WithQualifiers:
             )
 
     @classproperty
-    def is_qualified(cls):
+    def is_qualified(cls):  # pylint: disable=no-self-argument
         return "unqualified" in cls.__dict__
 
     @classmethod
@@ -340,12 +343,16 @@ class WithQualifiers:
             the source format to convert from
         """
         # Try to see if a converter has been defined to the exact type
-        available_converters = super().get_converter_tuples(source_format)
+        available_converters = super().get_converter_tuples(
+            source_format
+        )  # pylint: disable=no-member
         # Failing that, see if there is a generic conversion between the container type
         # the source format (or subclass of) defined with matching wildcards in the source
         # and target formats
         if not available_converters and cls.is_qualified:
-            converters_dict = FileSet.get_converters_dict(cls.unqualified)
+            converters_dict = FileSet.get_converters_dict(
+                cls.unqualified
+            )  # pylint: disable=no-member
             for template_source_format, converter in converters_dict.items():
                 if len(converter) == 3:  # was defined with wildcard qualifiers
                     converter, conv_kwargs, template_qualifiers = converter
@@ -426,13 +433,15 @@ class WithQualifiers:
 
     @classmethod
     def issubtype(cls, super_type: type):
-        if super().issubtype(super_type):
+        if super().issubtype(super_type):  # pylint: disable=no-member
             return True
         # Check to see whether the unqualified types are equivalent
         if (
             not cls.is_qualified
             or not getattr(super_type, "is_qualified", False)
-            or not cls.unqualified.issubtype(super_type.unqualified)
+            or not cls.unqualified.issubtype(
+                super_type.unqualified
+            )  # pylint: disable=no-member
         ):
             return False
         if cls.ordered_qualifiers:
@@ -521,7 +530,7 @@ class WithQualifiers:
             super().register_converter(source_format, converter_tuple)
 
     @classproperty
-    def namespace(cls):
+    def namespace(cls):  # pylint: disable=no-self-argument
         """The "namespace" the format belongs to under the "fileformats" umbrella
         namespace"""
         if cls.is_qualified:

@@ -1,11 +1,11 @@
 import os
 from pathlib import Path
 import attrs
-from ..core.base import FileSet
-from ..core.exceptions import FormatMismatchError, FileFormatsError
-from ..core import mark
-from ..core.utils import splitext, classproperty
-from ..core.mixin import WithQualifiers
+from fileformats.core.base import FileSet
+from fileformats.core.exceptions import FormatMismatchError, FileFormatsError
+from fileformats.core import mark
+from fileformats.core.utils import splitext, classproperty
+from fileformats.core.mixin import WithQualifiers
 
 
 @attrs.define
@@ -119,7 +119,7 @@ class File(FsObject):
                 "checked at initialisation"
             )
         # Return the longest matching extension, useful for optional extensions
-        return sorted(matching, key=lambda x: len(x))[-1]
+        return sorted(matching, key=len)[-1]
 
     @property
     def stem(self):
@@ -141,7 +141,7 @@ class Directory(FsObject):
         dirs = [p for p in self.fspaths if p.is_dir()]
         if not dirs:
             raise FormatMismatchError(f"No directory paths provided {repr(self)}")
-        elif len(dirs) > 1:
+        if len(dirs) > 1:
             raise FormatMismatchError(
                 f"More than one directory path provided {dirs} to {repr(self)}"
             )
