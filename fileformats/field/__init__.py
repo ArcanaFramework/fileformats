@@ -1,12 +1,13 @@
 import decimal
+import typing as ty
 import attrs
-from ..core import Field
-from ..core.mixin import WithQualifiers
-from ..core.exceptions import FormatMismatchError
+from fileformats.core import Field
+from fileformats.core.mixin import WithQualifiers
+from fileformats.core.exceptions import FormatMismatchError
 
 
 @attrs.define
-class Singluar(Field):
+class Singular(Field):
     pass
 
 
@@ -63,7 +64,7 @@ def text_converter(value):
     try:
         return str(value)
     except ValueError as e:
-        raise FormatMismatchError(str(e))
+        raise FormatMismatchError(str(e)) from None
 
 
 def integer_converter(value):
@@ -75,7 +76,7 @@ def integer_converter(value):
     try:
         return int(value)
     except ValueError as e:
-        raise FormatMismatchError(str(e))
+        raise FormatMismatchError(str(e)) from None
 
 
 def decimal_converter(value):
@@ -84,7 +85,7 @@ def decimal_converter(value):
     try:
         return decimal.Decimal(value)
     except decimal.InvalidOperation as e:
-        raise FormatMismatchError(str(e))
+        raise FormatMismatchError(str(e)) from None
 
 
 def boolean_converter(value):
@@ -101,7 +102,7 @@ def boolean_converter(value):
         try:
             value = bool(value)
         except ValueError as e:
-            raise FormatMismatchError(str(e))
+            raise FormatMismatchError(str(e)) from None
     return value
 
 
@@ -116,12 +117,12 @@ def array_converter(value):
         try:
             value = list(value)
         except ValueError as e:
-            raise FormatMismatchError(str(e))
+            raise FormatMismatchError(str(e)) from None
     return value
 
 
 @attrs.define
-class Text(Singluar):
+class Text(Singular):
 
     value: str = attrs.field(converter=text_converter)
 
@@ -129,7 +130,7 @@ class Text(Singluar):
 
 
 @attrs.define
-class Integer(Singluar, ScalarMixin):
+class Integer(Singular, ScalarMixin):
 
     value: int = attrs.field(converter=integer_converter)
 
@@ -146,7 +147,7 @@ class Integer(Singluar, ScalarMixin):
 
 
 @attrs.define
-class Decimal(Singluar, ScalarMixin):
+class Decimal(Singular, ScalarMixin):
 
     value: decimal.Decimal = attrs.field(converter=decimal_converter)
 
@@ -160,7 +161,7 @@ class Decimal(Singluar, ScalarMixin):
 
 
 @attrs.define
-class Boolean(Singluar, LogicalMixin):
+class Boolean(Singular, LogicalMixin):
 
     primitive = bool
 
@@ -173,14 +174,14 @@ class Boolean(Singluar, LogicalMixin):
         return self.value
 
 
-@attrs.define
+@attrs.define(auto_attribs=False)
 class Array(WithQualifiers, Field):
 
     # WithQualifiers class attrs
-    qualifiers_attr_name = "item_type"
-    multiple_qualifiers = False
-    allowed_qualifiers = (Singluar,)
-    item_type = None
+    qualifiers_attr_name: str = "item_type"
+    multiple_qualifiers: bool = False
+    allowed_qualifiers: ty.Tuple[ty.Type[Singular]] = (Singular,)
+    item_type: ty.Union[ty.Type[Singular], None] = None
 
     primitive = list
 
@@ -195,7 +196,9 @@ class Array(WithQualifiers, Field):
         return (
             "["
             + ",".join(
-                str(self.item_type(i)) if self.item_type is not None else i
+                str(self.item_type(i))
+                if self.item_type is not None
+                else i  # pylint: disable=not-callable
                 for i in self.value
             )
             + "]"
