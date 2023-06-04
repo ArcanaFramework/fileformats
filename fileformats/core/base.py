@@ -9,6 +9,7 @@ import importlib
 import shutil
 from operator import itemgetter
 import itertools
+import functools
 from pathlib import Path
 import hashlib
 import logging
@@ -37,6 +38,8 @@ from .exceptions import (
 # have been split
 REQUIRED_ANNOTATION = "__fileformats_required__"
 CHECK_ANNOTATION = "__fileformats_check__"
+
+FILE_CHUNK_LEN_DEFAULT = 8192
 
 
 logger = logging.getLogger("fileformats")
@@ -857,10 +860,33 @@ class FileSet(DataType):
             }
         return cls._formats_by_name
 
+    def __bytes_repr__(self, cache):  # pylint: disable=unused-argument
+        """Provided for compatibility with Pydra's hashing function, return the contents
+        of all the files in the file-set in chunks
+
+        Parameters
+        ----------
+        cache : pydra.utils.hash.Cache
+            an object passed around by Pydra's hashing function to store cached versions
+            of previously hashed objects, to allow recursive structures
+
+        Yields
+        ------
+        bytes
+            a chunk of bytes of length FILE_CHUNK_LEN_DEFAULT from the contents of all
+            files in the file-set.
+        """
+        for fspath in sorted(self.fspaths):
+            with open(fspath, "rb") as fp:
+                for chunk in iter(
+                    functools.partial(fp.read, FILE_CHUNK_LEN_DEFAULT), b""
+                ):
+                    yield chunk
+
     def hash_files(
         self,
         crypto=None,
-        chunk_len=8192,
+        chunk_len=FILE_CHUNK_LEN_DEFAULT,
         relative_to: os.PathLike = None,
         **kwargs,
     ):
