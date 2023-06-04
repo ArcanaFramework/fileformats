@@ -338,6 +338,9 @@ class FileSet(DataType):
     def __hash__(self):
         return hash(sorted(self.fspaths))
 
+    def __repr__(self):
+        return f"{type(self).__name__}('" + "', '".join(self.fspaths) + "')"
+
     def __attrs_post_init__(self):
         # Check required properties don't raise errors
         for prop_name in self.required_properties():
