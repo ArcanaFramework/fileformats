@@ -876,6 +876,8 @@ class FileSet(DataType):
             a chunk of bytes of length FILE_CHUNK_LEN_DEFAULT from the contents of all
             files in the file-set.
         """
+        cls = type(self)
+        yield f"{cls.__module__}.{cls.__name__}:".encode()
         for fspath in sorted(self.fspaths):
             with open(fspath, "rb") as fp:
                 for chunk in iter(
