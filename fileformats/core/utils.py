@@ -201,38 +201,38 @@ def from_mime_format_name(format_name: str):
     return format_name
 
 
-def hash_file(fspath: Path, chunk_len: int, crypto: ty.Callable):
-    crypto_obj = crypto()
-    with open(fspath, "rb") as fp:
-        for chunk in iter(lambda: fp.read(chunk_len), b""):
-            crypto_obj.update(chunk)
-    return crypto_obj.hexdigest()
+# def hash_file(fspath: Path, chunk_len: int, crypto: ty.Callable):
+#     crypto_obj = crypto()
+#     with open(fspath, "rb") as fp:
+#         for chunk in iter(lambda: fp.read(chunk_len), b""):
+#             crypto_obj.update(chunk)
+#     return crypto_obj.hexdigest()
 
 
-def hash_dir(
-    fspath: Path,
-    chunk_len: int,
-    crypto: ty.Callable,
-    ignore_hidden_files: bool = False,
-    ignore_hidden_dirs: bool = False,
-    relative_to: ty.Optional[Path] = None,
-):
-    if relative_to is None:
-        relative_to = fspath
-    file_hashes = {}
-    for dpath, _, filenames in sorted(os.walk(fspath)):
-        # Sort in-place to guarantee order.
-        filenames.sort()
-        dpath = Path(dpath)
-        if ignore_hidden_dirs and dpath.name.startswith(".") and str(dpath) != fspath:
-            continue
-        for filename in filenames:
-            if ignore_hidden_files and filename.startswith("."):
-                continue
-            file_hashes[str((dpath / filename).relative_to(relative_to))] = hash_file(
-                dpath / filename, crypto=crypto, chunk_len=chunk_len
-            )
-    return file_hashes
+# def hash_dir(
+#     fspath: Path,
+#     chunk_len: int,
+#     crypto: ty.Callable,
+#     ignore_hidden_files: bool = False,
+#     ignore_hidden_dirs: bool = False,
+#     relative_to: ty.Optional[Path] = None,
+# ):
+#     if relative_to is None:
+#         relative_to = fspath
+#     file_hashes = {}
+#     for dpath, _, filenames in sorted(os.walk(fspath)):
+#         # Sort in-place to guarantee order.
+#         filenames.sort()
+#         dpath = Path(dpath)
+#         if ignore_hidden_dirs and dpath.name.startswith(".") and str(dpath) != fspath:
+#             continue
+#         for filename in filenames:
+#             if ignore_hidden_files and filename.startswith("."):
+#                 continue
+#             file_hashes[str((dpath / filename).relative_to(relative_to))] = hash_file(
+#                 dpath / filename, crypto=crypto, chunk_len=chunk_len
+#             )
+#     return file_hashes
 
 
 def add_exc_note(e, note):

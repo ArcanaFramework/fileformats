@@ -21,8 +21,6 @@ from .utils import (
     to_mime_format_name,
     from_mime_format_name,
     STANDARD_NAMESPACES,
-    hash_file,
-    hash_dir,
     add_exc_note,
     describe_task,
 )
@@ -860,6 +858,113 @@ class FileSet(DataType):
             }
         return cls._formats_by_name
 
+    def byte_chunks(
+        self,
+        chunk_len=FILE_CHUNK_LEN_DEFAULT,
+        relative_to: ty.Optional[os.PathLike] = None,
+        ignore_hidden_files: bool = False,
+        ignore_hidden_dirs: bool = False,
+    ) -> ty.Generator[str, ty.Generator[bytes]]:
+        """Yields relative paths for all files within the file-set along with iterators
+        over their byte-contents. To be used when generating hashes for the file set.
+
+        Parameters
+        ----------
+        crypto : function, optional
+            the cryptography method used to hash the files, by default hashlib.sha256
+        chunk_len : int, optional
+            the chunk length to break up the file and calculate the hash over, by default 8192
+        relative_to : Path, optional
+            the base path by which to record the file system paths in the dictionary keys
+            to, by default None
+        ignore_hidden_files : bool
+            whether to ignore hidden files within nested directories (i.e. those
+            starting with '.')
+        ignore_hidden_dirs : bool
+            whether to ignore hidden directories within nested directories (i.e. those
+            starting with '.')
+
+        Yields
+        -------
+        rel_path: str
+            relative path to either 'relative_to' arg or common base path for each file
+            in the file set
+        byte_iter : Generator[bytes]
+            an iterator over the bytes contents of the file, chunked into 'chunk_len'
+            chunks
+        """
+        # If "relative_to" is not provided, get the common path between
+        if relative_to is None:
+            relative_to = Path(os.path.commonpath(self.fspaths))
+            if all(p.is_file() and p.parent == relative_to for p in self.fspaths):
+                relative_to /= os.path.commonprefix(
+                    [p.name for p in self.fspaths]
+                ).rstrip(".")
+        relative_to = str(relative_to)
+        if Path(relative_to).is_dir() and not relative_to.endswith(os.path.sep):
+            relative_to += os.path.sep
+
+        def chunk_file(fspath: Path):
+            if not fspath.is_file():
+                assert fspath.is_symlink()  # broken symlink
+                yield b"\x00"
+            else:
+                with open(fspath, "rb") as fp:
+                    for chunk in iter(functools.partial(fp.read, chunk_len), b""):
+                        yield chunk
+
+        def chunk_dir(fspath):
+            for dpath, _, filenames in sorted(os.walk(fspath)):
+                # Sort in-place to guarantee order.
+                filenames.sort()
+                dpath = Path(dpath)
+                if (
+                    ignore_hidden_dirs
+                    and dpath.name.startswith(".")
+                    and str(dpath) != fspath
+                ):
+                    continue
+                for filename in filenames:
+                    if ignore_hidden_files and filename.startswith("."):
+                        continue
+                    yield (
+                        str((dpath / filename).relative_to(relative_to)),
+                        chunk_file(dpath / filename),
+                    )
+
+        for key, fspath in sorted(
+            ((str(p)[len(relative_to) :], p) for p in self.fspaths),
+            key=itemgetter(0),
+        ):
+            if fspath.is_dir():
+                yield from chunk_dir(fspath)
+            else:
+                yield (key, chunk_file(fspath))
+
+    def hash(self, crypto=None, **kwargs):
+        """Calculate a unique hash for the file-set based on the relative paths and
+        contents of its constituent files
+
+        Parameters
+        ----------
+        crypto : function, optional
+            the cryptography method used to hash the files, by default hashlib.sha256
+        **kwargs
+            keyword args passed directly through to the ``hash_dir`` function
+
+        Returns
+        -------
+        hash : str
+            unique hash for the file-set
+        """
+        if crypto is None:
+            crypto = hashlib.sha256
+        crytpo_obj = crypto()
+        for path, bytes in self.byte_chunks(**kwargs):
+            crytpo_obj.update(path.encode())
+            crytpo_obj.update(bytes.encode())
+        return crytpo_obj.hexdigest()
+
     def __bytes_repr__(self, cache):  # pylint: disable=unused-argument
         """Provided for compatibility with Pydra's hashing function, return the contents
         of all the files in the file-set in chunks
@@ -878,103 +983,9 @@ class FileSet(DataType):
         """
         cls = type(self)
         yield f"{cls.__module__}.{cls.__name__}:".encode()
-        for fspath in sorted(self.fspaths):
-            with open(fspath, "rb") as fp:
-                for chunk in iter(
-                    functools.partial(fp.read, FILE_CHUNK_LEN_DEFAULT), b""
-                ):
-                    yield chunk
-
-    def hash_files(
-        self,
-        crypto=None,
-        chunk_len=FILE_CHUNK_LEN_DEFAULT,
-        relative_to: os.PathLike = None,
-        **kwargs,
-    ):
-        """Calculate hashes for all files within the file set within a dictionary.
-        Hashes for files within directories are nested within separate dictionaries
-        for each (sub)directory.
-
-        Parameters
-        ----------
-        crypto : function, optional
-            the cryptography method used to hash the files, by default hashlib.sha256
-        chunk_len : int, optional
-            the chunk length to break up the file and calculate the hash over, by default 8192
-        relative_to : Path, optional
-            the base path by which to record the file system paths in the dictionary keys
-            to, by default None
-        **kwargs
-            keyword args passed directly through to the ``hash_dir`` function
-
-        Returns
-        -------
-        file_hashes : dict[str, str]
-            hashes for all files in the file-set, addressed by their directory relative
-            to the ``relative_to`` path
-        """
-        if relative_to is None:
-            relative_to = Path(os.path.commonpath(self.fspaths))
-            if all(p.is_file() and p.parent == relative_to for p in self.fspaths):
-                relative_to /= os.path.commonprefix(
-                    [p.name for p in self.fspaths]
-                ).rstrip(".")
-        relative_to = str(relative_to)
-        if Path(relative_to).is_dir() and not relative_to.endswith(os.path.sep):
-            relative_to += os.path.sep
-        if crypto is None:
-            crypto = hashlib.sha256
-
-        file_hashes = {}
-        for key, fspath in sorted(
-            ((str(p)[len(relative_to) :], p) for p in self.fspaths),
-            key=itemgetter(0),
-        ):
-            if fspath.is_file():
-                file_hashes[key] = hash_file(fspath, chunk_len=chunk_len, crypto=crypto)
-            elif fspath.is_dir():
-                file_hashes.update(
-                    hash_dir(
-                        fspath,
-                        chunk_len=chunk_len,
-                        crypto=crypto,
-                        relative_to=relative_to,
-                        **kwargs,
-                    )
-                )
-            else:
-                raise RuntimeError(f"Cannot hash {self} as {fspath} no longer exists")
-        return file_hashes
-
-    def hash(self, crypto=None, **kwargs):
-        """Calculate a unique hash for the file-set based on the relative paths and
-        contents of its constituent files
-
-        Parameters
-        ----------
-        crypto : function, optional
-            the cryptography method used to hash the files, by default hashlib.sha256
-        chunk_len : int, optional
-            the chunk length to break up the file and calculate the hash over, by default 8192
-        relative_to : Path, optional
-            the base path by which to record the file system paths in the dictionary keys
-            to, by default None
-        **kwargs
-            keyword args passed directly through to the ``hash_dir`` function
-
-        Returns
-        -------
-        hash : str
-            unique hash for the file-set
-        """
-        if crypto is None:
-            crypto = hashlib.sha256
-        crytpo_obj = crypto()
-        for path, hash in self.hash_files(crypto=crypto, **kwargs).items():
-            crytpo_obj.update(path.encode())
-            crytpo_obj.update(hash.encode())
-        return crytpo_obj.hexdigest()
+        for key, chunk_iter in self.byte_chunks():
+            yield (",'" + key + "'=").encode()
+            yield from chunk_iter
 
     _all_formats = None
     _formats_by_iana_mime = None
