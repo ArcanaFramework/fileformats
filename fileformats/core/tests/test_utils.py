@@ -1,5 +1,7 @@
 from pathlib import Path
 import os.path
+import random
+import shutil
 import pytest
 from fileformats.generic import File, Directory, FsObject
 from fileformats.core.mixin import WithSeparateHeader
@@ -118,3 +120,66 @@ def test_missing_dependency():
 
     with pytest.raises(MissingExtendedDepenciesError):
         missing_dep.an_attr
+
+
+def test_hash(tmp_path: Path):
+    file_1 = tmp_path / "file_1.txt"
+    file_2 = tmp_path / "file_2.txt"
+    file_1.write_text("hello")
+    file_2.write_text("hello")
+
+    assert File(file_1).hash() == File(file_2).hash()
+
+
+def test_hash_function_files_mismatch(tmp_path: Path):
+    file_1 = tmp_path / "file_1.txt"
+    file_2 = tmp_path / "file_2.txt"
+    file_1.write_text("hello")
+    file_2.write_text("hi")
+
+    assert File(file_1).hash() != File(file_2).hash()
+
+
+def test_hash_dir(tmp_path: Path):
+    dir1 = tmp_path / "foo"
+    dir2 = tmp_path / "bar"
+    for d in (dir1, dir2):
+        d.mkdir()
+        for i in range(3):
+            f = d / f"{i}.txt"
+            f.write_text(str(i))
+
+    assert Directory(dir1).hash() == Directory(dir2).hash()
+
+
+def test_hash_nested_dir(tmp_path: Path):
+    dpath = tmp_path / "dir"
+    dpath.mkdir()
+    hidden = dpath / ".hidden"
+    nested = dpath / "nested"
+    hidden.mkdir()
+    nested.mkdir()
+    file_1 = dpath / "file_1.txt"
+    file_2 = hidden / "file_2.txt"
+    file_3 = nested / ".file_3.txt"
+    file_4 = nested / "file_4.txt"
+
+    for fx in [file_1, file_2, file_3, file_4]:
+        fx.write_text(str(random.randint(0, 1000)))
+
+    nested_dir = Directory(dpath)
+
+    orig_hash = nested_dir.hash()
+
+    nohidden_hash = nested_dir.hash(ignore_hidden_dirs=True, ignore_hidden_files=True)
+    nohiddendirs_hash = nested_dir.hash(ignore_hidden_dirs=True)
+    nohiddenfiles_hash = nested_dir.hash(ignore_hidden_files=True)
+
+    assert orig_hash != nohidden_hash
+    assert orig_hash != nohiddendirs_hash
+    assert orig_hash != nohiddenfiles_hash
+
+    os.remove(file_3)
+    assert nested_dir.hash() == nohiddenfiles_hash
+    shutil.rmtree(hidden)
+    assert nested_dir.hash() == nohidden_hash
