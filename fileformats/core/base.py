@@ -13,6 +13,7 @@ import functools
 from pathlib import Path
 import hashlib
 import logging
+from typing_extensions import Self
 import attrs
 from .utils import (
     subpackages,
@@ -476,7 +477,7 @@ class FileSet(DataType):
         self,
         dest_dir: Path,
         stem: ty.Optional[str] = None,
-        symlink: bool = False,
+        link_type: ty.Optional[str] = None,
         trim: bool = True,
         make_dirs: bool = False,
         overwrite: bool = False,
@@ -491,23 +492,44 @@ class FileSet(DataType):
         stem: str, optional
             the file name excluding file extensions, to give the files/dirs in the parent
             directory, by default the original file name is used
-        symlink : bool, optional
-            Use symbolic links instead of copying files to new location, false by default
+        link_type : str, optional
+            Whether to use hard ('hard') or symbolic ('symbolic') links instead of
+            copying files to the new location. If None then the files are copied,
+            None by default.
         trim : bool, optional
-            Only copy the paths in the file-set that are "required" by the format, true by default
+            Only copy the paths in the file-set that are "required" by the format,
+            true by default
         make_dirs : bool, optional
-            Make the parent destination and all missing ancestors if they are missing, false by default
+            Make the parent destination and all missing ancestors if they are missing,
+            false by default
         overwrite : bool, optional
             whether to overwrite existing files/directories if present
         """
         dest_dir = Path(dest_dir)  # ensure a Path not a string
         if make_dirs:
             dest_dir.mkdir(parents=True, exist_ok=True)
-        if symlink:
-            copy_dir = copy_file = os.symlink
-        else:
+        if link_type is None:
             copy_dir = shutil.copytree
             copy_file = shutil.copyfile
+        elif link_type == "hard":
+            copy_file = os.link
+
+            def hardlink_dir(src: Path, dest: Path):
+                for dpath, _, fpaths in os.walk(src):
+                    dpath = Path(dpath)
+                    relpath = dpath.relative_to(src)
+                    (dest / relpath).mkdir()
+                    for fpath in fpaths:
+                        os.link(dpath / fpath, dest / relpath / fpath)
+
+            copy_dir = hardlink_dir
+        elif link_type == "symbolic":
+            copy_dir = copy_file = os.symlink
+        else:
+            raise FileFormatsError(
+                f"Unrecognised link_type option {link_type}, can be 'hard', 'symbolic' "
+                "or None"
+            )
         new_paths = []
         if trim and self.required_paths():
             fspaths_to_copy = self.required_paths()
@@ -784,8 +806,8 @@ class FileSet(DataType):
         source_format: type,
         converter_tuple: ty.Tuple[ty.Callable, ty.Dict[str, ty.Any]],
     ):
-        """Registers a converter task within a class attribute. Called by the @fileformats.mark.converter
-        decorator.
+        """Registers a converter task within a class attribute. Called by the
+        @fileformats.mark.converter decorator.
 
         Parameters
         ----------
@@ -813,7 +835,7 @@ class FileSet(DataType):
         converters_dict[source_format] = converter_tuple
 
     @classproperty
-    def all_formats(cls):
+    def all_formats(cls) -> set[ty.Any[Self]]:
         """Iterate over all FileSet formats in fileformats.* namespaces"""
         if cls._all_formats is None:
             cls._all_formats = set(
@@ -960,9 +982,10 @@ class FileSet(DataType):
         if crypto is None:
             crypto = hashlib.sha256
         crytpo_obj = crypto()
-        for path, bytes in self.byte_chunks(**kwargs):
+        for path, bytes_iter in self.byte_chunks(**kwargs):
             crytpo_obj.update(path.encode())
-            crytpo_obj.update(bytes.encode())
+            for bytes_str in bytes_iter:
+                crytpo_obj.update(bytes_str)
         return crytpo_obj.hexdigest()
 
     def __bytes_repr__(self, cache):  # pylint: disable=unused-argument

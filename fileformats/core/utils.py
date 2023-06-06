@@ -5,6 +5,7 @@ import inspect
 import typing as ty
 import re
 import os
+import logging
 import pkgutil
 from contextlib import contextmanager
 from fileformats.core.exceptions import (
@@ -12,6 +13,8 @@ from fileformats.core.exceptions import (
     FileFormatsError,
 )
 import fileformats.core
+
+logger = logging.getLogger("fileformats")
 
 
 def find_matching(
@@ -276,3 +279,77 @@ def describe_task(task):
     src_file = inspect.getsourcefile(task)
     src_line = inspect.getsourcelines(task)[-1]
     return f"{task} (defined at line {src_line} of {src_file})"
+
+
+# def on_cifs(fname):
+#     """
+#     Check whether a file path is on a CIFS filesystem mounted in a POSIX host.
+
+#     POSIX hosts are assumed to have the ``mount`` command.
+
+#     On Windows, Docker mounts host directories into containers through CIFS
+#     shares, which has support for Minshall+French symlinks, or text files that
+#     the CIFS driver exposes to the OS as symlinks.
+#     We have found that under concurrent access to the filesystem, this feature
+#     can result in failures to create or read recently-created symlinks,
+#     leading to inconsistent behavior and ``FileNotFoundError`` errors.
+
+#     This check is written to support disabling symlinks on CIFS shares.
+
+#     NB: This function and sub-functions are copied from the nipype.utils.filemanip module
+
+#     """
+#     # Only the first match (most recent parent) counts
+#     for fspath, fstype in _cifs_table:
+#         if fname.startswith(fspath):
+#             return fstype == "cifs"
+#     return False
+
+
+# def _generate_cifs_table():
+#     """
+#     Construct a reverse-length-ordered list of mount points that fall under a CIFS mount.
+
+#     This precomputation allows efficient checking for whether a given path
+#     would be on a CIFS filesystem.
+#     On systems without a ``mount`` command, or with no CIFS mounts, returns an
+#     empty list.
+
+#     """
+#     exit_code, output = sp.getstatusoutput("mount")
+
+#     # Not POSIX
+#     if exit_code != 0:
+#         return []
+
+#     # Linux mount example:  sysfs on /sys type sysfs (rw,nosuid,nodev,noexec)
+#     #                          <PATH>^^^^      ^^^^^<FSTYPE>
+#     # OSX mount example:    /dev/disk2 on / (hfs, local, journaled)
+#     #                               <PATH>^  ^^^<FSTYPE>
+#     pattern = re.compile(r".*? on (/.*?) (?:type |\()([^\s,\)]+)")
+
+#     # Keep line and match for error reporting (match == None on failure)
+#     # Ignore empty lines
+#     matches = [(ll, pattern.match(ll)) for ll in output.strip().splitlines() if ll]
+
+#     # (path, fstype) tuples, sorted by path length (longest first)
+#     mount_info = sorted(
+#         (match.groups() for _, match in matches if match is not None),
+#         key=lambda x: len(x[0]),
+#         reverse=True,
+#     )
+#     cifs_paths = [path for path, fstype in mount_info if fstype.lower() == "cifs"]
+
+#     # Report failures as warnings
+#     for line, match in matches:
+#         if match is None:
+#             logger.debug("Cannot parse mount line: '%s'", line)
+
+#     return [
+#         mount
+#         for mount in mount_info
+#         if any(mount[0].startswith(path) for path in cifs_paths)
+#     ]
+
+
+# _cifs_table = _generate_cifs_table()
