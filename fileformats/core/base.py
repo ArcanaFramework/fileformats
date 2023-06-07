@@ -14,7 +14,6 @@ import functools
 from pathlib import Path
 import hashlib
 import logging
-from typing_extensions import Self
 import attrs
 from .utils import (
     subpackages,
@@ -836,7 +835,7 @@ class FileSet(DataType):
         converters_dict[source_format] = converter_tuple
 
     @classproperty
-    def all_formats(cls) -> set[ty.Any[Self]]:
+    def all_formats(cls) -> set:
         """Iterate over all FileSet formats in fileformats.* namespaces"""
         if cls._all_formats is None:
             cls._all_formats = set(
