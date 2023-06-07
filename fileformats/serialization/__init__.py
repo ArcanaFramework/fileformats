@@ -1,7 +1,7 @@
 from pathlib import Path
 import json
 from ..core import __version__, mark, DataType
-from ..core.mixin import WithQualifiers
+from ..core.mixin import WithClassifiers
 from ..generic import File
 from ..core.utils import MissingExtendedDependency
 
@@ -30,14 +30,14 @@ class InformalSchema(Schema):
     "Not actually a strict schema, just a set of conventions on how to structure the serialization"
 
 
-class DataSerialization(WithQualifiers, File):
+class DataSerialization(WithClassifiers, File):
     "Base class for text-based hierarchical data-serialization formats, e.g. JSON, YAML"
 
-    # Qualifiers class attrs
-    qualifiers_attr_name = "schema"
+    # Classifiers class attrs
+    classifiers_attr_name = "schema"
     schema = None
-    multiple_qualifiers = False
-    allowed_qualifiers = (Schema,)
+    multiple_classifiers = False
+    allowed_classifiers = (Schema,)
     generically_qualifies = True
 
     iana_mime = None
@@ -55,12 +55,12 @@ class DataSerialization(WithQualifiers, File):
 
 class Xml(DataSerialization):
     ext = ".xml"
-    allowed_qualifiers = (XmlSchema, InformalSchema)
+    allowed_classifiers = (XmlSchema, InformalSchema)
 
 
 class Json(DataSerialization):
     ext = ".json"
-    allowed_qualifiers = (JsonSchema, InformalSchema)
+    allowed_classifiers = (JsonSchema, InformalSchema)
 
     @mark.check
     def load(self):

@@ -164,7 +164,7 @@ class WithSideCars(WithAdjacentFiles):
         return metadata
 
 
-class WithQualifiers:
+class WithClassifiers:
     """Mixin class for adding the ability to qualify the format class to designate the
     type of information stored within the format, e.g. ``DirectoryContaining[Png, Gif]`` for a
     directory containing PNG and GIF files, ``Zip[DataFile]`` for a zipped data file,
@@ -184,151 +184,151 @@ class WithQualifiers:
 
     Class Attrs
     -----------
-    qualifiers_attr_name : str, optional
-        an attribute name to store the qualifiers at within the qualified class. This
-        should be used if you need to reference the ``qualifiers`` attribute directly
+    classifiers_attr_name : str, optional
+        an attribute name to store the classifiers at within the classified class. This
+        should be used if you need to reference the ``classifiers`` attribute directly
         in any validation/other methods (i.e. in most cases), to handle the case of
-        diamond inheritance between two classes that can be qualified.
-        A default value should also be set in the unqualified base for this attribute,
-        which is either ``()`` if ``multiple_qualifiers`` is true and ``None`` otherwise
-    <qualifiers-attr-name> : tuple[type, ...] or None, optional
-        pass a default value to the attribute referenced by 'qualifiers_attr_name'
-    multiple_qualifiers : bool, optional
+        diamond inheritance between two classes that can be classified.
+        A default value should also be set in the unclassified base for this attribute,
+        which is either ``()`` if ``multiple_classifiers`` is true and ``None`` otherwise
+    <classifiers-attr-name> : tuple[type, ...] or None, optional
+        pass a default value to the attribute referenced by 'classifiers_attr_name'
+    multiple_classifiers : bool, optional
         whether or not multiple content types are permitted for the container type, True
-    allowed_qualifiers : tuple[type,...], optional
+    allowed_classifiers : tuple[type,...], optional
         the allowable types (+ subclasses) for the content types. If None all types
         are allowed
-    ordered_qualifiers : bool, optional
+    ordered_classifiers : bool, optional
         whether the order of the content types is important or not, by default false
-    genericly_qualified : bool, optional
-        whether the class can be qualified by qualifiers in any namespace (true) or just the
+    genericly_classified : bool, optional
+        whether the class can be classified by classifiers in any namespace (true) or just the
         namespace it belongs to (false). If true, then the namespace of the genericly
-        qualified class is omitted from the "mime-like" string. Note that the
+        classified class is omitted from the "mime-like" string. Note that the
         class' name therefore needs to be globally unique amongst all other genericly
-        qualified classes and so it should be used sparingly, i.e., highly generic
+        classified classes and so it should be used sparingly, i.e., highly generic
         formats that are unambiguous across all namespaces, such as "directory", "zip",
         "gzip", "json", "yaml", etc...
     """
 
-    qualifiers = ()  # qualifiers set in the current class
-    _qualified_subtypes = {}
-    # dict of previously created qualified subtypes. If an existing class with matching
-    # qualifiers has been created it is returned instead of creating a new type. This
+    classifiers = ()  # classifiers set in the current class
+    _classified_subtypes = {}
+    # dict of previously created classified subtypes. If an existing class with matching
+    # classifiers has been created it is returned instead of creating a new type. This
     # ensures that ``assert MyFormat[Qualifier] is MyFormat[Qualifier]``
 
     # Default values for class attrs
-    multiple_qualifiers = True
-    allowed_qualifiers: ty.Optional[ty.Tuple[ty.Type[ty.Any]]] = None
-    ordered_qualifiers = False
+    multiple_classifiers = True
+    allowed_classifiers: ty.Optional[ty.Tuple[ty.Type[ty.Any]]] = None
+    ordered_classifiers = False
     generically_qualifies = False
 
     def __attrs_pre_init__(self):
-        if self.wildcard_qualifiers():
+        if self.wildcard_classifiers():
             raise FileFormatsError(
-                f"Can instantiate {type(self)} class as it has wildcard qualifiers "
+                f"Can instantiate {type(self)} class as it has wildcard classifiers "
                 "and therefore should only be used for converter specifications"
             )
 
     @classproperty
-    def is_qualified(cls):  # pylint: disable=no-self-argument
-        return "unqualified" in cls.__dict__
+    def is_classified(cls):  # pylint: disable=no-self-argument
+        return "unclassified" in cls.__dict__
 
     @classmethod
-    def wildcard_qualifiers(cls, qualifiers=None):
-        if qualifiers is None:
-            qualifiers = cls.qualifiers if cls.is_qualified else ()
-        return frozenset(t for t in qualifiers if isinstance(t, SubtypeVar))
+    def wildcard_classifiers(cls, classifiers=None):
+        if classifiers is None:
+            classifiers = cls.classifiers if cls.is_classified else ()
+        return frozenset(t for t in classifiers if isinstance(t, SubtypeVar))
 
     @classmethod
-    def non_wildcard_qualifiers(cls, qualifiers=None):
-        if qualifiers is None:
-            qualifiers = cls.qualifiers if cls.is_qualified else ()
-        return frozenset(q for q in qualifiers if not isinstance(q, SubtypeVar))
+    def non_wildcard_classifiers(cls, classifiers=None):
+        if classifiers is None:
+            classifiers = cls.classifiers if cls.is_classified else ()
+        return frozenset(q for q in classifiers if not isinstance(q, SubtypeVar))
 
     @classmethod
-    def __class_getitem__(cls, qualifiers):
+    def __class_getitem__(cls, classifiers):
         """Set the content types for a newly created dynamically type"""
-        if isinstance(qualifiers, ty.Iterable):
-            qualifiers = tuple(qualifiers)
+        if isinstance(classifiers, ty.Iterable):
+            classifiers = tuple(classifiers)
         else:
-            qualifiers = (qualifiers,)
-        if cls.allowed_qualifiers:
+            classifiers = (classifiers,)
+        if cls.allowed_classifiers:
             not_allowed = [
                 q
-                for q in qualifiers
-                if not any(q.issubtype(t) for t in cls.allowed_qualifiers)
+                for q in classifiers
+                if not any(q.issubtype(t) for t in cls.allowed_classifiers)
             ]
             if not_allowed:
                 raise FileFormatsError(
                     f"Invalid content types provided to {cls} (must be subclasses of "
-                    f"{cls.allowed_qualifiers}): {not_allowed}"
+                    f"{cls.allowed_classifiers}): {not_allowed}"
                 )
         # Sort content types if order isn't important
-        if cls.multiple_qualifiers:
-            if not cls.ordered_qualifiers:
-                # TODO: should check to see if qualifiers are subclasses of each other
-                repetitions = [t for t, c in Counter(qualifiers).items() if c > 1]
+        if cls.multiple_classifiers:
+            if not cls.ordered_classifiers:
+                # TODO: should check to see if classifiers are subclasses of each other
+                repetitions = [t for t, c in Counter(classifiers).items() if c > 1]
                 if repetitions:
                     raise FileFormatsError(
                         f"Cannot have more than one occurrence of a qualifier "
                         f"({repetitions}) for {cls} class when "
-                        f"{cls.__name__}.ordered_qualifiers is false"
+                        f"{cls.__name__}.ordered_classifiers is false"
                     )
-                qualifiers = frozenset(qualifiers)
+                classifiers = frozenset(classifiers)
         else:
-            if len(qualifiers) > 1:
+            if len(classifiers) > 1:
                 raise FileFormatsError(
-                    f"Multiple qualifiers not permitted for {cls} types, provided: ({qualifiers})"
+                    f"Multiple classifiers not permitted for {cls} types, provided: ({classifiers})"
                 )
-        # Make sure that the "qualified" dictionary is present in this class not super
+        # Make sure that the "classified" dictionary is present in this class not super
         # classes
-        if "_qualified_subtypes" not in cls.__dict__:
-            cls._qualified_subtypes = {}
+        if "_classified_subtypes" not in cls.__dict__:
+            cls._classified_subtypes = {}
         try:
             # Load previously created type so we can do ``assert MyType[Integer] is MyType[Integer]``
-            qualified = cls._qualified_subtypes[qualifiers]
+            classified = cls._classified_subtypes[classifiers]
         except KeyError:
-            if not hasattr(cls, "qualifiers_attr_name"):
+            if not hasattr(cls, "classifiers_attr_name"):
                 raise FileFormatsError(
-                    f"{cls} needs to define the 'qualifiers_attr_name' class attribute "
+                    f"{cls} needs to define the 'classifiers_attr_name' class attribute "
                     "with the name of the (different) class attribute to hold the "
-                    "qualified types"
+                    "classified types"
                 )
-            if cls.qualifiers_attr_name is None:
+            if cls.classifiers_attr_name is None:
                 raise FileFormatsError(
-                    f"Inherited qualifiers have been disabled in {cls} (by setting "
-                    f'"qualifiers_attr_name)" to None)'
+                    f"Inherited classifiers have been disabled in {cls} (by setting "
+                    f'"classifiers_attr_name)" to None)'
                 )
             try:
-                qualifiers_attr = getattr(cls, cls.qualifiers_attr_name)
+                classifiers_attr = getattr(cls, cls.classifiers_attr_name)
             except AttributeError:
                 raise FileFormatsError(
-                    f"Default value for qualifiers attribute "
-                    f"'{cls.qualifiers_attr_name}' needs to be set in {cls}"
+                    f"Default value for classifiers attribute "
+                    f"'{cls.classifiers_attr_name}' needs to be set in {cls}"
                 )
             else:
-                if qualifiers_attr:
+                if classifiers_attr:
                     raise FileFormatsError(
-                        f"Default value for qualifiers attribute "
-                        f"'{cls.qualifiers_attr_name}' needs to be set in {cls}"
+                        f"Default value for classifiers attribute "
+                        f"'{cls.classifiers_attr_name}' needs to be set in {cls}"
                     )
             class_attrs = {
-                "unqualified": cls,
-                "qualifiers": qualifiers,
+                "unclassified": cls,
+                "classifiers": classifiers,
             }
-            class_attrs[cls.qualifiers_attr_name] = (
-                qualifiers if cls.multiple_qualifiers else qualifiers[0]
+            class_attrs[cls.classifiers_attr_name] = (
+                classifiers if cls.multiple_classifiers else classifiers[0]
             )
-            qualifier_names = [t.__name__ for t in qualifiers]
-            if not cls.ordered_qualifiers:
+            qualifier_names = [t.__name__ for t in classifiers]
+            if not cls.ordered_classifiers:
                 qualifier_names.sort()
-            qualified = type(
+            classified = type(
                 f"{'_'.join(qualifier_names)}__{cls.__name__}",
                 (cls,),
                 class_attrs,
             )
-            cls._qualified_subtypes[qualifiers] = qualified
-        return qualified
+            cls._classified_subtypes[classifiers] = classified
+        return classified
 
     @classmethod
     def get_converter_tuples(
@@ -349,49 +349,53 @@ class WithQualifiers:
         # Failing that, see if there is a generic conversion between the container type
         # the source format (or subclass of) defined with matching wildcards in the source
         # and target formats
-        if not available_converters and cls.is_qualified:
+        if not available_converters and cls.is_classified:
             converters_dict = FileSet.get_converters_dict(
-                cls.unqualified
+                cls.unclassified
             )  # pylint: disable=no-member
             for template_source_format, converter in converters_dict.items():
-                if len(converter) == 3:  # was defined with wildcard qualifiers
-                    converter, conv_kwargs, template_qualifiers = converter
+                if len(converter) == 3:  # was defined with wildcard classifiers
+                    converter, conv_kwargs, template_classifiers = converter
                     # Attempt conversion from generic type to template match
                     if isinstance(template_source_format, SubtypeVar):
-                        assert tuple(cls.wildcard_qualifiers(template_qualifiers)) == (
-                            template_source_format,
+                        assert tuple(
+                            cls.wildcard_classifiers(template_classifiers)
+                        ) == (template_source_format,)
+                        non_wildcards = cls.non_wildcard_classifiers(
+                            template_classifiers
                         )
-                        non_wildcards = cls.non_wildcard_qualifiers(template_qualifiers)
-                        to_match = tuple(set(cls.qualifiers).difference(non_wildcards))
+                        to_match = tuple(set(cls.classifiers).difference(non_wildcards))
                         if len(to_match) > 1:
                             wildcard_match = False
                         else:
                             wildcard_match = source_format.issubtype(to_match[0])
                     # Attempt template to template conversion match
                     elif getattr(
-                        source_format, "is_qualified", False
-                    ) and source_format.unqualified.issubtype(
-                        template_source_format.unqualified
+                        source_format, "is_classified", False
+                    ) and source_format.unclassified.issubtype(
+                        template_source_format.unclassified
                     ):
-                        assert cls.wildcard_qualifiers(
-                            template_qualifiers
-                        ) == cls.wildcard_qualifiers(template_source_format.qualifiers)
-                        if cls.ordered_qualifiers:
-                            if len(cls.qualifiers) != len(template_qualifiers) or len(
-                                source_format.qualifiers
-                            ) != len(template_source_format.qualifiers):
+                        assert cls.wildcard_classifiers(
+                            template_classifiers
+                        ) == cls.wildcard_classifiers(
+                            template_source_format.classifiers
+                        )
+                        if cls.ordered_classifiers:
+                            if len(cls.classifiers) != len(template_classifiers) or len(
+                                source_format.classifiers
+                            ) != len(template_source_format.classifiers):
                                 wildcard_match = False
                             else:
                                 wildcard_map = {}
                                 for actual, template in zip(
-                                    source_format.qualifiers,
-                                    template_source_format.qualifiers,
+                                    source_format.classifiers,
+                                    template_source_format.classifiers,
                                 ):
                                     if isinstance(template, SubtypeVar):
                                         wildcard_map[template] = actual
                                 wildcard_match = True
                                 for actual, template in zip(
-                                    cls.qualifiers, template_qualifiers
+                                    cls.classifiers, template_classifiers
                                 ):
                                     if isinstance(template, SubtypeVar):
                                         try:
@@ -407,21 +411,23 @@ class WithQualifiers:
                                         wildcard_match = False
                                         break
                         else:
-                            non_wildcards = cls.non_wildcard_qualifiers(
-                                template_qualifiers
+                            non_wildcards = cls.non_wildcard_classifiers(
+                                template_classifiers
                             )
-                            src_non_wildcards = cls.non_wildcard_qualifiers(
-                                template_source_format.qualifiers
+                            src_non_wildcards = cls.non_wildcard_classifiers(
+                                template_source_format.classifiers
                             )
                             if not non_wildcards.issubset(
-                                set(cls.qualifiers)
+                                set(cls.classifiers)
                             ) or not src_non_wildcards.issubset(
-                                set(source_format.qualifiers)
+                                set(source_format.classifiers)
                             ):
                                 wildcard_match = False
                             else:
-                                to_match = set(cls.qualifiers).difference(non_wildcards)
-                                from_types = set(source_format.qualifiers).difference(
+                                to_match = set(cls.classifiers).difference(
+                                    non_wildcards
+                                )
+                                from_types = set(source_format.classifiers).difference(
                                     src_non_wildcards
                                 )
                                 wildcard_match = to_match.issubset(from_types)
@@ -435,30 +441,30 @@ class WithQualifiers:
     def issubtype(cls, super_type: type):
         if super().issubtype(super_type):  # pylint: disable=no-member
             return True
-        # Check to see whether the unqualified types are equivalent
+        # Check to see whether the unclassified types are equivalent
         if (
-            not cls.is_qualified
-            or not getattr(super_type, "is_qualified", False)
-            or not cls.unqualified.issubtype(
-                super_type.unqualified
+            not cls.is_classified
+            or not getattr(super_type, "is_classified", False)
+            or not cls.unclassified.issubtype(
+                super_type.unclassified
             )  # pylint: disable=no-member
         ):
             return False
-        if cls.ordered_qualifiers:
-            if len(cls.qualifiers) != len(super_type.qualifiers):
+        if cls.ordered_classifiers:
+            if len(cls.classifiers) != len(super_type.classifiers):
                 is_subtype = False
             else:
                 is_subtype = all(
                     q.issubtype(s)
-                    for q, s in zip(cls.qualifiers, super_type.qualifiers)
+                    for q, s in zip(cls.classifiers, super_type.classifiers)
                 )
         else:
-            if super_type.qualifiers.issubset(cls.qualifiers):
+            if super_type.classifiers.issubset(cls.classifiers):
                 is_subtype = True
             else:
                 is_subtype = all(
-                    any(q.issubtype(s) for q in cls.qualifiers)
-                    for s in super_type.qualifiers
+                    any(q.issubtype(s) for q in cls.classifiers)
+                    for s in super_type.classifiers
                 )
         return is_subtype
 
@@ -487,45 +493,45 @@ class WithQualifiers:
             if there is already a converter registered between the two types
         """
         # Ensure "converters" dict is defined in the target class and not in a superclass
-        if cls.wildcard_qualifiers():
+        if cls.wildcard_classifiers():
             if isinstance(source_format, SubtypeVar):
-                if len(cls.wildcard_qualifiers()) > 1:
+                if len(cls.wildcard_classifiers()) > 1:
                     raise FileFormatsError(
                         "Can only have one wildcard qualifier when registering a converter "
-                        f"to {cls} from a generic type, found {cls.wildcard_qualifiers()}"
+                        f"to {cls} from a generic type, found {cls.wildcard_classifiers()}"
                     )
-            elif not source_format.is_qualified:
+            elif not source_format.is_classified:
                 raise FileFormatsError(
-                    "Can only use wildcard qualifiers when registering a converter "
-                    f"from a generic type or similarly qualified type, not {source_format}"
+                    "Can only use wildcard classifiers when registering a converter "
+                    f"from a generic type or similarly classified type, not {source_format}"
                 )
             else:
-                if cls.wildcard_qualifiers() != source_format.wildcard_qualifiers():
+                if cls.wildcard_classifiers() != source_format.wildcard_classifiers():
                     raise FileFormatsError(
                         f"Mismatching wildcards between source format, {source_format} "
-                        f"({list(source_format.wildcard_qualifiers())}), and target "
-                        f"{cls} ({cls.wildcard_qualifiers()})"
+                        f"({list(source_format.wildcard_classifiers())}), and target "
+                        f"{cls} ({cls.wildcard_classifiers()})"
                     )
                 prev_registered = [
                     f
                     for f in cls.converters
                     if (
-                        source_format.unqualified.issubtype(f.unqualified)
-                        and f.non_wildcard_qualifiers()
-                        == source_format.non_wildcard_qualifiers()
+                        source_format.unclassified.issubtype(f.unclassified)
+                        and f.non_wildcard_classifiers()
+                        == source_format.non_wildcard_classifiers()
                     )
                 ]
                 assert len(prev_registered) <= 1
                 prev = prev_registered[0] if prev_registered else None
                 if prev:
                     raise FileFormatsError(
-                        f"There is already a converter registered from {prev.unqualified} "
-                        f"to {cls.unqualified} with non-wildcard qualifiers "
-                        f"{list(prev.non_wildcard_qualifiers())}: "
+                        f"There is already a converter registered from {prev.unclassified} "
+                        f"to {cls.unclassified} with non-wildcard classifiers "
+                        f"{list(prev.non_wildcard_classifiers())}: "
                         + describe_task(cls.converters[prev][0])
                     )
-            converters_dict = cls.unqualified.get_converters_dict()
-            converters_dict[source_format] = converter_tuple + (cls.qualifiers,)
+            converters_dict = cls.unclassified.get_converters_dict()
+            converters_dict[source_format] = converter_tuple + (cls.classifiers,)
         else:
             super().register_converter(source_format, converter_tuple)
 
@@ -533,20 +539,20 @@ class WithQualifiers:
     def namespace(cls):  # pylint: disable=no-self-argument
         """The "namespace" the format belongs to under the "fileformats" umbrella
         namespace"""
-        if cls.is_qualified:
-            namespaces = set(t.namespace for t in cls.qualifiers)
+        if cls.is_classified:
+            namespaces = set(t.namespace for t in cls.classifiers)
             if not cls.generically_qualifies:
-                namespaces.add(cls.unqualified.namespace)
+                namespaces.add(cls.unclassified.namespace)
             if len(namespaces) == 1:
                 return next(iter(namespaces))
             else:
                 msg = (
                     "Cannot create reversible MIME type for because did not find a "
-                    f"common namespace between all qualifiers {list(cls.qualifiers)}"
+                    f"common namespace between all classifiers {list(cls.classifiers)}"
                 )
                 if cls.generically_qualifies:
                     msg += (
-                        f" and (non genericly qualified) base class {cls.unqualified}"
+                        f" and (non genericly classified) base class {cls.unclassified}"
                     )
                 raise FormatRecognitionError(msg + f", found:\n{list(namespaces)}")
         else:

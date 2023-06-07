@@ -2,7 +2,7 @@ import decimal
 import typing as ty
 import attrs
 from fileformats.core import Field
-from fileformats.core.mixin import WithQualifiers
+from fileformats.core.mixin import WithClassifiers
 from fileformats.core.exceptions import FormatMismatchError
 
 
@@ -175,12 +175,12 @@ class Boolean(Singular, LogicalMixin):
 
 
 @attrs.define(auto_attribs=False)
-class Array(WithQualifiers, Field):
+class Array(WithClassifiers, Field):
 
-    # WithQualifiers class attrs
-    qualifiers_attr_name: str = "item_type"
-    multiple_qualifiers: bool = False
-    allowed_qualifiers: ty.Tuple[ty.Type[Singular]] = (Singular,)
+    # WithClassifiers class attrs
+    classifiers_attr_name: str = "item_type"
+    multiple_classifiers: bool = False
+    allowed_classifiers: ty.Tuple[ty.Type[Singular]] = (Singular,)
     item_type: ty.Union[ty.Type[Singular], None] = None
 
     primitive = list

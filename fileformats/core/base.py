@@ -80,8 +80,8 @@ class DataType:
         In this case the subtype is expected to be able to be treated as if it was
         the super class.
 
-        Overridden in the ``WithQualifiers`` mixin to add support for
-        qualified subtypes
+        Overridden in the ``WithClassifiers`` mixin to add support for
+        classified subtypes
 
         Parameters
         ----------
@@ -251,35 +251,35 @@ class DataType:
                 klass = getattr(module, class_name)
             except AttributeError:
                 if "+" in format_name:
-                    qualifier_names, qualified_name = format_name.split("+")
+                    qualifier_names, classified_name = format_name.split("+")
                     try:
-                        qualifiers = [
+                        classifiers = [
                             getattr(module, from_mime_format_name(q))
                             for q in qualifier_names.split(".")
                         ]
                     except AttributeError:
                         raise FormatRecognitionError(
-                            f"Could not load qualifiers [{qualifier_names}] from "
+                            f"Could not load classifiers [{qualifier_names}] from "
                             f"fileformats.{namespace}, corresponding to MIME, "
                             f"or MIME-like, type {mime_string}"
                         ) from None
                     try:
-                        qualified = getattr(
-                            module, from_mime_format_name(qualified_name)
+                        classified = getattr(
+                            module, from_mime_format_name(classified_name)
                         )
                     except AttributeError:
                         try:
-                            qualified = cls.generically_qualifies_by_name[
-                                qualified_name
+                            classified = cls.generically_qualifies_by_name[
+                                classified_name
                             ]
                         except KeyError:
                             raise FormatRecognitionError(
-                                f"Could not load qualified class '{qualified_name}' from "
+                                f"Could not load classified class '{classified_name}' from "
                                 f"fileformats.{namespace} or list of generic types "
                                 f"({list(cls.generically_qualifies_by_name)}), "
                                 f"corresponding to MIME, or MIME-like, type {mime_string}"
                             ) from None
-                    klass = qualified[qualifiers]
+                    klass = classified[classifiers]
                 else:
                     raise FormatRecognitionError(
                         f"Did not find '{class_name}' class in fileformats.{namespace} "
@@ -297,7 +297,7 @@ class DataType:
             }
         return cls._generically_qualifies_by_name
 
-    _generically_qualifies_by_name = None  # Register all generically qualified types
+    _generically_qualifies_by_name = None  # Register all generically classified types
 
 
 @attrs.define
@@ -700,11 +700,11 @@ class FileSet(DataType):
         # Ensure standard converters from source format are loaded
         source_format.import_standard_converters()
         try:
-            unqualified = source_format.unqualified
+            unclassified = source_format.unclassified
         except AttributeError:
             pass
         else:
-            unqualified.import_standard_converters()
+            unclassified.import_standard_converters()
         try:
             converter_tuple = converters[source_format]
         except KeyError:
@@ -794,7 +794,7 @@ class FileSet(DataType):
             if len(converter) == 2:  # Ignore converters with wildcards at this point
                 if source_format.issubtype(src_frmt):
                     available.append(converter)
-        if not available and hasattr(source_format, "unqualified"):
+        if not available and hasattr(source_format, "unclassified"):
             available = SubtypeVar.get_converter_tuples(
                 source_format, target_format=cls
             )

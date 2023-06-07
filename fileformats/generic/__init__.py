@@ -5,7 +5,7 @@ from fileformats.core.base import FileSet
 from fileformats.core.exceptions import FormatMismatchError, FileFormatsError
 from fileformats.core import mark
 from fileformats.core.utils import splitext, classproperty
-from fileformats.core.mixin import WithQualifiers
+from fileformats.core.mixin import WithClassifiers
 
 
 @attrs.define
@@ -230,18 +230,18 @@ class TypedSet(FileSet):
         )
 
 
-class DirectoryContaining(WithQualifiers, Directory):
-    """Generic directory qualified by the formats of its contents"""
+class DirectoryContaining(WithClassifiers, Directory):
+    """Generic directory classified by the formats of its contents"""
 
-    # WithQualifiers-required class attrs
-    qualifiers_attr_name = "content_types"
-    allowed_qualifiers = (FileSet,)
+    # WithClassifiers-required class attrs
+    classifiers_attr_name = "content_types"
+    allowed_classifiers = (FileSet,)
     generically_qualifies = True
 
 
-class SetOf(WithQualifiers, TypedSet):
+class SetOf(WithClassifiers, TypedSet):
 
-    # WithQualifiers-required class attrs
-    qualifiers_attr_name = "content_types"
-    allowed_qualifiers = (FileSet,)
+    # WithClassifiers-required class attrs
+    classifiers_attr_name = "content_types"
+    allowed_classifiers = (FileSet,)
     generically_qualifies = True

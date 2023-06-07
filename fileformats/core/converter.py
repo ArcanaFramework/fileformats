@@ -63,8 +63,8 @@ class SubtypeVar:
         In this case the subtype is expected to be able to be treated as if it was
         the super class.
 
-        Overridden in the ``WithQualifiers`` mixin to add support for
-        qualified subtypes
+        Overridden in the ``WithClassifiers`` mixin to add support for
+        classified subtypes
 
         Parameters
         ----------
@@ -88,18 +88,18 @@ class SubtypeVar:
         # check to see whether there are converters from a base class of the source
         # format
         available_converters = []
-        if source_format.is_qualified:
+        if source_format.is_classified:
             for template_source_format, converter in cls.converters.items():
-                if not template_source_format.unqualified.issubtype(
-                    source_format.unqualified
+                if not template_source_format.unclassified.issubtype(
+                    source_format.unclassified
                 ):
                     continue
-                assert len(template_source_format.wildcard_qualifiers()) == 1
-                non_wildcards = template_source_format.non_wildcard_qualifiers()
-                if not non_wildcards.issubset(source_format.qualifiers):
+                assert len(template_source_format.wildcard_classifiers()) == 1
+                non_wildcards = template_source_format.non_wildcard_classifiers()
+                if not non_wildcards.issubset(source_format.classifiers):
                     continue
                 from_types = tuple(
-                    set(source_format.qualifiers).difference(non_wildcards)
+                    set(source_format.classifiers).difference(non_wildcards)
                 )
                 if any(q.issubtype(target_format) for q in from_types):
                     available_converters.append(converter)
@@ -130,18 +130,18 @@ class SubtypeVar:
             if there is already a converter registered between the two types
         """
         # Ensure "converters" dict is defined in the target class and not in a superclass
-        if len(source_format.wildcard_qualifiers()) > 1:
+        if len(source_format.wildcard_classifiers()) > 1:
             raise FileFormatsError(
                 "Cannot register a conversion to a generic type from a type with more "
-                f"than one wildcard {source_format} ({list(source_format.wildcard_qualifiers())})"
+                f"than one wildcard {source_format} ({list(source_format.wildcard_classifiers())})"
             )
         prev_registered = [
             f
             for f in cls.converters
             if (
-                f.unqualified is source_format.unqualified
-                and f.non_wildcard_qualifiers()
-                == source_format.non_wildcard_qualifiers()
+                f.unclassified is source_format.unclassified
+                and f.non_wildcard_classifiers()
+                == source_format.non_wildcard_classifiers()
             )
         ]
         assert len(prev_registered) <= 1
@@ -150,7 +150,7 @@ class SubtypeVar:
             prev_task = cls.converters[prev][0]
             raise FileFormatsError(
                 f"There is already a converter registered from {prev} "
-                f"to the generic type '{tuple(prev.wildcard_qualifiers())[0]}':"
+                f"to the generic type '{tuple(prev.wildcard_classifiers())[0]}':"
                 f"{describe_task(prev_task)}"
             )
 

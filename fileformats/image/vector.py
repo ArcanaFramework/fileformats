@@ -14,4 +14,4 @@ class Svg__Xml(VectorImage, Xml):
     ext = ".svg"
     iana_mime = "image/svg+xml"
     schema = Svg  # Set Xml schema attribute
-    qualifiers_attr_name = None  # disable qualifiers inherited from Xml
+    classifiers_attr_name = None  # disable classifiers inherited from Xml

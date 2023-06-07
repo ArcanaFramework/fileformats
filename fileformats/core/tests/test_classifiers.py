@@ -38,7 +38,7 @@ SpecificDataType = DataType.type_var("SpecificDataType")
 SpecificFileSet = FileSet.type_var("SpecificFileSet")
 
 
-def test_qualified_equivalence():
+def test_classified_equivalence():
     assert F is F
     assert F[A] is F[A]
     assert F[A, B] is F[B, A]
@@ -84,18 +84,18 @@ def test_qualifier_fails():
         H[A, B, A]
     assert "Cannot have more than one occurrence of a qualifier" in str(e)
 
-    K[A, B, A]  # ordered qualifiers allow repeats
+    K[A, B, A]  # ordered classifiers allow repeats
 
     with pytest.raises(FileFormatsError) as e:
         Q[A]
     assert (
-        "Default value for qualifiers attribute 'new_qualifiers_attr' needs to be set"
+        "Default value for classifiers attribute 'new_classifiers_attr' needs to be set"
         in str(e)
     )
 
     with pytest.raises(FileFormatsError) as e:
         M[A, B]
-    assert "Multiple qualifiers not permitted for " in str(e)
+    assert "Multiple classifiers not permitted for " in str(e)
 
 
 # (source_format=F, target_format=H)
@@ -149,7 +149,7 @@ def test_mime_rountrips():
     assert DirectoryContaining[F].mime_like == "testing/f+directory-containing"
     assert from_mime("testing/f+directory-containing") is DirectoryContaining[F]
 
-    # Directory is unordered so sort qualifiers to create unique mime
+    # Directory is unordered so sort classifiers to create unique mime
     assert DirectoryContaining[H, F].mime_like == "testing/f.h+directory-containing"
     assert from_mime("testing/f.h+directory-containing") is DirectoryContaining[F, H]
 
@@ -163,7 +163,7 @@ def test_mime_rountrips():
     assert "Cannot create reversible MIME type for " in str(e)
 
 
-def test_inherited_qualifiers():
+def test_inherited_classifiers():
     assert Zip[G].mime_like == "testing/g+zip"
     assert from_mime("testing/g+zip") is Zip[G]
 
