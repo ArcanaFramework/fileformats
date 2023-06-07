@@ -200,3 +200,12 @@ def test_hash_mtime(tmp_path: Path):
     time.sleep(1)
     Path.touch(file_1)
     assert File(file_1).hash(mtime=True) != orig_hash
+
+
+def test_hash_files(fsobject: FsObject, work_dir: Path, dest_dir: Path):
+    file_hashes = fsobject.hash_files(relative_to=work_dir)
+    assert sorted(Path(p) for p in file_hashes) == sorted(
+        p.relative_to(work_dir) for p in fsobject.all_file_paths
+    )
+    cpy = fsobject.copy_to(dest_dir)
+    assert cpy.hash_files() == fsobject.hash_files()

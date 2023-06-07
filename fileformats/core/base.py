@@ -880,6 +880,17 @@ class FileSet(DataType):
             }
         return cls._formats_by_name
 
+    @property
+    def all_file_paths(self) -> ty.Iterable[Path]:
+        """Paths of all files within the fileset"""
+        for fspath in self.fspaths:
+            if fspath.is_file():
+                yield fspath
+            else:
+                for dpath, _, file_paths in os.walk(fspath):
+                    for file_path in file_paths:
+                        yield Path(dpath) / file_path
+
     def byte_chunks(
         self,
         mtime: bool = False,
@@ -978,7 +989,7 @@ class FileSet(DataType):
             else:
                 yield (key, chunk_file(fspath))
 
-    def hash(self, crypto=None, **kwargs):
+    def hash(self, crypto=None, **kwargs) -> bytes:
         """Calculate a unique hash for the file-set based on the relative paths and
         contents of its constituent files
 
@@ -1002,6 +1013,32 @@ class FileSet(DataType):
             for bytes_str in bytes_iter:
                 crytpo_obj.update(bytes_str)
         return crytpo_obj.hexdigest()
+
+    def hash_files(self, crypto=None, **kwargs) -> dict[str, bytes]:
+        """Calculate hashes for all files in the file-set based on the relative paths and
+        contents of its constituent files
+
+        Parameters
+        ----------
+        crypto : function, optional
+            the cryptography method used to hash the files, by default hashlib.sha256
+        **kwargs
+            keyword args passed directly through to the ``hash_dir`` function
+
+        Returns
+        -------
+        file_hashes : dict[str, bytes]
+            unique hashes for each file in the file-set
+        """
+        if crypto is None:
+            crypto = hashlib.sha256
+        file_hashes = {}
+        for path, bytes_iter in self.byte_chunks(**kwargs):
+            crypto_obj = crypto()
+            for bytes_str in bytes_iter:
+                crypto_obj.update(bytes_str)
+            file_hashes[str(path)] = crypto_obj.hexdigest()
+        return file_hashes
 
     def __bytes_repr__(self, cache, mode=None):  # pylint: disable=unused-argument
         """Provided for compatibility with Pydra's hashing function, return the contents
