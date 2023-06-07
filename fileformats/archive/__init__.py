@@ -1,18 +1,18 @@
 from fileformats.core import __version__
 from warnings import warn
 from fileformats.core import FileSet
-from fileformats.core.mixin import WithQualifiers
+from fileformats.core.mixin import WithClassifiers
 from fileformats.generic import File
 from fileformats.core.mixin import WithMagicNumber
 
 
-class Archive(WithQualifiers, File):
+class Archive(WithClassifiers, File):
     "Base class for compressed archives"
 
-    qualifiers_attr_name = "archived_type"
+    classifiers_attr_name = "archived_type"
     archived_type = None
-    multiple_qualifiers = False
-    allowed_qualifiers = (FileSet,)
+    multiple_classifiers = False
+    allowed_classifiers = (FileSet,)
     generically_qualifies = True
 
     binary = True

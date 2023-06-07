@@ -1,5 +1,7 @@
+from __future__ import annotations
 import os
 from copy import copy
+import struct
 from inspect import isclass
 from warnings import warn
 import traceback
@@ -8,6 +10,7 @@ import importlib
 import shutil
 from operator import itemgetter
 import itertools
+import functools
 from pathlib import Path
 import hashlib
 import logging
@@ -19,8 +22,6 @@ from .utils import (
     to_mime_format_name,
     from_mime_format_name,
     STANDARD_NAMESPACES,
-    hash_file,
-    hash_dir,
     add_exc_note,
     describe_task,
 )
@@ -36,6 +37,8 @@ from .exceptions import (
 # have been split
 REQUIRED_ANNOTATION = "__fileformats_required__"
 CHECK_ANNOTATION = "__fileformats_check__"
+
+FILE_CHUNK_LEN_DEFAULT = 8192
 
 
 logger = logging.getLogger("fileformats")
@@ -77,8 +80,8 @@ class DataType:
         In this case the subtype is expected to be able to be treated as if it was
         the super class.
 
-        Overridden in the ``WithQualifiers`` mixin to add support for
-        qualified subtypes
+        Overridden in the ``WithClassifiers`` mixin to add support for
+        classified subtypes
 
         Parameters
         ----------
@@ -123,6 +126,15 @@ class DataType:
                 attr = getattr(subpkg, attr_name)
                 if isclass(attr) and issubclass(attr, cls):
                     yield attr
+
+    @classmethod
+    def get_converter(cls, source_format: type, name: str = "converter", **kwargs):
+        if source_format.issubtype(cls):
+            return None
+        else:
+            raise FormatConversionError(
+                f"Cannot converter between '{cls.mime_like}' and '{source_format.mime_like}'"
+            )
 
     @classproperty
     def mime_like(cls):
@@ -183,7 +195,12 @@ class DataType:
         type
             the corresponding file format class
         """
-        namespace, format_name = mime_string.split("/")
+        try:
+            namespace, format_name = mime_string.split("/")
+        except ValueError:
+            raise FormatRecognitionError(
+                f"Format '{mime_string}' is not a valid MIME-like format of <namespace>/<format>"
+            )
         try:
             return FileSet.formats_by_iana_mime[mime_string]
         except KeyError:
@@ -234,35 +251,35 @@ class DataType:
                 klass = getattr(module, class_name)
             except AttributeError:
                 if "+" in format_name:
-                    qualifier_names, qualified_name = format_name.split("+")
+                    qualifier_names, classified_name = format_name.split("+")
                     try:
-                        qualifiers = [
+                        classifiers = [
                             getattr(module, from_mime_format_name(q))
                             for q in qualifier_names.split(".")
                         ]
                     except AttributeError:
                         raise FormatRecognitionError(
-                            f"Could not load qualifiers [{qualifier_names}] from "
+                            f"Could not load classifiers [{qualifier_names}] from "
                             f"fileformats.{namespace}, corresponding to MIME, "
                             f"or MIME-like, type {mime_string}"
                         ) from None
                     try:
-                        qualified = getattr(
-                            module, from_mime_format_name(qualified_name)
+                        classified = getattr(
+                            module, from_mime_format_name(classified_name)
                         )
                     except AttributeError:
                         try:
-                            qualified = cls.generically_qualifies_by_name[
-                                qualified_name
+                            classified = cls.generically_qualifies_by_name[
+                                classified_name
                             ]
                         except KeyError:
                             raise FormatRecognitionError(
-                                f"Could not load qualified class '{qualified_name}' from "
+                                f"Could not load classified class '{classified_name}' from "
                                 f"fileformats.{namespace} or list of generic types "
                                 f"({list(cls.generically_qualifies_by_name)}), "
                                 f"corresponding to MIME, or MIME-like, type {mime_string}"
                             ) from None
-                    klass = qualified[qualifiers]
+                    klass = classified[classifiers]
                 else:
                     raise FormatRecognitionError(
                         f"Did not find '{class_name}' class in fileformats.{namespace} "
@@ -280,7 +297,7 @@ class DataType:
             }
         return cls._generically_qualifies_by_name
 
-    _generically_qualifies_by_name = None  # Register all generically qualified types
+    _generically_qualifies_by_name = None  # Register all generically classified types
 
 
 @attrs.define
@@ -322,6 +339,9 @@ class FileSet(DataType):
 
     def __hash__(self):
         return hash(sorted(self.fspaths))
+
+    def __repr__(self):
+        return f"{type(self).__name__}('" + "', '".join(self.fspaths) + "')"
 
     def __attrs_post_init__(self):
         # Check required properties don't raise errors
@@ -456,8 +476,8 @@ class FileSet(DataType):
     def copy_to(
         self,
         dest_dir: Path,
-        stem: str = None,
-        symlink: bool = False,
+        stem: ty.Optional[str] = None,
+        link_type: ty.Optional[str] = None,
         trim: bool = True,
         make_dirs: bool = False,
         overwrite: bool = False,
@@ -472,23 +492,44 @@ class FileSet(DataType):
         stem: str, optional
             the file name excluding file extensions, to give the files/dirs in the parent
             directory, by default the original file name is used
-        symlink : bool, optional
-            Use symbolic links instead of copying files to new location, false by default
+        link_type : str, optional
+            Whether to use hard ('hard') or symbolic ('symbolic') links instead of
+            copying files to the new location. If None then the files are copied,
+            None by default.
         trim : bool, optional
-            Only copy the paths in the file-set that are "required" by the format, true by default
+            Only copy the paths in the file-set that are "required" by the format,
+            true by default
         make_dirs : bool, optional
-            Make the parent destination and all missing ancestors if they are missing, false by default
+            Make the parent destination and all missing ancestors if they are missing,
+            false by default
         overwrite : bool, optional
             whether to overwrite existing files/directories if present
         """
         dest_dir = Path(dest_dir)  # ensure a Path not a string
         if make_dirs:
             dest_dir.mkdir(parents=True, exist_ok=True)
-        if symlink:
-            copy_dir = copy_file = os.symlink
-        else:
+        if link_type is None:
             copy_dir = shutil.copytree
             copy_file = shutil.copyfile
+        elif link_type == "hard":
+            copy_file = os.link
+
+            def hardlink_dir(src: Path, dest: Path):
+                for dpath, _, fpaths in os.walk(src):
+                    dpath = Path(dpath)
+                    relpath = dpath.relative_to(src)
+                    (dest / relpath).mkdir()
+                    for fpath in fpaths:
+                        os.link(dpath / fpath, dest / relpath / fpath)
+
+            copy_dir = hardlink_dir
+        elif link_type == "symbolic":
+            copy_dir = copy_file = os.symlink
+        else:
+            raise FileFormatsError(
+                f"Unrecognised link_type option {link_type}, can be 'hard', 'symbolic' "
+                "or None"
+            )
         new_paths = []
         if trim and self.required_paths():
             fspaths_to_copy = self.required_paths()
@@ -523,7 +564,9 @@ class FileSet(DataType):
             new_paths.append(new_path)
         return type(self)(new_paths)
 
-    def select_by_ext(self, fileformat: type = None, allow_none: bool = False) -> Path:
+    def select_by_ext(
+        self, fileformat: ty.Optional[type] = None, allow_none: bool = False
+    ) -> Path:
         """Selects a single path from a set of file-system paths based on the file
         extension
 
@@ -657,11 +700,11 @@ class FileSet(DataType):
         # Ensure standard converters from source format are loaded
         source_format.import_standard_converters()
         try:
-            unqualified = source_format.unqualified
+            unclassified = source_format.unclassified
         except AttributeError:
             pass
         else:
-            unqualified.import_standard_converters()
+            unclassified.import_standard_converters()
         try:
             converter_tuple = converters[source_format]
         except KeyError:
@@ -751,7 +794,7 @@ class FileSet(DataType):
             if len(converter) == 2:  # Ignore converters with wildcards at this point
                 if source_format.issubtype(src_frmt):
                     available.append(converter)
-        if not available and hasattr(source_format, "unqualified"):
+        if not available and hasattr(source_format, "unclassified"):
             available = SubtypeVar.get_converter_tuples(
                 source_format, target_format=cls
             )
@@ -763,8 +806,8 @@ class FileSet(DataType):
         source_format: type,
         converter_tuple: ty.Tuple[ty.Callable, ty.Dict[str, ty.Any]],
     ):
-        """Registers a converter task within a class attribute. Called by the @fileformats.mark.converter
-        decorator.
+        """Registers a converter task within a class attribute. Called by the
+        @fileformats.mark.converter decorator.
 
         Parameters
         ----------
@@ -792,7 +835,7 @@ class FileSet(DataType):
         converters_dict[source_format] = converter_tuple
 
     @classproperty
-    def all_formats(cls):
+    def all_formats(cls) -> set:
         """Iterate over all FileSet formats in fileformats.* namespaces"""
         if cls._all_formats is None:
             cls._all_formats = set(
@@ -837,69 +880,116 @@ class FileSet(DataType):
             }
         return cls._formats_by_name
 
-    def hash_files(
+    @property
+    def all_file_paths(self) -> ty.Iterable[Path]:
+        """Paths of all files within the fileset"""
+        for fspath in self.fspaths:
+            if fspath.is_file():
+                yield fspath
+            else:
+                for dpath, _, file_paths in os.walk(fspath):
+                    for file_path in file_paths:
+                        yield Path(dpath) / file_path
+
+    def byte_chunks(
         self,
-        crypto=None,
-        chunk_len=8192,
-        relative_to: os.PathLike = None,
-        **kwargs,
-    ):
-        """Calculate hashes for all files within the file set within a dictionary.
-        Hashes for files within directories are nested within separate dictionaries
-        for each (sub)directory.
+        mtime: bool = False,
+        chunk_len=FILE_CHUNK_LEN_DEFAULT,
+        relative_to: ty.Optional[os.PathLike] = None,
+        ignore_hidden_files: bool = False,
+        ignore_hidden_dirs: bool = False,
+    ) -> ty.Generator[str, ty.Generator[bytes]]:
+        """Yields relative paths for all files within the file-set along with iterators
+        over their byte-contents. To be used when generating hashes for the file set.
 
         Parameters
         ----------
-        crypto : function, optional
-            the cryptography method used to hash the files, by default hashlib.sha256
+        mtime : bool, optional
+            instead of iterating over the entire contents of the file-set, simply yield
+            a bytes repr of the last modification time.
         chunk_len : int, optional
             the chunk length to break up the file and calculate the hash over, by default 8192
         relative_to : Path, optional
             the base path by which to record the file system paths in the dictionary keys
             to, by default None
-        **kwargs
-            keyword args passed directly through to the ``hash_dir`` function
+        ignore_hidden_files : bool
+            whether to ignore hidden files within nested directories (i.e. those
+            starting with '.')
+        ignore_hidden_dirs : bool
+            whether to ignore hidden directories within nested directories (i.e. those
+            starting with '.')
 
-        Returns
+        Yields
         -------
-        file_hashes : dict[str, str]
-            hashes for all files in the file-set, addressed by their directory relative
-            to the ``relative_to`` path
+        rel_path: str
+            relative path to either 'relative_to' arg or common base path for each file
+            in the file set
+        byte_iter : Generator[bytes]
+            an iterator over the bytes contents of the file, chunked into 'chunk_len'
+            chunks
         """
+        # If "relative_to" is not provided, get the common path between
         if relative_to is None:
             relative_to = Path(os.path.commonpath(self.fspaths))
             if all(p.is_file() and p.parent == relative_to for p in self.fspaths):
                 relative_to /= os.path.commonprefix(
                     [p.name for p in self.fspaths]
                 ).rstrip(".")
+        # yield the absolute base path if using mtimes instead of contents
+        if mtime:
+            yield ("<base-path>", iter([str(relative_to.absolute()).encode()]))
+
         relative_to = str(relative_to)
         if Path(relative_to).is_dir() and not relative_to.endswith(os.path.sep):
             relative_to += os.path.sep
-        if crypto is None:
-            crypto = hashlib.sha256
 
-        file_hashes = {}
+        if mtime:
+
+            def chunk_file(fspath: Path):
+                """Yields a byte representation of the last modified time for the file"""
+                yield bytes(struct.pack("<d", os.stat(fspath).st_mtime))
+
+        else:
+
+            def chunk_file(fspath: Path):
+                """Yields the contents of the file in byte chunks"""
+                if not fspath.is_file():
+                    assert fspath.is_symlink()  # broken symlink
+                    yield b"\x00"
+                else:
+                    with open(fspath, "rb") as fp:
+                        for chunk in iter(functools.partial(fp.read, chunk_len), b""):
+                            yield chunk
+
+        def chunk_dir(fspath):
+            for dpath, _, filenames in sorted(os.walk(fspath)):
+                # Sort in-place to guarantee order.
+                filenames.sort()
+                dpath = Path(dpath)
+                if (
+                    ignore_hidden_dirs
+                    and dpath.name.startswith(".")
+                    and str(dpath) != fspath
+                ):
+                    continue
+                for filename in filenames:
+                    if ignore_hidden_files and filename.startswith("."):
+                        continue
+                    yield (
+                        str((dpath / filename).relative_to(relative_to)),
+                        chunk_file(dpath / filename),
+                    )
+
         for key, fspath in sorted(
             ((str(p)[len(relative_to) :], p) for p in self.fspaths),
             key=itemgetter(0),
         ):
-            if fspath.is_file():
-                file_hashes[key] = hash_file(fspath, chunk_len=chunk_len, crypto=crypto)
-            elif fspath.is_dir():
-                file_hashes.update(
-                    hash_dir(
-                        fspath,
-                        chunk_len=chunk_len,
-                        crypto=crypto,
-                        relative_to=relative_to,
-                        **kwargs,
-                    )
-                )
+            if fspath.is_dir():
+                yield from chunk_dir(fspath)
             else:
-                raise RuntimeError(f"Cannot hash {self} as {fspath} no longer exists")
-        return file_hashes
+                yield (key, chunk_file(fspath))
 
-    def hash(self, crypto=None, *args, **kwargs):
+    def hash(self, crypto=None, **kwargs) -> bytes:
         """Calculate a unique hash for the file-set based on the relative paths and
         contents of its constituent files
 
@@ -907,11 +997,6 @@ class FileSet(DataType):
         ----------
         crypto : function, optional
             the cryptography method used to hash the files, by default hashlib.sha256
-        chunk_len : int, optional
-            the chunk length to break up the file and calculate the hash over, by default 8192
-        relative_to : Path, optional
-            the base path by which to record the file system paths in the dictionary keys
-            to, by default None
         **kwargs
             keyword args passed directly through to the ``hash_dir`` function
 
@@ -923,10 +1008,61 @@ class FileSet(DataType):
         if crypto is None:
             crypto = hashlib.sha256
         crytpo_obj = crypto()
-        for path, hash in self.hash_files(crypto=crypto, *args, **kwargs).items():
+        for path, bytes_iter in self.byte_chunks(**kwargs):
             crytpo_obj.update(path.encode())
-            crytpo_obj.update(hash.encode())
+            for bytes_str in bytes_iter:
+                crytpo_obj.update(bytes_str)
         return crytpo_obj.hexdigest()
+
+    def hash_files(self, crypto=None, **kwargs) -> dict[str, bytes]:
+        """Calculate hashes for all files in the file-set based on the relative paths and
+        contents of its constituent files
+
+        Parameters
+        ----------
+        crypto : function, optional
+            the cryptography method used to hash the files, by default hashlib.sha256
+        **kwargs
+            keyword args passed directly through to the ``hash_dir`` function
+
+        Returns
+        -------
+        file_hashes : dict[str, bytes]
+            unique hashes for each file in the file-set
+        """
+        if crypto is None:
+            crypto = hashlib.sha256
+        file_hashes = {}
+        for path, bytes_iter in self.byte_chunks(**kwargs):
+            crypto_obj = crypto()
+            for bytes_str in bytes_iter:
+                crypto_obj.update(bytes_str)
+            file_hashes[str(path)] = crypto_obj.hexdigest()
+        return file_hashes
+
+    def __bytes_repr__(self, cache, mode=None):  # pylint: disable=unused-argument
+        """Provided for compatibility with Pydra's hashing function, return the contents
+        of all the files in the file-set in chunks
+
+        Parameters
+        ----------
+        cache : pydra.utils.hash.Cache
+            an object passed around by Pydra's hashing function to store cached versions
+            of previously hashed objects, to allow recursive structures
+        mode : int, optional
+            a flag used to specify the mode used to generate the bytes representation
+
+        Yields
+        ------
+        bytes
+            a chunk of bytes of length FILE_CHUNK_LEN_DEFAULT from the contents of all
+            files in the file-set.
+        """
+        cls = type(self)
+        yield f"{cls.__module__}.{cls.__name__}:".encode()
+        for key, chunk_iter in self.byte_chunks():
+            yield (",'" + key + "'=").encode()
+            yield from chunk_iter
 
     _all_formats = None
     _formats_by_iana_mime = None
@@ -939,6 +1075,7 @@ class Field(DataType):
 
     type = None
     is_field = True
+    primitive = None
 
     def __str__(self):
         return str(self.value)
@@ -948,10 +1085,22 @@ class Field(DataType):
         return {}
 
     @classproperty
-    def all_fields(cls):
+    def all_fields(cls) -> list[ty.Type[Field]]:  # pylint: disable=no-self-argument
         """Iterate over all field formats in fileformats.* namespaces"""
-        if cls._all_fields is None:
-            cls._all_fields = [f for f in Field.subclasses() if f.type is not None]
-        return cls._all_fields
+        import fileformats.field  # noqa
+
+        return [f for f in Field.subclasses() if f.primitive is not None]
+
+    @classmethod
+    def from_primitive(cls, dtype: type):
+        try:
+            datatype = next(iter(f for f in cls.all_fields if f.primitive is dtype))
+        except StopIteration as e:
+            field_types_str = ", ".join(t.__name__ for t in cls.all_fields)
+            raise FileFormatsError(
+                f"{dtype} doesn't not correspond to a valid fileformats field type "
+                f"({field_types_str})"
+            ) from e
+        return datatype
 
     _all_fields = None

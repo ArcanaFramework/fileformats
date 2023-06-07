@@ -1,4 +1,5 @@
 from pathlib import Path
+import typing as ty
 import tempfile
 import pydra.mark
 import pydra.engine.specs
@@ -13,7 +14,9 @@ from .raster import RasterImage, Bitmap, Gif, Jpeg, Png, Tiff
 @mark.converter(target_format=Tiff, output_format=Tiff)
 @pydra.mark.task
 @pydra.mark.annotate({"return": {"out_file": RasterImage}})
-def convert_image(in_file: RasterImage, output_format: type, out_dir: Path = None):
+def convert_image(
+    in_file: RasterImage, output_format: type, out_dir: ty.Optional[Path] = None
+):
     data_array = in_file.load()
     if out_dir is None:
         out_dir = Path(tempfile.mkdtemp())

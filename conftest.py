@@ -4,9 +4,13 @@ import logging
 from pathlib import Path
 import tempfile
 import pytest
-from pydra import set_input_validator
 
-set_input_validator(True)
+try:
+    from pydra import set_input_validator
+
+    set_input_validator(True)
+except ImportError:
+    pass
 
 # Set DEBUG logging for unittests
 

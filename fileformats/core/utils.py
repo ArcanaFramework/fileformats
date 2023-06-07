@@ -1,9 +1,11 @@
+from __future__ import annotations
 import importlib
 from pathlib import Path
 import inspect
 import typing as ty
 import re
 import os
+import logging
 import pkgutil
 from contextlib import contextmanager
 from fileformats.core.exceptions import (
@@ -12,8 +14,12 @@ from fileformats.core.exceptions import (
 )
 import fileformats.core
 
+logger = logging.getLogger("fileformats")
 
-def find_matching(fspaths: ty.List[Path], standard_only: bool = False):
+
+def find_matching(
+    fspaths: ty.List[Path], standard_only: bool = False, include_generic: bool = False
+):
     """Detect the corresponding file format from a set of file-system paths
 
     Parameters
@@ -21,13 +27,19 @@ def find_matching(fspaths: ty.List[Path], standard_only: bool = False):
     fspaths : list[Path]
         file-system paths to detect the format of
     standard_only : bool, optional
-        If you only want to return matches from the "standard" IANA types
+        If you only want to return matches from the "standard" IANA types, by default False
+    include_generic : bool, optional
+        Include generic file-set types (i.e ones within the fileformats.generic package),
+        by default False
     """
     fspaths = fspaths_converter(fspaths)
     matches = []
     for frmt in fileformats.core.FileSet.all_formats:
-        if frmt.matches(fspaths) and (
-            not standard_only or frmt.namespace in STANDARD_NAMESPACES
+        namespace = frmt.namespace
+        if (
+            frmt.matches(fspaths)
+            and (not standard_only or namespace in STANDARD_NAMESPACES)
+            and (include_generic or namespace != "generic")
         ):
             matches.append(frmt)
     return matches
@@ -101,9 +113,15 @@ def set_cwd(path: Path):
 
 def fspaths_converter(
     fspaths: ty.Union[
-        ty.Iterable[ty.Union[str, os.PathLike, bytes]], str, os.PathLike, bytes
+        ty.Iterable[ty.Union[str, os.PathLike, bytes]],
+        str,
+        os.PathLike,
+        bytes,
+        fileformats.core.FileSet,
     ]
 ):
+    import fileformats.core
+
     """Ensures fs-paths are a set of pathlib.Path"""
     if isinstance(fspaths, fileformats.core.FileSet):
         fspaths = fspaths.fspaths
@@ -186,38 +204,38 @@ def from_mime_format_name(format_name: str):
     return format_name
 
 
-def hash_file(fspath: Path, chunk_len: int, crypto: ty.Callable):
-    crypto_obj = crypto()
-    with open(fspath, "rb") as fp:
-        for chunk in iter(lambda: fp.read(chunk_len), b""):
-            crypto_obj.update(chunk)
-    return crypto_obj.hexdigest()
+# def hash_file(fspath: Path, chunk_len: int, crypto: ty.Callable):
+#     crypto_obj = crypto()
+#     with open(fspath, "rb") as fp:
+#         for chunk in iter(lambda: fp.read(chunk_len), b""):
+#             crypto_obj.update(chunk)
+#     return crypto_obj.hexdigest()
 
 
-def hash_dir(
-    fspath: Path,
-    chunk_len: int,
-    crypto: ty.Callable,
-    ignore_hidden_files: bool = False,
-    ignore_hidden_dirs: bool = False,
-    relative_to: Path = None,
-):
-    if relative_to is None:
-        relative_to = fspath
-    file_hashes = {}
-    for dpath, _, filenames in sorted(os.walk(fspath)):
-        # Sort in-place to guarantee order.
-        filenames.sort()
-        dpath = Path(dpath)
-        if ignore_hidden_dirs and dpath.name.startswith(".") and str(dpath) != fspath:
-            continue
-        for filename in filenames:
-            if ignore_hidden_files and filename.startswith("."):
-                continue
-            file_hashes[str((dpath / filename).relative_to(relative_to))] = hash_file(
-                dpath / filename, crypto=crypto, chunk_len=chunk_len
-            )
-    return file_hashes
+# def hash_dir(
+#     fspath: Path,
+#     chunk_len: int,
+#     crypto: ty.Callable,
+#     ignore_hidden_files: bool = False,
+#     ignore_hidden_dirs: bool = False,
+#     relative_to: ty.Optional[Path] = None,
+# ):
+#     if relative_to is None:
+#         relative_to = fspath
+#     file_hashes = {}
+#     for dpath, _, filenames in sorted(os.walk(fspath)):
+#         # Sort in-place to guarantee order.
+#         filenames.sort()
+#         dpath = Path(dpath)
+#         if ignore_hidden_dirs and dpath.name.startswith(".") and str(dpath) != fspath:
+#             continue
+#         for filename in filenames:
+#             if ignore_hidden_files and filename.startswith("."):
+#                 continue
+#             file_hashes[str((dpath / filename).relative_to(relative_to))] = hash_file(
+#                 dpath / filename, crypto=crypto, chunk_len=chunk_len
+#             )
+#     return file_hashes
 
 
 def add_exc_note(e, note):
@@ -261,3 +279,77 @@ def describe_task(task):
     src_file = inspect.getsourcefile(task)
     src_line = inspect.getsourcelines(task)[-1]
     return f"{task} (defined at line {src_line} of {src_file})"
+
+
+# def on_cifs(fname):
+#     """
+#     Check whether a file path is on a CIFS filesystem mounted in a POSIX host.
+
+#     POSIX hosts are assumed to have the ``mount`` command.
+
+#     On Windows, Docker mounts host directories into containers through CIFS
+#     shares, which has support for Minshall+French symlinks, or text files that
+#     the CIFS driver exposes to the OS as symlinks.
+#     We have found that under concurrent access to the filesystem, this feature
+#     can result in failures to create or read recently-created symlinks,
+#     leading to inconsistent behavior and ``FileNotFoundError`` errors.
+
+#     This check is written to support disabling symlinks on CIFS shares.
+
+#     NB: This function and sub-functions are copied from the nipype.utils.filemanip module
+
+#     """
+#     # Only the first match (most recent parent) counts
+#     for fspath, fstype in _cifs_table:
+#         if fname.startswith(fspath):
+#             return fstype == "cifs"
+#     return False
+
+
+# def _generate_cifs_table():
+#     """
+#     Construct a reverse-length-ordered list of mount points that fall under a CIFS mount.
+
+#     This precomputation allows efficient checking for whether a given path
+#     would be on a CIFS filesystem.
+#     On systems without a ``mount`` command, or with no CIFS mounts, returns an
+#     empty list.
+
+#     """
+#     exit_code, output = sp.getstatusoutput("mount")
+
+#     # Not POSIX
+#     if exit_code != 0:
+#         return []
+
+#     # Linux mount example:  sysfs on /sys type sysfs (rw,nosuid,nodev,noexec)
+#     #                          <PATH>^^^^      ^^^^^<FSTYPE>
+#     # OSX mount example:    /dev/disk2 on / (hfs, local, journaled)
+#     #                               <PATH>^  ^^^<FSTYPE>
+#     pattern = re.compile(r".*? on (/.*?) (?:type |\()([^\s,\)]+)")
+
+#     # Keep line and match for error reporting (match == None on failure)
+#     # Ignore empty lines
+#     matches = [(ll, pattern.match(ll)) for ll in output.strip().splitlines() if ll]
+
+#     # (path, fstype) tuples, sorted by path length (longest first)
+#     mount_info = sorted(
+#         (match.groups() for _, match in matches if match is not None),
+#         key=lambda x: len(x[0]),
+#         reverse=True,
+#     )
+#     cifs_paths = [path for path, fstype in mount_info if fstype.lower() == "cifs"]
+
+#     # Report failures as warnings
+#     for line, match in matches:
+#         if match is None:
+#             logger.debug("Cannot parse mount line: '%s'", line)
+
+#     return [
+#         mount
+#         for mount in mount_info
+#         if any(mount[0].startswith(path) for path in cifs_paths)
+#     ]
+
+
+# _cifs_table = _generate_cifs_table()

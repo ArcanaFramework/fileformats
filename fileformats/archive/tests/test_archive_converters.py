@@ -54,7 +54,7 @@ def test_tar_gz_roundtrip(archive_input):
 
 def _roundtrip(input, archive_klass):
     archive_klass.convert(input)  # test generic archive
-    # Create qualified archive that can be reversed
+    # Create classified archive that can be reversed
     compressed_type = Directory if input.is_dir else PlainText
     archive = archive_klass[compressed_type].convert(input)
     assert isinstance(archive, archive_klass)

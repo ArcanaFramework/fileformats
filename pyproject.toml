@@ -56,7 +56,6 @@ test = [
     "pytest >=6.2.5",
     "pytest-env>=0.6.2",
     "pytest-cov>=2.12.1",
-    "codecov",
     "fileformats-testing",
 ]
 docs = [
