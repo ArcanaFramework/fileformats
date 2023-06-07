@@ -2,6 +2,7 @@ from pathlib import Path
 import os.path
 import random
 import shutil
+import time
 import pytest
 from fileformats.generic import File, Directory, FsObject
 from fileformats.core.mixin import WithSeparateHeader
@@ -196,5 +197,6 @@ def test_hash_mtime(tmp_path: Path):
     assert File(file_1).hash(mtime=True) == orig_hash
     assert File(file_2).hash(mtime=True) != orig_hash
 
+    time.sleep(1)
     Path.touch(file_1)
     assert File(file_1).hash(mtime=True) != orig_hash
