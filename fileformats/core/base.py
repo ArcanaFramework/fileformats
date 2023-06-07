@@ -1,6 +1,7 @@
 from __future__ import annotations
 import os
 from copy import copy
+import struct
 from inspect import isclass
 from warnings import warn
 import traceback
@@ -882,6 +883,7 @@ class FileSet(DataType):
 
     def byte_chunks(
         self,
+        mtime: bool = False,
         chunk_len=FILE_CHUNK_LEN_DEFAULT,
         relative_to: ty.Optional[os.PathLike] = None,
         ignore_hidden_files: bool = False,
@@ -892,8 +894,9 @@ class FileSet(DataType):
 
         Parameters
         ----------
-        crypto : function, optional
-            the cryptography method used to hash the files, by default hashlib.sha256
+        mtime : bool, optional
+            instead of iterating over the entire contents of the file-set, simply yield
+            a bytes repr of the last modification time.
         chunk_len : int, optional
             the chunk length to break up the file and calculate the hash over, by default 8192
         relative_to : Path, optional
@@ -922,18 +925,31 @@ class FileSet(DataType):
                 relative_to /= os.path.commonprefix(
                     [p.name for p in self.fspaths]
                 ).rstrip(".")
+        # yield the absolute base path if using mtimes instead of contents
+        if mtime:
+            yield ("<base-path>", iter([str(relative_to.absolute()).encode()]))
+
         relative_to = str(relative_to)
         if Path(relative_to).is_dir() and not relative_to.endswith(os.path.sep):
             relative_to += os.path.sep
 
-        def chunk_file(fspath: Path):
-            if not fspath.is_file():
-                assert fspath.is_symlink()  # broken symlink
-                yield b"\x00"
-            else:
-                with open(fspath, "rb") as fp:
-                    for chunk in iter(functools.partial(fp.read, chunk_len), b""):
-                        yield chunk
+        if mtime:
+
+            def chunk_file(fspath: Path):
+                """Yields a byte representation of the last modified time for the file"""
+                yield bytes(struct.pack("<d", os.stat(fspath).st_mtime))
+
+        else:
+
+            def chunk_file(fspath: Path):
+                """Yields the contents of the file in byte chunks"""
+                if not fspath.is_file():
+                    assert fspath.is_symlink()  # broken symlink
+                    yield b"\x00"
+                else:
+                    with open(fspath, "rb") as fp:
+                        for chunk in iter(functools.partial(fp.read, chunk_len), b""):
+                            yield chunk
 
         def chunk_dir(fspath):
             for dpath, _, filenames in sorted(os.walk(fspath)):
@@ -988,7 +1004,7 @@ class FileSet(DataType):
                 crytpo_obj.update(bytes_str)
         return crytpo_obj.hexdigest()
 
-    def __bytes_repr__(self, cache):  # pylint: disable=unused-argument
+    def __bytes_repr__(self, cache, mode=None):  # pylint: disable=unused-argument
         """Provided for compatibility with Pydra's hashing function, return the contents
         of all the files in the file-set in chunks
 
@@ -997,6 +1013,8 @@ class FileSet(DataType):
         cache : pydra.utils.hash.Cache
             an object passed around by Pydra's hashing function to store cached versions
             of previously hashed objects, to allow recursive structures
+        mode : int, optional
+            a flag used to specify the mode used to generate the bytes representation
 
         Yields
         ------

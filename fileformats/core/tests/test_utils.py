@@ -183,3 +183,18 @@ def test_hash_nested_dir(tmp_path: Path):
     assert nested_dir.hash() == nohiddenfiles_hash
     shutil.rmtree(hidden)
     assert nested_dir.hash() == nohidden_hash
+
+
+def test_hash_mtime(tmp_path: Path):
+    file_1 = tmp_path / "file_1.txt"
+    file_2 = tmp_path / "file_2.txt"
+    file_1.write_text("hello")
+    file_2.write_text("hello")
+
+    orig_hash = File(file_1).hash(mtime=True)
+
+    assert File(file_1).hash(mtime=True) == orig_hash
+    assert File(file_2).hash(mtime=True) != orig_hash
+
+    Path.touch(file_1)
+    assert File(file_1).hash(mtime=True) != orig_hash
