@@ -58,25 +58,19 @@ PathLike = ty.Union[str, bytes, os.PathLike]
 @pydra.mark.task
 @pydra.mark.annotate(
     {
-        "in_file": PathLike,
-        "out_file": str,
-        "filter": str,
-        "compression": str,  # TAR_COMPRESSION_ANNOT,
-        "format": int,
-        "ignore_zeros": bool,
         "return": {"out_file": Path},
     }
 )
 def create_tar(
-    in_file,
-    out_file=None,
-    base_dir=None,
-    filter=None,
-    compression=None,
-    format=tarfile.DEFAULT_FORMAT,
-    ignore_zeros=False,
-    encoding=tarfile.ENCODING,
-):
+    in_file: FileSet,
+    out_file: ty.Optional[Path] = None,
+    base_dir: ty.Optional[Path] = None,
+    filter: ty.Optional[str] = None,
+    compression: ty.Optional[str] = None,
+    format: int = tarfile.DEFAULT_FORMAT,
+    ignore_zeros: bool = False,
+    encoding: str = tarfile.ENCODING,
+) -> Path:
     return _create_tar(
         in_file=in_file,
         out_file=out_file,
@@ -170,8 +164,8 @@ def _create_tar(
 @pydra.mark.task
 @pydra.mark.annotate({"return": {"out_file": pydra.engine.specs.MultiOutputObj}})
 def extract_tar(
-    in_file: PathLike,
-    extract_dir: PathLike,
+    in_file: FileSet,
+    extract_dir: Path,
     bufsize: int = 10240,
     compression_type: str = "*",
 ) -> ty.Iterable[Path]:
@@ -197,21 +191,17 @@ def extract_tar(
 @pydra.mark.task
 @pydra.mark.annotate(
     {
-        "in_file": PathLike,
-        "out_file": str,
-        "compression": int,  # ZIP_COMPRESSION_ANNOT,
-        "allowZip64": bool,
         "return": {"out_file": PathLike},
     }
 )
 def create_zip(
-    in_file,
-    out_file,
-    base_dir,
-    compression=zipfile.ZIP_DEFLATED,
-    allowZip64=True,
-    compresslevel=None,
-    strict_timestamps=True,
+    in_file: FileSet,
+    out_file: Path,
+    base_dir: Path,
+    compression: int = zipfile.ZIP_DEFLATED,
+    allowZip64: bool = True,
+    compresslevel: ty.Optional[int] = None,
+    strict_timestamps: bool = True,
 ):
     return _create_zip(
         in_file=in_file,
