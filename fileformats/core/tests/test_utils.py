@@ -85,7 +85,7 @@ def test_copy_hardlink(fsobject: FsObject, dest_dir: Path):
     assert set(p.name for p in cpy.fspaths) == set(p.name for p in fsobject.fspaths)
     assert all(
         os.path.samefile(c, o)
-        for c, o in zip(cpy.fspaths, fsobject.fspaths)
+        for c, o in zip(sorted(cpy.fspaths), sorted(fsobject.fspaths))
         if o.is_file()
     )
     assert cpy.hash() == fsobject.hash()
