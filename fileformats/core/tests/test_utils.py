@@ -66,14 +66,14 @@ def dest_dir(work_dir):
 
 
 def test_copy(fsobject: FsObject, dest_dir: Path):
-    cpy = fsobject.copy_to(dest_dir)
+    cpy = fsobject.copy(dest_dir)
     assert all(p.parent == dest_dir for p in cpy.fspaths)
     assert set(p.name for p in cpy.fspaths) == set(p.name for p in fsobject.fspaths)
     assert cpy.hash() == fsobject.hash()
 
 
 def test_copy_symlink(fsobject: FsObject, dest_dir: Path):
-    cpy = fsobject.copy_to(dest_dir, link_type="symbolic")
+    cpy = fsobject.copy(dest_dir, link_type="symbolic")
     assert all(p.parent == dest_dir for p in cpy.fspaths)
     assert set(p.name for p in cpy.fspaths) == set(p.name for p in fsobject.fspaths)
     assert set(p.is_symlink() for p in cpy.fspaths)
@@ -81,7 +81,7 @@ def test_copy_symlink(fsobject: FsObject, dest_dir: Path):
 
 
 def test_copy_hardlink(fsobject: FsObject, dest_dir: Path):
-    cpy = fsobject.copy_to(dest_dir, link_type="hard")
+    cpy = fsobject.copy(dest_dir, link_type="hard")
     assert all(p.parent == dest_dir for p in cpy.fspaths)
     assert set(p.name for p in cpy.fspaths) == set(p.name for p in fsobject.fspaths)
     assert all(
@@ -93,7 +93,7 @@ def test_copy_hardlink(fsobject: FsObject, dest_dir: Path):
 
 
 def test_copy_with_rename(foo_file, dest_dir):
-    cpy = foo_file.copy_to(dest_dir, stem="new")
+    cpy = foo_file.copy(dest_dir, stem="new")
     assert cpy.fspath.name == "new.foo"
     assert cpy.header.fspath.name == "new.bar"
 
@@ -207,5 +207,5 @@ def test_hash_files(fsobject: FsObject, work_dir: Path, dest_dir: Path):
     assert sorted(Path(p) for p in file_hashes) == sorted(
         p.relative_to(work_dir) for p in fsobject.all_file_paths
     )
-    cpy = fsobject.copy_to(dest_dir)
+    cpy = fsobject.copy(dest_dir)
     assert cpy.hash_files() == fsobject.hash_files()
