@@ -473,7 +473,7 @@ class FileSet(DataType):
             else:
                 yield attr_name
 
-    def copy_to(
+    def copy(
         self,
         dest_dir: Path,
         stem: ty.Optional[str] = None,
@@ -563,6 +563,10 @@ class FileSet(DataType):
                 copy_file(fspath, new_path)
             new_paths.append(new_path)
         return type(self)(new_paths)
+
+    def copy_to(self, *args, **kwargs):
+        """For b/w compatibility (temporary message)"""
+        return self.copy(*args, **kwargs)
 
     def select_by_ext(
         self, fileformat: ty.Optional[type] = None, allow_none: bool = False
@@ -1040,17 +1044,17 @@ class FileSet(DataType):
             file_hashes[str(path)] = crypto_obj.hexdigest()
         return file_hashes
 
-    def __bytes_repr__(self, cache, mode=None):  # pylint: disable=unused-argument
+    def __bytes_repr__(
+        self, cache: dict
+    ) -> ty.Iterable[bytes]:  # pylint: disable=unused-argument
         """Provided for compatibility with Pydra's hashing function, return the contents
         of all the files in the file-set in chunks
 
         Parameters
         ----------
-        cache : pydra.utils.hash.Cache
+        cache : dict
             an object passed around by Pydra's hashing function to store cached versions
             of previously hashed objects, to allow recursive structures
-        mode : int, optional
-            a flag used to specify the mode used to generate the bytes representation
 
         Yields
         ------
