@@ -24,6 +24,7 @@ from .utils import (
     STANDARD_NAMESPACES,
     add_exc_note,
     describe_task,
+    CifsMountIndentifier,
 )
 from .converter import SubtypeVar
 from .exceptions import (
@@ -525,10 +526,26 @@ class FileSet(DataType):
             copy_dir = hardlink_dir
         elif link_type == "symbolic":
             copy_dir = copy_file = os.symlink
+        elif link_type == "symbolic_with_cifs_fallback":
+
+            def symlink_dir_w_fallback(src: Path, dest: Path):
+                if CifsMountIndentifier.on_cifs(src):
+                    shutil.copytree(src, dest)
+                else:
+                    os.symlink(src, dest)
+
+            def symlink_file_w_fallback(src: Path, dest: Path):
+                if CifsMountIndentifier.on_cifs(src):
+                    shutil.copyfile(src, dest)
+                else:
+                    os.symlink(src, dest)
+
+            copy_dir = symlink_dir_w_fallback
+            copy_file = symlink_file_w_fallback
         else:
             raise FileFormatsError(
                 f"Unrecognised link_type option {link_type}, can be 'hard', 'symbolic' "
-                "or None"
+                "'symbolic_with_cifs_fallback', or None"
             )
         new_paths = []
         if trim and self.required_paths():
