@@ -2,7 +2,7 @@ from pathlib import Path
 import typing as ty
 from collections import Counter
 from . import mark
-from .base import FileSet
+from .fileset import FileSet
 from .utils import classproperty, describe_task, to_mime_format_name
 from .converter import SubtypeVar
 from .exceptions import FileFormatsError, FormatMismatchError, FormatRecognitionError

@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 import attrs
-from fileformats.core.base import FileSet
+from fileformats.core.fileset import FileSet
 from fileformats.core.exceptions import FormatMismatchError, FileFormatsError
 from fileformats.core import mark
 from fileformats.core.utils import splitext, classproperty

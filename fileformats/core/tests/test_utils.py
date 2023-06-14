@@ -73,15 +73,39 @@ def test_copy(fsobject: FsObject, dest_dir: Path):
 
 
 def test_copy_symlink(fsobject: FsObject, dest_dir: Path):
-    cpy = fsobject.copy(dest_dir, link_type="symbolic")
+    cpy = fsobject.copy(dest_dir, mode=File.CopyMode.symlink)
     assert all(p.parent == dest_dir for p in cpy.fspaths)
     assert set(p.name for p in cpy.fspaths) == set(p.name for p in fsobject.fspaths)
-    assert set(p.is_symlink() for p in cpy.fspaths)
+    assert all(p.is_symlink() for p in cpy.fspaths)
+    assert cpy.hash() == fsobject.hash()
+
+
+def test_copy_symlink_with_fallback(fsobject: FsObject, dest_dir: Path):
+    "Simulate source object on CIFS share, should be copied not symlinked"
+    cpy = fsobject.copy(
+        dest_dir,
+        mode=File.CopyMode.link_or_copy,
+        supported_modes=File.CopyMode.hardlink_or_copy,
+    )
+    assert all(p.parent == dest_dir for p in cpy.fspaths)
+    assert set(p.name for p in cpy.fspaths) == set(p.name for p in fsobject.fspaths)
+    assert not any(p.is_symlink() for p in cpy.fspaths)
+    assert cpy.hash() == fsobject.hash()
+
+
+def test_copy_symlink_with_unrequired_fallback(fsobject: FsObject, dest_dir: Path):
+    "Simulate source object not on CIFS share, should be symlinked not copied"
+    cpy = fsobject.copy(
+        dest_dir, mode=File.CopyMode.link_or_copy, supported_modes=File.CopyMode.link
+    )
+    assert all(p.parent == dest_dir for p in cpy.fspaths)
+    assert set(p.name for p in cpy.fspaths) == set(p.name for p in fsobject.fspaths)
+    assert all(p.is_symlink() for p in cpy.fspaths)
     assert cpy.hash() == fsobject.hash()
 
 
 def test_copy_hardlink(fsobject: FsObject, dest_dir: Path):
-    cpy = fsobject.copy(dest_dir, link_type="hard")
+    cpy = fsobject.copy(dest_dir, mode=File.CopyMode.symlink)
     assert all(p.parent == dest_dir for p in cpy.fspaths)
     assert set(p.name for p in cpy.fspaths) == set(p.name for p in fsobject.fspaths)
     assert all(

@@ -1,6 +1,6 @@
 import importlib
 import attrs
-from .base import DataType, REQUIRED_ANNOTATION, CHECK_ANNOTATION
+from .fileset import DataType, REQUIRED_ANNOTATION, CHECK_ANNOTATION
 from .converter import ConverterWrapper
 from .exceptions import FormatConversionError
 

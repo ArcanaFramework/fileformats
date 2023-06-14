@@ -2,7 +2,7 @@ from __future__ import annotations
 import os
 from copy import copy
 import struct
-from inspect import isclass
+from enum import Enum
 from warnings import warn
 import traceback
 import typing as ty
@@ -16,13 +16,10 @@ import hashlib
 import logging
 import attrs
 from .utils import (
-    subpackages,
     classproperty,
     fspaths_converter,
     to_mime_format_name,
-    from_mime_format_name,
     STANDARD_NAMESPACES,
-    add_exc_note,
     describe_task,
 )
 from .converter import SubtypeVar
@@ -30,8 +27,8 @@ from .exceptions import (
     FileFormatsError,
     FormatMismatchError,
     FormatConversionError,
-    FormatRecognitionError,
 )
+from .datatype import DataType
 
 # Tools imported from Arcana, will remove again once file-formats and "cells"
 # have been split
@@ -42,262 +39,6 @@ FILE_CHUNK_LEN_DEFAULT = 8192
 
 
 logger = logging.getLogger("fileformats")
-
-
-class DataType:
-    is_fileset = False
-    is_field = False
-
-    @classmethod
-    def type_var(cls, name):
-        return SubtypeVar(name, cls)
-
-    @classmethod
-    def matches(cls, values) -> bool:
-        """Checks whether the given value (fspaths for file-sets) match the datatype
-        specified by the class
-
-        Parameters
-        ----------
-        values : ty.Any
-            values to check whether they match the given datatype
-
-        Returns
-        -------
-        matches : bool
-            whether the datatype matches the provided values
-        """
-        try:
-            cls(values)
-        except FormatMismatchError:
-            return False
-        else:
-            return True
-
-    @classmethod
-    def issubtype(cls, super_type: type, allow_same: bool = True):
-        """Check to see whether datatype class is a subtype of a given super class.
-        In this case the subtype is expected to be able to be treated as if it was
-        the super class.
-
-        Overridden in the ``WithClassifiers`` mixin to add support for
-        classified subtypes
-
-        Parameters
-        ----------
-        super_type : type
-            the class to check whether the given class is a subtype of
-        allow_same : bool, optional
-            whether there is a match if the classes are the same, by default True
-
-        Returns
-        -------
-        is_subtype : bool
-            whether or not the current class can be considered a subtype of the super (or
-            is the super itself)
-        """
-        if allow_same and cls is super_type:
-            return True
-        if isinstance(super_type, SubtypeVar):
-            super_type = super_type.base
-        return issubclass(cls, super_type)
-
-    @classproperty
-    def namespace(cls):
-        """The "namespace" the format belongs to under the "fileformats" umbrella
-        namespace"""
-        module_parts = cls.__module__.split(".")
-        if module_parts[0] != "fileformats":
-            raise FileFormatsError(
-                f"Cannot create reversible MIME type for {cls} as it is not in the "
-                "fileformats namespace"
-            )
-        return module_parts[1]
-
-    @classproperty
-    def all_types(self):
-        return itertools.chain(FileSet.all_formats, Field.all_fields)
-
-    @classmethod
-    def subclasses(cls):
-        """Iterate over all installed subclasses"""
-        for subpkg in subpackages():
-            for attr_name in dir(subpkg):
-                attr = getattr(subpkg, attr_name)
-                if isclass(attr) and issubclass(attr, cls):
-                    yield attr
-
-    @classmethod
-    def get_converter(cls, source_format: type, name: str = "converter", **kwargs):
-        if source_format.issubtype(cls):
-            return None
-        else:
-            raise FormatConversionError(
-                f"Cannot converter between '{cls.mime_like}' and '{source_format.mime_like}'"
-            )
-
-    @classproperty
-    def mime_like(cls):
-        """Generates a "MIME-like" identifier from a format class (i.e.
-        an identifier for a non-MIME class in the MIME style), e.g.
-
-            fileformats.text.Plain to "text/plain"
-
-        and
-
-            fileformats.image.TiffFx to "image/tiff-fx"
-
-        Parameters
-        ----------
-        klass : type(FileSet)
-            FileSet subclass
-        iana_mime : bool
-            whether to use standardised IANA format or a more relaxed type format corresponding
-            to the fileformats extension the type belongs to
-
-        Returns
-        -------
-        type
-            the corresponding file format class
-        """
-        mime = f"{cls.namespace}/{to_mime_format_name(cls.__name__)}"
-        try:
-            cls.from_mime(mime)
-        except FormatRecognitionError as e:
-            add_exc_note(
-                e,
-                (
-                    f"Cannot create reversible MIME type for {cls} as it is not present "
-                    f"in a top-level fileformats namespace package '{cls.namespace}'"
-                ),
-            )
-            raise e
-        return mime
-
-    @classmethod
-    def from_mime(cls, mime_string):
-        """Resolves a FileFormat class from a MIME (IANA) or "MIME-like" identifier (i.e.
-        an identifier for a non-MIME class in the MIME style), e.g.
-
-            "text/plain" resolves to fileformats.text.Plain
-
-        and
-
-            "image/tiff-fx" resolves to fileformats.image.TiffFx
-
-        Parameters
-        ----------
-        mime_string : str
-            MIME identifier
-
-        Returns
-        -------
-        type
-            the corresponding file format class
-        """
-        try:
-            namespace, format_name = mime_string.split("/")
-        except ValueError:
-            raise FormatRecognitionError(
-                f"Format '{mime_string}' is not a valid MIME-like format of <namespace>/<format>"
-            )
-        try:
-            return FileSet.formats_by_iana_mime[mime_string]
-        except KeyError:
-            pass
-        if namespace == "application":
-            # We treat the "application" namespace as a catch-all for any formats that are
-            # not explicitly covered by the IANA standard (which is kind of how the IANA
-            # treats it). Therefore, we loop through all subclasses across the different
-            # namespaces to find one that matches the name.
-            if not format_name.startswith("x-"):
-                raise FormatRecognitionError(
-                    "Did not find class matching official (i.e. non-extension) MIME type "
-                    f"{mime_string} (i.e. one not starting with 'application/x-'"
-                ) from None
-            format_name = format_name[2:]  # remove "x-" prefix
-            matching_name = FileSet.formats_by_name[format_name]
-            if not matching_name:
-                namespace_names = [n.__name__ for n in subpackages()]
-                class_name = from_mime_format_name(format_name)
-                raise FormatRecognitionError(
-                    f"Did not find class matching extension the class name '{class_name}' "
-                    f"corresponding to MIME type '{mime_string}' "
-                    f"in any of the installed namespaces: {namespace_names}"
-                )
-            elif len(matching_name) > 1:
-                namespace_names = [f.__module__.__name__ for f in matching_name]
-                raise FormatRecognitionError(
-                    f"Ambiguous extended MIME type '{mime_string}', could refer to "
-                    f"{', '.join(repr(f) for f in matching_name)} installed types. "
-                    f"Explicitly set the 'iana_mime' attribute on one or all of these types "
-                    f"to disambiguate, or uninstall all but one of the following "
-                    "namespaces: "
-                )
-            else:
-                klass = next(iter(matching_name))
-        else:
-            class_name = from_mime_format_name(format_name)
-            try:
-                module = importlib.import_module("fileformats." + namespace)
-            except ImportError:
-                raise FormatRecognitionError(
-                    f"Did not find fileformats namespace package corresponding to {namespace} "
-                    f"required to interpret '{mime_string}' MIME, or MIME-like, type. "
-                    f"try installing the namespace package with "
-                    f"'python3 -m pip install fileformats-{namespace}'."
-                ) from None
-            try:
-                klass = getattr(module, class_name)
-            except AttributeError:
-                if "+" in format_name:
-                    qualifier_names, classified_name = format_name.split("+")
-                    try:
-                        classifiers = [
-                            getattr(module, from_mime_format_name(q))
-                            for q in qualifier_names.split(".")
-                        ]
-                    except AttributeError:
-                        raise FormatRecognitionError(
-                            f"Could not load classifiers [{qualifier_names}] from "
-                            f"fileformats.{namespace}, corresponding to MIME, "
-                            f"or MIME-like, type {mime_string}"
-                        ) from None
-                    try:
-                        classified = getattr(
-                            module, from_mime_format_name(classified_name)
-                        )
-                    except AttributeError:
-                        try:
-                            classified = cls.generically_qualifies_by_name[
-                                classified_name
-                            ]
-                        except KeyError:
-                            raise FormatRecognitionError(
-                                f"Could not load classified class '{classified_name}' from "
-                                f"fileformats.{namespace} or list of generic types "
-                                f"({list(cls.generically_qualifies_by_name)}), "
-                                f"corresponding to MIME, or MIME-like, type {mime_string}"
-                            ) from None
-                    klass = classified[classifiers]
-                else:
-                    raise FormatRecognitionError(
-                        f"Did not find '{class_name}' class in fileformats.{namespace} "
-                        f"corresponding to MIME, or MIME-like, type {mime_string}"
-                    ) from None
-        return klass
-
-    @classproperty
-    def generically_qualifies_by_name(cls):
-        if cls._generically_qualifies_by_name is None:
-            cls._generically_qualifies_by_name = {
-                to_mime_format_name(f.__name__): f
-                for f in FileSet.all_formats
-                if getattr(f, "generically_qualifies", False)
-            }
-        return cls._generically_qualifies_by_name
-
-    _generically_qualifies_by_name = None  # Register all generically classified types
 
 
 @attrs.define
@@ -336,6 +77,47 @@ class FileSet(DataType):
     converters = {}
 
     is_fileset = True
+
+    class CopyMode(Enum):
+        """Designates the desired behaviour of the FileSet.copy() method"""
+
+        dont_copy = 0b0001  # simply leave the files where they are (i.e. don't copy)
+        symlink = 0b0010  # symlink the file into the destination directory
+        hardlink = 0b0100  # hardlink the file into the destination directory
+        copy = (
+            0b1000  # duplicate (actually copy) the file into the destination directory
+        )
+
+        link = 0b0110  # use either linking method (preferring symbolic)
+        link_or_copy = 0b1110  # use either linking method or copy (preferring symbolic, hardlink and then copy)
+        symlink_or_copy = 0b1010
+        hardlink_or_copy = 0b1100
+
+        # Masks
+        all = 0b1111  # use any method (preferring dont_copy)
+        no_supported = 0b0000  # none of the requested methods are supported
+
+        # rarely used combinations
+        dont_copy_or_symlink = 0b0011
+        dont_copy_or_hardlink = 0b0101
+        dont_copy_or_link = 0b0111
+        dont_copy_or_symlink_or_copy = 0b1011
+        dont_copy_or_hardlink_or_copy = 0b1101
+
+        def __xor__(self, other):
+            return type(self)(self.value ^ other.value)
+
+        def __and__(self, other):
+            return type(self)(self.value & other.value)
+
+        def __or__(self, other):
+            return type(self)(self.value | other.value)
+
+        def __sub__(self, other):
+            return type(self)((self.value & (self.value ^ other.value)))
+
+        def __bool__(self):
+            return bool(self.value)
 
     def __hash__(self):
         return hash(sorted(self.fspaths))
@@ -477,10 +259,11 @@ class FileSet(DataType):
         self,
         dest_dir: Path,
         stem: ty.Optional[str] = None,
-        link_type: ty.Optional[str] = None,
+        mode: ty.Union[CopyMode, str] = CopyMode.copy,
         trim: bool = True,
         make_dirs: bool = False,
         overwrite: bool = False,
+        supported_modes: CopyMode = CopyMode.all,
     ):
         """Copies the file-set to a new directory, optionally renaming the files
         to have consistent name-stems.
@@ -492,10 +275,9 @@ class FileSet(DataType):
         stem: str, optional
             the file name excluding file extensions, to give the files/dirs in the parent
             directory, by default the original file name is used
-        link_type : str, optional
-            Whether to use hard ('hard') or symbolic ('symbolic') links instead of
-            copying files to the new location. If None then the files are copied,
-            None by default.
+        mode : CopyMode or str, optional
+            designates whether to perform an actual copy or whether a link (symbolic or
+            hard) is okay, 'duplicate' by default.
         trim : bool, optional
             Only copy the paths in the file-set that are "required" by the format,
             true by default
@@ -504,14 +286,25 @@ class FileSet(DataType):
             false by default
         overwrite : bool, optional
             whether to overwrite existing files/directories if present
+        supported_modes : CopyMode, optional
+            supported modes for the copy operation. Used to mask out the requested
+            copy mode
         """
+        mode = self.CopyMode[mode] if isinstance(mode, str) else mode
+        selected_mode = mode & supported_modes
+        if not selected_mode:
+            raise FileFormatsError(
+                f"Cannot copy {self} using {mode} mode as it is not supported "
+                f"({supported_modes})"
+            )
+        if selected_mode & self.CopyMode.dont_copy:
+            return self
         dest_dir = Path(dest_dir)  # ensure a Path not a string
         if make_dirs:
             dest_dir.mkdir(parents=True, exist_ok=True)
-        if link_type is None:
-            copy_dir = shutil.copytree
-            copy_file = shutil.copyfile
-        elif link_type == "hard":
+        if selected_mode & self.CopyMode.symlink:
+            copy_dir = copy_file = os.symlink
+        elif selected_mode & self.CopyMode.hardlink:
             copy_file = os.link
 
             def hardlink_dir(src: Path, dest: Path):
@@ -523,13 +316,10 @@ class FileSet(DataType):
                         os.link(dpath / fpath, dest / relpath / fpath)
 
             copy_dir = hardlink_dir
-        elif link_type == "symbolic":
-            copy_dir = copy_file = os.symlink
         else:
-            raise FileFormatsError(
-                f"Unrecognised link_type option {link_type}, can be 'hard', 'symbolic' "
-                "or None"
-            )
+            assert selected_mode & self.CopyMode.copy
+            copy_dir = shutil.copytree
+            copy_file = shutil.copyfile
         new_paths = []
         if trim and self.required_paths():
             fspaths_to_copy = self.required_paths()
@@ -566,6 +356,7 @@ class FileSet(DataType):
 
     def copy_to(self, *args, **kwargs):
         """For b/w compatibility (temporary message)"""
+        warn("'FileSet.copy_to()' has been deprecated, please use copy() instead")
         return self.copy(*args, **kwargs)
 
     def select_by_ext(
@@ -1071,40 +862,3 @@ class FileSet(DataType):
     _all_formats = None
     _formats_by_iana_mime = None
     _formats_by_name = None
-
-
-@attrs.define
-class Field(DataType):
-    value = attrs.field()
-
-    type = None
-    is_field = True
-    primitive = None
-
-    def __str__(self):
-        return str(self.value)
-
-    @property
-    def metadata(self):
-        return {}
-
-    @classproperty
-    def all_fields(cls) -> list[ty.Type[Field]]:  # pylint: disable=no-self-argument
-        """Iterate over all field formats in fileformats.* namespaces"""
-        import fileformats.field  # noqa
-
-        return [f for f in Field.subclasses() if f.primitive is not None]
-
-    @classmethod
-    def from_primitive(cls, dtype: type):
-        try:
-            datatype = next(iter(f for f in cls.all_fields if f.primitive is dtype))
-        except StopIteration as e:
-            field_types_str = ", ".join(t.__name__ for t in cls.all_fields)
-            raise FileFormatsError(
-                f"{dtype} doesn't not correspond to a valid fileformats field type "
-                f"({field_types_str})"
-            ) from e
-        return datatype
-
-    _all_fields = None
