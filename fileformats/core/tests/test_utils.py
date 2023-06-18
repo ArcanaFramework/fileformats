@@ -135,7 +135,7 @@ def test_copy_collation_same_name(work_dir: Path, dest_dir: Path):
         match="as there are duplicate filenames",
     ):
         fileset.copy(dest_dir=dest_dir, collation="siblings")
-    cpy = fileset.copy(dest_dir=dest_dir, collation="separated")
+    cpy = fileset.copy(dest_dir=dest_dir, collation="any")
     assert sorted(cpy.relative_fspaths) == sorted(fileset.relative_fspaths)
     assert cpy.parent == dest_dir
 
@@ -205,7 +205,7 @@ def test_copy_collation_with_stem_not_adjacent(foo_file: Foo, dest_dir):
     with pytest.raises(
         FileFormatsError, match="when collation is not set to 'adjacent'"
     ):
-        foo_file.copy(dest_dir, collation="separated", stem="new")
+        foo_file.copy(dest_dir, collation="any", stem="new")
 
 
 def test_copy_collation_leave_diff_dir(work_dir: Path, dest_dir: Path):
