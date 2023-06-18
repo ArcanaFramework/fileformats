@@ -832,7 +832,7 @@ class FileSet(DataType):
             '.' in the filename).
         """
 
-        separated = 0
+        any = 0
         siblings = 1
         adjacent = 2
 
@@ -843,7 +843,7 @@ class FileSet(DataType):
         self,
         dest_dir: Path,
         mode: ty.Union[CopyMode, str] = CopyMode.copy,
-        collation: ty.Union[CopyCollation, str] = CopyCollation.separated,
+        collation: ty.Union[CopyCollation, str] = CopyCollation.any,
         stem: ty.Optional[str] = None,
         trim: bool = True,
         make_dirs: bool = False,
@@ -968,7 +968,7 @@ class FileSet(DataType):
             elif collation == self.CopyCollation.siblings:
                 new_path = dest_dir / fspath.name
             else:
-                assert collation == self.CopyCollation.separated
+                assert collation == self.CopyCollation.any
                 new_path = dest_dir / fspath.relative_to(self.parent)
                 new_path.parent.mkdir(parents=True, exist_ok=True)
             if new_path.exists():
