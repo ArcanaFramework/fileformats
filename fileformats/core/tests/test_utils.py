@@ -132,7 +132,7 @@ def test_copy_collation_same_name(work_dir: Path, dest_dir: Path):
 
     with pytest.raises(
         FileFormatsError,
-        match='with "collation mode" siblings, as there are duplicate filenames',
+        match="as there are duplicate filenames",
     ):
         fileset.copy(dest_dir=dest_dir, collation="siblings")
     cpy = fileset.copy(dest_dir=dest_dir, collation="separated")
@@ -155,7 +155,7 @@ def test_copy_collation_same_ext(work_dir: Path, dest_dir: Path):
 
     with pytest.raises(
         FileFormatsError,
-        match='with "collation mode" adjacent, as there are duplicate extensions',
+        match="as there are duplicate extensions",
     ):
         fileset.copy(dest_dir=dest_dir, collation="adjacent")
     cpy = fileset.copy(dest_dir=dest_dir, collation="siblings")

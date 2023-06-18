@@ -897,8 +897,8 @@ class FileSet(DataType):
                 ]
                 if duplicate_names:
                     raise FileFormatsError(
-                        f'Cannot copy {self} to {dest_dir} with "collation mode" '
-                        f"{collation}, as there are duplicate filenames, {duplicate_names}, "
+                        f"Cannot copy {self} to {dest_dir} with collation mode "
+                        f'"{collation}", as there are duplicate filenames, {duplicate_names}, '
                         f"in file paths: " + "\n".join(str(p) for p in self.fspaths)
                     )
             if collation == self.CopyCollation.adjacent:
@@ -906,8 +906,8 @@ class FileSet(DataType):
                 duplicate_exts = [n for n, c in Counter(exts).items() if c > 1]
                 if duplicate_exts:
                     raise FileFormatsError(
-                        f'Cannot copy {self} to {dest_dir} with "collation mode" '
-                        f"{collation}, as there are duplicate extensions, {duplicate_exts}, "
+                        f"Cannot copy {self} to {dest_dir} with collation mode "
+                        f'"{collation}", as there are duplicate extensions, {duplicate_exts}, '
                         f"in file paths: " + "\n".join(str(p) for p in self.fspaths)
                     )
         if not selected_mode:

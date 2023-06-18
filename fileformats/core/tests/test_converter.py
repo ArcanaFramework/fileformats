@@ -2,6 +2,7 @@ import attrs
 import pytest
 from fileformats.testing import Foo, Bar, Baz, Qux
 from fileformats.core import mark
+from fileformats.generic import File
 from fileformats.core.exceptions import FormatConversionError
 from conftest import write_test_file
 
@@ -42,7 +43,7 @@ def FooQuxConverter():
     input_fields = [
         (
             "in_file",
-            specs.File,
+            File,
             {
                 "help_string": "the input file",
                 "argstr": "",
@@ -50,7 +51,7 @@ def FooQuxConverter():
         ),
         (
             "out_file",
-            str,
+            File,
             {
                 "help_string": "output file name",
                 "argstr": "",
@@ -67,7 +68,7 @@ def FooQuxConverter():
     output_fields = [
         (
             "out_file",
-            specs.File,
+            File,
             {
                 "help_string": "output file",
             },
