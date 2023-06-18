@@ -1,5 +1,6 @@
 import attrs
 import pytest
+from pydra.engine.specs import File
 from fileformats.testing import Foo, Bar, Baz, Qux
 from fileformats.core import mark
 from fileformats.core.exceptions import FormatConversionError
@@ -42,7 +43,7 @@ def FooQuxConverter():
     input_fields = [
         (
             "in_file",
-            specs.File,
+            File,
             {
                 "help_string": "the input file",
                 "argstr": "",
@@ -67,7 +68,7 @@ def FooQuxConverter():
     output_fields = [
         (
             "out_file",
-            specs.File,
+            File,
             {
                 "help_string": "output file",
             },

@@ -2,8 +2,9 @@ from __future__ import annotations
 import os
 from copy import copy
 import struct
-from enum import Enum
+from enum import Enum, IntEnum
 from warnings import warn
+from collections import Counter
 import traceback
 import typing as ty
 import importlib
@@ -21,6 +22,7 @@ from .utils import (
     to_mime_format_name,
     STANDARD_NAMESPACES,
     describe_task,
+    splitext,
 )
 from .converter import SubtypeVar
 from .exceptions import (
@@ -78,52 +80,15 @@ class FileSet(DataType):
 
     is_fileset = True
 
-    class CopyMode(Enum):
-        """Designates the desired behaviour of the FileSet.copy() method"""
-
-        dont_copy = 0b0001  # simply leave the files where they are (i.e. don't copy)
-        symlink = 0b0010  # symlink the file into the destination directory
-        hardlink = 0b0100  # hardlink the file into the destination directory
-        copy = (
-            0b1000  # duplicate (actually copy) the file into the destination directory
-        )
-
-        link = 0b0110  # use either linking method (preferring symbolic)
-        link_or_copy = 0b1110  # use either linking method or copy (preferring symbolic, hardlink and then copy)
-        symlink_or_copy = 0b1010
-        hardlink_or_copy = 0b1100
-
-        # Masks
-        all = 0b1111  # use any method (preferring dont_copy)
-        no_supported = 0b0000  # none of the requested methods are supported
-
-        # rarely used combinations
-        dont_copy_or_symlink = 0b0011
-        dont_copy_or_hardlink = 0b0101
-        dont_copy_or_link = 0b0111
-        dont_copy_or_symlink_or_copy = 0b1011
-        dont_copy_or_hardlink_or_copy = 0b1101
-
-        def __xor__(self, other):
-            return type(self)(self.value ^ other.value)
-
-        def __and__(self, other):
-            return type(self)(self.value & other.value)
-
-        def __or__(self, other):
-            return type(self)(self.value | other.value)
-
-        def __sub__(self, other):
-            return type(self)((self.value & (self.value ^ other.value)))
-
-        def __bool__(self):
-            return bool(self.value)
-
     def __hash__(self):
         return hash(sorted(self.fspaths))
 
     def __repr__(self):
-        return f"{type(self).__name__}('" + "', '".join(self.fspaths) + "')"
+        return (
+            f"{type(self).__name__}('"
+            + "', '".join(str(p) for p in self.fspaths)
+            + "')"
+        )
 
     def __attrs_post_init__(self):
         # Check required properties don't raise errors
@@ -161,6 +126,16 @@ class FileSet(DataType):
         if self._metadata is None and hasattr(self, "load_metadata"):
             self._metadata = self.load_metadata()
         return self._metadata
+
+    @property
+    def parent(self) -> Path:
+        "A common parent directory for all the top-level paths in the file-set"
+        return Path(os.path.commonpath(p.parent for p in self.fspaths))
+
+    @property
+    def relative_fspaths(self) -> ty.Iterator[Path]:
+        "Paths for all top-level paths in the file-set relative to the common parent directory"
+        return (p.relative_to(self.parent) for p in self.fspaths)
 
     @classproperty
     def mime_type(cls):
@@ -254,110 +229,6 @@ class FileSet(DataType):
                 pass
             else:
                 yield attr_name
-
-    def copy(
-        self,
-        dest_dir: Path,
-        stem: ty.Optional[str] = None,
-        mode: ty.Union[CopyMode, str] = CopyMode.copy,
-        trim: bool = True,
-        make_dirs: bool = False,
-        overwrite: bool = False,
-        supported_modes: CopyMode = CopyMode.all,
-    ):
-        """Copies the file-set to a new directory, optionally renaming the files
-        to have consistent name-stems.
-
-        Parameters
-        ----------
-        dest_dir : str
-            Path to the parent directory to save the file-set
-        stem: str, optional
-            the file name excluding file extensions, to give the files/dirs in the parent
-            directory, by default the original file name is used
-        mode : CopyMode or str, optional
-            designates whether to perform an actual copy or whether a link (symbolic or
-            hard) is okay, 'duplicate' by default.
-        trim : bool, optional
-            Only copy the paths in the file-set that are "required" by the format,
-            true by default
-        make_dirs : bool, optional
-            Make the parent destination and all missing ancestors if they are missing,
-            false by default
-        overwrite : bool, optional
-            whether to overwrite existing files/directories if present
-        supported_modes : CopyMode, optional
-            supported modes for the copy operation. Used to mask out the requested
-            copy mode
-        """
-        mode = self.CopyMode[mode] if isinstance(mode, str) else mode
-        selected_mode = mode & supported_modes
-        if not selected_mode:
-            raise FileFormatsError(
-                f"Cannot copy {self} using {mode} mode as it is not supported "
-                f"({supported_modes})"
-            )
-        if selected_mode & self.CopyMode.dont_copy:
-            return self
-        dest_dir = Path(dest_dir)  # ensure a Path not a string
-        if make_dirs:
-            dest_dir.mkdir(parents=True, exist_ok=True)
-        if selected_mode & self.CopyMode.symlink:
-            copy_dir = copy_file = os.symlink
-        elif selected_mode & self.CopyMode.hardlink:
-            copy_file = os.link
-
-            def hardlink_dir(src: Path, dest: Path):
-                for dpath, _, fpaths in os.walk(src):
-                    dpath = Path(dpath)
-                    relpath = dpath.relative_to(src)
-                    (dest / relpath).mkdir()
-                    for fpath in fpaths:
-                        os.link(dpath / fpath, dest / relpath / fpath)
-
-            copy_dir = hardlink_dir
-        else:
-            assert selected_mode & self.CopyMode.copy
-            copy_dir = shutil.copytree
-            copy_file = shutil.copyfile
-        new_paths = []
-        if trim and self.required_paths():
-            fspaths_to_copy = self.required_paths()
-        else:
-            fspaths_to_copy = self.fspaths
-        if not fspaths_to_copy:
-            raise FileFormatsError(
-                f"Cannot copy {self} because none of the fspaths in the file-set are "
-                "required. Set trim=False to copy all file-paths"
-            )
-        for fspath in fspaths_to_copy:
-            if stem:
-                new_fname = stem + "".join(fspath.suffixes)
-            else:
-                new_fname = fspath.name
-            new_path = dest_dir / new_fname
-            if new_path.exists():
-                if overwrite:
-                    if fspath.is_dir():
-                        shutil.rmtree(new_path)
-                    else:
-                        os.unlink(new_path)
-                else:
-                    raise FileFormatsError(
-                        f"Destination path '{str(new_path)}' exists, set "
-                        "'overwrite' to overwrite it"
-                    )
-            if fspath.is_dir():
-                copy_dir(fspath, new_path)
-            else:
-                copy_file(fspath, new_path)
-            new_paths.append(new_path)
-        return type(self)(new_paths)
-
-    def copy_to(self, *args, **kwargs):
-        """For b/w compatibility (temporary message)"""
-        warn("'FileSet.copy_to()' has been deprecated, please use copy() instead")
-        return self.copy(*args, **kwargs)
 
     def select_by_ext(
         self, fileformat: ty.Optional[type] = None, allow_none: bool = False
@@ -836,8 +707,8 @@ class FileSet(DataType):
         return file_hashes
 
     def __bytes_repr__(
-        self, cache: dict
-    ) -> ty.Iterable[bytes]:  # pylint: disable=unused-argument
+        self, cache: dict  # pylint: disable=unused-argument
+    ) -> ty.Iterable[bytes]:
         """Provided for compatibility with Pydra's hashing function, return the contents
         of all the files in the file-set in chunks
 
@@ -858,6 +729,270 @@ class FileSet(DataType):
         for key, chunk_iter in self.byte_chunks():
             yield (",'" + key + "'=").encode()
             yield from chunk_iter
+
+    class CopyMode(Enum):
+        """Designates the desired behaviour of the FileSet.copy() method with regards to
+        symbolic, hard or full copies
+
+        Basic options (in order of preference)
+        --------------------------------------
+        leave
+            simply leave the files where they are (i.e. do nothing)
+        symlink
+            symlink the files into the destination directory
+        hardlink
+            hardlink the files into the destination directory
+        copy
+            duplicate (actually copy) the files into the destination directory
+
+        Common combinations
+        -------------------
+        link
+            use either linking method (preferring symbolic)
+        link_or_copy
+            use either link method or copy (preferring sym, hard, then copy)
+        symlink_or_copy
+            "  symbolic "   "         "
+        hardlink_or_copy
+            "  hard "   "         "
+
+        Masks
+        -----
+        any
+            use any method (preferring leave)
+        none
+            none of the requested methods are supported (i.e. after masking with the
+            supported options mask)
+        """
+
+        # Bases
+
+        leave = 0b0001
+        symlink = 0b0010
+        hardlink = 0b0100
+        copy = 0b1000
+
+        # Common combinations
+
+        link = 0b0110
+        link_or_copy = 0b1110
+        symlink_or_copy = 0b1010
+        hardlink_or_copy = 0b1100
+
+        # Masks
+
+        any = 0b1111
+        none = 0b0000
+
+        # All other combinations (typically the result of bit-masking)
+
+        leave_or_symlink = 0b0011
+        leave_or_hardlink = 0b0101
+        leave_or_link = 0b0111
+        leave_or_symlink_or_copy = 0b1011
+        leave_or_hardlink_or_copy = 0b1101
+
+        def __xor__(self, other):
+            return type(self)(self.value ^ other.value)
+
+        def __and__(self, other):
+            return type(self)(self.value & other.value)
+
+        def __or__(self, other):
+            return type(self)(self.value | other.value)
+
+        def __sub__(self, other):
+            return type(self)((self.value & (self.value ^ other.value)))
+
+        def __bool__(self):
+            return bool(self.value)
+
+        def __str__(self):
+            return self.name
+
+    class CopyCollation(IntEnum):
+        """Designates the desired "collation" behaviour of the FileSet.copy() method
+
+        Bases
+        -----
+        separated
+            If mode == leave, paths can exist in separate directories in the
+            file-system. For other copy modes, the relative directory structure between
+            the "copied" paths (incl. links) in the set will be maintained within the
+            destination directory. This guarantees there won't be name clashes between
+            copied paths.
+        siblings
+            copied paths are guaranteed to be "copied" to the root of the destination
+            directory, i.e be siblings. However, this requires that the file/dir name
+            in fspaths are unique.
+        adjacent
+            copied paths are guaranteed to have the same name-stem and only differ in
+            file-extensions. Requires that the file-set only includes files/dirs with
+            unique suffixes (NB: suffixes are considered to be everything after the first
+            '.' in the filename).
+        """
+
+        any = 0
+        siblings = 1
+        adjacent = 2
+
+        def __str__(self):
+            return self.name
+
+    def copy(
+        self,
+        dest_dir: Path,
+        mode: ty.Union[CopyMode, str] = CopyMode.copy,
+        collation: ty.Union[CopyCollation, str] = CopyCollation.any,
+        stem: ty.Optional[str] = None,
+        trim: bool = True,
+        make_dirs: bool = False,
+        overwrite: bool = False,
+        multi_splitext: bool = True,
+        supported_modes: CopyMode = CopyMode.any,
+    ):
+        """Copies the file-set to a new directory, optionally renaming the files
+        to have consistent name-stems.
+
+        Parameters
+        ----------
+        dest_dir : str
+            Path to the parent directory to save the file-set
+        mode : FileSet.CopyMode or str, optional
+            designates whether to perform an actual copy or whether a link (symbolic or
+            hard) is okay, 'duplicate' by default. See FielSet.CopyMode for details
+        collation : FileSet.CopyCollation or str, optional
+            how to treat relative paths within the fileset, i.e. whether to move them
+            to a single directory, rename them to the same file-stem or maintain
+            relative directory structure. See FileSet.CopyCollation for details
+        stem: str, optional
+            the file name excluding file extensions, to give the files/dirs in the parent
+            directory, by default the original file name is used
+        trim : bool, optional
+            Only copy the paths in the file-set that are "required" by the format,
+            true by default
+        make_dirs : bool, optional
+            Make the parent destination and all missing ancestors if they are missing,
+            false by default
+        overwrite : bool, optional
+            whether to overwrite existing files/directories if present
+        multi_splitext : bool, optional
+            whether to consider file extensions to start from the first '.' (True) or the
+            last (False), by default True
+        supported_modes : CopyMode, optional
+            supported modes for the copy operation. Used to mask out the requested
+            copy mode
+        """
+        mode = self.CopyMode[mode] if isinstance(mode, str) else mode
+        selected_mode = mode & supported_modes
+        collation = (
+            self.CopyCollation[collation] if isinstance(collation, str) else collation
+        )
+        if len(self.fspaths) > 1:
+            if collation >= self.CopyCollation.siblings:
+                if not all(p.parent == self.parent for p in self.fspaths):
+                    selected_mode -= self.CopyMode.leave
+                duplicate_names = [
+                    n for n, c in Counter(p.name for p in self.fspaths).items() if c > 1
+                ]
+                if duplicate_names:
+                    raise FileFormatsError(
+                        f"Cannot copy {self} to {dest_dir} with collation mode "
+                        f'"{collation}", as there are duplicate filenames, {duplicate_names}, '
+                        f"in file paths: " + "\n".join(str(p) for p in self.fspaths)
+                    )
+            if collation == self.CopyCollation.adjacent:
+                exts = [splitext(p, multi=multi_splitext)[1] for p in self.fspaths]
+                duplicate_exts = [n for n, c in Counter(exts).items() if c > 1]
+                if duplicate_exts:
+                    raise FileFormatsError(
+                        f"Cannot copy {self} to {dest_dir} with collation mode "
+                        f'"{collation}", as there are duplicate extensions, {duplicate_exts}, '
+                        f"in file paths: " + "\n".join(str(p) for p in self.fspaths)
+                    )
+        if not selected_mode:
+            raise FileFormatsError(
+                f"Cannot copy {self} using {mode} mode as it is not supported by "
+                f"the {supported_modes} given the collation specification, {collation}"
+            )
+        if selected_mode & self.CopyMode.leave:
+            return self
+        dest_dir = Path(dest_dir)  # ensure a Path not a string
+        if make_dirs:
+            dest_dir.mkdir(parents=True, exist_ok=True)
+        if selected_mode & self.CopyMode.symlink:
+            copy_dir = copy_file = os.symlink
+        elif selected_mode & self.CopyMode.hardlink:
+            copy_file = os.link
+
+            def hardlink_dir(src: Path, dest: Path):
+                for dpath, _, fpaths in os.walk(src):
+                    dpath = Path(dpath)
+                    relpath = dpath.relative_to(src)
+                    (dest / relpath).mkdir()
+                    for fpath in fpaths:
+                        os.link(dpath / fpath, dest / relpath / fpath)
+
+            copy_dir = hardlink_dir
+        else:
+            assert selected_mode & self.CopyMode.copy
+            copy_dir = shutil.copytree
+            copy_file = shutil.copyfile
+        new_paths = []
+        if trim and self.required_paths():
+            fspaths_to_copy = self.required_paths()
+        else:
+            fspaths_to_copy = self.fspaths
+        if not fspaths_to_copy:
+            raise FileFormatsError(
+                f"Cannot copy {self} because none of the fspaths in the file-set are "
+                "required. Set trim=False to copy all file-paths"
+            )
+        if collation == self.CopyCollation.adjacent:
+            if stem is None:
+                try:
+                    # Attempt to get the stem of the primary path
+                    stem = self.stem
+                except AttributeError:
+                    # If there isn't a primary path, ick the stem of the first of the sorted
+                    # paths
+                    stem = splitext(sorted(self.fspaths)[0], multi=multi_splitext)[0]
+        elif stem is not None:
+            raise FileFormatsError(
+                f"'stem' ({stem}) provided to FileSet.copy() method when collation is "
+                f"not set to 'adjacent' ({collation})"
+            )
+        for fspath in fspaths_to_copy:
+            if collation == self.CopyCollation.adjacent:
+                new_path = dest_dir / (stem + splitext(fspath, multi=multi_splitext)[1])
+            elif collation == self.CopyCollation.siblings:
+                new_path = dest_dir / fspath.name
+            else:
+                assert collation == self.CopyCollation.any
+                new_path = dest_dir / fspath.relative_to(self.parent)
+                new_path.parent.mkdir(parents=True, exist_ok=True)
+            if new_path.exists():
+                if overwrite:
+                    if fspath.is_dir():
+                        shutil.rmtree(new_path)
+                    else:
+                        os.unlink(new_path)
+                else:
+                    raise FileFormatsError(
+                        f"Destination path '{str(new_path)}' exists, set "
+                        "'overwrite' to overwrite it"
+                    )
+            if fspath.is_dir():
+                copy_dir(fspath, new_path)
+            else:
+                copy_file(fspath, new_path)
+            new_paths.append(new_path)
+        return type(self)(new_paths)
+
+    def copy_to(self, *args, **kwargs):
+        """For b/w compatibility (temporary message)"""
+        warn("'FileSet.copy_to()' has been deprecated, please use copy() instead")
+        return self.copy(*args, **kwargs)
 
     _all_formats = None
     _formats_by_iana_mime = None

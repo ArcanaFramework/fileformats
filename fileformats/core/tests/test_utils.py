@@ -4,13 +4,14 @@ import random
 import shutil
 import time
 import pytest
+from fileformats.core import FileSet
 from fileformats.generic import File, Directory, FsObject
 from fileformats.core.mixin import WithSeparateHeader
 from fileformats.core.utils import (
     find_matching,
     MissingExtendedDependency,
 )
-from fileformats.core.exceptions import MissingExtendedDepenciesError
+from fileformats.core.exceptions import MissingExtendedDepenciesError, FileFormatsError
 import fileformats.text
 import fileformats.numeric
 from conftest import write_test_file
@@ -116,10 +117,121 @@ def test_copy_hardlink(fsobject: FsObject, dest_dir: Path):
     assert cpy.hash() == fsobject.hash()
 
 
-def test_copy_with_rename(foo_file, dest_dir):
-    cpy = foo_file.copy(dest_dir, stem="new")
-    assert cpy.fspath.name == "new.foo"
-    assert cpy.header.fspath.name == "new.bar"
+def test_copy_collation_same_name(work_dir: Path, dest_dir: Path):
+
+    a = work_dir / "a" / "file.txt"
+    b = work_dir / "b" / "file.txt"
+    c = work_dir / "c" / "d" / "file.txt"
+    fspaths = (a, b, c)
+
+    for x in fspaths:
+        x.parent.mkdir(parents=True)
+        Path.touch(x)
+
+    fileset = FileSet(fspaths)
+
+    with pytest.raises(
+        FileFormatsError,
+        match="as there are duplicate filenames",
+    ):
+        fileset.copy(dest_dir=dest_dir, collation="siblings")
+    cpy = fileset.copy(dest_dir=dest_dir, collation="separated")
+    assert sorted(cpy.relative_fspaths) == sorted(fileset.relative_fspaths)
+    assert cpy.parent == dest_dir
+
+
+def test_copy_collation_same_ext(work_dir: Path, dest_dir: Path):
+
+    a = work_dir / "a" / "filea.txt"
+    b = work_dir / "b" / "fileb.txt"
+    c = work_dir / "c" / "d" / "filec.txt"
+    fspaths = (a, b, c)
+
+    for x in fspaths:
+        x.parent.mkdir(parents=True)
+        Path.touch(x)
+
+    fileset = FileSet(fspaths)
+
+    with pytest.raises(
+        FileFormatsError,
+        match="as there are duplicate extensions",
+    ):
+        fileset.copy(dest_dir=dest_dir, collation="adjacent")
+    cpy = fileset.copy(dest_dir=dest_dir, collation="siblings")
+    assert sorted(p.name for p in cpy.fspaths) == sorted(
+        p.name for p in fileset.fspaths
+    )
+    assert all(p.parent == dest_dir for p in cpy.fspaths)
+
+
+def test_copy_collation_diff_ext(work_dir: Path, dest_dir: Path):
+
+    a = work_dir / "a" / "filea.x"
+    b = work_dir / "b" / "fileb.y"
+    c = work_dir / "c" / "d" / "filec.z"
+    fspaths = (a, b, c)
+
+    for x in fspaths:
+        x.parent.mkdir(parents=True)
+        Path.touch(x)
+
+    fileset = FileSet(fspaths)
+
+    cpy = fileset.copy(dest_dir=dest_dir, collation="adjacent")
+    assert all(p.parent == dest_dir for p in cpy.fspaths)
+    assert all(p.stem == "filea" for p in cpy.fspaths)
+
+
+def test_copy_collation_stem(work_dir: Path, dest_dir: Path):
+
+    a = work_dir / "a" / "filea.x"
+    b = work_dir / "b" / "fileb.y"
+    c = work_dir / "c" / "d" / "filec.z"
+    fspaths = (a, b, c)
+
+    for x in fspaths:
+        x.parent.mkdir(parents=True)
+        Path.touch(x)
+
+    fileset = FileSet(fspaths)
+
+    cpy = fileset.copy(dest_dir=dest_dir, collation="adjacent", stem="newfile")
+    assert all(p.parent == dest_dir for p in cpy.fspaths)
+    assert all(p.stem == "newfile" for p in cpy.fspaths)
+
+
+def test_copy_collation_with_stem_not_adjacent(foo_file: Foo, dest_dir):
+    with pytest.raises(
+        FileFormatsError, match="when collation is not set to 'adjacent'"
+    ):
+        foo_file.copy(dest_dir, collation="separated", stem="new")
+
+
+def test_copy_collation_leave_diff_dir(work_dir: Path, dest_dir: Path):
+
+    a = work_dir / "a" / "file.x"
+    b = work_dir / "b" / "file.y"
+    c = work_dir / "c" / "file.z"
+    fspaths = (a, b, c)
+
+    for x in fspaths:
+        x.parent.mkdir(parents=True)
+        Path.touch(x)
+
+    fileset = FileSet(fspaths)
+
+    with pytest.raises(
+        FileFormatsError,
+        match="using leave mode as it is not supported by the any given the collation specification",
+    ):
+        fileset.copy(dest_dir=dest_dir, mode="leave", collation="siblings")
+
+    with pytest.raises(
+        FileFormatsError,
+        match="using leave mode as it is not supported by the any given the collation specification",
+    ):
+        fileset.copy(dest_dir=dest_dir, mode="leave", collation="adjacent")
 
 
 def test_copy_ext(work_dir):
