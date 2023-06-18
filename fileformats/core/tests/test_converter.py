@@ -1,8 +1,8 @@
 import attrs
 import pytest
+from pydra.engine.specs import File
 from fileformats.testing import Foo, Bar, Baz, Qux
 from fileformats.core import mark
-from pydra.engine.specs import File
 from fileformats.core.exceptions import FormatConversionError
 from conftest import write_test_file
 
