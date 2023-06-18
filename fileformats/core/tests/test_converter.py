@@ -51,7 +51,7 @@ def FooQuxConverter():
         ),
         (
             "out_file",
-            File,
+            str,
             {
                 "help_string": "output file name",
                 "argstr": "",
