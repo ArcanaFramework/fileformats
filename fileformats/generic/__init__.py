@@ -4,7 +4,7 @@ import attrs
 from fileformats.core.fileset import FileSet
 from fileformats.core.exceptions import FormatMismatchError, FileFormatsError
 from fileformats.core import mark
-from fileformats.core.utils import splitext, classproperty
+from fileformats.core.utils import classproperty
 from fileformats.core.mixin import WithClassifiers
 
 
@@ -64,7 +64,12 @@ class File(FsObject):
         return fspath
 
     @classmethod
-    def copy_ext(cls, old_path: Path, new_path: Path):
+    def copy_ext(
+        cls,
+        old_path: Path,
+        new_path: Path,
+        decomposition_mode=FileSet.ExtensionDecomposition.none,
+    ):
         """Copy extension from the old path to the new path, ensuring that all
         of the extension is used (e.g. 'my.gz' instead of 'gz')
 
@@ -74,6 +79,9 @@ class File(FsObject):
             The path from which to copy the extension from
         new_path: Path or str
             The path to append the extension to
+        decomposition_mode : FileSet.ExtensionDecomposition, optional
+            if the file doesn't have an explicit extension, how to interpret "." within
+            the filename
 
         Returns
         -------
@@ -85,7 +93,11 @@ class File(FsObject):
                 f"Extension of old path ('{str(old_path)}') does not match that "
                 f"of file, '{cls.ext}'"
             )
-        suffix = cls.ext if cls.ext else splitext(old_path, multi=True)[-1]
+        suffix = (
+            cls.ext
+            if cls.ext
+            else cls.decompose_fspath(old_path, mode=decomposition_mode)[-1]
+        )
         return Path(new_path).with_suffix(suffix)
 
     @property
@@ -123,7 +135,11 @@ class File(FsObject):
 
     @property
     def stem(self):
-        return self.fspath.name[: -len(self.actual_ext)]
+        if self.actual_ext:
+            stem = self.fspath.name[: -len(self.actual_ext)]
+        else:
+            stem = self.fspath
+        return stem
 
 
 @attrs.define
@@ -240,7 +256,6 @@ class DirectoryContaining(WithClassifiers, Directory):
 
 
 class SetOf(WithClassifiers, TypedSet):
-
     # WithClassifiers-required class attrs
     classifiers_attr_name = "content_types"
     allowed_classifiers = (FileSet,)

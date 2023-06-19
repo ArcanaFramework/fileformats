@@ -4,7 +4,7 @@ import random
 import shutil
 import time
 import pytest
-from fileformats.core import FileSet
+from fileformats.core import FileSet, mark
 from fileformats.generic import File, Directory, FsObject
 from fileformats.core.mixin import WithSeparateHeader
 from fileformats.core.utils import (
@@ -118,7 +118,6 @@ def test_copy_hardlink(fsobject: FsObject, dest_dir: Path):
 
 
 def test_copy_collation_same_name(work_dir: Path, dest_dir: Path):
-
     a = work_dir / "a" / "file.txt"
     b = work_dir / "b" / "file.txt"
     c = work_dir / "c" / "d" / "file.txt"
@@ -141,7 +140,6 @@ def test_copy_collation_same_name(work_dir: Path, dest_dir: Path):
 
 
 def test_copy_collation_same_ext(work_dir: Path, dest_dir: Path):
-
     a = work_dir / "a" / "filea.txt"
     b = work_dir / "b" / "fileb.txt"
     c = work_dir / "c" / "d" / "filec.txt"
@@ -166,7 +164,6 @@ def test_copy_collation_same_ext(work_dir: Path, dest_dir: Path):
 
 
 def test_copy_collation_diff_ext(work_dir: Path, dest_dir: Path):
-
     a = work_dir / "a" / "filea.x"
     b = work_dir / "b" / "fileb.y"
     c = work_dir / "c" / "d" / "filec.z"
@@ -184,7 +181,6 @@ def test_copy_collation_diff_ext(work_dir: Path, dest_dir: Path):
 
 
 def test_copy_collation_stem(work_dir: Path, dest_dir: Path):
-
     a = work_dir / "a" / "filea.x"
     b = work_dir / "b" / "fileb.y"
     c = work_dir / "c" / "d" / "filec.z"
@@ -196,7 +192,7 @@ def test_copy_collation_stem(work_dir: Path, dest_dir: Path):
 
     fileset = FileSet(fspaths)
 
-    cpy = fileset.copy(dest_dir=dest_dir, collation="adjacent", stem="newfile")
+    cpy = fileset.copy(dest_dir=dest_dir, collation="adjacent", new_stem="newfile")
     assert all(p.parent == dest_dir for p in cpy.fspaths)
     assert all(p.stem == "newfile" for p in cpy.fspaths)
 
@@ -205,11 +201,10 @@ def test_copy_collation_with_stem_not_adjacent(foo_file: Foo, dest_dir):
     with pytest.raises(
         FileFormatsError, match="when collation is not set to 'adjacent'"
     ):
-        foo_file.copy(dest_dir, collation="any", stem="new")
+        foo_file.copy(dest_dir, collation="any", new_stem="new")
 
 
 def test_copy_collation_leave_diff_dir(work_dir: Path, dest_dir: Path):
-
     a = work_dir / "a" / "file.x"
     b = work_dir / "b" / "file.y"
     c = work_dir / "c" / "file.z"
@@ -236,9 +231,55 @@ def test_copy_collation_leave_diff_dir(work_dir: Path, dest_dir: Path):
 
 def test_copy_ext(work_dir):
     assert (
-        File.copy_ext(work_dir / "x.foo.bar", work_dir / "y") == work_dir / "y.foo.bar"
+        File.copy_ext(
+            work_dir / "x.foo.bar",
+            work_dir / "y",
+            decomposition_mode=FileSet.ExtensionDecomposition.none,
+        )
+        == work_dir / "y"
+    )
+    assert (
+        File.copy_ext(
+            work_dir / "x.foo.bar",
+            work_dir / "y",
+            decomposition_mode=FileSet.ExtensionDecomposition.single,
+        )
+        == work_dir / "y.bar"
+    )
+    assert (
+        File.copy_ext(
+            work_dir / "x.foo.bar",
+            work_dir / "y",
+            decomposition_mode=FileSet.ExtensionDecomposition.multiple,
+        )
+        == work_dir / "y.foo.bar"
     )
     assert Bar.copy_ext(work_dir / "x.foo.bar", work_dir / "y") == work_dir / "y.bar"
+
+
+def test_decompose_fspaths(work_dir):
+    class FooBar(File):
+        ext = ".foo.bar"
+
+    class DoubleBar(FileSet):
+        @mark.required
+        @property
+        def bar(self):
+            return Bar(self.select_by_ext(Bar))
+
+        @mark.required
+        @property
+        def foo_bar(self):
+            return FooBar(self.select_by_ext(FooBar))
+
+    fspath = work_dir / "file.foo.bar"
+    Path.touch(fspath)
+    double_bar = DoubleBar(fspath)
+
+    with pytest.warns(match="whereas it is also interpreted as a"):
+        decomposed = double_bar.decomposed_fspaths()
+
+    assert decomposed == [(work_dir, "file.foo", ".bar")]
 
 
 def test_format_detection(work_dir):
