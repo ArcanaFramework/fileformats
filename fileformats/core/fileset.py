@@ -22,7 +22,6 @@ from .utils import (
     to_mime_format_name,
     STANDARD_NAMESPACES,
     describe_task,
-    splitext,
 )
 from .converter import SubtypeVar
 from .exceptions import (
@@ -201,6 +200,22 @@ class FileSet(DataType):
                 if path in self.fspaths:
                     required.add(path)
         return required
+
+    def nested_filesets(self) -> ty.List[FileSet]:
+        """Returns all nested filesets that are required for the format
+
+        Returns
+        ------
+        fileset : list[FileSet]
+            a fileset that is nested within the broader fileset
+        """
+        nested = []
+        for prop_name in sorted(self.required_properties()):
+            prop = getattr(self, prop_name)
+            if isinstance(prop, FileSet):
+                nested.append(prop)
+                nested.extend(prop.nested_filesets())
+        return nested
 
     def trim_paths(self):
         """Trims paths in fspaths to only those that are "required" by the format class
@@ -730,6 +745,103 @@ class FileSet(DataType):
             yield (",'" + key + "'=").encode()
             yield from chunk_iter
 
+    class ExtensionDecomposition(IntEnum):
+        """What to consider the file extension to be for paths without an explicitly
+        defined extension
+
+        Options
+        -------
+        none
+            assume it doesn't have a file extension
+        single
+            assume that anything after the last '.' is the extension, e.g. the extension
+            of "file.nii.gz" would be ".gz"
+        multiple
+            assume that anything after the first '.' is the extension, e.g. the extension
+            of "file.nii.gz" would be "nii.gz"
+        """
+
+        none = 0
+        single = 1
+        multiple = 2
+
+        def __str__(self):
+            return self.name
+
+    def decomposed_fspaths(
+        self,
+        required_only: bool = True,
+        decomposition_mode: ExtensionDecomposition = ExtensionDecomposition.single,
+    ) -> ty.List[ty.Tuple[Path, str, str]]:
+        """Decompose paths into parent directory, filename stem, and extension
+
+        Parameters
+        ----------
+        required_only : bool, optional
+            only include required paths, by default True
+        assume_implicit_ext : FileSet.ExtensionDecomposition, optional
+            how to interpret paths without an explicitly defined extension (i.e. by
+            either the extension of the FileSet or nested filesets), by default single
+
+        Returns
+        -------
+        decomposed_fspath : list[tuple[Path, str, str]]
+            a tuple consisting of the parent directory, file-stem and extension
+        """
+        from ..generic import File
+
+        decomposed_fspaths = []
+        implicit = set(
+            self.required_paths()
+            if required_only and self.required_paths()
+            else self.fspaths
+        )
+        nested = self.nested_filesets()
+        for fileset in [self] + nested:
+            if isinstance(fileset, File):
+                decomposed = (fileset.fspath.parent, fileset.stem, fileset.actual_ext)
+                if fileset.fspath in implicit:
+                    decomposed_fspaths.append(decomposed)
+                    implicit.remove(fileset.fspath)
+                elif decomposed not in decomposed_fspaths:
+                    previous_fileset = next(
+                        f for f in nested if f.fspath == fileset.fspath
+                    )
+                    previous = (
+                        previous_fileset.fspath.parent,
+                        previous_fileset.stem,
+                        previous_fileset.actual_ext,
+                    )
+                    warn(
+                        f"The '{fileset.fspath}' path within {self} into has been decomposed as "
+                        f"{previous} as it was interpreted as a {type(previous_fileset)} "
+                        f"file, whereas it is also interpreted as a {type(fileset)}, in "
+                        f"which case it could be alternatively decomposed into {decomposed}"
+                    )
+        for fspath in implicit:
+            decomposed_fspaths.append(
+                self.decompose_fspath(fspath, mode=decomposition_mode)
+            )
+        return decomposed_fspaths
+
+    @classmethod
+    def decompose_fspath(
+        cls, fspath: Path, mode: ExtensionDecomposition = ExtensionDecomposition.single
+    ) -> ty.Tuple[Path, str, str]:
+        """Decompose an arbitrary file-system path into parent dir, stem and extension
+        given the assumption on what constitutes an extension"""
+        if mode == cls.ExtensionDecomposition.multiple:
+            ext = "".join(fspath.suffixes)
+            stem = fspath.name[: -len(ext)]
+        elif mode == cls.ExtensionDecomposition.single:
+            stem = fspath.stem
+            ext = fspath.suffix
+        else:
+            assert mode == cls.ExtensionDecomposition.none
+            stem = fspath
+            ext = ""
+        return fspath.parent, stem, ext
+
     class CopyMode(Enum):
         """Designates the desired behaviour of the FileSet.copy() method with regards to
         symbolic, hard or full copies
@@ -844,12 +956,12 @@ class FileSet(DataType):
         dest_dir: Path,
         mode: ty.Union[CopyMode, str] = CopyMode.copy,
         collation: ty.Union[CopyCollation, str] = CopyCollation.any,
-        stem: ty.Optional[str] = None,
+        new_stem: ty.Optional[str] = None,
         trim: bool = True,
         make_dirs: bool = False,
         overwrite: bool = False,
-        multi_splitext: bool = True,
         supported_modes: CopyMode = CopyMode.any,
+        extension_decomposition: ExtensionDecomposition = ExtensionDecomposition.single,
     ):
         """Copies the file-set to a new directory, optionally renaming the files
         to have consistent name-stems.
@@ -865,7 +977,7 @@ class FileSet(DataType):
             how to treat relative paths within the fileset, i.e. whether to move them
             to a single directory, rename them to the same file-stem or maintain
             relative directory structure. See FileSet.CopyCollation for details
-        stem: str, optional
+        new_stem: str, optional
             the file name excluding file extensions, to give the files/dirs in the parent
             directory, by default the original file name is used
         trim : bool, optional
@@ -876,47 +988,57 @@ class FileSet(DataType):
             false by default
         overwrite : bool, optional
             whether to overwrite existing files/directories if present
-        multi_splitext : bool, optional
-            whether to consider file extensions to start from the first '.' (True) or the
-            last (False), by default True
         supported_modes : CopyMode, optional
             supported modes for the copy operation. Used to mask out the requested
             copy mode
+        extension_decomposition : FileSet.ExtensionDecomposition, optional
+            whether to consider file extensions to start from the first '.' (multiple) or the
+            last (single) or be empty (none), when the extension of a fspath in the
+            FileSet isn't explicitly defined by the FileSet class. Only relevant when
+            collation mode is set to "adjacent". By default True
         """
         mode = self.CopyMode[mode] if isinstance(mode, str) else mode
         selected_mode = mode & supported_modes
-        collation = (
-            self.CopyCollation[collation] if isinstance(collation, str) else collation
-        )
-        if len(self.fspaths) > 1:
-            if collation >= self.CopyCollation.siblings:
-                if not all(p.parent == self.parent for p in self.fspaths):
-                    selected_mode -= self.CopyMode.leave
-                duplicate_names = [
-                    n for n, c in Counter(p.name for p in self.fspaths).items() if c > 1
-                ]
-                if duplicate_names:
-                    raise FileFormatsError(
-                        f"Cannot copy {self} to {dest_dir} with collation mode "
-                        f'"{collation}", as there are duplicate filenames, {duplicate_names}, '
-                        f"in file paths: " + "\n".join(str(p) for p in self.fspaths)
-                    )
-            if collation == self.CopyCollation.adjacent:
-                exts = [splitext(p, multi=multi_splitext)[1] for p in self.fspaths]
-                duplicate_exts = [n for n, c in Counter(exts).items() if c > 1]
-                if duplicate_exts:
-                    raise FileFormatsError(
-                        f"Cannot copy {self} to {dest_dir} with collation mode "
-                        f'"{collation}", as there are duplicate extensions, {duplicate_exts}, '
-                        f"in file paths: " + "\n".join(str(p) for p in self.fspaths)
-                    )
+        if len(self.fspaths) == 1:
+            # If there is only one path to copy, then collation isn't meaningful
+            collation = self.CopyCollation.any
+        else:
+            collation = (
+                self.CopyCollation[collation]
+                if isinstance(collation, str)
+                else collation
+            )
+        if collation >= self.CopyCollation.siblings:
+            if not all(p.parent == self.parent for p in self.fspaths):
+                selected_mode -= self.CopyMode.leave
+            duplicate_names = [
+                n for n, c in Counter(p.name for p in self.fspaths).items() if c > 1
+            ]
+            if duplicate_names:
+                raise FileFormatsError(
+                    f"Cannot copy {self} to {dest_dir} with collation mode "
+                    f'"{collation}", as there are duplicate filenames, {duplicate_names}, '
+                    f"in file paths: " + "\n".join(str(p) for p in self.fspaths)
+                )
         if not selected_mode:
             raise FileFormatsError(
                 f"Cannot copy {self} using {mode} mode as it is not supported by "
                 f"the {supported_modes} given the collation specification, {collation}"
             )
         if selected_mode & self.CopyMode.leave:
-            return self
+            return self  # Don't need to do anything
+        if collation == self.CopyCollation.adjacent:
+            decomposed_fspaths = self.decomposed_fspaths(
+                required_only=trim, decomposition_mode=extension_decomposition
+            )
+            exts = [d[-1] for d in decomposed_fspaths]
+            duplicate_exts = [n for n, c in Counter(exts).items() if c > 1]
+            if duplicate_exts:
+                raise FileFormatsError(
+                    f"Cannot copy {self} to {dest_dir} with collation mode "
+                    f'"{collation}", as there are duplicate extensions, {duplicate_exts}, '
+                    f"in file paths: " + "\n".join(str(p) for p in self.fspaths)
+                )
         dest_dir = Path(dest_dir)  # ensure a Path not a string
         if make_dirs:
             dest_dir.mkdir(parents=True, exist_ok=True)
@@ -949,22 +1071,21 @@ class FileSet(DataType):
                 "required. Set trim=False to copy all file-paths"
             )
         if collation == self.CopyCollation.adjacent:
-            if stem is None:
-                try:
-                    # Attempt to get the stem of the primary path
-                    stem = self.stem
-                except AttributeError:
-                    # If there isn't a primary path, ick the stem of the first of the sorted
-                    # paths
-                    stem = splitext(sorted(self.fspaths)[0], multi=multi_splitext)[0]
-        elif stem is not None:
+            if new_stem is None:
+                new_stem = sorted(decomposed_fspaths)[0][1]
+            # Warning we redefine fspaths_to_copy as list of tuples not Paths
+            fspaths_to_copy = decomposed_fspaths
+        elif new_stem is not None:
             raise FileFormatsError(
-                f"'stem' ({stem}) provided to FileSet.copy() method when collation is "
+                f"'stem' ({new_stem}) provided to FileSet.copy() method when collation is "
                 f"not set to 'adjacent' ({collation})"
             )
         for fspath in fspaths_to_copy:
             if collation == self.CopyCollation.adjacent:
-                new_path = dest_dir / (stem + splitext(fspath, multi=multi_splitext)[1])
+                # fspath is a path decomposed into parent, stem, ext instead of a Path
+                parent_dir, old_stem, ext = fspath
+                fspath = parent_dir / (old_stem + ext)  # reconstruct into a Path
+                new_path = dest_dir / (new_stem + ext)
             elif collation == self.CopyCollation.siblings:
                 new_path = dest_dir / fspath.name
             else:
