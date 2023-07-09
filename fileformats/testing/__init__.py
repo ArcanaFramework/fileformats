@@ -1,4 +1,4 @@
-from ._version import __version__
+from ..core import __version__
 from .basic import Foo, Bar, Baz, Qux
 from .headers import (
     Y,
