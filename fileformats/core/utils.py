@@ -17,6 +17,24 @@ import fileformats.core
 logger = logging.getLogger("fileformats")
 
 
+EXCLUDED_SUBPACKAGES = set(["core", "testing"])
+
+
+def include_testing_package(flag: bool = True):
+    """Include testing package in list of sub-packages. Typically set in conftest.py
+    or similar when setting up unittesting. Must be set globally before any methods are
+    called within the package as member classes are cached.
+
+    Parameters
+    ----------
+    flag : bool
+        whether to include the testing package or not
+    """
+    if flag:
+        global EXCLUDED_SUBPACKAGES
+        EXCLUDED_SUBPACKAGES.remove("testing")
+
+
 def find_matching(
     fspaths: ty.List[Path], standard_only: bool = False, include_generic: bool = False
 ):
@@ -49,8 +67,13 @@ def from_mime(mime_str: str):
     return fileformats.core.DataType.from_mime(mime_str)
 
 
-def subpackages():
+def subpackages(exclude: ty.Sequence[str] = EXCLUDED_SUBPACKAGES):
     """Iterates over all subpackages within the fileformats namespace
+
+    Parameters
+    ----------
+    exclude : ty.Sequence[str], optional
+        whether to include the testing subpackage, by default ["core", "testing"]
 
     Yields
     ------
@@ -60,7 +83,7 @@ def subpackages():
     for mod_info in pkgutil.iter_modules(
         fileformats.__path__, prefix=fileformats.__package__ + "."
     ):
-        if mod_info.name == "core":
+        if mod_info.name in exclude:
             continue
         yield importlib.import_module(mod_info.name)
 

@@ -11,6 +11,9 @@ try:
     set_input_validator(True)
 except ImportError:
     pass
+from fileformats.core.utils import include_testing_package
+
+include_testing_package(True)
 
 # Set DEBUG logging for unittests
 
