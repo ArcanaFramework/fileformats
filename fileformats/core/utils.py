@@ -17,6 +17,26 @@ import fileformats.core
 logger = logging.getLogger("fileformats")
 
 
+_excluded_subpackages = set(["core", "testing"])
+
+
+def include_testing_package(flag: bool = True):
+    """Include testing package in list of sub-packages. Typically set in conftest.py
+    or similar when setting up unittesting. Must be set globally before any methods are
+    called within the package as member classes are cached.
+
+    Parameters
+    ----------
+    flag : bool
+        whether to include the testing package or not
+    """
+    global _excluded_subpackages
+    if flag:
+        _excluded_subpackages.remove("testing")
+    else:
+        _excluded_subpackages.add("testing")
+
+
 def find_matching(
     fspaths: ty.List[Path], standard_only: bool = False, include_generic: bool = False
 ):
@@ -49,8 +69,13 @@ def from_mime(mime_str: str):
     return fileformats.core.DataType.from_mime(mime_str)
 
 
-def subpackages():
+def subpackages(exclude: ty.Sequence[str] = _excluded_subpackages):
     """Iterates over all subpackages within the fileformats namespace
+
+    Parameters
+    ----------
+    exclude : ty.Sequence[str], optional
+        whether to include the testing subpackage, by default ["core", "testing"]
 
     Yields
     ------
@@ -60,7 +85,7 @@ def subpackages():
     for mod_info in pkgutil.iter_modules(
         fileformats.__path__, prefix=fileformats.__package__ + "."
     ):
-        if mod_info.name == "core":
+        if mod_info.name.split(".")[-1] in exclude:
             continue
         yield importlib.import_module(mod_info.name)
 
@@ -174,40 +199,6 @@ def from_mime_format_name(format_name: str):
     format_name = re.sub(r"(\+)(\w)", lambda m: "__" + m.group(2).upper(), format_name)
     format_name = re.sub(r"(-)(\w)", lambda m: m.group(2).upper(), format_name)
     return format_name
-
-
-# def hash_file(fspath: Path, chunk_len: int, crypto: ty.Callable):
-#     crypto_obj = crypto()
-#     with open(fspath, "rb") as fp:
-#         for chunk in iter(lambda: fp.read(chunk_len), b""):
-#             crypto_obj.update(chunk)
-#     return crypto_obj.hexdigest()
-
-
-# def hash_dir(
-#     fspath: Path,
-#     chunk_len: int,
-#     crypto: ty.Callable,
-#     ignore_hidden_files: bool = False,
-#     ignore_hidden_dirs: bool = False,
-#     relative_to: ty.Optional[Path] = None,
-# ):
-#     if relative_to is None:
-#         relative_to = fspath
-#     file_hashes = {}
-#     for dpath, _, filenames in sorted(os.walk(fspath)):
-#         # Sort in-place to guarantee order.
-#         filenames.sort()
-#         dpath = Path(dpath)
-#         if ignore_hidden_dirs and dpath.name.startswith(".") and str(dpath) != fspath:
-#             continue
-#         for filename in filenames:
-#             if ignore_hidden_files and filename.startswith("."):
-#                 continue
-#             file_hashes[str((dpath / filename).relative_to(relative_to))] = hash_file(
-#                 dpath / filename, crypto=crypto, chunk_len=chunk_len
-#             )
-#     return file_hashes
 
 
 def add_exc_note(e, note):

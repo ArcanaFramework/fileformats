@@ -145,7 +145,7 @@ def test_ordered_qualifier_converters():
     L[C, A].get_converter(K[A, E, B])  # E is a subtype of C
 
 
-def test_mime_rountrips():
+def test_mime_roundtrips():
     assert DirectoryContaining[F].mime_like == "testing/f+directory-containing"
     assert from_mime("testing/f+directory-containing") is DirectoryContaining[F]
 
