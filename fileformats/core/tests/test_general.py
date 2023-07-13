@@ -15,14 +15,6 @@ def test_init_args(work_dir):
         File(fspath, fspath)
 
 
-# def test_metadata_iterator_fail(work_dir):
-#     fspath = work_dir / "test.txt"
-#     write_test_file(fspath)
-#     file = File(fspath)
-#     with pytest.raises(NotImplementedError):
-#         iter(file.metadata)
-
-
 class TestFile(File):
 
     ext = ".tst"
