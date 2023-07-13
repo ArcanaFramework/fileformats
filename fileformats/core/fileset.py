@@ -80,7 +80,7 @@ class FileSet(DataType):
     is_fileset = True
 
     def __hash__(self):
-        return hash(sorted(self.fspaths))
+        return hash(self.fspaths)
 
     def __repr__(self):
         return (

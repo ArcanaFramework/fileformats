@@ -8,7 +8,6 @@ from fileformats.core.utils import classproperty
 from fileformats.core.mixin import WithClassifiers
 
 
-@attrs.define
 class FsObject(FileSet, os.PathLike):
     "Generic file-system object, can be either a file or a directory"
 
@@ -35,7 +34,6 @@ class FsObject(FileSet, os.PathLike):
         return self.fspath.with_suffix("").name
 
 
-@attrs.define
 class File(FsObject):
     """Generic file type"""
 
@@ -142,7 +140,6 @@ class File(FsObject):
         return stem
 
 
-@attrs.define
 class Directory(FsObject):
     """Base directory to be overridden by subtypes that represent directories but don't
     want to inherit content type "qualifers" (i.e. most of them)"""
