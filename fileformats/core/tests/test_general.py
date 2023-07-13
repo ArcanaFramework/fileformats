@@ -1,5 +1,7 @@
+from pathlib import Path
 import pytest
 from fileformats.generic import File
+from fileformats.field import Integer, Boolean, Decimal, Array, Text
 from fileformats.core.exceptions import FileFormatsError, FormatMismatchError
 from fileformats.core import mark
 from conftest import write_test_file
@@ -49,6 +51,70 @@ def test_missing_files(work_dir):
     write_test_file(fspath)
     with pytest.raises(FileNotFoundError):
         TestFile([fspath, work_dir / "missing1.txt", work_dir / "missing2.txt"])
+
+
+def test_python_hash_fileset(work_dir: Path):
+
+    a_path = work_dir / "a.txt"
+    a_path.write_text("a")
+    a = File(a_path)
+    a2 = File(a_path)
+    b_path = work_dir / "b.txt"
+    b_path.write_text("b")
+    b = File(b_path)
+
+    assert hash(a) == hash(a2)
+    assert hash(b) != hash(a)
+
+
+def test_python_hash_integer():
+
+    a = Integer(1)
+    a2 = Integer(1)
+    b = Integer(2)
+
+    assert hash(a) == hash(a2)
+    assert hash(b) != hash(a)
+
+
+def test_python_hash_decimal():
+
+    a = Decimal(1)
+    a2 = Decimal(1)
+    b = Decimal(2)
+
+    assert hash(a) == hash(a2)
+    assert hash(b) != hash(a)
+
+
+def test_python_hash_boolean():
+
+    a = Boolean(1)
+    a2 = Boolean(1)
+    b = Boolean(0)
+
+    assert hash(a) == hash(a2)
+    assert hash(b) != hash(a)
+
+
+def test_python_hash_text():
+
+    a = Text("1")
+    a2 = Text("1")
+    b = Text("2")
+
+    assert hash(a) == hash(a2)
+    assert hash(b) != hash(a)
+
+
+def test_python_hash_array():
+
+    a = Array[Integer]([1, 2])
+    a2 = Array[Integer]([1, 2])
+    b = Array[Integer]([1, 2, 3])
+
+    assert hash(a) == hash(a2)
+    assert hash(b) != hash(a)
 
 
 class ImageWithInlineHeader(File):
