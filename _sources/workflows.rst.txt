@@ -142,11 +142,11 @@ to the file-set
 
 This is very useful when reading the output path of a workflow where only primary path
 is returned and associated files also need to be saved to an output directory. To copy
-all files/directories in a format you can use the ``copy_to`` method
+all files/directories in a format you can use the ``FileSet.copy()`` method
 
 .. code-block:: python
 
-    >>> analyze_file_copy = analyze_file.copy_to("/path/to/destination", stem="new-stem")
+    >>> analyze_file_copy = analyze_file.copy(dest_dir="/path/to/destination", stem="new-stem")
     >>> analyze_file_copy.fspaths
     {"/path/to/destination/new-stem.hdr", "/path/to/destination/new-stem.img"}
 
