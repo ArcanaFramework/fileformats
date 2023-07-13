@@ -6,7 +6,6 @@ from fileformats.core.mixin import WithClassifiers
 from fileformats.core.exceptions import FormatMismatchError
 
 
-@attrs.define
 class Singular(Field):
     pass
 
@@ -112,10 +111,10 @@ def array_converter(value):
             value = value[1:-1]
         elif value.startswith("[") or value.endswith("]"):
             raise FormatMismatchError(f"Unmatched brackets in array field {value}")
-        value = [v.strip() for v in value.split(",")]
+        value = tuple(v.strip() for v in value.split(","))
     else:
         try:
-            value = list(value)
+            value = tuple(value)
         except ValueError as e:
             raise FormatMismatchError(str(e)) from None
     return value
@@ -127,6 +126,9 @@ class Text(Singular):
     value: str = attrs.field(converter=text_converter)
 
     primitive = str
+
+    def __hash__(self):
+        return hash(self.value)
 
 
 @attrs.define
@@ -145,6 +147,9 @@ class Integer(Singular, ScalarMixin):
     def __bool__(self):
         return bool(self.value)
 
+    def __hash__(self):
+        return hash(self.value)
+
 
 @attrs.define
 class Decimal(Singular, ScalarMixin):
@@ -158,6 +163,9 @@ class Decimal(Singular, ScalarMixin):
 
     def __bool__(self):
         return bool(self.value)
+
+    def __hash__(self):
+        return hash(self.value)
 
 
 @attrs.define
@@ -173,6 +181,9 @@ class Boolean(Singular, LogicalMixin):
     def __bool__(self):
         return self.value
 
+    def __hash__(self):
+        return hash(self.value)
+
 
 @attrs.define(auto_attribs=False)
 class Array(WithClassifiers, Field):
@@ -183,14 +194,14 @@ class Array(WithClassifiers, Field):
     allowed_classifiers: ty.Tuple[ty.Type[Singular]] = (Singular,)
     item_type: ty.Union[ty.Type[Singular], None] = None
 
-    primitive = list
+    primitive = tuple
 
-    value: list = attrs.field(converter=array_converter)
+    value: tuple = attrs.field(converter=array_converter)
 
     def __attrs_post_init__(self):
         # Ensure items are of the correct type
         if self.item_type is not None:
-            self.value = [self.item_type(i).value for i in self.value]
+            self.value = tuple(self.item_type(i).value for i in self.value)
 
     def __str__(self):
         return (
@@ -206,3 +217,6 @@ class Array(WithClassifiers, Field):
 
     def __iter__(self):
         return iter(self.value)
+
+    def __hash__(self):
+        return hash(self.value)
