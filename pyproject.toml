@@ -9,7 +9,6 @@ readme = "README.rst"
 requires-python = ">=3.7"
 dependencies = [
     "attrs>=22.1.0",
-    "imageio",
 ]
 license = {file = "LICENSE"}
 authors = [
@@ -50,13 +49,13 @@ dev = [
     "codespell",
     "flake8",
     "flake8-pyproject",
-    "fileformats[extended]",
     "fileformats[test]",
 ]
 test = [
     "pytest >=6.2.5",
     "pytest-env>=0.6.2",
     "pytest-cov>=2.12.1",
+    "imageio",
 ]
 docs = [
     "packaging",
