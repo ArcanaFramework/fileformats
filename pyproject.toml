@@ -49,13 +49,14 @@ dev = [
     "codespell",
     "flake8",
     "flake8-pyproject",
-    "fileformats[extended]",
     "fileformats[test]",
 ]
 test = [
     "pytest >=6.2.5",
     "pytest-env>=0.6.2",
     "pytest-cov>=2.12.1",
+    "imageio",
+    "pydra >=0.22",
 ]
 docs = [
     "packaging",
@@ -66,11 +67,6 @@ docs = [
     "sphinx-click>=3.1",
     "furo>=2022.2.14.1",
     "numpydoc>=0.6.0",
-]
-extended = [
-    "pydra >= 0.20.0",
-    "imageio >=2.24.0",
-    "PyYAML>=6.0",
 ]
 
 [project.urls]

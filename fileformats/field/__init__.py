@@ -1,3 +1,9 @@
+"""Adds support for "field" data types
+
+While not "file-formats", in some workflows, particularly when interacting with a data
+store such as in Arcana, it is useful to interchangeably interact with file and field
+data, so the classes in this module are provided to support these use cases.
+"""
 import decimal
 import typing as ty
 import attrs
