@@ -9,6 +9,7 @@ readme = "README.rst"
 requires-python = ">=3.7"
 dependencies = [
     "attrs>=22.1.0",
+    "imageio",
 ]
 license = {file = "LICENSE"}
 authors = [
