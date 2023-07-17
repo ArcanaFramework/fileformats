@@ -67,11 +67,6 @@ docs = [
     "furo>=2022.2.14.1",
     "numpydoc>=0.6.0",
 ]
-extended = [
-    "pydra >= 0.20.0",
-    "imageio >=2.24.0",
-    "PyYAML>=6.0",
-]
 
 [project.urls]
 repository = "https://github.com/ArcanaFramework/fileformats"
