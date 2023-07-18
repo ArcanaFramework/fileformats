@@ -4,10 +4,9 @@ from copy import copy
 import struct
 from enum import Enum, IntEnum
 from warnings import warn
+import tempfile
 from collections import Counter
-import traceback
 import typing as ty
-import importlib
 import shutil
 from operator import itemgetter
 import itertools
@@ -16,13 +15,13 @@ from pathlib import Path
 import hashlib
 import logging
 import attrs
-from .mixin import WithMock
 from .utils import (
     classproperty,
     fspaths_converter,
     to_mime_format_name,
     STANDARD_NAMESPACES,
     describe_task,
+    import_extras_module,
 )
 from .converter import SubtypeVar
 from .exceptions import (
@@ -31,11 +30,8 @@ from .exceptions import (
     FormatConversionError,
 )
 from .datatype import DataType
+from . import mark
 
-# Tools imported from Arcana, will remove again once file-formats and "cells"
-# have been split
-REQUIRED_ANNOTATION = "__fileformats_required__"
-CHECK_ANNOTATION = "__fileformats_check__"
 
 FILE_CHUNK_LEN_DEFAULT = 8192
 
@@ -60,13 +56,6 @@ class FileSet(DataType):
     """
 
     fspaths: ty.FrozenSet[Path] = attrs.field(default=None, converter=fspaths_converter)
-    _metadata: ty.Dict[str, ty.Any] = attrs.field(
-        default=None,
-        init=False,
-        repr=False,
-        eq=False,
-        hash=False,
-    )
 
     # Explicitly set the Internet Assigned Numbers Authority (https://iana_mime.org) MIME
     # type to None for any base classes that should not correspond to a MIME or MIME-like
@@ -123,9 +112,11 @@ class FileSet(DataType):
 
     @property
     def metadata(self):
-        if self._metadata is None and hasattr(self, "load_metadata"):
-            self._metadata = self.load_metadata()
-        return self._metadata
+        return self.load_metadata()
+
+    @mark.extra
+    def load_metadata(self):
+        raise NotImplementedError
 
     @property
     def parent(self) -> Path:
@@ -177,7 +168,7 @@ class FileSet(DataType):
             klass_attr = getattr(cls, attr_name)
             if isinstance(klass_attr, property):
                 try:
-                    klass_attr.fget.__annotations__[REQUIRED_ANNOTATION]
+                    klass_attr.fget.__annotations__[cls.REQUIRED_ANNOTATION]
                 except KeyError:
                     pass
                 else:
@@ -240,7 +231,7 @@ class FileSet(DataType):
                 continue
             klass_attr = getattr(cls, attr_name)
             try:
-                klass_attr.__annotations__[CHECK_ANNOTATION]
+                klass_attr.__annotations__[cls.CHECK_ANNOTATION]
             except (AttributeError, KeyError):
                 pass
             else:
@@ -379,14 +370,12 @@ class FileSet(DataType):
         converters = (
             cls.get_converters_dict()
         )  # triggers loading of standard converters for target format
-        # Ensure standard converters from source format are loaded
-        source_format.import_standard_converters()
         try:
             unclassified = source_format.unclassified
         except AttributeError:
-            pass
+            import_extras_module(source_format)
         else:
-            unclassified.import_standard_converters()
+            import_extras_module(unclassified)
         try:
             converter_tuple = converters[source_format]
         except KeyError:
@@ -402,10 +391,18 @@ class FileSet(DataType):
                     f"'{source_format.mime_like}':\n{available_str}"
                 ) from None
             elif not available_converters:
-                raise FormatConversionError(
+                msg = (
                     f"Could not find converter between '{source_format.mime_like}' and "
                     f"'{cls.mime_like}' formats"
-                ) from None
+                )
+                extras_imported, sub_pkg = import_extras_module(cls)
+                if not extras_imported:
+                    msg += (
+                        f'. Was not able to import "extras" module, fileformats.extras.{sub_pkg}, '
+                        f"you may want to try installing the 'fileformats-{sub_pkg}-extras' package "
+                        f"from PyPI (e.g. pip install fileformats-{sub_pkg}-extras)"
+                    )
+                raise FormatConversionError(msg) from None
             converter_tuple = available_converters[0]
             # Store mapping for future reference
             converters[source_format] = converter_tuple
@@ -422,35 +419,14 @@ class FileSet(DataType):
         # be able to convert to the specific type)
         if klass is None:
             klass = cls
+        # import related extras module for the target class
+        import_extras_module(klass)
         try:
             converters_dict = klass.__dict__["converters"]
         except KeyError:
             converters_dict = {}
             klass.converters = converters_dict
-            klass.import_standard_converters()
         return converters_dict
-
-    @classmethod
-    def import_standard_converters(cls):
-        """Attempts to import standard converters for the format class, which are
-        located at `fileformats.<namespace>.converters`
-        """
-        standard_converters_module = f"fileformats.{cls.namespace}.converters"
-        try:
-            importlib.import_module(standard_converters_module)
-        except ImportError as e:
-            if str(e) != f"No module named '{standard_converters_module}'":
-                if cls.namespace in STANDARD_NAMESPACES:
-                    pkg = "fileformats"
-                else:
-                    pkg = f"fileformats-{cls.namespace}"
-                warn(
-                    f"Could not import standard converters for '{cls.namespace}' namespace, "
-                    f"please install '{pkg}' with the 'extended' install option to "
-                    f"use converters for {cls.namespace}, i.e.\n\n"
-                    f"    $ python3 -m pip install '{pkg}[extended]':\n\n"
-                    f"Import error was:\n{traceback.format_exc()}"
-                )
 
     @classmethod
     def get_converter_tuples(
@@ -762,7 +738,7 @@ class FileSet(DataType):
             a file-set that will pass type-checking as an instance of the given
             fileset class but which doesn't actually point to any FS objects.
         """
-        mock_cls = type(cls.__name__ + "Mock", bases=(WithMock, cls), dict={})
+        mock_cls = type(cls.__name__ + "Mock", (MockMixin, cls), {})
         if not fspaths:
             fspaths = []
             fspath = f"/mock/{cls.__name__.lower()}"
@@ -772,6 +748,44 @@ class FileSet(DataType):
                 pass
             fspaths.append(fspath)
         return mock_cls(fspaths=fspaths)
+
+    @classmethod
+    def test_instance(cls, dest_dir: ty.Optional[Path] = None) -> "FileSet":
+        """Return an arbitrary instance of the file-set type for classes where the
+        `test_data` extra has been implemented
+
+        Parameters
+        ----------
+        dest_dir : Path, optional
+            the path in which to create the test data
+
+        Returns
+        -------
+        FileSet
+            an instance of the given file-set class
+        """
+        if not dest_dir:
+            dest_dir = Path(tempfile.mkdtemp())
+        # Need to use mock to get an instance in order to use the singledispatch-based
+        # mark.extra decorator
+        mock = cls.mock()
+        return cls(mock.generate_test_data(dest_dir))
+
+    @mark.extra
+    def generate_test_data(self, dest_dir: Path) -> ty.Iterable[Path]:
+        """Generate test data at the fspaths of the file-set
+
+        Parameters
+        ----------
+        dest_dir : Path
+            the directory to generate the test data within
+
+        Returns
+        -------
+        fspaths : ty.Iterable
+            the generated fspaths
+        """
+        raise NotImplementedError
 
     class ExtensionDecomposition(IntEnum):
         """What to consider the file extension to be for paths without an explicitly
@@ -1146,3 +1160,18 @@ class FileSet(DataType):
     _all_formats = None
     _formats_by_iana_mime = None
     _formats_by_name = None
+
+
+@attrs.define(slots=False)
+class MockMixin:
+    """Strips out validation methods of a class, allowing it to be mocked in a way that
+    still satisfies type-checking"""
+
+    fspaths: ty.FrozenSet[Path] = attrs.field(default=None)
+
+    def __attrs_post_init__(self):
+        pass
+
+    @fspaths.validator
+    def validate_fspaths(self, _, fspaths):
+        pass

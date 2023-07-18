@@ -10,7 +10,6 @@ def png_path():
     return get_remote_file("images/chelsea.png")
 
 
-@pytest.mark.xfail(reason="No converter between PNG and tiff")
 def test_tiff_endianness(png_path):
     png = Png(png_path)
     Tiff.convert(png)

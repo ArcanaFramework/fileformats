@@ -18,6 +18,6 @@ class MissingExtendedDepenciesError(FileFormatsError):
     "'extended' install extra wasn't installed required for advanced behaviour"
 
 
-class FileFormatsExtrasHookError(FileFormatsError):
+class FileFormatsExtrasError(FileFormatsError):
     """If there is an "extras hook" in the datatype class but no methods have been
     registered on it"""

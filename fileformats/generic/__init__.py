@@ -1,4 +1,5 @@
 import os
+import typing as ty
 from pathlib import Path
 import attrs
 from fileformats.core.fileset import FileSet
@@ -44,21 +45,12 @@ class File(FsObject):
     @property
     def fspath(self):
         fspath = self.select_by_ext()
-        if not fspath.is_file():
-            if not fspath.exists():
-                msg = (
-                    f"Selected fspath for {type(self)}, '{str(fspath)}', does not exist"
-                )
-                if fspath.parent.exists():
-                    neighbours = [p.name for p in fspath.parent.iterdir()]
-                    msg += f". Found neighbouring files {neighbours}"
-                raise FileFormatsError(msg)
-            else:
-                msg = ", it is a directory" if fspath.is_dir() else ""
-                raise FormatMismatchError(
-                    f'Path that matches extension of "{type(self)}", {fspath}, is not a '
-                    "file in {repr(self)}" + msg
-                )
+        if fspath.is_dir():
+            # fspath is guaranteed to exist
+            raise FormatMismatchError(
+                f'Path that matches extension of {type(self)}, "{fspath}", '
+                f"is a directory not a file"
+            )
         return fspath
 
     @classmethod
@@ -151,7 +143,8 @@ class Directory(FsObject):
     @mark.required
     @property
     def fspath(self):
-        dirs = [p for p in self.fspaths if p.is_dir()]
+        # fspaths are checked for existence with the exception of mock classes
+        dirs = [p for p in self.fspaths if not p.is_file()]
         if not dirs:
             raise FormatMismatchError(f"No directory paths provided {repr(self)}")
         if len(dirs) > 1:

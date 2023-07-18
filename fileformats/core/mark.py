@@ -1,10 +1,12 @@
 import importlib
 import typing as ty
+import functools
 import attrs
+import urllib.error
 from .datatype import DataType
-from .fileset import REQUIRED_ANNOTATION, CHECK_ANNOTATION
 from .converter import ConverterWrapper
-from .exceptions import FormatConversionError, FileFormatsExtrasHookError
+from .exceptions import FormatConversionError, FileFormatsExtrasError
+from .utils import import_extras_module, check_package_exists_on_pypi
 
 
 __all__ = ["required", "check", "converter"]
@@ -26,7 +28,7 @@ def required(prop):
         to pass to the operator (the value of the property will be the first operand)
     """
 
-    prop.fget.__annotations__[REQUIRED_ANNOTATION] = None
+    prop.fget.__annotations__[DataType.REQUIRED_ANNOTATION] = None
     return prop
 
 
@@ -39,7 +41,7 @@ def check(method):
     method : Function
         the method to mark as a check
     """
-    method.__annotations__[CHECK_ANNOTATION] = None
+    method.__annotations__[DataType.CHECK_ANNOTATION] = None
     return method
 
 
@@ -122,36 +124,34 @@ def converter(
     return decorator if task_spec is None else decorator(task_spec)
 
 
-class extras_hook:
-    """A decorator class to facilitate the"""
+def extra(method: ty.Callable):
+    """A decorator which uses singledispatch to facilitate the registering of
+    "extra" functionality in external packages (e.g. "fileformats-extras")"""
 
-    def __init__(self, method: ty.Callable):
-        self._name = method.__name__
-        self._methods = {DataType: method}  # Set default method
+    functools.wraps(method)
 
-    def __call__(self, obj, *args, **kwargs):
-        assert isinstance(obj, DataType)
-        matches = [isinstance(obj, c) for c in self._methods]
-        if len(matches) > 1:
-            try:
-                key = next(m for m in matches if all(issubclass(m, n) for n in matches))
-            except StopIteration:
-                raise FileFormatsExtrasHookError(
-                    f"{type(obj)} type matches multiple extras hooks implemented for "
-                    f"{self._name}, with no clear subclass"
-                )
-        else:
-            key = matches[0]
-        method = self._methods[key]
+    def decorated(obj, *args, **kwargs):
+        cls = type(obj)
+        extras_imported, sub_pkg = import_extras_module(cls)
         try:
             return method(obj, *args, **kwargs)
         except NotImplementedError:
-            if key is DataType:
-                raise FileFormatsExtrasHookError(
-                    f"No hook for '{self._name}' has been implemented for {type(obj)} types"
-                ) from None
+            if extras_imported:
+                msg = f"No implementation for '{method.__name__}' extra for {cls.__name__} types"
             else:
-                raise
+                extras_pkg = f"fileformats-{sub_pkg}-extras"
+                try:
+                    if check_package_exists_on_pypi(extras_pkg):
+                        msg += (
+                            f'. An "extras" package exists on PyPI ({extras_pkg}), '
+                            "which may contain an implementation, try installing it "
+                            f"(e.g. 'pip install {extras_pkg}') and check again"
+                        )
+                except urllib.error.URLError:
+                    msg += (
+                        '. Was not able to check whether an "extras" package '
+                        f"({extras_pkg}) exists on PyPI or not"
+                    )
+            raise FileFormatsExtrasError(msg)
 
-    def hook(self, klass: ty.Type[DataType]):
-        pass
+    return functools.singledispatch(decorated)

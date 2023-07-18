@@ -1,24 +1,26 @@
 from fileformats.core.mixin import WithMagicNumber
-from fileformats.core import mark, MissingExtendedDependency
+from fileformats.core import mark
 from fileformats.core.exceptions import FormatMismatchError
 from .base import Image
-
-try:
-    import imageio
-except ImportError:
-    imageio = MissingExtendedDependency("imageio", __name__)
 
 
 class RasterImage(Image):
     iana_mime = None
     binary = True
 
-    def load(self):
-        return imageio.imread(self.fspath)
+    @mark.extra
+    def read_data(self):
+        raise NotImplementedError
+
+    @mark.extra
+    def write_data(self, data_array):
+        raise NotImplementedError
 
     @classmethod
     def save_new(cls, fspath, data_array):
-        imageio.imwrite(fspath, data_array)
+        # We have to use a mock object as the data file hasn't been written yet
+        mock = cls.mock(fspath)
+        mock.write_data(data_array)
         return cls(fspath)
 
 
