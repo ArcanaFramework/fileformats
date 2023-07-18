@@ -558,3 +558,11 @@ class WithClassifiers:
         else:
             namespace = super().namespace
         return namespace
+
+
+class WithMock:
+    """Strips out validation methods of a class, allowing it to be mocked in a way that
+    still satisfies type-checking"""
+
+    def __attrs_post_init__(self):
+        pass
