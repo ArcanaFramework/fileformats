@@ -4,6 +4,8 @@ from pathlib import Path
 import inspect
 import typing as ty
 import re
+import urllib.request
+import urllib.error
 import os
 import logging
 import pkgutil
@@ -242,3 +244,62 @@ def describe_task(task):
     src_file = inspect.getsourcefile(task)
     src_line = inspect.getsourcelines(task)[-1]
     return f"{task} (defined at line {src_line} of {src_file})"
+
+
+def check_package_exists_on_pypi(package_name: str) -> bool:
+    """Check if a package exists on PyPI
+
+    Parameters
+    ----------
+    package_name : str
+        the name of the package to check for
+
+    Returns
+    -------
+    bool
+        whether the package exists on PyPI or not
+    """
+    url = f"https://pypi.org/pypi/{package_name}/json"
+    try:
+        urllib.request.urlopen(url)
+    except urllib.error.HTTPError as e:
+        if e.code == 404:
+            return False
+        else:
+            raise
+    return True
+
+
+def import_extras_module(klass: type) -> ty.Tuple[bool, str]:
+    """Attempt to load extras module corresponding to the provided class's module
+
+    Parameters
+    ----------
+    klass : ty.Type
+        the class to load the extras module for
+
+    Returns
+    -------
+    imported : bool
+        whether the module was imported or not
+    sub_pkg : str
+        the name of the sub-package that was attempted to be loaded
+    """
+
+    pkg_parts = klass.__module__.split(".")
+    if pkg_parts[0] != "fileformats":
+        logger.debug(
+            "There is no 'extras' module for classes not within the 'fileformats' package, "
+            "not %s in %s",
+            klass.__name__,
+            klass.__module__,
+        )
+        return True, None
+    sub_pkg = pkg_parts[1]
+    try:
+        importlib.import_module("fileformats.extras." + sub_pkg)
+    except ImportError:
+        extras_imported = False
+    else:
+        extras_imported = True
+    return extras_imported, sub_pkg

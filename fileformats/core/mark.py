@@ -1,8 +1,12 @@
 import importlib
+import typing as ty
+import functools
 import attrs
-from .fileset import DataType, REQUIRED_ANNOTATION, CHECK_ANNOTATION
+import urllib.error
+from .datatype import DataType
 from .converter import ConverterWrapper
-from .exceptions import FormatConversionError
+from .exceptions import FormatConversionError, FileFormatsExtrasError
+from .utils import import_extras_module, check_package_exists_on_pypi
 
 
 __all__ = ["required", "check", "converter"]
@@ -24,7 +28,7 @@ def required(prop):
         to pass to the operator (the value of the property will be the first operand)
     """
 
-    prop.fget.__annotations__[REQUIRED_ANNOTATION] = None
+    prop.fget.__annotations__[DataType.REQUIRED_ANNOTATION] = None
     return prop
 
 
@@ -37,7 +41,7 @@ def check(method):
     method : Function
         the method to mark as a check
     """
-    method.__annotations__[CHECK_ANNOTATION] = None
+    method.__annotations__[DataType.CHECK_ANNOTATION] = None
     return method
 
 
@@ -118,3 +122,36 @@ def converter(
         return task_spec
 
     return decorator if task_spec is None else decorator(task_spec)
+
+
+def extra(method: ty.Callable):
+    """A decorator which uses singledispatch to facilitate the registering of
+    "extra" functionality in external packages (e.g. "fileformats-extras")"""
+
+    functools.wraps(method)
+
+    def decorated(obj, *args, **kwargs):
+        cls = type(obj)
+        extras_imported, sub_pkg = import_extras_module(cls)
+        try:
+            return method(obj, *args, **kwargs)
+        except NotImplementedError:
+            if extras_imported:
+                msg = f"No implementation for '{method.__name__}' extra for {cls.__name__} types"
+            else:
+                extras_pkg = f"fileformats-{sub_pkg}-extras"
+                try:
+                    if check_package_exists_on_pypi(extras_pkg):
+                        msg += (
+                            f'. An "extras" package exists on PyPI ({extras_pkg}), '
+                            "which may contain an implementation, try installing it "
+                            f"(e.g. 'pip install {extras_pkg}') and check again"
+                        )
+                except urllib.error.URLError:
+                    msg += (
+                        '. Was not able to check whether an "extras" package '
+                        f"({extras_pkg}) exists on PyPI or not"
+                    )
+            raise FileFormatsExtrasError(msg)
+
+    return functools.singledispatch(decorated)

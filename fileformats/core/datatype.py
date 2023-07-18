@@ -273,6 +273,9 @@ class DataType:
 
     _generically_qualifies_by_name = None  # Register all generically classified types
 
+    REQUIRED_ANNOTATION = "__fileformats_required__"
+    CHECK_ANNOTATION = "__fileformats_check__"
+
 
 from .fileset import FileSet  # noqa
 from .field import Field  # noqa
