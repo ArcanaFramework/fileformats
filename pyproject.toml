@@ -6,9 +6,10 @@ build-backend = "hatchling.build"
 name = "fileformats"
 description = "Classes for representing different file formats in Python classes for use in type hinting in data workflows"
 readme = "README.rst"
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 dependencies = [
     "attrs>=22.1.0",
+    "typing_extensions >=4.6.3; python_version < '3.11'"
 ]
 license = {file = "LICENSE"}
 authors = [

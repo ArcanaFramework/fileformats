@@ -32,6 +32,11 @@ from .exceptions import (
 from .datatype import DataType
 from . import mark
 
+try:
+    from typing import Self
+except ImportError:
+    from typing_extensions import Self
+
 
 FILE_CHUNK_LEN_DEFAULT = 8192
 
@@ -723,7 +728,7 @@ class FileSet(DataType):
             yield from chunk_iter
 
     @classmethod
-    def mock(cls, *fspaths: ty.Tuple[ty.Union[Path, str]]) -> "FileSet":
+    def mock(cls, *fspaths: ty.Tuple[ty.Union[Path, str]]) -> Self:
         """Return an instance of a mocked sub-class of the file format to be used in
         test routines like doctests.
 
@@ -750,7 +755,7 @@ class FileSet(DataType):
         return mock_cls(fspaths=fspaths)
 
     @classmethod
-    def test_instance(cls, dest_dir: ty.Optional[Path] = None) -> "FileSet":
+    def arbitrary(cls, dest_dir: ty.Optional[Path] = None) -> Self:
         """Return an arbitrary instance of the file-set type for classes where the
         `test_data` extra has been implemented
 
@@ -1167,7 +1172,8 @@ class MockMixin:
     """Strips out validation methods of a class, allowing it to be mocked in a way that
     still satisfies type-checking"""
 
-    fspaths: ty.FrozenSet[Path] = attrs.field(default=None)
+    # Mirror fspaths here so we can unset its validator
+    fspaths: ty.FrozenSet[Path] = attrs.field(default=None, converter=fspaths_converter)
 
     def __attrs_post_init__(self):
         pass
