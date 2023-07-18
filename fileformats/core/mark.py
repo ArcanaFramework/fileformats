@@ -1,8 +1,10 @@
 import importlib
+import typing as ty
 import attrs
-from .fileset import DataType, REQUIRED_ANNOTATION, CHECK_ANNOTATION
+from .datatype import DataType
+from .fileset import REQUIRED_ANNOTATION, CHECK_ANNOTATION
 from .converter import ConverterWrapper
-from .exceptions import FormatConversionError
+from .exceptions import FormatConversionError, FileFormatsExtrasHookError
 
 
 __all__ = ["required", "check", "converter"]
@@ -118,3 +120,38 @@ def converter(
         return task_spec
 
     return decorator if task_spec is None else decorator(task_spec)
+
+
+class extras_hook:
+    """A decorator class to facilitate the"""
+
+    def __init__(self, method: ty.Callable):
+        self._name = method.__name__
+        self._methods = {DataType: method}  # Set default method
+
+    def __call__(self, obj, *args, **kwargs):
+        assert isinstance(obj, DataType)
+        matches = [isinstance(obj, c) for c in self._methods]
+        if len(matches) > 1:
+            try:
+                key = next(m for m in matches if all(issubclass(m, n) for n in matches))
+            except StopIteration:
+                raise FileFormatsExtrasHookError(
+                    f"{type(obj)} type matches multiple extras hooks implemented for "
+                    f"{self._name}, with no clear subclass"
+                )
+        else:
+            key = matches[0]
+        method = self._methods[key]
+        try:
+            return method(obj, *args, **kwargs)
+        except NotImplementedError:
+            if key is DataType:
+                raise FileFormatsExtrasHookError(
+                    f"No hook for '{self._name}' has been implemented for {type(obj)} types"
+                ) from None
+            else:
+                raise
+
+    def hook(self, klass: ty.Type[DataType]):
+        pass

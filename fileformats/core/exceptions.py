@@ -2,17 +2,22 @@ class FileFormatsError(RuntimeError):
     "Base exception class"
 
 
-class FormatMismatchError(RuntimeError):
+class FormatMismatchError(FileFormatsError):
     "File formats don't match"
 
 
-class FormatConversionError(RuntimeError):
+class FormatConversionError(FileFormatsError):
     "No converters exist between formats"
 
 
-class FormatRecognitionError(KeyError):
+class FormatRecognitionError(KeyError, FileFormatsError):
     "Did not find a format class corresponding to a MIME, or MIME-like, type string"
 
 
-class MissingExtendedDepenciesError(RuntimeError):
+class MissingExtendedDepenciesError(FileFormatsError):
     "'extended' install extra wasn't installed required for advanced behaviour"
+
+
+class FileFormatsExtrasHookError(FileFormatsError):
+    """If there is an "extras hook" in the datatype class but no methods have been
+    registered on it"""
