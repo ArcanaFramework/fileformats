@@ -120,7 +120,8 @@ class FileSet(DataType):
         return self.load_metadata()
 
     @mark.extra
-    def load_metadata(self):
+    def load_metadata(self) -> ty.Dict[str, ty.Any]:
+        """Reads any metadata associated with the fileset and returns it as a dict"""
         raise NotImplementedError
 
     @property
