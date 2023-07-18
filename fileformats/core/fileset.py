@@ -16,6 +16,7 @@ from pathlib import Path
 import hashlib
 import logging
 import attrs
+from .mixin import WithMock
 from .utils import (
     classproperty,
     fspaths_converter,
@@ -745,6 +746,33 @@ class FileSet(DataType):
             yield (",'" + key + "'=").encode()
             yield from chunk_iter
 
+    @classmethod
+    def mock(cls, *fspaths: ty.Tuple[ty.Union[Path, str]]) -> "FileSet":
+        """Return an instance of a mocked sub-class of the file format to be used in
+        test routines like doctests.
+
+        Parameters
+        ----------
+        *fspaths: tuple[Path]
+            the paths to be provided to the mocked class, by default will be ["mock/<class-name-lower>"]
+
+        Returns
+        -------
+        FileSet
+            a file-set that will pass type-checking as an instance of the given
+            fileset class but which doesn't actually point to any FS objects.
+        """
+        mock_cls = type(cls.__name__ + "Mock", bases=(WithMock, cls), dict={})
+        if not fspaths:
+            fspaths = []
+            fspath = f"/mock/{cls.__name__.lower()}"
+            try:
+                fspath += cls.ext
+            except AttributeError:
+                pass
+            fspaths.append(fspath)
+        return mock_cls(fspaths=fspaths)
+
     class ExtensionDecomposition(IntEnum):
         """What to consider the file extension to be for paths without an explicitly
         defined extension
@@ -752,7 +780,7 @@ class FileSet(DataType):
         Options
         -------
         none
-            assume it doesn't have a file extension
+            assume it doesn't have a file extension, i.e. all parts are included in the stem
         single
             assume that anything after the last '.' is the extension, e.g. the extension
             of "file.nii.gz" would be ".gz"
