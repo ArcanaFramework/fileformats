@@ -559,3 +559,14 @@ class WithClassifiers:
         else:
             namespace = super().namespace
         return namespace
+
+    @property
+    def _type_name(self):
+        """Name of type including classifiers to be used in __repr__"""
+        if self.is_classified:
+            unclassified = self.unclassified.__name__
+        else:
+            unclassified = type(self).__name__
+        return (
+            unclassified + "[" + ", ".join(t._type_name for t in self.classifiers) + "]"
+        )

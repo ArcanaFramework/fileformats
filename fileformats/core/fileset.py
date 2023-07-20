@@ -28,6 +28,9 @@ from .exceptions import (
     FileFormatsError,
     FormatMismatchError,
     FormatConversionError,
+    FileFormatsExtrasError,
+    FileFormatsExtrasPkgUninstalledError,
+    FileFormatsExtrasPkgNotCheckedError,
 )
 from .datatype import DataType
 from . import mark
@@ -44,7 +47,7 @@ FILE_CHUNK_LEN_DEFAULT = 8192
 logger = logging.getLogger("fileformats")
 
 
-@attrs.define
+@attrs.define(slots=False, repr=False)
 class FileSet(DataType):
     """
     The base class for all format types within the fileformats package. A generic
@@ -78,11 +81,7 @@ class FileSet(DataType):
         return hash(self.fspaths)
 
     def __repr__(self):
-        return (
-            f"{type(self).__name__}('"
-            + "', '".join(str(p) for p in self.fspaths)
-            + "')"
-        )
+        return f"{self._type_name}('" + "', '".join(str(p) for p in self.fspaths) + "')"
 
     def __attrs_post_init__(self):
         # Check required properties don't raise errors
@@ -117,10 +116,23 @@ class FileSet(DataType):
 
     @property
     def metadata(self):
+        """Lazily load metadata from `read_metadata` extra if implemented, returning an
+        empty metadata array if not"""
         try:
-            return self.read_metadata()
-        except NotImplementedError:
-            return {}
+            metadata = self._metadata
+        except AttributeError:
+            try:
+                self._metadata = self.read_metadata()
+            except FileFormatsExtrasPkgUninstalledError:
+                raise
+            except FileFormatsExtrasPkgNotCheckedError as e:
+                logger.warning(str(e))
+                metadata = {}
+            except FileFormatsExtrasError:
+                metadata = {}
+            else:
+                metadata = self._metadata
+        return metadata
 
     @mark.extra
     def read_metadata(self) -> ty.Dict[str, ty.Any]:
@@ -1171,7 +1183,7 @@ class FileSet(DataType):
     _formats_by_name = None
 
 
-@attrs.define(slots=False)
+@attrs.define(slots=False, repr=False)
 class MockMixin:
     """Strips out validation methods of a class, allowing it to be mocked in a way that
     still satisfies type-checking"""
@@ -1185,3 +1197,8 @@ class MockMixin:
     @fspaths.validator
     def validate_fspaths(self, _, fspaths):
         pass
+
+    @classproperty
+    def _type_name(cls):
+        assert cls.__name__.endswith("Mock")
+        return cls.__name__[: -len("Mock")]

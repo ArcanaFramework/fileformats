@@ -10,7 +10,7 @@ from .exceptions import (
 from .datatype import DataType
 
 
-@attrs.define
+@attrs.define(repr=False)
 class Field(DataType):
     value = attrs.field()
 
@@ -20,6 +20,9 @@ class Field(DataType):
 
     def __str__(self):
         return str(self.value)
+
+    def __repr__(self):
+        return f"{self._type_name}({str(self)})"
 
     @property
     def metadata(self):

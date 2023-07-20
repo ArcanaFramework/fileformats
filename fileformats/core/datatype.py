@@ -49,30 +49,6 @@ class DataType(metaclass=ABCMeta):
         else:
             return True
 
-    # @classmethod
-    # def __subclasshook__(cls, candidate: type) -> bool:
-    #     """Check to see whether datatype class is a subtype of a given super class.
-    #     In this case the subtype is expected to be able to be treated as if it was
-    #     the super class.
-
-    #     Overridden in the ``WithClassifiers`` mixin to add support for
-    #     classified subtypes
-
-    #     Parameters
-    #     ----------
-    #     super_type : type
-    #         the class to check whether the given class is a subtype of
-
-    #     Returns
-    #     -------
-    #     bool
-    #         whether or not the current class can be considered a subtype of the super (or
-    #         is the super itself)
-    #     """
-    #     if cls is candidate:
-    #         return True
-    #     return issubclass(cls, candidate)
-
     @classproperty
     def namespace(cls):
         """The "namespace" the format belongs to under the "fileformats" umbrella
@@ -269,6 +245,11 @@ class DataType(metaclass=ABCMeta):
         return cls._generically_qualifies_by_name
 
     _generically_qualifies_by_name = None  # Register all generically classified types
+
+    @classproperty
+    def _type_name(cls):
+        """Name of type to be used in __repr__. Defined here so it can be overridden"""
+        return cls.__name__
 
     REQUIRED_ANNOTATION = "__fileformats_required__"
     CHECK_ANNOTATION = "__fileformats_check__"

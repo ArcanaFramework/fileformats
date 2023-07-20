@@ -2,6 +2,7 @@ from pathlib import Path
 import pytest
 from fileformats.generic import File
 from fileformats.field import Integer, Boolean, Decimal, Array, Text
+from fileformats.testing import Foo
 from fileformats.core.exceptions import FileFormatsError, FormatMismatchError
 from fileformats.core import mark
 from conftest import write_test_file
@@ -18,6 +19,18 @@ def test_init_args(work_dir):
 class TestFile(File):
 
     ext = ".tst"
+
+
+def test_file_repr():
+    assert repr(Foo.mock()) == "Foo('/mock/foo.foo')"
+
+
+def test_field_repr():
+    assert repr(Integer(1)) == "Integer(1)"
+    assert repr(Decimal("1.1")) == "Decimal(1.1)"
+    assert repr(Boolean(1)) == "Boolean(true)"
+    assert repr(Text(1)) == 'Text("1")'
+    assert repr(Array[Integer]([1, 2, 3])) == "Array[Integer]([1,2,3])"
 
 
 def test_multiple_matches1(work_dir):
