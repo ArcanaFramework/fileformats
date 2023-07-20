@@ -170,12 +170,12 @@ Noting that it is only the "primary" path as returned by the ``fspath`` property
 is rendered.
 
 
-Extended features
-~~~~~~~~~~~~~~~~~
+Extras
+~~~~~~
 
-In addition to the basic features of validation and path handling, once a file format
-is defined, it can be convenient to additional methods in the format class for accessing
-and converting the data they refer to. Such features are added to selected
+In addition to the basic features of validation and path handling, it is possible to
+implement methods to interact with the data of file format objects via "extras hooks".
+Such features are added to selected
 format classes on a needs basis (pull requests welcome 😊, see :ref:`Developer Guide`),
 so are by no means comprehensive, and **are very much provided "as-is"**.
 
@@ -187,19 +187,8 @@ are kept separate and only installed if the ``[extended]`` install option is use
 Metadata
 --------
 
-In addition to ``fspaths``, the base ``FileSet`` class defines a ``metadata`` attribute,
-which can be used to save arbitrary metadata alongside the file paths and can be
-accessed as required, e.g.
-
-.. code-block:: python
-
-    >>> from fileformats.medimage import Dicom
-    >>> dicom = Dicom("/path/to/dicom-dir", metadata={"sex": "male", "handedness": "right"})
-    >>> dicom.metadata["sex"]
-    "male"
-
-If the format class defines the ``load_metadata`` method, then it is called whenever a
-key doesn't exist in the provided metadata to lazily populate the metadata dictionary,
+If there has been an extras overload registered for the ``read_metadata`` method,
+then metadata associated with the fileset can be accessed via the ``metadata`` property,
 e.g.
 
 .. code-block:: python

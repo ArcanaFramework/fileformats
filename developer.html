@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="prev" title="Format Identification" href="identification.html" />
 
     <!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20 -->
-        <title>Developer Guide - FileFormats v0.7.1</title>
+        <title>Developer Guide - FileFormats v0.7.2</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -129,7 +129,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">FileFormats v0.7.1</div></a>
+      <a href="index.html"><div class="brand">FileFormats v0.7.2</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -152,7 +152,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">FileFormats v0.7.1</span>
+  <span class="sidebar-brand-text">FileFormats v0.7.2</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -301,26 +301,8 @@ return a dictionary containing metadata for the file-set.</p>
 <p>Similar to <code class="docutils literal notranslate"><span class="pre">WithSeparateHeader</span></code>, <code class="docutils literal notranslate"><span class="pre">WithSideCars</span></code> can be used to define a format that
 contains some metadata within the main file, and additional metadata in a separate
 &quot;side-car&quot; file. It can be used the same as <code class="docutils literal notranslate"><span class="pre">WithSeparateHeader</span></code>, however, the
-type of the primary file that reads the metadata from the binary file with <code class="docutils literal notranslate"><span class="pre">load_metadata</span></code>
+type of the primary file that reads the metadata from the binary file with <code class="docutils literal notranslate"><span class="pre">read_metadata</span></code>
 must also be defined in <code class="docutils literal notranslate"><span class="pre">primary_type</span></code></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.generic</span> <span class="kn">import</span> <span class="n">File</span>
-<span class="kn">from</span> <span class="nn">fileformats.core.mixin</span> <span class="kn">import</span> <span class="n">WithSideCars</span>
-<span class="kn">from</span> <span class="nn">fileformats.serialization</span> <span class="kn">import</span> <span class="n">Json</span>
-
-<span class="k">class</span> <span class="nc">FormatWithoutSideCar</span><span class="p">(</span><span class="n">File</span><span class="p">):</span>
-
-     <span class="n">binary</span> <span class="o">=</span> <span class="kc">True</span>
-
-    <span class="k">def</span> <span class="nf">load_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-       <span class="o">...</span> <span class="n">load</span> <span class="n">metadata</span> <span class="ow">in</span> <span class="n">binary</span><span class="o">...</span>
-
-
-<span class="k">class</span> <span class="nc">FormatWithSideCars</span><span class="p">(</span><span class="n">WithSideCars</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.fws&quot;</span>
-    <span class="n">primary_type</span> <span class="o">=</span> <span class="n">FormatWithoutSideCar</span>
-    <span class="n">side_car_types</span> <span class="o">=</span> <span class="p">(</span><span class="n">Json</span><span class="p">,)</span>
-</pre></div>
-</div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Mixin classes in the <code class="docutils literal notranslate"><span class="pre">fileformats.core.mixin</span></code> package must come first in the

@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Format Identification" href="identification.html" /><link rel="prev" title="FileFormats" href="index.html" />
 
     <!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20 -->
-        <title>Data Workflows - FileFormats v0.7.1</title>
+        <title>Data Workflows - FileFormats v0.7.2</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -129,7 +129,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">FileFormats v0.7.1</div></a>
+      <a href="index.html"><div class="brand">FileFormats v0.7.2</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -152,7 +152,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">FileFormats v0.7.1</span>
+  <span class="sidebar-brand-text">FileFormats v0.7.2</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -336,11 +336,11 @@ that format objects can be used in place of the path objects themselves, e.g.</p
 is rendered.</p>
 </section>
 </section>
-<section id="extended-features">
-<h2>Extended features<a class="headerlink" href="#extended-features" title="Permalink to this heading">#</a></h2>
-<p>In addition to the basic features of validation and path handling, once a file format
-is defined, it can be convenient to additional methods in the format class for accessing
-and converting the data they refer to. Such features are added to selected
+<section id="extras">
+<h2>Extras<a class="headerlink" href="#extras" title="Permalink to this heading">#</a></h2>
+<p>In addition to the basic features of validation and path handling, it is possible to
+implement methods to interact with the data of file format objects via &quot;extras hooks&quot;.
+Such features are added to selected
 format classes on a needs basis (pull requests welcome 😊, see <a class="reference internal" href="developer.html#developer-guide"><span class="std std-ref">Developer Guide</span></a>),
 so are by no means comprehensive, and <strong>are very much provided &quot;as-is&quot;</strong>.</p>
 <p>Since these features, typically rely on a range of external libraries, the dependencies
@@ -348,17 +348,8 @@ are kept separate and only installed if the <code class="docutils literal notran
 (i.e. <code class="docutils literal notranslate"><span class="pre">python3</span> <span class="pre">-m</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">filformats[extended]</span></code>).</p>
 <section id="metadata">
 <h3>Metadata<a class="headerlink" href="#metadata" title="Permalink to this heading">#</a></h3>
-<p>In addition to <code class="docutils literal notranslate"><span class="pre">fspaths</span></code>, the base <code class="docutils literal notranslate"><span class="pre">FileSet</span></code> class defines a <code class="docutils literal notranslate"><span class="pre">metadata</span></code> attribute,
-which can be used to save arbitrary metadata alongside the file paths and can be
-accessed as required, e.g.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.medimage</span> <span class="kn">import</span> <span class="n">Dicom</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">dicom</span> <span class="o">=</span> <span class="n">Dicom</span><span class="p">(</span><span class="s2">&quot;/path/to/dicom-dir&quot;</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;sex&quot;</span><span class="p">:</span> <span class="s2">&quot;male&quot;</span><span class="p">,</span> <span class="s2">&quot;handedness&quot;</span><span class="p">:</span> <span class="s2">&quot;right&quot;</span><span class="p">})</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">dicom</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;sex&quot;</span><span class="p">]</span>
-<span class="go">&quot;male&quot;</span>
-</pre></div>
-</div>
-<p>If the format class defines the <code class="docutils literal notranslate"><span class="pre">load_metadata</span></code> method, then it is called whenever a
-key doesn't exist in the provided metadata to lazily populate the metadata dictionary,
+<p>If there has been an extras overload registered for the <code class="docutils literal notranslate"><span class="pre">read_metadata</span></code> method,
+then metadata associated with the fileset can be accessed via the <code class="docutils literal notranslate"><span class="pre">metadata</span></code> property,
 e.g.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dicom</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;SeriesDescription&quot;</span><span class="p">]</span>
 <span class="go">&quot;localizer&quot;</span>
@@ -478,7 +469,7 @@ classmethod</p>
 <li><a class="reference internal" href="#path-handling">Path handling</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#extended-features">Extended features</a><ul>
+<li><a class="reference internal" href="#extras">Extras</a><ul>
 <li><a class="reference internal" href="#metadata">Metadata</a></li>
 <li><a class="reference internal" href="#load-saving-data">Load/saving data</a></li>
 <li><a class="reference internal" href="#conversion">Conversion</a></li>
