@@ -237,13 +237,13 @@ class WithClassifiers:
     def wildcard_classifiers(cls, classifiers=None):
         if classifiers is None:
             classifiers = cls.classifiers if cls.is_classified else ()
-        return frozenset(t for t in classifiers if isinstance(t, SubtypeVar))
+        return frozenset(t for t in classifiers if issubclass(t, SubtypeVar))
 
     @classmethod
     def non_wildcard_classifiers(cls, classifiers=None):
         if classifiers is None:
             classifiers = cls.classifiers if cls.is_classified else ()
-        return frozenset(q for q in classifiers if not isinstance(q, SubtypeVar))
+        return frozenset(q for q in classifiers if not issubclass(q, SubtypeVar))
 
     @classmethod
     def __class_getitem__(cls, classifiers):
@@ -357,7 +357,7 @@ class WithClassifiers:
                 if len(converter) == 3:  # was defined with wildcard classifiers
                     converter, conv_kwargs, template_classifiers = converter
                     # Attempt conversion from generic type to template match
-                    if isinstance(template_source_format, SubtypeVar):
+                    if issubclass(template_source_format, SubtypeVar):
                         assert tuple(
                             cls.wildcard_classifiers(template_classifiers)
                         ) == (template_source_format,)
@@ -370,10 +370,8 @@ class WithClassifiers:
                         else:
                             wildcard_match = issubclass(source_format, to_match[0])
                     # Attempt template to template conversion match
-                    elif getattr(
-                        source_format, "is_classified", False
-                    ) and source_format.unclassified.issubtype(
-                        template_source_format.unclassified
+                    elif getattr(source_format, "is_classified", False) and issubclass(
+                        source_format.unclassified, template_source_format.unclassified
                     ):
                         assert cls.wildcard_classifiers(
                             template_classifiers
@@ -391,13 +389,13 @@ class WithClassifiers:
                                     source_format.classifiers,
                                     template_source_format.classifiers,
                                 ):
-                                    if isinstance(template, SubtypeVar):
+                                    if issubclass(template, SubtypeVar):
                                         wildcard_map[template] = actual
                                 wildcard_match = True
                                 for actual, template in zip(
                                     cls.classifiers, template_classifiers
                                 ):
-                                    if isinstance(template, SubtypeVar):
+                                    if issubclass(template, SubtypeVar):
                                         try:
                                             reference = wildcard_map[template]
                                         except KeyError:
@@ -438,31 +436,36 @@ class WithClassifiers:
         return available_converters
 
     @classmethod
-    def __subclasshook__(cls, candidate: type) -> bool:
-        if issubclass(cls, candidate):  # pylint: disable=no-member
+    def __subclasshook__(cls, subclass: type) -> bool:
+        """Overload the behaviour of 'issubclass' so that classified classes are considered
+        to be subclasses of each other if they contain a super-set of classifiers"""
+        if type.__subclasscheck__(cls, subclass):
             return True
         # Check to see whether the unclassified types are equivalent
         if (
             not cls.is_classified
-            or not getattr(candidate, "is_classified", False)
-            or not issubclass(cls.unclassified, candidate.unclassified)
+            or not getattr(subclass, "is_classified", False)
+            or not issubclass(subclass.unclassified, cls.unclassified)
         ):
             return False
         if cls.ordered_classifiers:
-            if len(cls.classifiers) != len(candidate.classifiers):
+            assert subclass.ordered_classifiers
+            if len(subclass.classifiers) != len(cls.classifiers):
                 is_subclass = False
             else:
                 is_subclass = all(
                     issubclass(q, s)
-                    for q, s in zip(cls.classifiers, candidate.classifiers)
+                    for q, s in zip(subclass.classifiers, cls.classifiers)
                 )
         else:
-            if candidate.classifiers.issubset(cls.classifiers):
+            assert not subclass.ordered_classifiers
+            if subclass.classifiers.issuperset(cls.classifiers):
                 is_subclass = True
             else:
+                # Check for sub-classes of classifiers
                 is_subclass = all(
-                    any(issubclass(q, s) for q in cls.classifiers)
-                    for s in candidate.classifiers
+                    any(issubclass(q, s) for q in subclass.classifiers)
+                    for s in cls.classifiers
                 )
         return is_subclass
 
@@ -492,7 +495,7 @@ class WithClassifiers:
         """
         # Ensure "converters" dict is defined in the target class and not in a superclass
         if cls.wildcard_classifiers():
-            if isinstance(source_format, SubtypeVar):
+            if issubclass(source_format, SubtypeVar):
                 if len(cls.wildcard_classifiers()) > 1:
                     raise FileFormatsError(
                         "Can only have one wildcard qualifier when registering a converter "

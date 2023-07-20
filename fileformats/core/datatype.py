@@ -25,7 +25,7 @@ class DataType(metaclass=ABCMeta):
 
     @classmethod
     def type_var(cls, name):
-        return SubtypeVar[name, cls]
+        return SubtypeVar.new(name, cls)
 
     @classmethod
     def matches(cls, values) -> bool:

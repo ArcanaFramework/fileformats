@@ -1,8 +1,11 @@
+from abc import ABCMeta
 import typing as ty
 import attrs
 from .utils import describe_task
-from .datatype import DataType
 from .exceptions import FileFormatsError
+
+if ty.TYPE_CHECKING:
+    from .datatype import DataType
 
 
 @attrs.define
@@ -41,10 +44,9 @@ class SubtypeVar:
     """
 
     converters = {}
-    subtype_cache = {}
 
     @classmethod
-    def new(cls, name: str, klass: ty.Type[DataType]) -> "SubtypeVar":
+    def new(cls, name: str, klass: ty.Type["DataType"]) -> "SubtypeVar":
         """Create a new subtype
 
         Parameters
@@ -59,11 +61,13 @@ class SubtypeVar:
         SubtypeVar
             a sub-type that is
         """
-        try:
-            var = cls.subtype_cache[klass]
-        except KeyError:
-            var = cls.subtype_cache[klass] = type(name, (cls, klass), {})
-        return var
+        return ABCMeta(name, (cls, klass), {"bound": klass})
+
+    @classmethod
+    def __subclasshook__(cls, subclass: type) -> bool:
+        if issubclass(subclass, SubtypeVar):
+            return issubclass(subclass.bound, cls.bound)
+        return type.__subclasscheck__(cls, subclass)
 
     @classmethod
     def get_converter_tuples(
@@ -74,8 +78,8 @@ class SubtypeVar:
         available_converters = []
         if source_format.is_classified:
             for template_source_format, converter in cls.converters.items():
-                if not template_source_format.unclassified.issubtype(
-                    source_format.unclassified
+                if not issubclass(
+                    template_source_format.unclassified, source_format.unclassified
                 ):
                     continue
                 assert len(template_source_format.wildcard_classifiers()) == 1
