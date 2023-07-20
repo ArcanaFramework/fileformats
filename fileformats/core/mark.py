@@ -107,7 +107,7 @@ def converter(
                 source = eval(source, module_dict)
             if isinstance(target, str):
                 target = eval(target, module_dict)
-        if not target.issubtype(DataType):
+        if not issubclass(target, DataType):
             raise FormatConversionError(
                 f"Target file format '{target.__name__}' is not of subtype of "
                 "fileformats.core.DataType"

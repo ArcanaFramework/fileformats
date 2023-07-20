@@ -50,26 +50,26 @@ def test_classified_equivalence():
 
 
 def test_subtype_testing():
-    assert G.issubtype(F)
-    assert not F.issubtype(G)
-    assert J.issubtype(J)
-    assert J.issubtype(H)
-    assert J[A].issubtype(J)
-    assert not H[A].issubtype(F)
-    assert not H[A].issubtype(F[A])
-    assert J[A, B].issubtype(J[A])
-    assert not J[B].issubtype(J[A])
-    assert not J[A].issubtype(J[A, B])
-    assert J[A].issubtype(H[A])
-    assert J[A, B, C].issubtype(H[A, B])
-    assert not J[A].issubtype(H[B])
-    assert FileSet.issubtype(DataType)
-    assert SpecificFileSet.issubtype(SpecificDataType)
-    assert F[SpecificFileSet].issubtype(F[SpecificDataType])
-    assert L[A, E].issubtype(L[A, C])
-    assert not L[E, A].issubtype(L[A, C])
-    assert K[A, E, B].issubtype(K[A, C, B])
-    assert N[J, K].issubtype(N[J, H])  # J is subclass of H,
+    assert issubclass(G, F)
+    assert not issubclass(F, G)
+    assert issubclass(J, J)
+    assert issubclass(J, H)
+    assert issubclass(J[A], J)
+    assert not issubclass(H[A], F)
+    assert not issubclass(H[A], F[A])
+    assert issubclass(J[A, B], J[A])
+    assert not issubclass(J[B], J[A])
+    assert not issubclass(J[A], J[A, B])
+    assert issubclass(J[A], H[A])
+    assert issubclass(J[A, B, C], H[A, B])
+    assert not issubclass(J[A], H[B])
+    assert issubclass(FileSet, DataType)
+    assert issubclass(SpecificFileSet, SpecificDataType)
+    assert issubclass(F[SpecificFileSet], F[SpecificDataType])
+    assert issubclass(L[A, E], L[A, C])
+    assert not issubclass(L[E, A], L[A, C])
+    assert issubclass(K[A, E, B], K[A, C, B])
+    assert issubclass(N[J, K], N[J, H])  # J is subclass of H,
 
 
 def test_qualifier_fails():

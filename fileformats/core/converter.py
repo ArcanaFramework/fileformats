@@ -1,7 +1,7 @@
-from abc import ABCMeta
 import typing as ty
 import attrs
 from .utils import describe_task
+from .datatype import DataType
 from .exceptions import FileFormatsError
 
 
@@ -28,7 +28,7 @@ class ConverterWrapper:
         return wf
 
 
-class SubtypeVar(metaclass=ABCMeta):
+class SubtypeVar:
     """To handle the case where the target format is a placeholder (type-var) defined by
     by its relationship to the source format, e.g.
 
@@ -41,47 +41,29 @@ class SubtypeVar(metaclass=ABCMeta):
     """
 
     converters = {}
-
-    def __init__(self, name: str, base: type):
-        self.name = name
-        self.base = base
-
-    def __str__(self):
-        return f"{self.base.__name__}:{self.name}"
-
-    def __repr__(self):
-        return f"SubtypeVar({str(self)})"
-
-    def __hash__(self):
-        return hash((type(self), self.base, self.name))
-
-    @property
-    def __name__(self):
-        return self.name
+    subtype_cache = {}
 
     @classmethod
-    def __subclasshook__(self, super_type: type):
-        """Check to see whether datatype class is a subtype of a given super class.
-        In this case the subtype is expected to be able to be treated as if it was
-        the super class.
-
-        Overridden in the ``WithClassifiers`` mixin to add support for
-        classified subtypes
+    def new(cls, name: str, klass: ty.Type[DataType]) -> "SubtypeVar":
+        """Create a new subtype
 
         Parameters
         ----------
-        super_type : type
-            the class to check whether the given class is a subtype of
-        allow_same : bool, optional
-            whether there is a match if the classes are the same, by default True
+        name : str
+            name for the subtype
+        klass : ty.Type[DataType]
+            the class to sub-type
 
         Returns
         -------
-        is_subtype : bool
-            whether or not the current class can be considered a subtype of the super (or
-            is the super itself)
+        SubtypeVar
+            a sub-type that is
         """
-        return self.base.issubtype(super_type)
+        try:
+            var = cls.subtype_cache[klass]
+        except KeyError:
+            var = cls.subtype_cache[klass] = type(name, (cls, klass), {})
+        return var
 
     @classmethod
     def get_converter_tuples(
@@ -103,7 +85,7 @@ class SubtypeVar(metaclass=ABCMeta):
                 from_types = tuple(
                     set(source_format.classifiers).difference(non_wildcards)
                 )
-                if any(q.issubtype(target_format) for q in from_types):
+                if any(issubclass(q, target_format) for q in from_types):
                     available_converters.append(converter)
         return available_converters
 

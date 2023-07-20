@@ -117,7 +117,10 @@ class FileSet(DataType):
 
     @property
     def metadata(self):
-        return self.read_metadata()
+        try:
+            return self.read_metadata()
+        except NotImplementedError:
+            return {}
 
     @mark.extra
     def read_metadata(self) -> ty.Dict[str, ty.Any]:
@@ -371,7 +374,7 @@ class FileSet(DataType):
         FileFormatConversionError
             ambiguous (i.e. more than one) converters found between source and dest format
         """
-        if source_format.issubtype(cls):
+        if issubclass(source_format, cls):
             return None
         converters = (
             cls.get_converters_dict()
@@ -456,7 +459,7 @@ class FileSet(DataType):
         available = []
         for src_frmt, converter in converters_dict.items():
             if len(converter) == 2:  # Ignore converters with wildcards at this point
-                if source_format.issubtype(src_frmt):
+                if issubclass(source_format, src_frmt):
                     available.append(converter)
         if not available and hasattr(source_format, "unclassified"):
             available = SubtypeVar.get_converter_tuples(

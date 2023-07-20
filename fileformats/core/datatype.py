@@ -25,7 +25,7 @@ class DataType(metaclass=ABCMeta):
 
     @classmethod
     def type_var(cls, name):
-        return SubtypeVar(name, cls)
+        return SubtypeVar[name, cls]
 
     @classmethod
     def matches(cls, values) -> bool:
@@ -49,31 +49,29 @@ class DataType(metaclass=ABCMeta):
         else:
             return True
 
-    @classmethod
-    def __subclasshook__(cls, candidate: type) -> bool:
-        """Check to see whether datatype class is a subtype of a given super class.
-        In this case the subtype is expected to be able to be treated as if it was
-        the super class.
+    # @classmethod
+    # def __subclasshook__(cls, candidate: type) -> bool:
+    #     """Check to see whether datatype class is a subtype of a given super class.
+    #     In this case the subtype is expected to be able to be treated as if it was
+    #     the super class.
 
-        Overridden in the ``WithClassifiers`` mixin to add support for
-        classified subtypes
+    #     Overridden in the ``WithClassifiers`` mixin to add support for
+    #     classified subtypes
 
-        Parameters
-        ----------
-        super_type : type
-            the class to check whether the given class is a subtype of
+    #     Parameters
+    #     ----------
+    #     super_type : type
+    #         the class to check whether the given class is a subtype of
 
-        Returns
-        -------
-        bool
-            whether or not the current class can be considered a subtype of the super (or
-            is the super itself)
-        """
-        if cls is candidate:
-            return True
-        if isinstance(candidate, SubtypeVar):
-            super_type = candidate.base
-        return issubclass(cls, super_type)
+    #     Returns
+    #     -------
+    #     bool
+    #         whether or not the current class can be considered a subtype of the super (or
+    #         is the super itself)
+    #     """
+    #     if cls is candidate:
+    #         return True
+    #     return issubclass(cls, candidate)
 
     @classproperty
     def namespace(cls):
@@ -102,7 +100,7 @@ class DataType(metaclass=ABCMeta):
 
     @classmethod
     def get_converter(cls, source_format: type, name: str = "converter", **kwargs):
-        if source_format.issubtype(cls):
+        if issubclass(source_format, cls):
             return None
         else:
             raise FormatConversionError(

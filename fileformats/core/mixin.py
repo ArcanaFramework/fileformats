@@ -256,7 +256,7 @@ class WithClassifiers:
             not_allowed = [
                 q
                 for q in classifiers
-                if not any(q.issubtype(t) for t in cls.allowed_classifiers)
+                if not any(issubclass(q, t) for t in cls.allowed_classifiers)
             ]
             if not_allowed:
                 raise FileFormatsError(
@@ -368,7 +368,7 @@ class WithClassifiers:
                         if len(to_match) > 1:
                             wildcard_match = False
                         else:
-                            wildcard_match = source_format.issubtype(to_match[0])
+                            wildcard_match = issubclass(source_format, to_match[0])
                     # Attempt template to template conversion match
                     elif getattr(
                         source_format, "is_classified", False
@@ -404,10 +404,10 @@ class WithClassifiers:
                                             wildcard_match = False
                                             break
                                         else:
-                                            if not actual.issubtype(reference):
+                                            if not issubclass(actual, reference):
                                                 wildcard_match = False
                                                 break
-                                    elif not actual.issubtype(template):
+                                    elif not issubclass(actual, template):
                                         wildcard_match = False
                                         break
                         else:
@@ -514,7 +514,7 @@ class WithClassifiers:
                     f
                     for f in cls.converters
                     if (
-                        source_format.unclassified.issubtype(f.unclassified)
+                        issubclass(source_format.unclassified, f.unclassified)
                         and f.non_wildcard_classifiers()
                         == source_format.non_wildcard_classifiers()
                     )

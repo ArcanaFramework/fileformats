@@ -23,6 +23,7 @@ class Field(DataType):
 
     @property
     def metadata(self):
+        """Empty metadata dict for duck-typing with file-sets"""
         return {}
 
     @classproperty
