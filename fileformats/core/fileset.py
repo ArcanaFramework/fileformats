@@ -117,10 +117,10 @@ class FileSet(DataType):
 
     @property
     def metadata(self):
-        return self.load_metadata()
+        return self.read_metadata()
 
     @mark.extra
-    def load_metadata(self) -> ty.Dict[str, ty.Any]:
+    def read_metadata(self) -> ty.Dict[str, ty.Any]:
         """Reads any metadata associated with the fileset and returns it as a dict"""
         raise NotImplementedError
 
@@ -756,8 +756,8 @@ class FileSet(DataType):
         return mock_cls(fspaths=fspaths)
 
     @classmethod
-    def arbitrary(cls, dest_dir: ty.Optional[Path] = None) -> Self:
-        """Return an arbitrary instance of the file-set type for classes where the
+    def sample(cls, dest_dir: ty.Optional[Path] = None) -> Self:
+        """Return an sample instance of the file-set type for classes where the
         `test_data` extra has been implemented
 
         Parameters
