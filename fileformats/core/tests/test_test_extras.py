@@ -11,8 +11,8 @@ def generate_foo_data(file: Foo, dest_dir: Path) -> ty.List[Path]:
     return [foo_fspath]
 
 
-def test_arbitrary():
-    test_inst = Foo.arbitrary()
+def test_sample():
+    test_inst = Foo.sample()
     assert test_inst.fspath.exists()
     assert test_inst.fspath.name == "test.foo"
 

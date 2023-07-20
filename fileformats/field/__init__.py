@@ -126,7 +126,7 @@ def array_converter(value):
     return value
 
 
-@attrs.define
+@attrs.define(repr=False)
 class Text(Singular):
 
     value: str = attrs.field(converter=text_converter)
@@ -136,8 +136,11 @@ class Text(Singular):
     def __hash__(self):
         return hash(self.value)
 
+    def __repr__(self):
+        return f'{self._type_name}("{self.value}")'
 
-@attrs.define
+
+@attrs.define(repr=False)
 class Integer(Singular, ScalarMixin):
 
     value: int = attrs.field(converter=integer_converter)
@@ -157,7 +160,7 @@ class Integer(Singular, ScalarMixin):
         return hash(self.value)
 
 
-@attrs.define
+@attrs.define(repr=False)
 class Decimal(Singular, ScalarMixin):
 
     value: decimal.Decimal = attrs.field(converter=decimal_converter)
@@ -174,7 +177,7 @@ class Decimal(Singular, ScalarMixin):
         return hash(self.value)
 
 
-@attrs.define
+@attrs.define(repr=False)
 class Boolean(Singular, LogicalMixin):
 
     primitive = bool
@@ -191,7 +194,7 @@ class Boolean(Singular, LogicalMixin):
         return hash(self.value)
 
 
-@attrs.define(auto_attribs=False)
+@attrs.define(auto_attribs=False, repr=False)
 class Array(WithClassifiers, Field):
 
     # WithClassifiers class attrs

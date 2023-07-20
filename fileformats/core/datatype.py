@@ -1,5 +1,6 @@
 from __future__ import annotations
 from inspect import isclass
+from abc import ABCMeta
 import importlib
 import itertools
 from .converter import SubtypeVar
@@ -18,13 +19,13 @@ from .utils import (
 )
 
 
-class DataType:
+class DataType(metaclass=ABCMeta):
     is_fileset = False
     is_field = False
 
     @classmethod
     def type_var(cls, name):
-        return SubtypeVar(name, cls)
+        return SubtypeVar.new(name, cls)
 
     @classmethod
     def matches(cls, values) -> bool:
@@ -47,34 +48,6 @@ class DataType:
             return False
         else:
             return True
-
-    @classmethod
-    def issubtype(cls, super_type: type, allow_same: bool = True):
-        """Check to see whether datatype class is a subtype of a given super class.
-        In this case the subtype is expected to be able to be treated as if it was
-        the super class.
-
-        Overridden in the ``WithClassifiers`` mixin to add support for
-        classified subtypes
-
-        Parameters
-        ----------
-        super_type : type
-            the class to check whether the given class is a subtype of
-        allow_same : bool, optional
-            whether there is a match if the classes are the same, by default True
-
-        Returns
-        -------
-        is_subtype : bool
-            whether or not the current class can be considered a subtype of the super (or
-            is the super itself)
-        """
-        if allow_same and cls is super_type:
-            return True
-        if isinstance(super_type, SubtypeVar):
-            super_type = super_type.base
-        return issubclass(cls, super_type)
 
     @classproperty
     def namespace(cls):
@@ -103,7 +76,7 @@ class DataType:
 
     @classmethod
     def get_converter(cls, source_format: type, name: str = "converter", **kwargs):
-        if source_format.issubtype(cls):
+        if issubclass(source_format, cls):
             return None
         else:
             raise FormatConversionError(
@@ -272,6 +245,11 @@ class DataType:
         return cls._generically_qualifies_by_name
 
     _generically_qualifies_by_name = None  # Register all generically classified types
+
+    @classproperty
+    def _type_name(cls):
+        """Name of type to be used in __repr__. Defined here so it can be overridden"""
+        return cls.__name__
 
     REQUIRED_ANNOTATION = "__fileformats_required__"
     CHECK_ANNOTATION = "__fileformats_check__"

@@ -246,7 +246,7 @@ def describe_task(task):
     return f"{task} (defined at line {src_line} of {src_file})"
 
 
-def check_package_exists_on_pypi(package_name: str) -> bool:
+def check_package_exists_on_pypi(package_name: str, timeout: int = 5) -> bool:
     """Check if a package exists on PyPI
 
     Parameters
@@ -261,7 +261,7 @@ def check_package_exists_on_pypi(package_name: str) -> bool:
     """
     url = f"https://pypi.org/pypi/{package_name}/json"
     try:
-        urllib.request.urlopen(url)
+        urllib.request.urlopen(url, timeout=timeout)
     except urllib.error.HTTPError as e:
         if e.code == 404:
             return False

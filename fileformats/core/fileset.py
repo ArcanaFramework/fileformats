@@ -28,6 +28,9 @@ from .exceptions import (
     FileFormatsError,
     FormatMismatchError,
     FormatConversionError,
+    FileFormatsExtrasError,
+    FileFormatsExtrasPkgUninstalledError,
+    FileFormatsExtrasPkgNotCheckedError,
 )
 from .datatype import DataType
 from . import mark
@@ -44,7 +47,7 @@ FILE_CHUNK_LEN_DEFAULT = 8192
 logger = logging.getLogger("fileformats")
 
 
-@attrs.define
+@attrs.define(slots=False, repr=False)
 class FileSet(DataType):
     """
     The base class for all format types within the fileformats package. A generic
@@ -78,11 +81,7 @@ class FileSet(DataType):
         return hash(self.fspaths)
 
     def __repr__(self):
-        return (
-            f"{type(self).__name__}('"
-            + "', '".join(str(p) for p in self.fspaths)
-            + "')"
-        )
+        return f"{self._type_name}('" + "', '".join(str(p) for p in self.fspaths) + "')"
 
     def __attrs_post_init__(self):
         # Check required properties don't raise errors
@@ -117,10 +116,27 @@ class FileSet(DataType):
 
     @property
     def metadata(self):
-        return self.load_metadata()
+        """Lazily load metadata from `read_metadata` extra if implemented, returning an
+        empty metadata array if not"""
+        try:
+            metadata = self._metadata
+        except AttributeError:
+            try:
+                self._metadata = self.read_metadata()
+            except FileFormatsExtrasPkgUninstalledError:
+                raise
+            except FileFormatsExtrasPkgNotCheckedError as e:
+                logger.warning(str(e))
+                metadata = {}
+            except FileFormatsExtrasError:
+                metadata = {}
+            else:
+                metadata = self._metadata
+        return metadata
 
     @mark.extra
-    def load_metadata(self):
+    def read_metadata(self) -> ty.Dict[str, ty.Any]:
+        """Reads any metadata associated with the fileset and returns it as a dict"""
         raise NotImplementedError
 
     @property
@@ -370,7 +386,7 @@ class FileSet(DataType):
         FileFormatConversionError
             ambiguous (i.e. more than one) converters found between source and dest format
         """
-        if source_format.issubtype(cls):
+        if issubclass(source_format, cls):
             return None
         converters = (
             cls.get_converters_dict()
@@ -455,7 +471,7 @@ class FileSet(DataType):
         available = []
         for src_frmt, converter in converters_dict.items():
             if len(converter) == 2:  # Ignore converters with wildcards at this point
-                if source_format.issubtype(src_frmt):
+                if issubclass(source_format, src_frmt):
                     available.append(converter)
         if not available and hasattr(source_format, "unclassified"):
             available = SubtypeVar.get_converter_tuples(
@@ -755,8 +771,8 @@ class FileSet(DataType):
         return mock_cls(fspaths=fspaths)
 
     @classmethod
-    def arbitrary(cls, dest_dir: ty.Optional[Path] = None) -> Self:
-        """Return an arbitrary instance of the file-set type for classes where the
+    def sample(cls, dest_dir: ty.Optional[Path] = None) -> Self:
+        """Return an sample instance of the file-set type for classes where the
         `test_data` extra has been implemented
 
         Parameters
@@ -1167,7 +1183,7 @@ class FileSet(DataType):
     _formats_by_name = None
 
 
-@attrs.define(slots=False)
+@attrs.define(slots=False, repr=False)
 class MockMixin:
     """Strips out validation methods of a class, allowing it to be mocked in a way that
     still satisfies type-checking"""
@@ -1181,3 +1197,8 @@ class MockMixin:
     @fspaths.validator
     def validate_fspaths(self, _, fspaths):
         pass
+
+    @classproperty
+    def _type_name(cls):
+        assert cls.__name__.endswith("Mock")
+        return cls.__name__[: -len("Mock")]
