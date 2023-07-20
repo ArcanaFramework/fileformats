@@ -119,7 +119,7 @@ class WithSeparateHeader(WithAdjacentFiles):
     def header(self):
         return self.header_type(self.select_by_ext(self.header_type))
 
-    def load_metadata(self):
+    def read_metadata(self):
         return self.header.load()
 
 
@@ -128,7 +128,7 @@ class WithSideCars(WithAdjacentFiles):
     (typically with the same file stem but differing extension).
 
     Note that WithSideCars must come before the primary type in the method-resolution
-    order of the class so it can override the '__attrs_post_init__' and 'load_metadata'
+    order of the class so it can override the '__attrs_post_init__' and 'read_metadata'
     methods, e.g.
 
         class MyFileFormatWithSideCars(WithSideCars, MyFileFormat):
@@ -140,7 +140,7 @@ class WithSideCars(WithAdjacentFiles):
     -----------
     primary_type : type
         the file-format of the primary file (used to read the inline metadata), can be
-        the base class that implements 'load_metadata'
+        the base class that implements 'read_metadata'
     side_car_types : tuple[type, ...]
         the file-formats of the expected side-car files
     """
@@ -150,8 +150,8 @@ class WithSideCars(WithAdjacentFiles):
     def side_cars(self):
         return [tp(self.select_by_ext(tp)) for tp in self.side_car_types]
 
-    def load_metadata(self):
-        metadata = self.primary_type.load_metadata(self)
+    def read_metadata(self):
+        metadata = self.primary_type.read_metadata(self)
         for side_car in self.side_cars:
             try:
                 side_car_metadata = side_car.load()
@@ -438,35 +438,33 @@ class WithClassifiers:
         return available_converters
 
     @classmethod
-    def issubtype(cls, super_type: type):
-        if super().issubtype(super_type):  # pylint: disable=no-member
+    def __subclasshook__(cls, candidate: type) -> bool:
+        if issubclass(cls, candidate):  # pylint: disable=no-member
             return True
         # Check to see whether the unclassified types are equivalent
         if (
             not cls.is_classified
-            or not getattr(super_type, "is_classified", False)
-            or not cls.unclassified.issubtype(
-                super_type.unclassified
-            )  # pylint: disable=no-member
+            or not getattr(candidate, "is_classified", False)
+            or not issubclass(cls.unclassified, candidate.unclassified)
         ):
             return False
         if cls.ordered_classifiers:
-            if len(cls.classifiers) != len(super_type.classifiers):
-                is_subtype = False
+            if len(cls.classifiers) != len(candidate.classifiers):
+                is_subclass = False
             else:
-                is_subtype = all(
-                    q.issubtype(s)
-                    for q, s in zip(cls.classifiers, super_type.classifiers)
+                is_subclass = all(
+                    issubclass(q, s)
+                    for q, s in zip(cls.classifiers, candidate.classifiers)
                 )
         else:
-            if super_type.classifiers.issubset(cls.classifiers):
-                is_subtype = True
+            if candidate.classifiers.issubset(cls.classifiers):
+                is_subclass = True
             else:
-                is_subtype = all(
-                    any(q.issubtype(s) for q in cls.classifiers)
-                    for s in super_type.classifiers
+                is_subclass = all(
+                    any(issubclass(q, s) for q in cls.classifiers)
+                    for s in candidate.classifiers
                 )
-        return is_subtype
+        return is_subclass
 
     @classmethod
     def register_converter(

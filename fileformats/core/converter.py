@@ -1,3 +1,4 @@
+from abc import ABCMeta
 import typing as ty
 import attrs
 from .utils import describe_task
@@ -27,7 +28,7 @@ class ConverterWrapper:
         return wf
 
 
-class SubtypeVar:
+class SubtypeVar(metaclass=ABCMeta):
     """To handle the case where the target format is a placeholder (type-var) defined by
     by its relationship to the source format, e.g.
 
@@ -58,7 +59,8 @@ class SubtypeVar:
     def __name__(self):
         return self.name
 
-    def issubtype(self, super_type: type, allow_same: bool = True):
+    @classmethod
+    def __subclasshook__(self, super_type: type):
         """Check to see whether datatype class is a subtype of a given super class.
         In this case the subtype is expected to be able to be treated as if it was
         the super class.
@@ -79,7 +81,7 @@ class SubtypeVar:
             whether or not the current class can be considered a subtype of the super (or
             is the super itself)
         """
-        return self.base.issubtype(super_type, allow_same=allow_same)
+        return self.base.issubtype(super_type)
 
     @classmethod
     def get_converter_tuples(

@@ -1,5 +1,6 @@
 from __future__ import annotations
 from inspect import isclass
+from abc import ABCMeta
 import importlib
 import itertools
 from .converter import SubtypeVar
@@ -18,7 +19,7 @@ from .utils import (
 )
 
 
-class DataType:
+class DataType(metaclass=ABCMeta):
     is_fileset = False
     is_field = False
 
@@ -49,7 +50,7 @@ class DataType:
             return True
 
     @classmethod
-    def issubtype(cls, super_type: type, allow_same: bool = True):
+    def __subclasshook__(cls, candidate: type) -> bool:
         """Check to see whether datatype class is a subtype of a given super class.
         In this case the subtype is expected to be able to be treated as if it was
         the super class.
@@ -61,19 +62,17 @@ class DataType:
         ----------
         super_type : type
             the class to check whether the given class is a subtype of
-        allow_same : bool, optional
-            whether there is a match if the classes are the same, by default True
 
         Returns
         -------
-        is_subtype : bool
+        bool
             whether or not the current class can be considered a subtype of the super (or
             is the super itself)
         """
-        if allow_same and cls is super_type:
+        if cls is candidate:
             return True
-        if isinstance(super_type, SubtypeVar):
-            super_type = super_type.base
+        if isinstance(candidate, SubtypeVar):
+            super_type = candidate.base
         return issubclass(cls, super_type)
 
     @classproperty
