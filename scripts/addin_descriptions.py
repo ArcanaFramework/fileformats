@@ -42,7 +42,7 @@ def addin_descriptions(scraped_json_file: str):
                 class_name = from_mime_format_name(name)
 
                 applications = mdata.get("applications")
-                if applications.lower() in ("none", "n/a"):
+                if applications and applications.lower() in ("none", "n/a"):
                     applications = None
                 additional_info = mdata.get("additional_info")
                 if additional_info and additional_info.lower() in (
