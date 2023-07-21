@@ -364,13 +364,19 @@ application/mathematica:
 application/mathml+xml:
   ext:
   - .mml
-application/mathml-content+xml:
 application/mbox:
   ext:
   - .mbox
   - null
   magic_number: "From "
   magic_number_offset: 0
+  info: mbox database files can be recognized by having a
+        leading character sequence of "From", followed by a single Space
+        character (0x20), followed by additional printable character data
+        (refer to the description in Appendix A for details). However,
+        implementers are cautioned that all such files will not be compliant
+        with all of the formatting rules, therefore implementers should treat
+        these files with an appropriate amount of circumspection.
 application/media-policy-dataset+xml:
   ext:
   - .mpf
@@ -4355,11 +4361,11 @@ audio/vnd.dts.uhd:
   - etc.
 audio/vnd.dvb.file:
   ext:
-  - .'dvb'
+  - '.dvb'
 audio/vnd.everad.plj:
   ext:
   - .plj
-  magic_number: First DWORD is 0x4B539DFF
+  magic_number: 0x4B539DFF
   magic_number_offset: 0
 audio/vnd.hns.audio:
   ext:
@@ -4367,7 +4373,7 @@ audio/vnd.hns.audio:
 audio/vnd.lucent.voice:
   ext:
   - .lvp
-  magic_number: First Byte is FFAA
+  magic_number: 0xFFAA
   magic_number_offset: 0
 audio/vnd.ms-playready.media.pya:
   ext:
@@ -4732,7 +4738,7 @@ image/webp:
 image/wmf:
   ext:
   - .wmf
-  magic_number: 0xD7CDC69A (little-endian DWORD 0x9AC6CDD7)
+  magic_number: 0xD7CDC69A
   info: (little-endian DWORD 0x9AC6CDD7)
   magic_number_offset: 0
 model/3mf:
@@ -4909,7 +4915,7 @@ model/x3d-vrml:
   magic_number_offset: 0
 text/cache-manifest:
   ext:
-  - ."appcache"
+  - ".appcache"
   - '"manifest"'
   magic_number: "CACHE MANIFEST"
   magic_number_offset: 0
@@ -5253,7 +5259,7 @@ video/vnd.dlna.mpeg-tts:
   - .Undefined
 video/vnd.dvb.file:
   ext:
-  - .'dvb'
+  - '.dvb'
 video/vnd.fvt:
   ext:
   - .fvt

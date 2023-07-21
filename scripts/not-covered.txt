@@ -3,6 +3,5 @@ message/rfc822
 model/mesh
 model/vrml
 text/enriched
-text/plain
 text/richtext
 video/mpeg
