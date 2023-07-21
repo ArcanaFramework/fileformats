@@ -1,0 +1,6075 @@
+application/A2L:
+  ext:
+  - .a2l
+application/AML:
+  ext:
+  - .aml
+application/ATF:
+  ext:
+  - .atf
+application/ATFX:
+  ext:
+  - .atfx
+application/ATXML:
+  ext:
+  - .atxml
+application/CDFX+XML:
+  ext:
+  - .cdfx
+application/CEA:
+  ext:
+  - .cea
+application/DCD:
+  ext:
+  - .dcd
+application/DII:
+  ext:
+  - .dii
+application/DIT:
+  ext:
+  - .dit
+application/EmergencyCallData.Comment+xml:
+  ext:
+  - .xml
+application/EmergencyCallData.Control+xml:
+  ext:
+  - .xml
+application/EmergencyCallData.DeviceInfo+xml:
+  ext:
+  - .xml
+application/EmergencyCallData.LegacyESN+json:
+  ext:
+  - .json
+application/EmergencyCallData.ProviderInfo+xml:
+  ext:
+  - .xml
+application/EmergencyCallData.ServiceInfo+xml:
+  ext:
+  - .xml
+application/EmergencyCallData.SubscriberInfo+xml:
+  ext:
+  - .xml
+application/EmergencyCallData.VEDS+xml:
+  ext:
+  - .xml
+application/LXF:
+  ext:
+  - .lxf
+application/MF4:
+  ext:
+  - .mf4
+application/ODX:
+  ext:
+  - .odx
+application/PDX:
+  ext:
+  - .pdx
+application/atom+xml:
+  ext:
+  - .atom
+application/atomcat+xml:
+  ext:
+  - .atomcat
+application/atomdeleted+xml:
+  ext:
+  - .atomdeleted
+application/atomsvc+xml:
+  ext:
+  - .atomsvc
+application/atsc-dwd+xml:
+  ext:
+  - .dwd
+application/atsc-held+xml:
+  ext:
+  - .held
+application/atsc-rsat+xml:
+  ext:
+  - .rsat
+application/auth-policy+xml:
+  ext:
+  - .apxml
+application/automationml-aml+xml:
+  ext:
+  - .aml
+application/automationml-amlx+zip:
+  ext:
+  - .amlx
+application/bacnet-xdd+zip:
+  ext:
+  - .xdd
+  magic_number: 'PK\003\004'
+  magic_number_offset: 0
+application/calendar+xml:
+  ext:
+  - .xcs
+application/cbor:
+  ext:
+  - .cbor
+application/cccex:
+  ext:
+  - .c3ex
+application/ccmp+xml:
+  ext:
+  - .ccmp
+application/cdmi-capability:
+  ext:
+  - .cdmia
+application/cdmi-container:
+  ext:
+  - .cdmic
+application/cdmi-domain:
+  ext:
+  - .cdmid
+application/cdmi-object:
+  ext:
+  - .cdmio
+application/cdmi-queue:
+  ext:
+  - .cdmiq
+application/cea-2018+xml:
+  ext:
+  - .xml
+application/cellml+xml:
+  ext:
+  - .cellml
+  - .xml
+  - .cml
+  - null
+application/city+json:
+  ext:
+  - .json
+application/clr:
+  ext:
+  - .1clr
+application/clue+xml:
+  ext:
+  - .xml
+application/clue_info+xml:
+  ext:
+  - .clue
+application/cms:
+  ext:
+  - .cmsc
+application/coap-group+json:
+  ext:
+  - .json
+application/conference-info+xml:
+  ext:
+  - .xml
+application/cose:
+  ext:
+  - .cbor
+application/cose-key:
+  ext:
+  - .cbor
+application/cose-key-set:
+  ext:
+  - .cbor
+application/cpl+xml:
+  ext:
+  - .cpl
+  - .xml
+application/csrattrs:
+  ext:
+  - .csrattrs
+application/csvm+json:
+  ext:
+  - .json
+application/cwl:
+  ext:
+  - .cwl
+  magic_number_info: CWL documents often start with the US-ASCII string "#!/usr/bin/env     cwl-runner"
+    (35 33 47 117 115 114 47 98 105 110 47 101 110 118 32     99 119 108 45 114 117
+    110 110 101 114) but this is not required.     All CWL document have the US-ASCII
+    string "cwlVersion" (99 119 108     86 101 114 115 105 111 110) as either the
+    very first octets, or     prepended by a newline later (13 10 or 13 or 10) in
+    the file.
+application/cwl+json:
+  ext:
+  - .cwl.json
+  magic_number_info: All CWL document have the US-ASCII string "cwlVersion" (99 119 108     86
+    101 114 115 105 111 110) as a key in the topmost JSON     dictionary.
+application/dash+xml:
+  ext:
+  - .mpd
+application/dash-patch+xml:
+  ext:
+  - .mpp
+application/dashdelta:
+  ext:
+  - .mpdd
+application/davmount+xml:
+  ext:
+  - .davmount
+application/dialog-info+xml:
+  ext:
+  - .xml
+application/dicom:
+  ext:
+  - .dcm
+  - null
+  magic_number_info: 'DICM' at 128
+application/dicom+json:
+  ext:
+  - .json
+application/dicom+xml:
+  ext:
+  - .xml
+application/dskpp+xml:
+  ext:
+  - .xmls
+application/dssc+der:
+  ext:
+  - .dssc
+application/dssc+xml:
+  ext:
+  - .xdssc
+application/dvcs:
+  ext:
+  - .dvc
+application/ecmascript:
+  ext:
+  - .es
+application/efi:
+  ext:
+  - .*.efi
+  magic_number: MZ - The first two octets are the ASCII Characters "M" and "Z" ("MZ"
+    at offset 0) - $offset = (read 4-bytes from byte 60) - The ASCII string "PE\0\0"
+    must be found at $offset - The value of the two bytes at $offset + 24 must be
+    0x010b or 0x020b
+  magic_number_offset: 0
+application/emma+xml:
+  ext:
+  - .EMMA
+  - .emma
+application/emotionml+xml:
+  ext:
+  - .emotionml
+application/epp+xml:
+  ext:
+  - .xml
+application/epub+zip:
+  ext:
+  - .OCF
+  - .epub
+application/exi:
+  ext:
+  - .exi
+  magic_number: 0x24455849
+  magic_number_info: The first four octets may be hexadecimal 24 45 58 49 ("$EXI"). The
+    first octet after these, or the first octet of the whole content if they are not
+    present, has its high two bits set to values 1 and 0 in that order.
+  magic_number_offset: 0
+application/express:
+  ext:
+  - .exp
+application/fastinfoset:
+  ext:
+  - .*.finf
+application/fdf:
+  ext:
+  - .fdf
+  magic_number: "%FDF-"
+  magic_number_info: '"%FDF-" followed by the FDF        version number, e.g., "%FDF-1.2".
+    These characters are in        US-ASCII encoding.'
+  magic_number_oset: 0
+application/fdt+xml:
+  ext:
+  - .fdt
+application/fits:
+  ext:
+  - .fits
+  - null
+  magic_number: "SIMPLE = T"
+  magic_number_info: '"SIMPLE = T"  Jeff Uphoff of the National Radio Astronomy Observatory
+    (NRAO) has contributed database entries for the magic number file which is used
+    by the Unix "file" command. Magic number files with these entries are distributed
+    with a variety of Unix-like operating systems. In addition to recognizing a FITS
+    file using the string given above, the Uphoff entries also recognize the data
+    type of the pixels in the PHDU.'
+  magic_number_offset: 0
+application/geo+json:
+  ext:
+  - .geojson
+application/geopackage+sqlite3:
+  ext:
+  - .gpkg
+  magic_number: 0x47504B47
+  magic_number_offset: 0
+application/gltf-buffer:
+  ext:
+  - .bin
+  - .glbin
+  - .glbuf
+application/gml+xml:
+  ext:
+  - .gml
+application/gzip:
+  ext:
+  - .gz
+  magic_number: 0x1f8b
+  magic_number_offset: 0
+application/held+xml:
+  ext:
+  - .heldxml
+application/inkml+xml:
+  ext:
+  - .InkML
+  - .ink
+  - .inkml
+application/ipfix:
+  ext:
+  - .ipfix
+application/its+xml:
+  ext:
+  - .its
+application/java-archive:
+  ext:
+  - .jar
+  magic_number: PK\x03\x04
+  magic_number_offset: 0
+application/jrd+json:
+  ext:
+  - .jrd
+application/json:
+  ext:
+  - .json
+application/json-patch+json:
+  ext:
+  - .json-patch
+application/ld+json:
+  ext:
+  - .jsonld
+application/lgr+xml:
+  ext:
+  - .lgr
+application/link-format:
+  ext:
+  - .wlnk
+application/lost+xml:
+  ext:
+  - .lostxml
+application/lostsync+xml:
+  ext:
+  - .lostsyncxml
+application/lpf+zip:
+  ext:
+  - .LPF
+  - .lpf
+  magic_number: 'PK\x03\x04'
+  magic_number_offset: 0
+application/mads+xml:
+  ext:
+  - .mads
+application/manifest+json:
+  ext:
+  - .webmanifest
+application/marc:
+  ext:
+  - .mrc
+application/marcxml+xml:
+  ext:
+  - .mrcx
+application/mathematica:
+  ext:
+  - .nb
+  - .ma
+  - .mb
+application/mathml+xml:
+  ext:
+  - .mml
+application/mathml-content+xml:
+application/mbox:
+  ext:
+  - .mbox
+  - null
+  magic_number: "From "
+  magic_number_offset: 0
+application/media-policy-dataset+xml:
+  ext:
+  - .mpf
+application/metalink4+xml:
+  ext:
+  - .meta4
+application/mets+xml:
+  ext:
+  - .mets
+application/mipc:
+  magic_number_info: "To first verify that the file is HDF5 formatted, the data consumer\
+    \     must search for the HDF5 superblock. The superblock may begin at     certain\
+    \ predefined offsets within the HDF5 file, allowing a block     of unspecified\
+    \ content for users to place additional information     at the beginning (and\
+    \ end) of the HDF5 file without limiting the     HDF5 Library\u2019s ability to\
+    \ manage the objects within the file     itself. This feature was designed to\
+    \ accommodate wrapping an HDF5     file in another file format or adding descriptive\
+    \ information to     an HDF5 file without requiring the modification of the actual\
+    \     file\u2019s information. The superblock is located by searching for the\
+    \     HDF5 format signature at byte offset 0, byte offset 512, and at     successive\
+    \ locations in the file, each a multiple of two of the"
+application/mmt-aei+xml:
+  ext:
+  - .maei
+application/mmt-usd+xml:
+  ext:
+  - .musd
+application/mods+xml:
+  ext:
+  - .mods
+application/mp21:
+  ext:
+  - .m21
+  - .mp21
+application/mp4:
+  ext:
+  - .mp4
+  - .mpg4
+application/mrb-consumer+xml:
+  ext:
+  - .xdf
+application/mrb-publish+xml:
+  ext:
+  - .xdf
+application/mxf:
+  ext:
+  - .mxf
+application/n-quads:
+  ext:
+  - .nq
+application/n-triples:
+  ext:
+  - .nt
+application/node:
+  ext:
+  - .js
+  - .cjs
+application/ocsp-request:
+  ext:
+  - .ORQ
+application/ocsp-response:
+  ext:
+  - .ORS
+application/odm+xml:
+  ext:
+  - .xml
+application/oebps-package+xml:
+  ext:
+  - .opf
+application/ogg:
+  ext:
+  - .ogx
+  - .ogg
+  magic_number: "OggS"
+  magic_number_offset: 0
+application/oxps:
+  ext:
+  - .oxps
+  magic_number: 0x504b0304
+  magic_number_offset: 0
+application/p21:
+  ext:
+  - .p21
+  - .stp
+  - .step
+  - .stpnc
+  - '.210'
+  - .ifc
+application/p21+zip:
+  ext:
+  - .stpz
+application/p2p-overlay+xml:
+  ext:
+  - .relo
+application/patch-ops-error+xml:
+  ext:
+  - .xer
+application/pdf:
+  ext:
+  - .pdf
+  magic_number: "%PDF-"
+  magic_number_offset: 0
+application/pem-certificate-chain:
+  ext:
+  - .pem
+application/pgp-keys:
+  ext:
+  - .asc
+application/pgp-signature:
+  ext:
+  - .asc
+  - .sig
+application/pidf-diff+xml:
+  ext:
+  - .xml
+application/pkcs10:
+  ext:
+  - .p10
+application/pkcs12:
+  ext:
+  - .p12
+  - .pfx
+application/pkcs8:
+  ext:
+  - .p8
+application/pkcs8-encrypted:
+  ext:
+  - .p8e
+application/pkix-attr-cert:
+  ext:
+  - .ac
+application/pkix-cert:
+  ext:
+  - .CER
+application/pkix-crl:
+  ext:
+  - .CRL
+application/pkix-pkipath:
+  ext:
+  - .pkipath
+application/pkixcmp:
+  ext:
+  - .PKI
+application/provenance+xml:
+  ext:
+  - .provx
+application/prs.cww:
+  ext:
+  - .cw
+  - cww
+application/prs.hpub+zip:
+  ext:
+  - .HPUB
+application/prs.nprend:
+  ext:
+  - .rnd
+  - .rct
+application/prs.plucker:
+  magic_number_info: "60\tstring\t\tDataPlkr\tPlucker document"
+application/prs.rdf-xml-crypt:
+  ext:
+  - .rdf-crypt
+application/prs.xsf+xml:
+  ext:
+  - .xsf
+  - .xml
+application/pskc+xml:
+  ext:
+  - .pskcxml
+application/rdf+xml:
+  ext:
+  - .rdf
+application/reginfo+xml:
+  ext:
+  - .rif
+application/relax-ng-compact-syntax:
+  ext:
+  - .rnc
+application/resource-lists+xml:
+  ext:
+  - .rl
+application/resource-lists-diff+xml:
+  ext:
+  - .rld
+application/rfc+xml:
+  ext:
+  - .rfcxml
+application/rls-services+xml:
+  ext:
+  - .rs
+application/route-apd+xml:
+  ext:
+  - .rapd
+application/route-s-tsid+xml:
+  ext:
+  - .sls
+application/route-usd+xml:
+  ext:
+  - .rusd
+application/rpki-checklist:
+  ext:
+  - .sig
+application/rpki-ghostbusters:
+  ext:
+  - .gbr
+application/rpki-manifest:
+  ext:
+  - .mft
+application/rpki-roa:
+  ext:
+  - .roa
+application/rtf:
+  ext:
+  - .rtf
+  magic_number: "{\\rtf"
+  magic_number_offset: 0
+application/sarif+json:
+  ext:
+  - .sarif
+  - .sarif.json
+application/sarif-external-properties+json:
+  ext:
+  - .sarif-external-properties
+  - .sarif-external-properties.json
+application/scim+json:
+  ext:
+  - .scim
+  - .scm
+application/scvp-cv-request:
+  ext:
+  - .SCQ
+application/scvp-cv-response:
+  ext:
+  - .SCS
+application/scvp-vp-request:
+  ext:
+  - .SPQ
+application/scvp-vp-response:
+  ext:
+  - .SPP
+application/sdp:
+  ext:
+  - .sdp
+application/senml+cbor:
+  ext:
+  - .senmlc
+application/senml+json:
+  ext:
+  - .senml
+application/senml+xml:
+  ext:
+  - .senmlx
+application/senml-etch+cbor:
+  ext:
+  - .senml-etchc
+application/senml-etch+json:
+  ext:
+  - .senml-etchj
+application/senml-exi:
+  ext:
+  - .senmle
+application/sensml+cbor:
+  ext:
+  - .sensmlc
+application/sensml+json:
+  ext:
+  - .sensml
+application/sensml+xml:
+  ext:
+  - .sensmlx
+application/sensml-exi:
+  ext:
+  - .sensmle
+application/shf+xml:
+  ext:
+  - .shf
+application/sieve:
+  ext:
+  - .siv
+  - .sieve
+application/simple-filter+xml:
+  ext:
+  - .cl
+  - .xml
+application/sipc:
+  magic_number_info: "To first verify that the file is HDF5 formatted, the data consumer\
+    \    must search for the HDF5 superblock. The superblock may begin at     certain\
+    \ predefined offsets within the HDF5 file, allowing a block     of unspecified\
+    \ content for users to place additional information     at the beginning (and\
+    \ end) of the HDF5 file without limiting the     HDF5 Library\u2019s ability to\
+    \ manage the objects within the file     itself. This feature was designed to\
+    \ accommodate wrapping an HDF5     file in another file format or adding descriptive\
+    \ information to     an HDF5 file without requiring the modification of the actual\
+    \     file\u2019s information. The superblock is located by searching for the\
+    \     HDF5 format signature at byte offset 0, byte offset 512, and at     successive\
+    \ locations in the file, each a multiple of two of the"
+application/smil (OBSOLETED in favor of application/smil+xml):
+  ext:
+  - .smil
+  - .smi
+  - .sml
+application/soap+fastinfoset:
+  ext:
+  - .W3C
+  magic_number_info: "For details on the identification of a fast infoset document refer\
+    \ to the\r magic number section of the \"application/fastinfoset\" media type.\
+    \ \r The identification of a W3C SOAP message infoset serialized as a fast\r infoset\
+    \ document requires that the fast infoset document be parsed and that\r the properties\
+    \ of the element information item, corresponding to the root of\r the element\
+    \ tree, conform to the properties of the SOAP Envelope element\r information item\
+    \ specified in W3C SOAP 1.2, 5.1."
+application/soap+xml:
+  ext:
+  - .SOAP
+application/sparql-query:
+  ext:
+  - .rq
+  magic_number_info: A SPARQL query may have the string 'PREFIX' (case independent) near
+    the beginning of the document.
+application/sparql-results+xml:
+  ext:
+  - .srx
+application/spdx+json:
+  ext:
+  - .spdx.json
+application/sql:
+  ext:
+  - .sql
+application/sru+xml:
+  ext:
+  - .sru
+application/stix+json:
+  ext:
+  - .stix
+application/swid+cbor:
+  ext:
+  - .coswid
+  magic_number: 0x53574944
+application/swid+xml:
+  ext:
+  - .swidtag
+application/tamp-apex-update:
+  ext:
+  - .tau
+application/tamp-apex-update-confirm:
+  ext:
+  - .auc
+application/tamp-community-update:
+  ext:
+  - .tcu
+application/tamp-community-update-confirm:
+  ext:
+  - .cuc
+application/tamp-error:
+  ext:
+  - .ter
+application/tamp-sequence-adjust:
+  ext:
+  - .tsa
+application/tamp-sequence-adjust-confirm:
+  ext:
+  - .sac
+application/tamp-status-query:
+  ext:
+  - .tsq
+application/tamp-status-response:
+  ext:
+  - .tsr
+application/tamp-update:
+  ext:
+  - .tur
+application/tamp-update-confirm:
+  ext:
+  - .tuc
+application/td+json:
+  ext:
+  - .jsontd
+application/tei+xml:
+  ext:
+  - .tei
+  - .teiCorpus
+  - .odd
+application/thraud+xml:
+  ext:
+  - .tfi
+application/timestamped-data:
+  ext:
+  - .tsd
+application/tlsrpt+json:
+  ext:
+  - .".json"
+application/tm+json:
+  ext:
+  - .jsontm
+  - .tm.json
+  - .tm.jsonld
+application/trig:
+  ext:
+  - .trig
+application/ttml+xml:
+  ext:
+  - .ttml
+application/tzif:
+  magic_number: 0x545A6966
+  magic_number_offset: 0
+application/tzif-leap:
+  magic_number: 0x545A6966
+  magic_number_offset: 0
+application/urc-grpsheet+xml:
+  ext:
+  - .gsheet
+application/urc-ressheet+xml:
+  ext:
+  - .rsheet
+application/urc-targetdesc+xml:
+  ext:
+  - .td
+application/urc-uisocketdesc+xml:
+  ext:
+  - .uis
+application/vnd.1000minds.decision-model+xml:
+  ext:
+  - .1km
+application/vnd.1ob:
+  ext:
+  - .ob
+application/vnd.3M.Post-it-Notes:
+  ext:
+  - .pwn
+application/vnd.3gpp.pic-bw-large:
+  ext:
+  - .plb
+application/vnd.3gpp.pic-bw-small:
+  ext:
+  - .psb
+application/vnd.3gpp.pic-bw-var:
+  ext:
+  - .pvb
+application/vnd.3gpp.sms:
+  ext:
+  - .sms
+application/vnd.3gpp2.sms:
+  ext:
+  - .sms
+application/vnd.3gpp2.tcap:
+  ext:
+  - .tcap
+application/vnd.3lightssoftware.imagescal:
+  ext:
+  - .imgcal
+application/vnd.FloGraphIt:
+  ext:
+  - .gph
+application/vnd.HandHeld-Entertainment+xml:
+  ext:
+  - .ZMM
+application/vnd.Kinar:
+  ext:
+  - .kne
+  - .knp
+  - .sdf
+  magic_number: KNRO
+  magic_number_offset: 0
+application/vnd.MFER:
+  ext:
+  - .mwf
+  magic_number: MFR
+  magic_number_offset: 0
+application/vnd.Mobius.DAF:
+  ext:
+  - .DAF
+application/vnd.Mobius.DIS:
+  ext:
+  - .DIS
+application/vnd.Mobius.MBK:
+  ext:
+  - .MBK
+application/vnd.Mobius.MQY:
+  ext:
+  - .MQY
+application/vnd.Mobius.MSL:
+  ext:
+  - .MSL
+application/vnd.Mobius.PLC:
+  ext:
+  - .PLC
+application/vnd.Mobius.TXF:
+  ext:
+  - .TXF
+application/vnd.Quark.QuarkXPress:
+  ext:
+  - .qxd
+  - .qxt
+  - .qwd
+  - .qwt
+  - .qxl
+  - .qxb
+  magic_number: XPR3
+  magic_number_offset: 4
+application/vnd.SimTech-MindMapper:
+  ext:
+  - .twd
+  - .twds
+application/vnd.accpac.simply.aso:
+  ext:
+  - .aso
+application/vnd.accpac.simply.imp:
+  ext:
+  - .imp
+application/vnd.acucobol:
+  ext:
+  - .acu
+  magic_number: 0x101214
+  magic_number_info: 0x10121420 and 0x10121421
+  magic_number_offset: 0
+application/vnd.acucorp:
+  ext:
+  - .atc
+  - .acutc
+application/vnd.adobe.flash.movie:
+  ext:
+  - .swf
+  magic_number: FWS
+  magic_number_info: FWS, CWS or ZWS
+  magic_number_offset: 0
+application/vnd.adobe.formscentral.fcdt:
+  ext:
+  - .fcdt
+application/vnd.adobe.fxp:
+  ext:
+  - .fxp
+  - fxpl
+  magic_number: PK
+  magic_number_offset: 0
+application/vnd.adobe.xdp+xml:
+  ext:
+  - .xdp
+  magic_number_info: 'XDP files are xml and use the namespace: http://ns.adobe.com'
+application/vnd.afpc.afplinedata-pagedef:
+  magic_number_info: As any other AFP object, Page Definitions are enclosed with a        "Begin"
+    and an "End" structured field. A Page Definition starts
+application/vnd.afpc.cmoca-cmresource:
+  magic_number_info: Like any other AFP object, Color Management        Resources are enclosed
+    with a "Begin" and an "End" structured        field. A Color Management Resource
+    is an object container and
+application/vnd.afpc.foca-charset:
+  magic_number_info: 0xD3A889 - Begin Font (BFN) Structured Field       0xD3A989 - End
+    Font (EFN) Structured Field
+application/vnd.afpc.foca-codedfont:
+  magic_number_info: 0xD3A88A - Begin Coded Font (BCF) Structured Field       0xD3A98A
+    - End Coded Font (ECF) Structured Field
+application/vnd.afpc.foca-codepage:
+  magic_number_info: 0xD3A887 - Begin Code Page (BCP) Structured Field       0xD3A987 -
+    End Code Page (ECP) Structured Field
+application/vnd.afpc.modca:
+  ext:
+  - .list3820
+  - .listafp
+  - .afp
+  - .pseg3820
+application/vnd.afpc.modca-cmtable:
+  magic_number_info: As any other AFP object, Color Mapping Tables are       enclosed with
+    a "Begin" and an "End" structured field. A Color        Mapping Table is an object
+    container and starts with the
+  magic_number_offset: 0
+application/vnd.afpc.modca-formdef:
+  magic_number_info: 0xD3A8CD - Begin Form Map (BFM) Structured Field       0xD3A9CD -
+    End Form Map (EFM) Structured Field
+  magic_number_offset: 0
+application/vnd.afpc.modca-mediummap:
+  magic_number_info: 0xD3A8CC - Begin Medium Map (BMM) Structured Field       0xD3A9CC
+    - End Medium Map (EMM) Structured Field
+  magic_number_offset: 0
+application/vnd.afpc.modca-objectcontainer:
+  magic_number_info: 0xD3A892 - Begin Object Container (BOC) Structured Field       0xD3A992
+    - End Object Container (EOC) Structured Field
+  magic_number_offset: 0
+application/vnd.afpc.modca-overlay:
+  ext:
+  - .ovl
+  magic_number_info: Any object in the AFP specification has a byte        pattern that
+    opens and closes the object. For Overlays the
+  magic_number_offset: 0
+application/vnd.afpc.modca-pagesegment:
+  ext:
+  - .psg
+  magic_number_info: 0xD3A85F - Begin Page Segment (BPS) Structured Field       0xD3A95F
+    - End Page Segment (EPS) Structured Field
+  magic_number_offset: 0
+application/vnd.age:
+  ext:
+  - .age
+  magic_number: 0x6167652d656e6372797074696f6e2e6f7267
+  magic_number_offset: 0
+application/vnd.ahead.space:
+  ext:
+  - .ahead
+  magic_number: '\x89AHEAD\x0d\x0a\x1a\x0aSPACE\0'
+  magic_number_offset: 0
+application/vnd.airzip.filesecure.azf:
+  ext:
+  - .azf
+  magic_number: 0x415A4617
+  magic_number_offset: 0
+application/vnd.airzip.filesecure.azs:
+  ext:
+  - .azs
+  magic_number: 0xD3415A53
+  magic_number_offset: 0
+application/vnd.amazon.mobi8-ebook:
+  ext:
+  - .azw3
+application/vnd.americandynamics.acc:
+  ext:
+  - .acc
+application/vnd.amiga.ami:
+  ext:
+  - .ami
+application/vnd.amundsen.maze+xml:
+  ext:
+  - .xml
+application/vnd.android.ota:
+  ext:
+  - .ota
+  magic_number: 0x504b0304
+  magic_number_offset: 0
+application/vnd.anki:
+  ext:
+  - .apkg
+application/vnd.anser-web-certificate-issue-initiation:
+  ext:
+  - .cii
+application/vnd.antix.game-component:
+  ext:
+  - .atx
+application/vnd.apache.arrow.file:
+  ext:
+  - .arrow
+  magic_number: 0x4152524F57310000
+  magic_number_offset: 0
+application/vnd.apache.arrow.stream:
+  ext:
+  - .arrows
+application/vnd.apexlang:
+  ext:
+  - .-
+  - .apexlang
+  - '       '
+  - '-'
+  - .apex
+  - '       '
+  - '-'
+  - .axdl
+application/vnd.api+json:
+  ext:
+  - .json
+application/vnd.aplextor.warrp+json:
+  ext:
+  - .json
+application/vnd.apple.installer+xml:
+  ext:
+  - .dist
+  - distz
+  - pkg
+  - mpkg
+  - '3.'
+  - Macintosh
+  - file
+  - type
+  - code
+  - ':'
+application/vnd.apple.keynote:
+  ext:
+  - .key
+application/vnd.apple.mpegurl:
+  ext:
+  - .m3u8
+  - .m3u
+  - (see
+  - Section
+  - '4'
+  - of
+  - RFC
+  - 8216)
+  magic_number: '#EXTM3U'
+  magic_number_offset: 0
+application/vnd.apple.numbers:
+  ext:
+  - .numbers
+application/vnd.apple.pages:
+  ext:
+  - .pages
+application/vnd.arastra.swi (OBSOLETED in favor of application/vnd.aristanetworks.swi):
+  ext:
+  - .swi
+  magic_number: '0x4b500403'
+  magic_number_offset: 0
+application/vnd.aristanetworks.swi:
+  ext:
+  - .swi
+  magic_number: '0x4b500403'
+  magic_number_offset: 0
+application/vnd.artisan+json:
+  ext:
+  - .artisan
+application/vnd.astraea-software.iota:
+  ext:
+  - .iota
+application/vnd.audiograph:
+  ext:
+  - .aep
+application/vnd.autopackage:
+  ext:
+  - .package
+application/vnd.avalon+json:
+  ext:
+  - .json
+application/vnd.avistar+xml:
+  ext:
+  - .xml
+application/vnd.balsamiq.bmml+xml:
+  ext:
+  - .bmml
+application/vnd.balsamiq.bmpr:
+  ext:
+  - .bmpr
+application/vnd.banana-accounting:
+  ext:
+  - .ac2
+application/vnd.bekitzur-stech+json:
+  ext:
+  - .json
+application/vnd.belightsoft.lhzd+zip:
+  ext:
+  - .lhzd
+application/vnd.belightsoft.lhzl+zip:
+  ext:
+  - .lhzl
+application/vnd.biopax.rdf+xml:
+  ext:
+  - .owl
+  - .rdf
+application/vnd.blueice.multipass:
+  ext:
+  - .mpm
+application/vnd.bluetooth.ep.oob:
+  ext:
+  - .EP
+application/vnd.bluetooth.le.oob:
+  ext:
+  - .LE
+application/vnd.bmi:
+  ext:
+  - .BMI
+application/vnd.bpf:
+  ext:
+  - .bpf
+application/vnd.bpf3:
+  ext:
+  - .bpf
+  magic_number: "\u201CBPF!\u201D in the first four bytes of the file (0x42, 0x50,\
+    \ 0x46, 0x21)"
+  magic_number_offset: 0
+application/vnd.businessobjects:
+  ext:
+  - .rep
+application/vnd.byu.uapi+json:
+  ext:
+  - .json
+application/vnd.capasystems-pg+json:
+  ext:
+  - .json
+application/vnd.cendio.thinlinc.clientconf:
+  ext:
+  - .tlclient
+  magic_number: '-'
+  magic_number_offset: 0
+application/vnd.chemdraw+xml:
+  ext:
+  - .cdxml
+application/vnd.chess-pgn:
+  ext:
+  - .pgn
+application/vnd.chipnuts.karaoke-mmd:
+  ext:
+  - .mmd
+application/vnd.cinderella:
+  ext:
+  - .cdy
+  magic_number: NOT USED
+  magic_number_offset: 0
+application/vnd.citationstyles.style+xml:
+  ext:
+  - .csl
+  magic_number: '-'
+  magic_number_offset: 0
+application/vnd.claymore:
+  ext:
+  - .cla
+application/vnd.cloanto.rp9:
+  ext:
+  - .rp9
+  magic_number: 50 4B 03 04
+  magic_number_offset: 0
+application/vnd.clonk.c4group:
+  ext:
+  - .c4g
+  - c4d
+  - c4f
+  - c4p
+  - c4u
+  magic_number: 2 (0x1e, 0x8c)
+  magic_number_offset: 0
+application/vnd.cluetrust.cartomobile-config:
+  ext:
+  - .c11amc
+application/vnd.cluetrust.cartomobile-config-pkg:
+  ext:
+  - .c11amz
+application/vnd.cncf.helm.chart.provenance.v1.prov:
+  ext:
+  - .Text
+application/vnd.cncf.helm.config.v1+json:
+  ext:
+  - .json
+application/vnd.coffeescript:
+  ext:
+  - .coffee
+application/vnd.collabio.xodocuments.document:
+  ext:
+  - .xodt
+  magic_number: '- the string ''PK'' to be at position 0 of the file;  - the string
+    ''mimetype'' to be at position 30;  - the media type of the corresponding OpenDocument
+    format to be at position 38 (either ''vnd.oasis.opendocument.text'', ''vnd.oasis.opendocument.spreadsheet'',
+    or ''vnd.oasis.opendocument.document'' strings).'
+  magic_number_offset: 0
+application/vnd.collabio.xodocuments.document-template:
+  ext:
+  - .xott
+  magic_number: '- the string ''PK'' to be at position 0 of the file;  - the string
+    ''mimetype'' to be at position 30;  - the media type of the corresponding OpenDocument
+    format to be at position 38 (''vnd.oasis.opendocument.text-template'' string).'
+  magic_number_offset: 0
+application/vnd.collabio.xodocuments.presentation:
+  ext:
+  - .xodp
+  magic_number: '- the string ''PK'' to be at position 0 of the file;  - the string
+    ''mimetype'' to be at position 30;  - the media type of the corresponding OpenDocument
+    format to be at position 38 (either ''vnd.oasis.opendocument.text'', ''vnd.oasis.opendocument.spreadsheet'',
+    or ''vnd.oasis.opendocument.presentation'' strings).'
+  magic_number_offset: 0
+application/vnd.collabio.xodocuments.presentation-template:
+  ext:
+  - .xotp
+  magic_number: '- the string ''PK'' to be at position 0 of the file;  - the string
+    ''mimetype'' to be at position 30;  - the media type of the corresponding OpenDocument
+    format to be at position 38 (''vnd.oasis.opendocument.presentation-template''
+    string).'
+  magic_number_offset: 0
+application/vnd.collabio.xodocuments.spreadsheet:
+  ext:
+  - .xods
+  magic_number: '- the string ''PK'' to be at position 0 of the file;  - the string
+    ''mimetype'' to be at position 30;  - the media type of the corresponding OpenDocument
+    format to be at position 38 (either ''vnd.oasis.opendocument.text'', ''vnd.oasis.opendocument.spreadsheet'',
+    or ''vnd.oasis.opendocument.spreadsheet'' strings).'
+  magic_number_offset: 0
+application/vnd.collabio.xodocuments.spreadsheet-template:
+  ext:
+  - .xots
+  magic_number: '- the string ''PK'' to be at position 0 of the file;  - the string
+    ''mimetype'' to be at position 30;  - the media type of the corresponding OpenDocument
+    format to be at position 38 (''vnd.oasis.opendocument.spreadsheet-template'' string).'
+  magic_number_offset: 0
+application/vnd.collection+json:
+  ext:
+  - .json
+application/vnd.collection.doc+json:
+  ext:
+  - .json
+application/vnd.collection.next+json:
+  ext:
+  - .json
+application/vnd.comicbook+zip:
+  ext:
+  - .cbz
+application/vnd.comicbook-rar:
+  ext:
+  - .cbr
+application/vnd.commerce-battelle:
+  ext:
+  - .ica
+  - ','
+  - icf
+  - ','
+  - icd
+  - ','
+  - icc
+  - ','
+  - ic#
+  - where
+  - '#'
+  - is
+  - an
+  - integer
+  - such
+  - that
+  - '   '
+  - -1<#<9.
+application/vnd.commonspace:
+  ext:
+  - .csp
+  - .cst
+application/vnd.contact.cmsg:
+  ext:
+  - .cdbcmsg
+application/vnd.coreos.ignition+json:
+  ext:
+  - .ign
+  - ignition
+application/vnd.cosmocaller:
+  ext:
+  - .cmc
+application/vnd.crick.clicker:
+  ext:
+  - .clkx
+application/vnd.crick.clicker.keyboard:
+  ext:
+  - .clkk
+application/vnd.crick.clicker.palette:
+  ext:
+  - .clkp
+application/vnd.crick.clicker.template:
+  ext:
+  - .clkt
+application/vnd.crick.clicker.wordbank:
+  ext:
+  - .clkw
+application/vnd.criticaltools.wbs+xml:
+  ext:
+  - .wbs
+application/vnd.cryptii.pipe+json:
+  ext:
+  - .json
+  magic_number: None.
+  magic_number_offset: 0
+application/vnd.crypto-shade-file:
+  ext:
+  - .ssv
+  - .ssvc
+  magic_number: EC 4E 43 54
+  magic_number_offset: 0
+application/vnd.cryptomator.encrypted:
+  ext:
+  - .c9r
+  - c9s
+application/vnd.cryptomator.vault:
+  ext:
+  - .cryptomator
+application/vnd.ctc-posml:
+  ext:
+  - .pml
+  magic_number: none used
+  magic_number_offset: 0
+application/vnd.cups-ppd:
+  ext:
+  - .ppd
+  - .PPD
+  - .ppd.gz
+  magic_number: Starts with "*PPD-Adobe:"
+  magic_number_offset: 0
+application/vnd.curl:
+  ext:
+  - .curl
+application/vnd.cyan.dean.root+xml:
+  ext:
+  - .xml
+application/vnd.cyclonedx+json:
+  ext:
+  - .json
+application/vnd.cyclonedx+xml:
+  ext:
+  - .xml
+application/vnd.d2l.coursepackage1p0+zip:
+  magic_number: Same as application .zip
+  magic_number_offset: 0
+application/vnd.d3m-dataset:
+  ext:
+  - .json
+application/vnd.d3m-problem:
+  ext:
+  - .json
+application/vnd.dart:
+  ext:
+  - .dart
+application/vnd.data-vision.rdz:
+  ext:
+  - .rdz
+application/vnd.datalog:
+  ext:
+  - .dl
+application/vnd.datapackage+json:
+  ext:
+  - .json
+  magic_number: not applicable.
+  magic_number_offset: 0
+application/vnd.dataresource+json:
+  ext:
+  - .json
+  magic_number: not applicable.
+  magic_number_offset: 0
+application/vnd.dbf:
+  ext:
+  - .dbf
+application/vnd.debian.binary-package:
+  ext:
+  - .deb
+  - udeb
+  magic_number: 'Version 2.0 files start with: !<arch>\ndebian-binary'
+  magic_number_offset: 0
+application/vnd.dece.data:
+  ext:
+  - .uvf
+  - .uvvf
+  - .uvd
+  - .uvvd
+application/vnd.dece.ttml+xml:
+  ext:
+  - .uvt
+  - .uvvt
+application/vnd.dece.unspecified:
+  ext:
+  - .uvx
+  - .uvvx
+application/vnd.dece.zip:
+  ext:
+  - .uvz
+  - .uvvz
+application/vnd.denovo.fcselayout-link:
+  ext:
+  - .fe_launch
+application/vnd.desmume.movie:
+  ext:
+  - .*.dsm
+application/vnd.dna:
+  ext:
+  - .dna
+application/vnd.document+json:
+  ext:
+  - .docjson
+application/vnd.doremir.scorecloud-binary-document:
+  ext:
+  - .scld
+application/vnd.dpgraph:
+  ext:
+  - .dpg
+  - .mwc
+  - .dpgraph
+application/vnd.dreamfactory:
+  ext:
+  - .dfac
+application/vnd.drive+json:
+  ext:
+  - .json
+application/vnd.dtg.local.flash:
+  ext:
+  - .fla
+application/vnd.dtg.local.html:
+  ext:
+  - .html
+application/vnd.dvb.ait:
+  ext:
+  - .AIT
+application/vnd.dvb.dvbj:
+  ext:
+  - .class
+application/vnd.dvb.pfr:
+  ext:
+  - .pfr
+application/vnd.dvb.service:
+  ext:
+  - .svc
+application/vnd.dxr:
+  ext:
+  - .dxr
+application/vnd.dynageo:
+  ext:
+  - .geo
+  magic_number: NOT USED
+  magic_number_offset: 0
+application/vnd.dzr:
+  ext:
+  - .dzr
+  magic_number: None.
+  magic_number_offset: 0
+application/vnd.easykaraoke.cdgdownload:
+  ext:
+  - .None
+  - or
+  - .zip
+application/vnd.eclipse.ditto+json:
+  ext:
+  - .json
+application/vnd.ecowin.chart:
+  ext:
+  - .mag
+application/vnd.efi.img:
+  ext:
+  - .*.img
+application/vnd.efi.iso:
+  ext:
+  - .*.iso
+  magic_number: '"CD001" at byte offset 0x8001, 0x8801 or 0x9001'
+  magic_number_offset: 0
+application/vnd.eln+zip:
+  ext:
+  - .ELN
+  - files
+  - are
+  - identified
+  - with
+  - .eln
+  - extension.
+  magic_number: 50 4B 03 04
+  magic_number_offset: 0
+application/vnd.enliven:
+  ext:
+  - .nml
+application/vnd.eprints.data+xml:
+  ext:
+  - .xml
+application/vnd.epson.esf:
+  ext:
+  - .esf
+application/vnd.epson.msf:
+  ext:
+  - .msf
+application/vnd.epson.quickanime:
+  ext:
+  - .qam
+application/vnd.epson.salt:
+  ext:
+  - .slt
+application/vnd.epson.ssf:
+  ext:
+  - .ssf
+application/vnd.ericsson.quickcall:
+  ext:
+  - .qcall
+  - qca
+  magic_number: 0x97230000 (first 4 bytes)
+  magic_number_offset: 0
+application/vnd.espass-espass+zip:
+  ext:
+  - .espass
+application/vnd.eszigno3+xml:
+  ext:
+  - .es3
+  - .et3
+  magic_number: "\u2013"
+  magic_number_offset: 0
+application/vnd.etsi.asic-e+zip:
+  ext:
+  - .asice
+  - or
+  - sce
+  magic_number: 0:PK,30:mimetype,38:vnd.etsi.asic-e+zip
+  magic_number_offset: 0
+application/vnd.etsi.asic-s+zip:
+  ext:
+  - .asics
+  - or
+  - scs
+  magic_number: 0:PK,30:mimetype,38:vnd.etsi.asic-s+zip
+  magic_number_offset: 0
+application/vnd.etsi.pstn+xml:
+  ext:
+  - .xml
+  - (see
+  - RFC
+  - 3023)
+  magic_number: none (see RFC 3023)
+  magic_number_offset: 0
+application/vnd.etsi.timestamp-token:
+  ext:
+  - .tst
+application/vnd.eu.kasparian.car+json:
+  ext:
+  - .carjson
+application/vnd.evolv.ecig.profile:
+  ext:
+  - .ecigprofile
+  magic_number: None.
+  magic_number_offset: 0
+application/vnd.evolv.ecig.settings:
+  ext:
+  - .ecig
+  magic_number: None.
+  magic_number_offset: 0
+application/vnd.evolv.ecig.theme:
+  ext:
+  - .ecigtheme
+  magic_number: None.
+  magic_number_offset: 0
+application/vnd.exstream-empower+zip:
+  ext:
+  - .mpw
+application/vnd.exstream-package:
+  ext:
+  - .pub
+  - or
+  - pkg
+  magic_number: '@4: 0x4F61BC00 | 0x3116D205 @8: 0xB17F3905 |        0xC78AA900'
+  magic_number_offset: 0
+application/vnd.ezpix-album:
+  ext:
+  - .ez2
+application/vnd.ezpix-package:
+  ext:
+  - .ez3
+application/vnd.f-secure.mobile:
+  ext:
+  - .None.
+application/vnd.familysearch.gedcom+zip:
+  ext:
+  - .gdz
+application/vnd.fastcopy-disk-image:
+  ext:
+  - .dim
+  magic_number: 0x4242 at byte position 0
+  magic_number_offset: 0
+application/vnd.fdsn.mseed:
+  ext:
+  - .msd
+  - .mseed
+  - .seed
+  - .dataless
+application/vnd.fdsn.seed:
+  ext:
+  - .seed
+  - .dataless
+  magic_number: None (can contain optional first record blocks)
+  magic_number_offset: 0
+application/vnd.ficlab.flb+zip:
+  ext:
+  - .flb
+  magic_number: 0x4649434c414201 (0 byte offset)
+  magic_number_offset: 0
+application/vnd.filmit.zfc:
+  ext:
+  - .zfc
+  magic_number: '8 byte string: X''895A 4643 0D0A 1A0A'''
+  magic_number_offset: 0
+application/vnd.fints:
+  ext:
+  - .hbci
+  - and
+  - .hbc;
+  - .kom
+  - .upa
+  - .pkd
+  - an
+  - .bpd
+  - for
+  - special
+  - purpose
+application/vnd.fluxtime.clip:
+  ext:
+  - .FTC
+application/vnd.font-fontforge-sfd:
+  ext:
+  - .sfd
+  magic_number: <match type="string" offset="0" value="SplineFontDB"/>
+  magic_number_offset: 0
+application/vnd.frogans.fnc (OBSOLETE):
+  ext:
+  - .FNC
+application/vnd.frogans.ltf (OBSOLETE):
+  ext:
+  - .LTF
+application/vnd.fsc.weblaunch:
+  ext:
+  - .fsc
+application/vnd.fujifilm.fb.docuworks:
+  ext:
+  - .xdw
+application/vnd.fujifilm.fb.docuworks.binder:
+  ext:
+  - .xbd
+application/vnd.fujifilm.fb.docuworks.container:
+  ext:
+  - .xct
+application/vnd.fujifilm.fb.jfi+xml:
+  ext:
+  - .xml
+application/vnd.fujitsu.oasys:
+  ext:
+  - .oas
+application/vnd.fujitsu.oasys2:
+  ext:
+  - .oa2
+application/vnd.fujitsu.oasys3:
+  ext:
+  - .oa3
+application/vnd.fujitsu.oasysgp:
+  ext:
+  - .fg5
+application/vnd.fujitsu.oasysprs:
+  ext:
+  - .bh2
+application/vnd.fujixerox.ddd:
+  ext:
+  - .ddd
+  magic_number: 44 00 00 DD hex, or 44 00 00 0D hex
+  magic_number_offset: 0
+application/vnd.fujixerox.docuworks:
+  ext:
+  - .xdw
+application/vnd.fujixerox.docuworks.binder:
+  ext:
+  - .xbd
+application/vnd.fujixerox.docuworks.container:
+  ext:
+  - .xct
+application/vnd.fut-misnet:
+  ext:
+  - .None
+  - yet.
+  magic_number: None.
+  magic_number_offset: 0
+application/vnd.fuzzysheet:
+  ext:
+  - .fzs
+  magic_number: 46 7A 53 00
+  magic_number_offset: 0
+application/vnd.genomatix.tuxedo:
+  ext:
+  - .txd
+application/vnd.genozip:
+  ext:
+  - .genozip
+  magic_number: 0x27, 0x05, 0x20, 0x12
+  magic_number_offset: 0
+application/vnd.gentics.grd+json:
+  ext:
+  - .grd
+application/vnd.gentoo.catmetadata+xml:
+  ext:
+  - .xml
+  - (the
+  - file
+  - is
+  - always
+  - named
+  - '        '
+  - '"metadata.xml")'
+application/vnd.gentoo.ebuild:
+  ext:
+  - .ebuild
+application/vnd.gentoo.eclass:
+  ext:
+  - .eclass
+application/vnd.gentoo.gpkg:
+  ext:
+  - .gpkg.tar
+application/vnd.gentoo.manifest:
+  ext:
+  - .none
+  - but
+  - the
+  - file
+  - is
+  - commonly
+  - named
+  - '        '
+  - '"Manifest"'
+application/vnd.gentoo.pkgmetadata+xml:
+  ext:
+  - .xml
+  - (the
+  - file
+  - is
+  - always
+  - named
+  - '        '
+  - '"metadata.xml")'
+application/vnd.gentoo.xpak:
+  ext:
+  - .tbz2
+  - .xpak
+application/vnd.geo+json (OBSOLETED by [RFC7946] in favor of application/geo+json):
+  ext:
+  - .json
+  - .geojson
+application/vnd.geocube+xml (OBSOLETED by request):
+  ext:
+  - .g3
+  magic_number: NOT USED
+  magic_number_offset: 0
+application/vnd.geogebra.file:
+  ext:
+  - .ggb
+  magic_number: NOT USED
+  magic_number_offset: 0
+application/vnd.geogebra.slides:
+  ext:
+  - .ggs
+application/vnd.geogebra.tool:
+  ext:
+  - .ggt
+  magic_number: NOT USED
+  magic_number_offset: 0
+application/vnd.geometry-explorer:
+  ext:
+  - .gex
+  - .gre
+application/vnd.geonext:
+  ext:
+  - .gxt
+  magic_number: NOT USED
+  magic_number_offset: 0
+application/vnd.geoplan:
+  ext:
+  - .g2w
+  magic_number: NOT USED
+  magic_number_offset: 0
+application/vnd.geospace:
+  ext:
+  - .g3w
+  magic_number: NOT USED
+  magic_number_offset: 0
+application/vnd.gerber:
+  ext:
+  - .gbr
+application/vnd.gmx - DEPRECATED:
+  ext:
+  - .gmx
+  magic_number: '0x476d58'
+  magic_number_offset: 0
+application/vnd.google-earth.kml+xml:
+  ext:
+  - .kml
+application/vnd.google-earth.kmz:
+  ext:
+  - .kmz
+  magic_number: 50 4b 03 04
+  magic_number_offset: 0
+application/vnd.gov.sk.e-form+xml:
+  ext:
+  - .xml
+  magic_number: As specified for "application/xml" in RFC7303.
+  magic_number_offset: 0
+application/vnd.gov.sk.e-form+zip:
+  ext:
+  - .zip
+application/vnd.gov.sk.xmldatacontainer+xml:
+  ext:
+  - .xml
+  magic_number: As specified for "application/xml" in RFC 7303.
+  magic_number_offset: 0
+application/vnd.gpxsee.map+xml:
+  ext:
+  - .xml
+  magic_number: '-'
+  magic_number_offset: 0
+application/vnd.grafeq:
+  ext:
+  - .gqf
+  - gqs
+application/vnd.groove-account:
+  ext:
+  - .gac
+application/vnd.groove-help:
+  ext:
+  - .ghf
+application/vnd.groove-identity-message:
+  ext:
+  - .gim
+application/vnd.groove-injector:
+  ext:
+  - .grv
+application/vnd.groove-tool-message:
+  ext:
+  - .gtm
+application/vnd.groove-tool-template:
+  ext:
+  - .tpl
+application/vnd.groove-vcard:
+  ext:
+  - .vcg
+application/vnd.hal+json:
+  ext:
+  - .json
+application/vnd.hal+xml:
+  ext:
+  - .hal
+application/vnd.hbci:
+  ext:
+  - .hbci
+  - and
+  - .hbc;
+  - .kom
+  - .upa
+  - .pkd
+  - an
+  - .bpd
+  - for
+  - special
+  - purpose
+application/vnd.hc+json:
+  ext:
+  - .json
+application/vnd.hcl-bireports:
+  ext:
+  - .rep
+application/vnd.hdt:
+  ext:
+  - .hdt
+  magic_number: "The magic keyword \u2018$HDT\u2019, as four ASCII characters"
+  magic_number_offset: 0
+application/vnd.heroku+json:
+  ext:
+  - .json
+application/vnd.hhe.lesson-player:
+  ext:
+  - .les
+application/vnd.hp-hpid:
+  ext:
+  - .hpi
+  - or
+  - .hpid
+application/vnd.hp-hps:
+  ext:
+  - .hps
+application/vnd.hp-jlyt:
+  ext:
+  - .jlt
+  magic_number: '%jlyt'
+  magic_number_offset: 0
+application/vnd.hsl:
+  ext:
+  - .hsl
+application/vnd.httphone:
+  ext:
+  - .do
+  - not
+  - apply
+application/vnd.hydrostatix.sof-data:
+  ext:
+  - .sfd-hdstx
+application/vnd.hyper+json:
+  ext:
+  - .json
+application/vnd.hyper-item+json:
+  ext:
+  - .json
+application/vnd.hyperdrive+json:
+  ext:
+  - .json
+application/vnd.hzn-3d-crossword:
+  ext:
+  - .x3d
+application/vnd.ibm.electronic-media:
+  ext:
+  - .emm
+  - (Electronic
+  - Media
+  - Management)
+application/vnd.ibm.modcap (OBSOLETED in favor of application/vnd.afpc.modca):
+  ext:
+  - .list3820
+  - listafp
+  - afp
+  - pseg3820
+  magic_number: X'D3', X'D3A8', X'D3A9'
+  magic_number_offset: 0
+application/vnd.ibm.rights-management:
+  ext:
+  - .irm
+  - (IBM
+  - Rights
+  - Management)
+application/vnd.ibm.secure-container:
+  ext:
+  - .sc
+  - (Secure
+  - Container)
+application/vnd.iccprofile:
+  ext:
+  - .icc
+  - .icm
+  magic_number: acsp
+  magic_number_offset: 0
+application/vnd.ieee.1905:
+  ext:
+  - .1905.1
+application/vnd.igloader:
+  ext:
+  - .igl
+application/vnd.imagemeter.folder+zip:
+  ext:
+  - .imf
+application/vnd.imagemeter.image+zip:
+  ext:
+  - .imi
+application/vnd.immervision-ivp:
+  ext:
+  - .ivp
+application/vnd.immervision-ivu:
+  ext:
+  - .ivu
+application/vnd.ims.imsccv1p2:
+  ext:
+  - .imscc
+  magic_number: same as application .zip
+  magic_number_offset: 0
+application/vnd.ims.imsccv1p3:
+  ext:
+  - .imscc
+  magic_number: same as application .zip
+  magic_number_offset: 0
+application/vnd.ims.lis.v2.result+json:
+  ext:
+  - .jsonld
+  - or
+  - .json
+application/vnd.ims.lti.v2.toolconsumerprofile+json:
+  ext:
+  - .jsonld
+  - or
+  - .json
+application/vnd.ims.lti.v2.toolproxy+json:
+  ext:
+  - .jsonld
+  - or
+  - .json
+application/vnd.ims.lti.v2.toolproxy.id+json:
+  ext:
+  - .jsonld
+  - or
+  - .json
+application/vnd.ims.lti.v2.toolsettings+json:
+  ext:
+  - .jsonld
+  - or
+  - .json
+application/vnd.ims.lti.v2.toolsettings.simple+json:
+  ext:
+  - .jsonld
+  - or
+  - .json
+application/vnd.informedcontrol.rms+xml:
+  ext:
+  - .xml
+application/vnd.informix-visionary (OBSOLETED in favor of application/vnd.visionary):
+  ext:
+  - .vis
+  magic_number: VISCMP
+  magic_number_offset: 0
+application/vnd.infotech.project:
+  ext:
+  - .json
+application/vnd.infotech.project+xml:
+  ext:
+  - .XML
+application/vnd.insors.igm:
+  ext:
+  - .igm
+application/vnd.intercon.formnet:
+  ext:
+  - .XPW
+  - XPX
+application/vnd.intergeo:
+  ext:
+  - .i2g
+  magic_number: NOT USED
+  magic_number_offset: 0
+application/vnd.intu.qbo:
+  ext:
+  - .QBO
+application/vnd.intu.qfx:
+  ext:
+  - .QFX
+application/vnd.ipfs.ipns-record:
+  ext:
+  - .ipns-record
+application/vnd.ipld.car:
+  ext:
+  - .car
+application/vnd.ipld.dag-cbor:
+  ext:
+  - .cbor
+application/vnd.ipld.dag-json:
+  ext:
+  - .json
+application/vnd.iptc.g2.catalogitem+xml:
+  ext:
+  - .xml
+application/vnd.iptc.g2.conceptitem+xml:
+  ext:
+  - .xml
+application/vnd.iptc.g2.knowledgeitem+xml:
+  ext:
+  - .xml
+application/vnd.iptc.g2.newsitem+xml:
+  ext:
+  - .xml
+application/vnd.iptc.g2.newsmessage+xml:
+  ext:
+  - .xml
+application/vnd.iptc.g2.packageitem+xml:
+  ext:
+  - .xml
+application/vnd.iptc.g2.planningitem+xml:
+  ext:
+  - .xml
+application/vnd.ipunplugged.rcprofile:
+  ext:
+  - .rcprofile
+application/vnd.irepository.package+xml:
+  ext:
+  - .irp
+application/vnd.is-xpr:
+  ext:
+  - .XPR
+application/vnd.isac.fcs:
+  ext:
+  - .fcs
+  magic_number: Bytes 00 to 02 contain string "FCS"
+  magic_number_offset: 0
+application/vnd.iso11783-10+zip:
+  ext:
+  - .zip
+  magic_number: 50 4B 03 04
+  magic_number_offset: 0
+application/vnd.jam:
+  ext:
+  - .jam
+application/vnd.jcp.javame.midlet-rms:
+  ext:
+  - .rms
+  magic_number: 'First six bytes: 0x4d 0x49 0x44 0x52 0x4d 0x53 (&#8220;MIDRMS&#8221;)'
+  magic_number_offset: 0
+application/vnd.jisp:
+  ext:
+  - .jisp
+application/vnd.joost.joda-archive:
+  ext:
+  - .joda
+  magic_number: PK\003\004
+  magic_number_offset: 0
+application/vnd.kahootz:
+  ext:
+  - .ktz
+  - .ktr
+application/vnd.kde.karbon:
+  ext:
+  - .KARBON
+  magic_number: This is an entry that can be used with the
+  magic_number_offset: 0
+application/vnd.kde.kchart:
+  ext:
+  - .CHRT
+  magic_number: This is an entry that can be used with the
+  magic_number_offset: 0
+application/vnd.kde.kformula:
+  ext:
+  - .KFO
+  magic_number: This is an entry that can be used with the
+  magic_number_offset: 0
+application/vnd.kde.kivio:
+  ext:
+  - .FLW
+  magic_number: This is an entry that can be used with the
+  magic_number_offset: 0
+application/vnd.kde.kontour:
+  ext:
+  - .KON
+  magic_number: This is an entry that can be used with the
+  magic_number_offset: 0
+application/vnd.kde.kpresenter:
+  ext:
+  - .KWT
+  - KWD
+  magic_number: This is an entry that can be used with the
+  magic_number_offset: 0
+application/vnd.kde.kspread:
+  ext:
+  - .KWT
+  - KWD
+  magic_number: This is an entry that can be used with the
+  magic_number_offset: 0
+application/vnd.kde.kword:
+  ext:
+  - .KWT
+  - KWD
+  magic_number: This is an entry that can be used with the
+  magic_number_offset: 0
+application/vnd.kenameaapp:
+  ext:
+  - .htke
+application/vnd.kidspiration:
+  ext:
+  - .kia
+  magic_number: FEEDFACEBEEFCAFE
+  magic_number_offset: 0
+application/vnd.koan:
+  ext:
+  - .skd
+  - '-'
+  - SSEYO
+  - Koan
+  - Design
+  - file
+  - authored
+  - using
+  - SSEYO
+  - Koan
+  - Pro.
+  - '    '
+  - .skp
+  - '-'
+  - SSEYO
+  - Koan
+  - Play
+  - file
+  - '-'
+  - an
+  - encrypted
+  - version
+  - of
+  - an
+  - .skd
+  - file
+  - ',           '
+  - created
+  - from
+  - SSEYO
+  - Koan
+  - Pro
+  - which
+  - can
+  - be
+  - played
+  - through
+  - the
+  - '           '
+  - Koan
+  - Web
+  - and
+  - Koan
+  - Plugins.
+  - SKP
+  - files
+  - cannot
+  - be
+  - loaded
+  - by
+  - Koan
+  - '           '
+  - Pro
+  - making
+  - it
+  - a
+  - useful
+  - format
+  - for
+  - distributing
+  - Koan
+  - pieces
+  - '           '
+  - where
+  - you
+  - do
+  - not
+  - want
+  - the
+  - techniques
+  - you
+  - have
+  - used
+  - to
+  - be
+  - '           '
+  - seen
+  - by
+  - others.
+  - '    '
+  - .skm
+  - '-'
+  - SSEYO
+  - Koan
+  - Mix
+  - file
+  - '-'
+  - a
+  - user-remix
+  - of
+  - an
+  - .skp
+  - file.
+  - '    '
+  - .skt
+  - '-'
+  - SSEYO
+  - Koan
+  - Tempate
+  - file
+  - '-'
+  - used
+  - as
+  - the
+  - template
+  - of
+  - ideas
+  - for
+  - Koan
+  - '           '
+  - Pro.
+  - '  '
+  - '3.'
+  - '  '
+  - Background
+  - Information
+  - '-'
+  - Koan
+  - Music
+  - '     '
+  - The
+  - SKME
+  - can
+  - use
+  - more
+  - than
+  - '150'
+  - specially
+  - designed
+  - variable
+  - controls
+  - '    '
+  - to
+  - influence
+  - and
+  - produce
+  - its
+  - music
+  - as
+  - it
+  - composes.
+  - '  '
+  - These
+  - values
+  - ',    '
+  - many
+  - of
+  - which
+  - are
+  - time
+  - dependent
+  - are
+  - written
+  - into
+  - a
+  - SSEYO
+  - Koan
+  - file.
+  - '    '
+  - They
+  - determine
+  - the
+  - notes
+  - and
+  - melodies
+  - generated
+  - when
+  - the
+  - file
+  - is
+  - '    '
+  - played
+  - through
+  - the
+  - SKME.
+  - '  '
+  - It
+  - is
+  - these
+  - very
+  - controls
+  - that
+  - influence
+  - '    '
+  - the
+  - creation
+  - of
+  - music
+  - that
+  - it
+  - smooth
+  - non-intrusive
+  - and
+  - '    '
+  - natural-sounding.
+  - '     '
+  - Whenever
+  - a
+  - Koan
+  - piece
+  - is
+  - played
+  - it
+  - can
+  - be
+  - slightly
+  - different
+  - '-'
+  - like
+  - '    '
+  - a
+  - musical
+  - kaleidoscope.
+  - '  '
+  - SSEYO
+  - Koan
+  - music
+  - can
+  - sound
+  - very
+  - natural
+  - and
+  - '    '
+  - expressive
+  - and
+  - each
+  - piece
+  - tends
+  - to
+  - have
+  - its
+  - own
+  - character.
+  - '  '
+  - The
+  - SKME
+  - '    '
+  - has
+  - been
+  - designed
+  - to
+  - be
+  - flexible
+  - and
+  - so
+  - does
+  - not
+  - limit
+  - itself
+  - to
+  - '    '
+  - pre-defined
+  - style-based
+  - music
+  - making
+  - it
+  - particularly
+  - ideal
+  - for
+  - '    '
+  - ambient
+  - music
+  - of
+  - all
+  - genres.
+  - '  '
+  - Also
+  - because
+  - a
+  - piece's
+  - musical
+  - output
+  - can
+  - '    '
+  - be
+  - different
+  - every
+  - time
+  - it
+  - provides
+  - a
+  - higher
+  - level
+  - of
+  - originality
+  - and
+  - '    '
+  - interest
+  - than
+  - do
+  - MIDI
+  - files
+  - whose
+  - output
+  - is
+  - always
+  - the
+  - same.
+  - '     '
+  - All
+  - these
+  - factors
+  - combine
+  - to
+  - make
+  - SSEYO
+  - Koan
+  - music
+  - particularly
+  - suited
+  - '    '
+  - to
+  - being
+  - embedded
+  - within
+  - World-Wide
+  - Web
+  - pages.
+  - '  '
+  - Author's
+  - Address
+  - '     '
+  - Pete
+  - Cole
+  - '    '
+  - SSEYO
+  - Limited
+  - '    '
+  - Pyramid
+  - House
+  - '    '
+  - Easthampstead
+  - Road
+  - '    '
+  - Bracknell
+  - '    '
+  - Berkshire
+  - RG12
+  - 1YW
+  - '    '
+  - United
+  - Kingdom.
+application/vnd.kodak-descriptor:
+  ext:
+  - .SSE
+application/vnd.las:
+  ext:
+  - .las
+  magic_number: "\u201CLASF\u201D in first four bytes of the file (0x4c, 0x41, 0x53,\
+    \ 0x46)"
+  magic_number_offset: 0
+application/vnd.las.las+json:
+  ext:
+  - .lasjson
+application/vnd.las.las+xml:
+  ext:
+  - .lasxml
+application/vnd.laszip:
+  ext:
+  - .laz
+  magic_number: "\u201CLASF\u201D in first four bytes of the file (0x4c, 0x41, 0x53,\
+    \ 0x46).     In addition, a LASzip file will also include a variable length  \
+    \   record with the 16-byte User ID set to \"laszip encoded\\0\" and the     Record\
+    \ ID set to 22204."
+  magic_number_offset: 0
+application/vnd.leap+json:
+  ext:
+  - .json
+application/vnd.llamagraphics.life-balance.desktop:
+  ext:
+  - .lbd
+application/vnd.llamagraphics.life-balance.exchange+xml:
+  ext:
+  - .lbe
+application/vnd.logipipe.circuit+zip:
+  ext:
+  - .lcs
+  - lca
+  magic_number: 50 4B 03 04, 50 4B 05 06, 50 4B 07 08 (hex)
+  magic_number_offset: 0
+application/vnd.loom:
+  ext:
+  - .loom
+  magic_number: \211HDF\r\n\032\n
+  magic_number_offset: 0
+application/vnd.lotus-1-2-3:
+  ext:
+  - '.123'
+  - '                         '
+  - wk4
+  - (older
+  - form)
+  - '                         '
+  - wk3
+  - (older
+  - form)
+  - '                         '
+  - wk1
+  - (older
+  - form)
+application/vnd.lotus-approach:
+  ext:
+  - .apr
+  - '                     '
+  - vew
+application/vnd.lotus-freelance:
+  ext:
+  - .prz
+  - '                         '
+  - pre
+  - (older
+  - form)
+application/vnd.lotus-notes:
+  ext:
+  - .nsf
+  - (database)
+  - '                       '
+  - ntf
+  - (template)
+  - '                       '
+  - ndl
+  - (link)
+  - '                       '
+  - ns4
+  - (database
+  - older
+  - form)
+  - '                       '
+  - ns3
+  - (database
+  - older
+  - form)
+  - '                       '
+  - ns2
+  - (database
+  - older
+  - form)
+  - '                       '
+  - nsh
+  - (database
+  - older
+  - form)
+  - '                       '
+  - nsg
+  - (database
+  - older
+  - form)
+application/vnd.lotus-organizer:
+  ext:
+  - .or3
+  - '                         '
+  - or2
+  - (older
+  - form)
+  - '                         '
+  - org
+  - (older
+  - form)
+application/vnd.lotus-screencam:
+  ext:
+  - .scm
+application/vnd.lotus-wordpro:
+  ext:
+  - .lwp
+  - (Word
+  - Pro)
+  - '                     '
+  - sam
+  - (older
+  - form
+  - for
+  - Ami
+  - Pro)
+application/vnd.macports.portpkg:
+  ext:
+  - .portpkg
+  magic_number: (none)
+  magic_number_offset: 0
+application/vnd.mapbox-vector-tile:
+  ext:
+  - .mvt
+application/vnd.marlin.drm.actiontoken+xml:
+  ext:
+  - .None.
+  magic_number: None.
+  magic_number_offset: 0
+application/vnd.marlin.drm.conftoken+xml:
+  ext:
+  - .None.
+  magic_number: None.
+  magic_number_offset: 0
+application/vnd.marlin.drm.mdcf:
+  ext:
+  - .mdc
+application/vnd.mason+json:
+  ext:
+  - .json
+application/vnd.maxar.archive.3tz+zip:
+  ext:
+  - .3tz
+  magic_number: PK 0x03 0x04
+  magic_number_offset: 0
+application/vnd.maxmind.maxmind-db:
+  ext:
+  - .mmdb
+application/vnd.mcd:
+  ext:
+  - .MCD
+application/vnd.mdl:
+  ext:
+  - .mdl
+application/vnd.mdl-mbsdf:
+  ext:
+  - .mbsdf
+application/vnd.medcalcdata:
+  ext:
+  - .MC1
+application/vnd.mediastation.cdkey:
+  ext:
+  - .cdkey
+application/vnd.medicalholodeck.recordxr:
+  ext:
+  - .rxr
+  magic_number: 52 45 43 4f 52 44 58 52 2d 31 ("RECORDXR-1")
+  magic_number_offset: 0
+application/vnd.mfmp:
+  ext:
+  - .mfm
+application/vnd.micro+json:
+  ext:
+  - .json
+application/vnd.micrografx.flo:
+  ext:
+  - .flo
+application/vnd.micrografx.igx:
+  ext:
+  - .igx
+application/vnd.microsoft.portable-executable:
+  ext:
+  - .*.exe
+  - '*.dll'
+  magic_number: MZ
+  magic_number_offset: 0
+application/vnd.microsoft.windows.thumbnail-cache:
+  ext:
+  - .
+  magic_number: .
+  magic_number_offset: 0
+application/vnd.miele+json:
+  ext:
+  - .json
+  magic_number: None.
+  magic_number_offset: 0
+application/vnd.mitsubishi.misty-guard.trustweb:
+  ext:
+  - .any
+application/vnd.modl:
+  ext:
+  - .modl
+application/vnd.mophun.application:
+  ext:
+  - .mpn
+  magic_number: the first 4 bytes are always "VMGP" (hex 564D4750)
+  magic_number_offset: 0
+application/vnd.mophun.certificate:
+  ext:
+  - .mpc
+application/vnd.mozilla.xul+xml:
+  ext:
+  - .xul
+  magic_number: None.
+  magic_number_offset: 0
+application/vnd.ms-3mfdocument:
+  ext:
+  - .3MF
+application/vnd.ms-asf:
+  ext:
+  - .asf
+application/vnd.ms-cab-compressed:
+  ext:
+  - .cab
+application/vnd.ms-excel.addin.macroEnabled.12:
+  ext:
+  - .xlam
+application/vnd.ms-excel.sheet.binary.macroEnabled.12:
+  ext:
+  - .xlsb
+application/vnd.ms-excel.sheet.macroEnabled.12:
+  ext:
+  - .xlsm
+application/vnd.ms-excel.template.macroEnabled.12:
+  ext:
+  - .xltm
+application/vnd.ms-fontobject:
+  ext:
+  - ".eot\r"
+  - '>'
+  magic_number: "none\r >"
+  magic_number_offset: 0
+application/vnd.ms-htmlhelp:
+  ext:
+  - .chm
+  magic_number: (4, 'ITSF')
+  magic_number_offset: 0
+application/vnd.ms-ims:
+  ext:
+  - .ims
+application/vnd.ms-officetheme:
+  ext:
+  - .thmx
+application/vnd.ms-powerpoint.addin.macroEnabled.12:
+  ext:
+  - .ppam
+application/vnd.ms-powerpoint.presentation.macroEnabled.12:
+  ext:
+  - .pptm
+application/vnd.ms-powerpoint.slide.macroEnabled.12:
+  ext:
+  - .sldm
+application/vnd.ms-powerpoint.slideshow.macroEnabled.12:
+  ext:
+  - .ppsm
+application/vnd.ms-powerpoint.template.macroEnabled.12:
+  ext:
+  - .potm
+application/vnd.ms-word.document.macroEnabled.12:
+  ext:
+  - .docm
+application/vnd.ms-word.template.macroEnabled.12:
+  ext:
+  - .dotm
+application/vnd.ms-wpl:
+  ext:
+  - .".wpl"
+application/vnd.ms-xpsdocument:
+  ext:
+  - .xps
+application/vnd.msa-disk-image:
+  ext:
+  - .msa
+  magic_number: Big endian 0x0E0F at byte position 0
+  magic_number_offset: 0
+application/vnd.mseq:
+  ext:
+  - .mseq
+application/vnd.multiad.creator:
+  ext:
+  - .crtr
+  magic_number: First four bytes of Creator document are "Ctr6".
+  magic_number_offset: 0
+application/vnd.multiad.creator.cif:
+  ext:
+  - .cif
+  magic_number: First four bytes of CIF document are 0x00640004.
+  magic_number_offset: 0
+application/vnd.muvee.style:
+  ext:
+  - .msty
+application/vnd.mynfc:
+  ext:
+  - .taglet
+  magic_number: 'Two first bytes of these files are: 0x32 and 0x20'
+  magic_number_offset: 0
+application/vnd.nacamar.ybrid+json:
+  ext:
+  - .json
+application/vnd.ncd.control:
+  ext:
+  - .None.
+  - This
+  - MIME-type
+  - primary
+  - purpoes
+  - is
+  - to
+  - identify
+  - "\r"
+  - PDUs
+  - that
+  - are
+  - in
+  - transport.
+  magic_number: "None. This MIME-type identifier is intended to be the \r single purpose\
+    \ identifier for the MIME type."
+  magic_number_offset: 0
+application/vnd.ncd.reference:
+  ext:
+  - .None.
+  magic_number: None.
+  magic_number_offset: 0
+application/vnd.nearst.inv+json:
+  ext:
+  - .json
+application/vnd.nebumind.line:
+  ext:
+  - .nebul
+  - ','
+  - .line
+application/vnd.nervana:
+  ext:
+  - .ent
+  - entity
+  - req
+  - request
+  - bkm
+  - kcm
+application/vnd.netfpx:
+  ext:
+  - .often
+  - used
+  - with
+  - .fpx
+  - files.
+application/vnd.neurolanguage.nlu:
+  ext:
+  - .nlu
+application/vnd.nimn:
+  ext:
+  - .nimn
+application/vnd.nintendo.nitro.rom:
+  ext:
+  - .*.nds
+application/vnd.nintendo.snes.rom:
+  ext:
+  - .*.sfc
+  - '*.smc'
+  magic_number: .
+  magic_number_offset: 0
+application/vnd.nitf:
+  ext:
+  - .ntf
+  - nitf
+  magic_number: 4E:49:54:46
+  magic_number_offset: 0
+application/vnd.noblenet-directory:
+  ext:
+  - .NND
+application/vnd.noblenet-sealer:
+  ext:
+  - .NNS
+application/vnd.noblenet-web:
+  ext:
+  - .NNW
+application/vnd.nokia.n-gage.ac+xml:
+  ext:
+  - .ac
+application/vnd.nokia.n-gage.data:
+  ext:
+  - .ngdat
+application/vnd.nokia.n-gage.symbian.install (OBSOLETE; no replacement given):
+  ext:
+  - .n-gage
+application/vnd.nokia.radio-preset:
+  ext:
+  - .rpst
+application/vnd.nokia.radio-presets:
+  ext:
+  - .rpss
+application/vnd.novadigm.EDM:
+  ext:
+  - .EDM
+application/vnd.novadigm.EDX:
+  ext:
+  - .EDX
+application/vnd.novadigm.EXT:
+  ext:
+  - .EXT
+application/vnd.oasis.opendocument.base:
+  ext:
+  - .odb
+application/vnd.oasis.opendocument.chart:
+  ext:
+  - .odc
+  magic_number: 0:PK,30:mimetype,38:vnd.oasis.opendocument.chart
+  magic_number_offset: 0
+application/vnd.oasis.opendocument.chart-template:
+  ext:
+  - .otc
+  magic_number: 0:PK,30:mimetype,38:vnd.oasis.opendocument.chart-template
+  magic_number_offset: 0
+application/vnd.oasis.opendocument.database (OBSOLETED in favor of application/vnd.oasis.opendocument.base):
+  ext:
+  - .odb
+application/vnd.oasis.opendocument.formula:
+  ext:
+  - .odf
+  magic_number: 0:PK,30:mimetype,38:vnd.oasis.opendocument.formula
+  magic_number_offset: 0
+application/vnd.oasis.opendocument.formula-template:
+  ext:
+  - .otf
+  magic_number: 0:PK,30:mimetype,38:vnd.oasis.opendocument.formula-template
+  magic_number_offset: 0
+application/vnd.oasis.opendocument.graphics:
+  ext:
+  - .odg
+  magic_number: 0:PK,30:mimetype,38:vnd.oasis.opendocument.graphics
+  magic_number_offset: 0
+application/vnd.oasis.opendocument.graphics-template:
+  ext:
+  - .otg
+  magic_number: 0:PK,30:mimetype,38:vnd.oasis.opendocument.graphics-template
+  magic_number_offset: 0
+application/vnd.oasis.opendocument.image:
+  ext:
+  - .odi
+  magic_number: 0:PK,30:mimetype,38:vnd.oasis.opendocument.image
+  magic_number_offset: 0
+application/vnd.oasis.opendocument.image-template:
+  ext:
+  - .oti
+  magic_number: 0:PK,30:mimetype,38:vnd.oasis.opendocument.image-template
+  magic_number_offset: 0
+application/vnd.oasis.opendocument.presentation:
+  ext:
+  - .odp
+  magic_number: 0:PK,30:mimetype,38:vnd.oasis.opendocument.presentation
+  magic_number_offset: 0
+application/vnd.oasis.opendocument.presentation-template:
+  ext:
+  - .otp
+  magic_number: 0:PK,30:mimetype,38:vnd.oasis.opendocument.presentation-temp
+  magic_number_offset: 0
+application/vnd.oasis.opendocument.spreadsheet:
+  ext:
+  - .ods
+  magic_number: 0:PK,30:mimetype,38:vnd.oasis.opendocument.spreadsheet
+  magic_number_offset: 0
+application/vnd.oasis.opendocument.spreadsheet-template:
+  ext:
+  - .ots
+  magic_number: 0:PK,30:mimetype,38:vnd.oasis.opendocument.spreadsheet-templ
+  magic_number_offset: 0
+application/vnd.oasis.opendocument.text:
+  ext:
+  - .odt
+  magic_number: 0:PK,30:mimetype,38:vnd.oasis.opendocument.text
+  magic_number_offset: 0
+application/vnd.oasis.opendocument.text-master:
+  ext:
+  - .odm
+  magic_number: 0:PK,30:mimetype,38:vnd.oasis.opendocument.text-master
+  magic_number_offset: 0
+application/vnd.oasis.opendocument.text-master-template:
+  ext:
+  - .otm
+  magic_number: 0:PK,30:mimetype,38:vnd.oasis.opendocument.text-master-template
+  magic_number_offset: 0
+application/vnd.oasis.opendocument.text-template:
+  ext:
+  - .ott
+  magic_number: 0:PK,30:mimetype,38:vnd.oasis.opendocument.text-template
+  magic_number_offset: 0
+application/vnd.oasis.opendocument.text-web:
+  ext:
+  - .oth
+  magic_number: 0:PK,30:mimetype,38:vnd.oasis.opendocument.text-web
+  magic_number_offset: 0
+application/vnd.obn:
+  magic_number: OBN
+  magic_number_offset: 0
+application/vnd.oftn.l10n+json:
+  ext:
+  - .json
+application/vnd.olpc-sugar:
+  ext:
+  - .xo
+  magic_number: '0x584F'
+  magic_number_offset: 0
+application/vnd.oma.dd2+xml:
+  ext:
+  - .xml
+  - .dd2
+  magic_number: There is no single initial byte sequence.
+  magic_number_offset: 0
+application/vnd.onepager:
+  ext:
+  - .tam
+application/vnd.onepagertamp:
+  ext:
+  - .tamp
+application/vnd.onepagertamx:
+  ext:
+  - .tamx
+application/vnd.onepagertat:
+  ext:
+  - .tat
+application/vnd.onepagertatp:
+  ext:
+  - .tatp
+application/vnd.onepagertatx:
+  ext:
+  - .tatx
+application/vnd.openblox.game+xml:
+  ext:
+  - .obgx
+application/vnd.openblox.game-binary:
+  ext:
+  - .obg
+application/vnd.openeye.oeb:
+  ext:
+  - .oeb
+application/vnd.openstreetmap.data+xml:
+  ext:
+  - .osm
+application/vnd.opentimestamps.ots:
+  ext:
+  - .ots
+  magic_number: 00 4f 70 65 6e 54 69 6d 65 73 74 61 6d 70 73 00    00 50 72 6f 6f
+    66 00 bf 89 e2 e8 84 e8 92 94 01     where the last byte of that header is the
+    major version number, 1     in this case
+  magic_number_offset: 0
+application/vnd.openxmlformats-officedocument.custom-properties+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.customXmlProperties+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.drawing+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.drawingml.chart+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.drawingml.chartshapes+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.drawingml.diagramColors+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.drawingml.diagramData+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.drawingml.diagramLayout+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.drawingml.diagramStyle+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.extended-properties+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.presentationml.commentAuthors+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.presentationml.comments+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.presentationml.handoutMaster+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.presentationml.notesMaster+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.presentationml.notesSlide+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.presentationml.presProps+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.presentationml.presentation:
+  ext:
+  - .pptx
+  magic_number: 50 4b 03 04 as in ZIP
+  magic_number_offset: 0
+application/vnd.openxmlformats-officedocument.presentationml.presentation.main+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.presentationml.slide:
+  ext:
+  - .sldx
+  magic_number: 50 4b 03 04 as in ZIP
+  magic_number_offset: 0
+application/vnd.openxmlformats-officedocument.presentationml.slide+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.presentationml.slideMaster+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.presentationml.slideUpdateInfo+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.presentationml.slideshow:
+  ext:
+  - .ppsx
+  magic_number: 50 4b 03 04 as in ZIP
+  magic_number_offset: 0
+application/vnd.openxmlformats-officedocument.presentationml.slideshow.main+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.presentationml.tableStyles+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.presentationml.tags+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.presentationml.template:
+  ext:
+  - .potx
+  magic_number: 50 4b 03 04 as in ZIP
+  magic_number_offset: 0
+application/vnd.openxmlformats-officedocument.presentationml.template.main+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.presentationml.viewProps+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.spreadsheetml.calcChain+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.spreadsheetml.chartsheet+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.spreadsheetml.comments+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.spreadsheetml.connections+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.spreadsheetml.dialogsheet+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.spreadsheetml.externalLink+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.spreadsheetml.pivotCacheDefinition+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.spreadsheetml.pivotCacheRecords+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.spreadsheetml.pivotTable+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.spreadsheetml.queryTable+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.spreadsheetml.revisionHeaders+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.spreadsheetml.revisionLog+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+  ext:
+  - .xltx
+  magic_number: 50 4b 03 04 as in ZIP
+  magic_number_offset: 0
+application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.spreadsheetml.sheetMetadata+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.spreadsheetml.tableSingleCells+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.spreadsheetml.template:
+  ext:
+  - .xltx
+  magic_number: 50 4b 03 04 as in ZIP
+  magic_number_offset: 0
+application/vnd.openxmlformats-officedocument.spreadsheetml.template.main+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.spreadsheetml.userNames+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.spreadsheetml.volatileDependencies+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.theme+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.themeOverride+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.wordprocessingml.comments+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.wordprocessingml.document:
+  ext:
+  - .docx
+  magic_number: 50 4b 03 04 as in ZIP
+  magic_number_offset: 0
+application/vnd.openxmlformats-officedocument.wordprocessingml.document.glossary+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.wordprocessingml.endnotes+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.wordprocessingml.fontTable+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.wordprocessingml.footnotes+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.wordprocessingml.template:
+  ext:
+  - .dotx
+  magic_number: 50 4b 03 04 as in ZIP
+  magic_number_offset: 0
+application/vnd.openxmlformats-officedocument.wordprocessingml.template.main+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-officedocument.wordprocessingml.webSettings+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-package.core-properties+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-package.digital-signature-xmlsignature+xml:
+  ext:
+  - .xml
+application/vnd.openxmlformats-package.relationships+xml:
+  ext:
+  - .xml
+application/vnd.oracle.resource+json:
+  ext:
+  - .json
+application/vnd.osa.netdeploy:
+  ext:
+  - .ndc
+application/vnd.osgeo.mapguide.package:
+  ext:
+  - .mgp
+application/vnd.osgi.bundle:
+  ext:
+  - .jar
+  magic_number: 'Magic number(s) : 0x04034b50 (from a ZIP file'
+  magic_number_offset: 0
+application/vnd.osgi.dp:
+  magic_number: '0x04034b50 (from a ZIP file 2. File extension(s) : .dp'
+  magic_number_offset: 0
+application/vnd.osgi.subsystem:
+  ext:
+  - .esa
+  magic_number: 0x04034b50 (from ZIP)
+  magic_number_offset: 0
+application/vnd.oxli.countgraph:
+  ext:
+  - .oxlicg
+  magic_number: 0, 'OXLI'; 5, 0x01
+  magic_number_offset: 0
+application/vnd.palm:
+  ext:
+  - .prc
+  - .pdb
+  - .pqa
+  - .oprc
+application/vnd.panoply:
+  ext:
+  - .plp
+  magic_number: '0xACEADDED'
+  magic_number_offset: 0
+application/vnd.patentdive:
+  ext:
+  - .dive
+application/vnd.pawaafile:
+  ext:
+  - .paw
+application/vnd.pcos:
+  ext:
+  - .-
+  magic_number: PCOS
+  magic_number_offset: 0
+application/vnd.pg.format:
+  ext:
+  - .str
+application/vnd.pg.osasli:
+  ext:
+  - .ei6
+application/vnd.piaccess.application-licence:
+  ext:
+  - .pil
+  magic_number: "String \"-----BEGIN PIACCESS LICENCE-----\\r\\n\" at\r > offset 0"
+  magic_number_offset: 0
+application/vnd.picsel:
+  ext:
+  - .eFIF
+  magic_number: '"%eFIF'
+  magic_number_offset: 0
+application/vnd.pmi.widget:
+  ext:
+  - .wg
+application/vnd.pocketlearn:
+  ext:
+  - .plf
+application/vnd.powerbuilder6:
+  ext:
+  - .pbd
+application/vnd.powerbuilder6-s:
+  ext:
+  - .pbd
+application/vnd.powerbuilder7:
+  ext:
+  - .pbd
+application/vnd.powerbuilder7-s:
+  ext:
+  - .pbd
+application/vnd.powerbuilder75:
+  ext:
+  - .pbd
+application/vnd.powerbuilder75-s:
+  ext:
+  - .pbd
+application/vnd.preminet:
+  ext:
+  - .preminet
+  magic_number: 'Preminet file always starts with text: !PreminetFile!'
+  magic_number_offset: 0
+application/vnd.previewsystems.box:
+  ext:
+  - .BOX
+  - VBOX
+application/vnd.proteus.magazine:
+  ext:
+  - .mgz
+application/vnd.psfs:
+  ext:
+  - .psfs
+application/vnd.publishare-delta-tree:
+  ext:
+  - .qps
+application/vnd.pvi.ptid1:
+  ext:
+  - .pti
+  - .ptid
+application/vnd.pwg-xhtml-print+xml:
+  ext:
+  - .xhtml
+  - .xhtm
+application/vnd.qualcomm.brew-app-res:
+  ext:
+  - .bar
+  magic_number: NOT USED
+  magic_number_offset: 0
+application/vnd.quobject-quoxdocument:
+  ext:
+  - .quox
+  - and
+  - .quiz
+  - (.quiz=compressed
+  - collection
+  - of
+  - multiple
+  - .quox
+  - files
+  - +
+  - one
+  - xml
+  - information
+  - file
+  - containing
+  - the
+  - order
+  - in
+  - which
+  - questions
+  - should
+  - be
+  - displayed)
+application/vnd.rainstor.data:
+  ext:
+  - .tree
+application/vnd.rar:
+  ext:
+  - .rar
+  magic_number: 52 61 72 21 1A 07 00
+  magic_number_offset: 0
+application/vnd.realvnc.bed:
+  ext:
+  - .BED
+application/vnd.recordare.musicxml:
+  ext:
+  - .mxl
+application/vnd.recordare.musicxml+xml:
+  ext:
+  - .xml
+application/vnd.resilient.logic:
+  ext:
+  - .rlm
+  - .reload
+  magic_number: '{0x07, 0x52, 0x4c, 0x4d}'
+  magic_number_offset: 0
+application/vnd.restful+json:
+  ext:
+  - .json
+application/vnd.rig.cryptonote:
+  ext:
+  - .cryptonote
+application/vnd.route66.link66+xml:
+  ext:
+  - .link66
+application/vnd.rs-274x:
+  ext:
+  - .gbr
+application/vnd.sailingtracker.track:
+  ext:
+  - .st
+application/vnd.sar:
+  ext:
+  - .SAR
+  magic_number: CAR 2.0
+  magic_number_offset: 0
+application/vnd.scribus:
+  ext:
+  - .scd
+  - .scd.gz
+  - .sla
+  - .sla.gz
+  - .slaz
+  magic_number: SCRIBUSUTF8
+  magic_number_offset: 0
+application/vnd.sealed.3df:
+  ext:
+  - .s3df
+application/vnd.sealed.csf:
+  ext:
+  - .scsf
+application/vnd.sealed.doc:
+  ext:
+  - .sdoc
+  - .sdo
+  - .s1w
+application/vnd.sealed.eml:
+  ext:
+  - .seml
+  - .sem
+application/vnd.sealed.mht:
+  ext:
+  - .smht
+  - .smh
+application/vnd.sealed.ppt:
+  ext:
+  - .sppt
+  - .spp
+  - .s1p
+application/vnd.sealed.tiff:
+  ext:
+  - .stif
+application/vnd.sealed.xls:
+  ext:
+  - .sxls
+  - .sxl
+  - .s1e
+application/vnd.sealedmedia.softseal.html:
+  ext:
+  - .stml
+  - .stm
+  - .s1h
+application/vnd.sealedmedia.softseal.pdf:
+  ext:
+  - .spdf
+  - .spd
+  - .s1a
+application/vnd.seis+json:
+  ext:
+  - .json
+application/vnd.sema:
+  magic_number: varies depending on object type and version 2. File
+  magic_number_offset: 0
+application/vnd.semd:
+  ext:
+  - .semd
+  magic_number: See http://www.sqlite.org/ ,how to identify sqlite database
+  magic_number_offset: 0
+application/vnd.semf:
+  ext:
+  - .semf
+  magic_number: See http://www.sqlite.org/ ,how to identify sqlite database
+  magic_number_offset: 0
+application/vnd.shade-save-file:
+  ext:
+  - .ssv
+  magic_number: AD 4E 42 54
+  magic_number_offset: 0
+application/vnd.shootproof+json:
+  ext:
+  - .json
+application/vnd.shp:
+  ext:
+  - .shp
+  magic_number: '0x0000270a'
+  magic_number_offset: 0
+application/vnd.shx:
+  ext:
+  - .shx
+application/vnd.sigrok.session:
+  ext:
+  - .sr
+application/vnd.siren+json:
+  ext:
+  - .json
+application/vnd.smaf:
+  ext:
+  - .mmf
+application/vnd.smart.notebook:
+  ext:
+  - .notebook
+application/vnd.smart.teacher:
+  ext:
+  - .teacher
+  magic_number: '4 octets starting at beginning of data stream: PK\003\004'
+  magic_number_offset: 0
+application/vnd.smintio.portals.archive:
+  ext:
+  - .sipa
+application/vnd.snesdev-page-table:
+  ext:
+  - .ptrom
+  - .pt
+  magic_number: 00 70 74 FF (used by the binary form only)
+  magic_number_offset: 0
+application/vnd.software602.filler.form+xml:
+  ext:
+  - .FO
+application/vnd.software602.filler.form-xml-zip:
+  ext:
+  - .ZFO
+application/vnd.solent.sdkm+xml:
+  ext:
+  - .sdkm
+  - sdkd
+  magic_number: None.
+  magic_number_offset: 0
+application/vnd.spotfire.dxp:
+  ext:
+  - .dxp
+application/vnd.spotfire.sfs:
+  ext:
+  - .sfs
+application/vnd.sqlite3:
+  ext:
+  - .db
+  - .sqlite
+  - .sqlite3
+  - (".db"
+  - does
+  - not
+  - uniquely
+  - identify
+  - SQLite
+  - database
+  - files.
+  - Other
+  - extensions
+  - are
+  - commonly
+  - used.)
+  magic_number: 53 51 4c 69 74 65 20 66 6f 72 6d 61 74 20 33 00 (zero-terminated ASCII
+    "SQLite format 3") at offset 0
+  magic_number_offset: 0
+application/vnd.sss-dtf:
+  ext:
+  - .Not
+  - designed
+  - yet
+  magic_number: 32,38151e9002ae11d5b63b00a0cc523011
+  magic_number_offset: 0
+application/vnd.sss-ntf:
+  ext:
+  - .None
+  - disclosed.
+  magic_number: 32,38151e9002ae11d5b63b00a0cc523011
+  magic_number_offset: 0
+application/vnd.stepmania.package:
+  ext:
+  - .smzip
+  magic_number: '0x04034b50'
+  magic_number_offset: 0
+application/vnd.stepmania.stepchart:
+  ext:
+  - .sm
+application/vnd.sun.wadl+xml:
+  ext:
+  - .wadl
+application/vnd.sus-calendar:
+  ext:
+  - .sus
+  - and
+  - .susp
+application/vnd.sybyl.mol2:
+  ext:
+  - .ml2
+  - mol2
+  - sy2
+application/vnd.sycle+xml:
+  ext:
+  - .scl
+application/vnd.syft+json:
+  ext:
+  - .syft.json
+application/vnd.syncml+xml:
+  ext:
+  - .XSM
+application/vnd.syncml.dm+wbxml:
+  ext:
+  - .BDM
+application/vnd.syncml.dm+xml:
+  ext:
+  - .XDM
+application/vnd.syncml.dmddf+wbxml:
+  ext:
+  - .ddf
+application/vnd.syncml.dmddf+xml:
+  ext:
+  - .ddf
+application/vnd.tableschema+json:
+  ext:
+  - .json
+  magic_number: not applicable.
+  magic_number_offset: 0
+application/vnd.tao.intent-module-archive:
+  ext:
+  - .tao
+application/vnd.tcpdump.pcap:
+  ext:
+  - .pcap
+  - .cap
+  - .dmp
+  magic_number: 0xa1b2c3d4, 0xd4c3b2a1
+  magic_number_offset: 0
+application/vnd.think-cell.ppttc+json:
+  ext:
+  - .ppttc
+application/vnd.tmd.mediaflex.api+xml:
+  ext:
+  - .xml
+application/vnd.tml:
+  ext:
+  - .vfr
+  - viaframe
+  magic_number: 04 22 4E 23
+  magic_number_offset: 0
+application/vnd.tmobile-livetv:
+  ext:
+  - .tmo
+application/vnd.trid.tpt:
+  ext:
+  - .tpt
+application/vnd.triscape.mxs:
+  ext:
+  - .mxs
+application/vnd.trueapp:
+  ext:
+  - .tra
+application/vnd.ubisoft.webplayer:
+  ext:
+  - .CAB
+application/vnd.ufdl:
+  ext:
+  - .ufdl
+  - ufd
+  - frm
+application/vnd.uiq.theme:
+  ext:
+  - .UTZ
+application/vnd.umajin:
+  ext:
+  - .umj
+application/vnd.unity:
+  ext:
+  - .unityweb
+  magic_number: 8 byte ascii string "UnityWeb" at offset 0
+  magic_number_offset: 0
+application/vnd.uoml+xml:
+  ext:
+  - .uoml
+  - .uo
+  magic_number: None.
+  magic_number_offset: 0
+application/vnd.uri-map:
+  ext:
+  - .urim
+  - .urimap
+  - recommended
+application/vnd.valve.source.material:
+  ext:
+  - .vmt
+  magic_number: .
+  magic_number_offset: 0
+application/vnd.vcx:
+  ext:
+  - .vcx
+application/vnd.vd-study:
+  ext:
+  - .sxi
+  - .mxi
+  - .study-inter
+  - .model-inter
+application/vnd.vectorworks:
+  ext:
+  - .MCD
+  - VWX
+application/vnd.vel+json:
+  ext:
+  - .json
+application/vnd.veritone.aion+json:
+  ext:
+  - .json
+  - .aion
+  - .vtnstd
+application/vnd.veryant.thin:
+  ext:
+  - .istc
+  - 'isws:'
+  - '       '
+  - istc
+  - is
+  - the
+  - configuration
+  - file
+  - for
+  - isclient.exe
+  - and
+  - isws
+  - is
+  - the
+  - '       '
+  - configuration
+  - file
+  - for
+  - isupdater.exe.
+  - Both
+  - are
+  - ASCII
+  - files
+  - like
+  - '       '
+  - java
+  - property
+  - that
+  - contains
+  - configuration
+  - settings
+  - useful
+  - to
+  - '        '
+  - execute
+  - isclient.exe
+  - and
+  - isupdater.exe
+  - respectively.
+application/vnd.ves.encrypted:
+  ext:
+  - .VES
+application/vnd.vidsoft.vidconference:
+  ext:
+  - .vsc
+  magic_number: 56 53 hex
+  magic_number_offset: 0
+application/vnd.visio:
+  ext:
+  - .vsd
+  - vst
+  - vsw
+  - vss
+application/vnd.visionary:
+  ext:
+  - .vis
+  magic_number: None.
+  magic_number_offset: 0
+application/vnd.vividence.scriptfile:
+  ext:
+  - .vsc
+  magic_number: 56 53 hex
+  magic_number_offset: 0
+application/vnd.vsf:
+  ext:
+  - .vsf
+application/vnd.wap.sic:
+  ext:
+  - .sic
+  - .wbxml
+application/vnd.wap.slc:
+  ext:
+  - .slc
+  - .wbxml
+application/vnd.wap.wbxml:
+  ext:
+  - .wbxml
+  magic_number: none  The first byte of an WBXML entity is always the WBXML version
+    number, followed by a public Id that identifies the XML document type. For version
+    number 1.1 and WML documents, the first two bytes are 01 04.  The public Id represents
+    the XML document type identifier for the XML application; e.g. "-//WAPFORUM//DTD
+    WML 1.1//EN" (WML 1.1)) for WML 1.1 documents. Public Ids are registered by the
+    WAP Naming Authority [WAP], and published in [WBXML].
+  magic_number_offset: 0
+application/vnd.wap.wmlc:
+  ext:
+  - .wmlc
+  - .wbxml
+application/vnd.wap.wmlscriptc:
+  ext:
+  - .wmlsc
+application/vnd.wasmflow.wafl:
+  ext:
+  - .wafl
+application/vnd.wfa.dpp:
+  ext:
+  - .NA
+  magic_number: NA
+  magic_number_offset: 0
+application/vnd.wfa.p2p:
+  ext:
+  - .P2P
+application/vnd.wfa.wsc:
+  ext:
+  - .WSC
+application/vnd.windows.devicepairing:
+  ext:
+  - .None.
+  magic_number: None.
+  magic_number_offset: 0
+application/vnd.wmc:
+  ext:
+  - .wmc
+application/vnd.wolfram.mathematica:
+  ext:
+  - .nb
+application/vnd.wolfram.mathematica.package:
+  ext:
+  - .m
+application/vnd.wolfram.player:
+  ext:
+  - .nbp
+application/vnd.wordperfect:
+  ext:
+  - .wpd
+application/vnd.wqd:
+  ext:
+  - .wqd
+  magic_number: 'Always starts with: 0x98 0xF0 0x8B 0x5A 0x51 0x44 0x8E 0x32'
+  magic_number_offset: 0
+application/vnd.wt.stf:
+  ext:
+  - .stf
+  magic_number: None.
+  magic_number_offset: 0
+application/vnd.wv.csp+wbxml:
+  ext:
+  - .wv
+  magic_number: '-'
+  magic_number_offset: 0
+application/vnd.xacml+json:
+  ext:
+  - .json
+application/vnd.xara:
+  ext:
+  - .XAR
+  magic_number: 'First 8 bytes: 58 41 52 41 A3 A3 0D 0A'
+  magic_number_offset: 0
+application/vnd.xfdl:
+  ext:
+  - .xfdl
+  - xfd
+  - frm
+application/vnd.xmi+xml:
+  ext:
+  - .XMI
+  - documents
+  - are
+  - most
+  - often
+  - identified
+  - with
+  - the
+  - extensions
+  magic_number: There is no single initial octet sequence that is always pre
+  magic_number_offset: 0
+application/vnd.xmpie.cpkg:
+  ext:
+  - .cpkg
+application/vnd.xmpie.dpkg:
+  ext:
+  - .dpkg
+application/vnd.xmpie.plan:
+  ext:
+  - .dpkg
+application/vnd.xmpie.ppkg:
+  ext:
+  - .ppkg
+application/vnd.xmpie.xlim:
+  ext:
+  - .xlim
+application/vnd.yamaha.hv-dic:
+  ext:
+  - .hvd
+application/vnd.yamaha.hv-script:
+  ext:
+  - .hvs
+application/vnd.yamaha.hv-voice:
+  ext:
+  - .hvp
+application/vnd.yamaha.openscoreformat:
+  ext:
+  - .osf
+application/vnd.yamaha.openscoreformat.osfpvg+xml:
+  ext:
+  - .xml
+application/vnd.yamaha.smaf-audio:
+  ext:
+  - .saf
+application/vnd.yamaha.smaf-phrase:
+  ext:
+  - .spf
+application/vnd.yaoweme:
+  ext:
+  - .yme
+application/vnd.yellowriver-custom-menu:
+  ext:
+  - .cmp
+application/vnd.youtube.yt (OBSOLETED in favor of video/vnd.youtube.yt):
+  ext:
+  - .yt
+  magic_number: 50 4b 03 04
+  magic_number_offset: 0
+application/vnd.zul:
+  ext:
+  - .zir
+  - zirz
+  magic_number: NOT USED
+  magic_number_offset: 0
+application/vnd.zzazz.deck+xml:
+  ext:
+  - .zaz
+  magic_number: None.
+  magic_number_offset: 0
+application/voucher-cms+json:
+  ext:
+  - .vcj
+application/wasm:
+  ext:
+  - .wasm
+  magic_number: 0x0061736D
+  magic_number_offset: 0
+application/watcherinfo+xml:
+  ext:
+  - .wif
+  - .xml
+application/webpush-options+json:
+  ext:
+  - .json
+application/widget:
+  ext:
+  - .wgt
+  magic_number: 0x504B0304
+  magic_number_offset: 0
+application/wsdl+xml:
+  ext:
+  - .wsdl
+application/wspolicy+xml:
+  ext:
+  - .wspolicy
+application/xcap-att+xml:
+  ext:
+  - .xav
+application/xcap-caps+xml:
+  ext:
+  - .xca
+application/xcap-diff+xml:
+  ext:
+  - .xdf
+application/xcap-el+xml:
+  ext:
+  - .xel
+application/xcap-error+xml:
+  ext:
+  - .xer
+application/xcap-ns+xml:
+  ext:
+  - .xns
+application/xcon-conference-info+xml:
+  ext:
+  - .xml
+application/xcon-conference-info-diff+xml:
+  ext:
+  - .xml
+application/xenc+xml:
+  ext:
+  - .xml
+application/xfdf:
+  ext:
+  - .xfdf
+application/xhtml+xml:
+  ext:
+  - .xhtml
+  - .xht
+application/xliff+xml:
+  ext:
+  - .xlf
+application/xml-dtd:
+  ext:
+  - .dtd
+  - .mod
+application/xml-external-parsed-entity:
+  ext:
+  - .ent
+application/xop+xml:
+  ext:
+  - .XOP
+application/xslt+xml:
+  ext:
+  - .XSLT
+  - .xsl
+  - .xslt
+application/xv+xml:
+  ext:
+  - .mxml
+  - .xhvml
+  - .xvml
+  - .xvm
+application/yang:
+  ext:
+  - .yang
+application/yin+xml:
+  ext:
+  - .yin
+application/zlib:
+  magic_number: 0x78
+  magic_number_info: first byte is usually 0x78 but can also be 0x08, 0x18, 0x28, 0x38,
+    0x48, 0x58, or 0x68. The first two bytes, when interpreted as an unsigned 16-bit
+    number in big-endian byte order, contain a value that is a multiple of 31.
+  magic_number_offset: 0
+application/zstd:
+  ext:
+  - .zst
+  magic_number: 0xFD2FB528
+  magic_number_offset: 0
+  endianness: LE
+audio/32kadpcm:
+  ext:
+  - '.726'
+audio/3gpp:
+  ext:
+  - .3gp
+  - .3gpp
+  magic_number_info: None.  However, the file-type box                                     must
+    occur first in the file, and                                     MUST contain
+    a 3GPP brand in its                                     compatible brands list.
+  magic_number_offset: 0
+audio/3gpp2:
+  magic_number_info: None.  However, the file-type box must occur first in the file,        and
+    MUST contain a 3GPP2 brand in its compatible brands list.
+  magic_number_offset: 0
+audio/AMR:
+  ext:
+  - .amr
+  - .AMR
+audio/AMR-WB:
+  ext:
+  - .awb
+  - .AWB
+audio/ATRAC-ADVANCED-LOSSLESS:
+  ext:
+  - .aal
+  - .aa3
+  - .omg
+audio/ATRAC-X:
+  ext:
+  - .atx
+  - .aa3
+  - .omg
+audio/ATRAC3:
+  ext:
+  - .at3
+  - .aa3
+  - .omg
+audio/EVRC:
+  ext:
+  - .evc
+  - EVC
+  magic_number: '#!EVRC\n'
+  magic_number_offset: 0
+audio/EVRC-QCP:
+  ext:
+  - .qcp
+  - .QCP
+  magic_number: 'RIFF'
+  magic_number_offset: 0
+audio/EVRCB:
+  ext:
+  - .evb
+  - .EVB
+  magic_number: '#!EVRC-B\n'
+  magic_number_offset: 0
+audio/EVRCNW:
+  ext:
+  - .enw
+  - .ENW
+  magic_number: '#!EVRCNW\n'
+  magic_number_offset: 0
+audio/EVRCWB:
+  ext:
+  - .evw
+  - .EVW
+  magic_number: '#!EVCWB\n'
+  magic_number_offset: 0
+audio/EVS:
+  ext:
+  - .3gp
+  - .3gpp
+audio/G711-0:
+  magic_number: '#!G7110A\n'
+  magic_number_info: '#!G7110A\n or #!G7110M\n (for A-law or MU-law       encodings respectively,
+    see Section 6).'
+  magic_number_offset: 0
+audio/L16:
+  ext:
+  - .WAV
+  - .L16
+audio/SMV:
+  ext:
+  - .smv
+  - .SMV
+  magic_number: '#!SMV\n'
+  magic_number_offset: 0
+audio/SMV-QCP:
+  ext:
+  - .qcp
+  - .QCP
+  magic_number: 'RIFF'
+  magic_number_offset: 0
+audio/aac:
+  ext:
+  - .adts
+  - .aac
+  - .loas
+  - .ass
+audio/ac3:
+  magic_number: 0x0B77
+  magic_number_offset: 0
+audio/dls:
+  ext:
+  - .dls
+  magic_number: 0x444c5320
+  magic_number_offset: 8
+audio/eac3:
+  magic_number: 0x0B77
+  magic_number_offset: 0
+audio/iLBC:
+  ext:
+  - .lbc
+  - .LBC
+audio/mhas:
+  ext:
+  - .mhas
+  magic_number_info: "Receivers can search for the following
+      syncword within the binary data stream: mpeghAudioStreamPacket()
+      0xC001A5 (24bit sequence)."
+  magic_number_offset: 0
+audio/mobile-xmf:
+  ext:
+  - .mxmf
+audio/mp4:
+  ext:
+  - .mp4
+  - .mpg4
+audio/mpeg:
+  ext:
+  - .mp1
+  - .mp2
+  - .mp3
+audio/ogg:
+  ext:
+  - .oga
+  - .ogg
+  - .spx
+  - .opus
+  magic_number: "OggS"
+  magic_number_offset: 0
+audio/prs.sid:
+  ext:
+  - .sid
+  - .psid
+  magic_number: "PSID"
+  magic_number_info: "first 4 bytes are 0x50534944 - \"PSID\" or 0x52534944 - \"RSID\""
+  magic_number_offset: 0
+audio/sofa:
+  ext:
+  - .sofa
+  magic_number: 0x894844460d0a1a0a
+  magic_number_info: as with HDF5
+  magic_number_offset: 0
+audio/sp-midi:
+  ext:
+  - .mid
+audio/usac:
+  ext:
+  - .loas
+  - .xhe
+audio/vnd.4SB:
+  ext:
+  - .-
+  magic_number: '-'
+  magic_number_offset: 0
+audio/vnd.CELP:
+  ext:
+  - .-
+  magic_number: '-'
+  magic_number_offset: 0
+audio/vnd.audiokoz:
+  ext:
+  - .koz
+audio/vnd.dece.audio:
+  ext:
+  - .uva
+  - .uvva
+audio/vnd.digital-winds:
+  ext:
+  - .eol
+audio/vnd.dlna.adts:
+  ext:
+  - .Undefined
+audio/vnd.dolby.mlp:
+  ext:
+  - .mlp
+  magic_number: 0xF8726FBA, 0xF8726FBB
+  magic_number_offset: 0
+audio/vnd.dra:
+  magic_number: The first 16 bits of an DRA frame are fixed as synchronization word,
+    which is 0x7FFF in hex expression.
+  magic_number_offset: 0
+audio/vnd.dts:
+  ext:
+  - .wav
+  - .cpt
+  - .dts
+audio/vnd.dts.hd:
+  ext:
+  - .dtshd
+audio/vnd.dts.uhd:
+  ext:
+  - .various
+  - media
+  - file
+  - types
+  - such
+  - as
+  - .mp4
+  - ',        '
+  - .mov
+  - .mkv
+  - etc.
+audio/vnd.dvb.file:
+  ext:
+  - .'dvb'
+audio/vnd.everad.plj:
+  ext:
+  - .plj
+  magic_number: First DWORD is 0x4B539DFF
+  magic_number_offset: 0
+audio/vnd.hns.audio:
+  ext:
+  - .rm
+audio/vnd.lucent.voice:
+  ext:
+  - .lvp
+  magic_number: First Byte is FFAA
+  magic_number_offset: 0
+audio/vnd.ms-playready.media.pya:
+  ext:
+  - .pya
+audio/vnd.nokia.mobile-xmf:
+  ext:
+  - .mxmf
+  magic_number: 'Bytes1-12: \130\115\106\137\062\056\060\060\000\000\000\002'
+  magic_number_offset: 0
+audio/vnd.nortel.vbk:
+  ext:
+  - .vbk
+audio/vnd.nuera.ecelp4800:
+  ext:
+  - .ecelp4800
+  magic_number: NA
+  magic_number_offset: 0
+audio/vnd.nuera.ecelp7470:
+  ext:
+  - .ecelp7470
+  magic_number: NA
+  magic_number_offset: 0
+audio/vnd.nuera.ecelp9600:
+  ext:
+  - .ecelp9600
+  magic_number: NA
+  magic_number_offset: 0
+audio/vnd.presonus.multitrack:
+  ext:
+  - .multitrack
+audio/vnd.rip:
+  ext:
+  - .rip
+  magic_number: NASProject\0
+  magic_number_offset: 0
+audio/vnd.sealedmedia.softseal.mpeg:
+  ext:
+  - .smp3
+  - .smp
+  - .s1m
+image/aces:
+  ext:
+  - .exr
+  magic_number: 0x76 2F 31 01 02 00 00 00 or 76 2F 31 01 02 04 00 00
+  magic_number_info: The attribute acesImageContainerFlag has value 1.
+  magic_number_offset: 0
+image/apng:
+  ext:
+  - .apng
+  magic_number: 89 50 4E 47 0D 0A 1A 0A
+  magic_number_offset: 0
+image/avci:
+  ext:
+  - .avci
+image/avcs:
+  ext:
+  - .avcs
+image/avif:
+  ext:
+  - .avif
+  - heif
+  - heifs
+  - or
+  - hif
+image/bmp:
+  ext:
+  - .bmp
+  - .dib
+  magic_number: 42 4D ("BM"), meaning "bitmap".  The next field       (BITMAPFILEHEADER
+    bfSize) is a little-endian DWORD indicating       the size of the bitmap content
+    in bytes.
+  magic_number_offset: 0
+image/dicom-rle:
+  ext:
+  - .drle
+image/dpx:
+  ext:
+  - .dpx
+  magic_number: hex 53 44 50 58 (most-significant byte first       file) or 58 50
+  magic_number_offset: 0
+image/emf:
+  ext:
+  - .emf
+  - (for
+  - both
+  - EMF
+  - and
+  - EMF+
+  - content)
+  magic_number: 01 00 00 00 (little-endian DWORD 0x00000001), corresponding to       the
+    EMR_HEADER Type field.       The next field (EMR_HEADER Size) should be at least
+    88 (little-       endian DWORD 0x00000050).
+  magic_number_offset: 0
+image/example:
+  ext:
+  - .not
+  - applicable.
+  magic_number: not applicable.
+  magic_number_offset: 0
+image/fits:
+  ext:
+  - .fits
+  - '  '
+  - This
+  - file
+  - extension
+  - SHOULD
+  - NOT
+  - be
+  - interpreted
+  - as
+  - a
+  - prescription.
+  - '  '
+  - The
+  - FITS
+  - standard
+  - originated
+  - in
+  - the
+  - era
+  - when
+  - files
+  - were
+  - stored
+  - and
+  - exchanged
+  - via
+  - magnetic
+  - tape;
+  - it
+  - does
+  - not
+  - prescribe
+  - any
+  - nomenclature
+  - for
+  - files
+  - 'on'
+  - disk.
+  - Various
+  - sites
+  - within
+  - the
+  - FITS
+  - community
+  - have
+  - long-established
+  - practices
+  - where
+  - files
+  - are
+  - presumed
+  - to
+  - be
+  - FITS
+  - by
+  - context.
+  - File
+  - extensions
+  - used
+  - at
+  - such
+  - sites
+  - commonly
+  - indicate
+  - content
+  - of
+  - the
+  - file
+  - instead
+  - of
+  - the
+  - data
+  - format.
+  - '  '
+  - In
+  - the
+  - absence
+  - of
+  - other
+  - information
+  - it
+  - is
+  - reasonably
+  - safe
+  - to
+  - presume
+  - that
+  - a
+  - file
+  - name
+  - ending
+  - in
+  - '".fits"'
+  - is
+  - intended
+  - to
+  - be
+  - a
+  - FITS
+  - file.
+  - Nevertheless
+  - there
+  - are
+  - other
+  - commonly
+  - used
+  - extensions;
+  - e.g.
+  - '".fit"'
+  - '".fts"'
+  - and
+  - many
+  - others
+  - not
+  - suitable
+  - for
+  - listing
+  - in
+  - a
+  - media
+  - type
+  - registration.
+  magic_number: '"SIMPLE = T"  Jeff Uphoff of the National Radio Astronomy Observatory
+    (NRAO) has contributed database entries for the magic number file which is used
+    by the Unix "file" command. Magic number files with these entries are distributed
+    with a variety of Unix-like operating systems. In addition to recognizing a FITS
+    file using the string given above, the Uphoff entries also recognize the data
+    type of the pixels in the PHDU.'
+  magic_number_offset: 0
+image/heic:
+  ext:
+  - .heif
+  - (for
+  - subtype
+  - heif)
+  - heic
+  - (for
+  - subtype
+  - '        '
+  - heic)
+  - hif
+  - (for
+  - subtypes
+  - heif
+  - and
+  - heic)
+image/heic-sequence:
+  ext:
+  - .heifs
+  - (for
+  - subtype
+  - heif-sequence)
+  - heics
+  - (for
+  - '        '
+  - subtype
+  - heic-sequence)
+  - hif
+  - (for
+  - subtypes
+  - heif-sequence
+  - and
+  - '        '
+  - heic-sequence)
+image/heif:
+  ext:
+  - .heif
+  - (for
+  - subtype
+  - heif)
+  - heic
+  - (for
+  - subtype
+  - '        '
+  - heic)
+  - hif
+  - (for
+  - subtypes
+  - heif
+  - and
+  - heic)
+image/heif-sequence:
+  ext:
+  - .heifs
+  - (for
+  - subtype
+  - heif-sequence)
+  - heics
+  - (for
+  - '        '
+  - subtype
+  - heic-sequence)
+  - hif
+  - (for
+  - subtypes
+  - heif-sequence
+  - and
+  - '        '
+  - heic-sequence)
+image/hej2k:
+  ext:
+  - .hej2
+  magic_number: None.
+  magic_number_offset: 0
+image/hsj2:
+  ext:
+  - .hsj2
+image/j2c:
+  ext:
+  - .j2c
+  - J2C
+  - j2k
+  - J2K
+  magic_number: 'Starts with the byte sequence: 0xFF 0x4F 0xFF        0x51'
+  magic_number_offset: 0
+image/jls:
+  ext:
+  - .jls
+image/jp2:
+  ext:
+  - .jp2
+  - and
+  - jpg2
+  - are
+  - both
+  - declared
+  - at
+  magic_number: "12 byte string: X'0000 000C 6A50 2020\r                         \
+    \           0D0A 870A' (for all JPEG-2000 family\r                           \
+    \         files)"
+  magic_number_offset: 0
+image/jph:
+  ext:
+  - .jph
+  magic_number: See Section 4.4 of RFC 3745
+  magic_number_offset: 0
+image/jphc:
+  ext:
+  - .jhc
+  magic_number: 'Starts with the following 4-byte sequence:        0xFF 0x4F 0xFF
+    0x51'
+  magic_number_offset: 0
+image/jpm:
+  ext:
+  - .jpm
+  - and
+  - jpgm
+  - are
+  - both
+  - declared
+  - at
+  magic_number: "12 byte string: X'0000 000C 6A50 2020\r                         \
+    \           0D0A 870A' (for all JPEG-2000 family\r                           \
+    \         files)"
+  magic_number_offset: 0
+image/jpx:
+  ext:
+  - .jpf
+  - is
+  - declared
+  - at
+  magic_number: "12 byte string: X'0000 000C 6A50 2020\r                         \
+    \           0D0A 870A' (for all JPEG-2000 family\r                           \
+    \         files)"
+  magic_number_offset: 0
+image/jxr:
+  ext:
+  - .jxr
+  magic_number: Data begins with a FILE_HEADER( ) data structure, which begins  with
+    a FIXED_FILE_HEADER_II_2BYTES field equal to 0x4949, followed by a FIXED_FILE_HEADER_0XBC_BYTE
+    field equal to 0xBC, followed by a FILE_VERSION_ID which is equal to 1 for the
+    current version of the Recommendation and International Standard (with other values
+    reserved for future use, as modified in additional parts or amendments, by ITU-T
+    or ISO/IEC).  Within the payload data, JPEG XR IMAGE_HEADER( ) data structures
+    begin with a GDI_SIGNATURE, which is a 64-bit syntax element that has the value
+    0x574D50484F544F00 that corresponds to "WMPHOTO" using the UTF-8 character set
+    encoding specified in Annex D of ISO/IEC 10646, followed by a byte equal to 0.
+  magic_number_offset: 0
+image/jxrA:
+  ext:
+  - .jxra
+image/jxrS:
+  ext:
+  - .jxrs
+image/jxs:
+  ext:
+  - .jxs
+  magic_number: Starts with 12-byte string 0x0000 000C 4A58 5320        0D0A 870A
+    as specified in ISO/IEC 21122-3.
+  magic_number_offset: 0
+image/jxsc:
+  ext:
+  - .jxsc
+  magic_number: Starts with the 4-byte string 0xFF10 FF50 as        specified in ISO/IEC
+    21122-1.
+  magic_number_offset: 0
+image/jxsi:
+  ext:
+  - .jxsi
+image/jxss:
+  ext:
+  - .jxss
+image/ktx:
+  ext:
+  - .ktx
+  magic_number: 12 octets - { 0xAB, 0x4B, 0x54, 0x58, 0x20, 0x31, 0x31, 0xBB, 0x0D,
+    0x0A, 0x1A, 0x0A }
+  magic_number_offset: 0
+image/ktx2:
+  ext:
+  - .ktx2
+  magic_number: 12 octets { 0xAB,0x4B,0x54,0x58,0x20,0x32,0x30,0xBB,0x0D,0x0A,0x1A,0x0A
+    }
+  magic_number_offset: 0
+image/png:
+  ext:
+  - .png
+  magic_number: 89 50 4E 47 0D 0A 1A 0A
+  magic_number_offset: 0
+image/prs.btif:
+  ext:
+  - .btif
+  - btf
+  magic_number: Since BTIF files are an extension of TIFF 6.0, the magic numbers        are
+    exactly the same as for TIFF 6.0.  The BTIF file        specification does not
+    introduce any unique magic numbers        besides what's already present in TIFF
+    6.0.  (See attached        specification)
+  magic_number_offset: 0
+image/prs.pti:
+  ext:
+  - .pti
+image/pwg-raster:
+  magic_number: 0x52.61.53.32
+  magic_number_offset: 0
+image/svg+xml:
+  ext:
+  - .svg
+  - Note
+  - that
+  - the
+  - extension
+  - '''svgz'''
+  - is
+  - used
+  - as
+  - an
+  - alias
+  - for
+  - '''svg.gz'''
+  - '[rfc1952]'
+  - i.e.
+  - octet
+  - streams
+  - of
+  - type
+  - image/svg+xml
+  - subsequently
+  - compressed
+  - with
+  - gzip.
+image/t38:
+  ext:
+  - .T38
+image/tiff:
+  ext:
+  - .TIF
+image/tiff-fx:
+  ext:
+  - .TFX
+image/vnd.adobe.photoshop:
+  ext:
+  - .psd
+image/vnd.airzip.accelerator.azv:
+  ext:
+  - .azv
+  magic_number: '0x415A0142'
+  magic_number_offset: 0
+image/vnd.dece.graphic:
+  ext:
+  - .uvi
+  - .uvvi
+  - .uvg
+  - .uvvg
+image/vnd.djvu:
+  ext:
+  - .djvu
+  - djv
+  magic_number: ASCII "FORM" at offset 4 and ASCII "DJVU"  or "DJVM" or "PM44" or
+    "BM44" at offset 12.
+  magic_number_offset: 0
+image/vnd.dvb.subtitle:
+  ext:
+  - .sub
+image/vnd.fastbidsheet:
+  ext:
+  - .fbs
+  magic_number: =20
+  magic_number_offset: 0
+image/vnd.fpx:
+  ext:
+  - .fpx
+image/vnd.fst:
+  ext:
+  - .fst
+image/vnd.fujixerox.edmics-mmr:
+  ext:
+  - .mmr
+  magic_number: FF FF 00 01 hex
+  magic_number_offset: 0
+image/vnd.fujixerox.edmics-rlc:
+  ext:
+  - .rlc
+  magic_number: 53 61 6E 65 hex, or 52 4C 43 00 hex
+  magic_number_offset: 0
+image/vnd.globalgraphics.pgb:
+  ext:
+  - .PGB
+  - .pgb
+  magic_number: "2F 50 47 42 20 hex\t(\u201C/PGB \u201C)"
+  magic_number_offset: 0
+image/vnd.microsoft.icon:
+  ext:
+  - .ico
+  magic_number: 00 00 01 00 (first four octets in hexadecimal)
+  magic_number_offset: 0
+image/vnd.mozilla.apng:
+  ext:
+  - .apng
+  - png
+  magic_number: 137 80 78 71 13 10 26 10
+  magic_number_offset: 0
+image/vnd.ms-modi:
+  ext:
+  - .mdi
+  magic_number: 45 50 2A 00 hex
+  magic_number_offset: 0
+image/vnd.pco.b16:
+  ext:
+  - .b16
+  magic_number: ASCII "PCO-" at offset 0.
+  magic_number_offset: 0
+image/vnd.radiance:
+  ext:
+  - .pic
+  - hdr
+  - rgbe
+  - xyze
+  magic_number: Text "#?RADIANCE\n" (octet sequence 23 3f 52 41 44 49 41 4e 43 45
+    0a) at the beginning of the file.
+  magic_number_offset: 0
+image/vnd.sealed.png:
+  ext:
+  - .spng
+  - .spn
+  - .s1n
+image/vnd.sealedmedia.softseal.gif:
+  ext:
+  - .sgif
+  - .sgi
+  - .s1g
+image/vnd.sealedmedia.softseal.jpg:
+  ext:
+  - .sjpg
+  - .sjp
+  - .s1j
+image/vnd.tencent.tap:
+  ext:
+  - .tap
+  magic_number: TAP0
+  magic_number_offset: 0
+image/vnd.valve.source.texture:
+  ext:
+  - .vtf
+  magic_number: VTF\0
+  magic_number_offset: 0
+image/vnd.wap.wbmp:
+  ext:
+  - .wbmp
+image/vnd.xiff:
+  ext:
+  - .xif
+image/vnd.zbrush.pcx:
+  ext:
+  - .pcx
+  magic_number: 'Byte 0: 0x0A (dec 10)'
+  magic_number_offset: 0
+image/webp:
+  ext:
+  - .webp
+  magic_number: The first 4 bytes are 0x52, 0x49, 0x46, 0x46 ('RIFF'), followed by
+    4 bytes for the RIFF chunk size. The next 7 bytes are 0x57, 0x45, 0x42, 0x50,
+    0x56, 0x50, 0x38 ('WEBPVP8').
+  magic_number_offset: 0
+image/wmf:
+  ext:
+  - .wmf
+  magic_number: D7 CD C6 9A (little-endian DWORD 0x9AC6CDD7)
+  magic_number_offset: 0
+image/x-emf - DEPRECATED in favor of image/emf:
+  ext:
+  - .emf
+  - (for
+  - both
+  - EMF
+  - and
+  - EMF+
+  - content)
+  magic_number: 01 00 00 00 (little-endian DWORD 0x00000001), corresponding to       the
+    EMR_HEADER Type field.       The next field (EMR_HEADER Size) should be at least
+    88 (little-       endian DWORD 0x00000050).
+  magic_number_offset: 0
+image/x-wmf - DEPRECATED in favor of image/wmf:
+  ext:
+  - .wmf
+  magic_number: D7 CD C6 9A (little-endian DWORD 0x9AC6CDD7)
+  magic_number_offset: 0
+message/disposition-notification:
+  ext:
+  - .disposition-notification
+message/example:
+  ext:
+  - .not
+  - applicable.
+  magic_number: not applicable.
+  magic_number_offset: 0
+message/global:
+  ext:
+  - .The
+  - extension
+  - '".u8msg"'
+  - is
+  - suggested.
+message/global-delivery-status:
+  ext:
+  - .The
+  - extension
+  - '".u8dsn"'
+  - is
+  - suggested.
+message/global-disposition-notification:
+  ext:
+  - .The
+  - extension
+  - '".u8mdn"'
+  - is
+  - suggested.
+message/global-headers:
+  ext:
+  - .In
+  - the
+  - event
+  - this
+  - is
+  - saved
+  - to
+  - a
+  - file
+  - the
+  - '       '
+  - extension
+  - '".u8hdr"'
+  - is
+  - suggested.
+message/imdn+xml:
+  ext:
+  - .cl
+  - or
+  - .xml
+message/vnd.si.simp (OBSOLETED by request):
+  magic_number: 53 49 4D 50 ("SIMP")
+  magic_number_offset: 0
+message/vnd.wfa.wsc:
+  ext:
+  - .WSC
+model/3mf:
+  ext:
+  - .3mf
+model/JT:
+  ext:
+  - .jt
+model/example:
+  ext:
+  - .not
+  - applicable.
+  magic_number: not applicable.
+  magic_number_offset: 0
+model/gltf+json:
+  ext:
+  - .gltf
+model/mtl:
+  ext:
+  - .mtl
+model/obj:
+  ext:
+  - .obj
+model/prc:
+  ext:
+  - .prc
+  magic_number: 'First 3 bytes are Hex: 50 52 43 (ASCII: "PRC")        as per ISO'
+  magic_number_offset: 0
+model/step:
+  ext:
+  - .p21
+  - .stp
+  - .step
+  - .stpnc
+  - '.210'
+model/step+xml:
+  ext:
+  - .stpx
+model/step+zip:
+  ext:
+  - .stpz
+model/step-xml+zip:
+  ext:
+  - .stpxz
+model/stl:
+  ext:
+  - .stl
+model/u3d:
+  ext:
+  - .u3d
+  magic_number: 'First 4 bytes of the file are Hex: 55 33 44 00'
+  magic_number_offset: 0
+model/vnd.bary:
+  ext:
+  - .bary
+  magic_number: 6 octets { 0xAB 0x42 0x41 0x52 0x59 0x20 }
+  magic_number_offset: 0
+model/vnd.cld:
+  ext:
+  - .cld
+  magic_number: ICLD
+  magic_number_offset: 0
+model/vnd.collada+xml:
+  ext:
+  - .dae
+  magic_number: <COLLADA> is the root XML element
+  magic_number_offset: 0
+model/vnd.dwf:
+  ext:
+  - .dwf
+model/vnd.flatland.3dml:
+  ext:
+  - .3dml
+  - '  '
+  - .3dm
+model/vnd.gdl:
+  ext:
+  - .gdl
+  - ','
+  - gsm
+  - ','
+  - win
+  - ','
+  - dor
+  - ','
+  - lmp
+  - ','
+  - rsm
+  - ','
+  - msm
+  - ','
+  - ism
+model/vnd.gs-gdl:
+  ext:
+  - .gdl
+  - ','
+  - gsm
+  - ','
+  - win
+  - ','
+  - dor
+  - ','
+  - lmp
+  - ','
+  - rsm
+  - ','
+  - msm
+  - ','
+  - ism
+model/vnd.gtw:
+  ext:
+  - .gtw
+model/vnd.moml+xml:
+  ext:
+  - .xml
+  - .moml
+model/vnd.mts:
+  ext:
+  - .mts
+model/vnd.opengex:
+  ext:
+  - .ogex
+model/vnd.parasolid.transmit.binary:
+  ext:
+  - .X_B
+  - (recommended)
+  - .xmt_bin
+  - (deprecated)
+  magic_number: '(complex: see comment)'
+  magic_number_offset: 0
+model/vnd.parasolid.transmit.text:
+  ext:
+  - .X_T
+  - (recommended)
+  - .xmt_txt
+  - (deprecated)
+  magic_number: '(complex: see comment)'
+  magic_number_offset: 0
+model/vnd.pytha.pyox:
+  ext:
+  - .pyo
+  - .pyox
+  magic_number: '8 octets: 50 59 54 48 41 5F 4F 42'
+  magic_number_offset: 0
+model/vnd.sap.vds:
+  ext:
+  - .vds
+model/vnd.usda:
+  ext:
+  - .usda
+  magic_number: '"#usda MAJOR.MINOR" at byte zero'
+  magic_number_offset: 0
+model/vnd.usdz+zip:
+  ext:
+  - .usdz
+model/vnd.valve.source.compiled-map:
+  ext:
+  - .bsp
+  magic_number: VBSP
+  magic_number_offset: 0
+model/vnd.vtu:
+  ext:
+  - .vtu
+model/x3d+fastinfoset:
+  ext:
+  - .x3db
+model/x3d+xml:
+  ext:
+  - .x3d
+model/x3d-vrml:
+  ext:
+  - .x3dv
+  magic_number: '#X3D'
+  magic_number_offset: 0
+multipart/example:
+  ext:
+  - .not
+  - applicable.
+  magic_number: not applicable.
+  magic_number_offset: 0
+multipart/voice-message:
+  ext:
+  - .VPM
+multipart/x-mixed-replace:
+  ext:
+  - .No
+  - specific
+  - file
+  - extensions
+  - are
+  - recommended
+  - for
+  - '  '
+  - this
+  - type.
+  magic_number: No sequence of bytes can uniquely identify it.
+  magic_number_offset: 0
+text/cache-manifest:
+  ext:
+  - ."appcache"
+  - '"manifest"'
+  magic_number: '"CACHE MANIFEST" followed by [ \t\r\n]'
+  magic_number_offset: 0
+text/calendar:
+  ext:
+  - .The
+  - file
+  - extension
+  - of
+  - '"ics"'
+  - is
+  - to
+  - be
+  - used
+  - to
+  - '       '
+  - designate
+  - a
+  - file
+  - containing
+  - (an
+  - arbitrary
+  - set
+  - of)
+  - calendaring
+  - '       '
+  - and
+  - scheduling
+  - information
+  - consistent
+  - with
+  - this
+  - MIME
+  - content
+  - '       '
+  - type.
+  - '        '
+  - The
+  - file
+  - extension
+  - of
+  - '"ifb"'
+  - is
+  - to
+  - be
+  - used
+  - to
+  - designate
+  - a
+  - file
+  - '       '
+  - containing
+  - free
+  - or
+  - busy
+  - time
+  - information
+  - consistent
+  - with
+  - this
+  - '       '
+  - MIME
+  - content
+  - type.
+  magic_number: None.
+  magic_number_offset: 0
+text/cql:
+  ext:
+  - .CQL
+text/css:
+  ext:
+  - .css
+text/csv:
+  ext:
+  - .CSV
+text/dns:
+  ext:
+  - .'soa'
+  - and
+  - '''zone'''
+  - are
+  - known
+  - to
+  - be
+  - used.
+  magic_number: None.
+  magic_number_offset: 0
+text/ecmascript (OBSOLETED in favor of text/javascript):
+  ext:
+  - .es
+  - .mjs
+text/example:
+  ext:
+  - .not
+  - applicable.
+  magic_number: not applicable.
+  magic_number_offset: 0
+text/gff3:
+  ext:
+  - .gff3
+  magic_number: Although no byte sequences can be counted on        to always be present,
+    GFF3 data in ASCII-compatible character        sets (including UTF-8) often begin
+    with hexadecimal 23 23 67 66        66 2d 76 65 72 73 69 6f 6e 20 33 ("##gff-version
+    3").
+  magic_number_offset: 0
+text/html:
+  ext:
+  - ."html"
+  - and
+  - '"htm"'
+  - are
+  - commonly
+  - used.
+  magic_number: No sequence of bytes can uniquely identify an HTML document.
+  magic_number_offset: 0
+text/javascript:
+  ext:
+  - .js
+  - .mjs
+text/jcr-cnd:
+  ext:
+  - .cnd
+text/markdown:
+  ext:
+  - .md
+  - .markdown
+text/mizar:
+  ext:
+  - .miz
+text/n3:
+  ext:
+  - .".n3"
+  magic_number: Notation3 documents may have the strings '@prefix' or '@base' (case
+    dependent) near the      beginning of the document.
+  magic_number_offset: 0
+text/provenance-notation:
+  ext:
+  - .".provn"
+  magic_number: PROV-N documents may have the strings 'document' near the beginning
+    of the document.
+  magic_number_offset: 0
+text/prs.fallenstein.rst:
+  ext:
+  - .txt
+  - .rst
+  magic_number: None.
+  magic_number_offset: 0
+text/prs.lines.tag:
+  ext:
+  - .Suggest
+  - .tag
+  - for
+  - general
+  - purpose
+  - tag
+  - files
+  - .dsc
+  - is
+  - used
+  - for
+  - tag
+  - descriptor
+  - files
+  magic_number: All tag data streams start Tag-xxx-version - where xxx is the particular
+    tag type.
+  magic_number_offset: 0
+text/prs.prop.logic:
+  ext:
+  - .txt
+text/raptorfec:
+  ext:
+  - .<none
+  - defined>
+  magic_number: <none defined>
+  magic_number_offset: 0
+text/shaclc:
+  ext:
+  - .shaclc
+  - .shc
+  magic_number: SHACLC documents will likely have the words        PREFIX or BASE
+    (case sensitive) near the beginning of the        document. However, the same
+    words may appear in Turtle and        SPARQL documents.
+  magic_number_offset: 0
+text/shex:
+  ext:
+  - .shex
+text/spdx:
+  ext:
+  - .spdx
+text/troff:
+  ext:
+  - .Files
+  - do
+  - not
+  - require
+  - any
+  - specific
+  - '"extension".'
+  - '       '
+  - Many
+  - are
+  - in
+  - use
+  - as
+  - a
+  - convenience
+  - for
+  - mechanized
+  - processing
+  - of
+  - '       '
+  - files
+  - some
+  - associated
+  - with
+  - specific
+  - macro
+  - packages
+  - or
+  - '       '
+  - preprocessors;
+  - others
+  - are
+  - ad
+  - hoc.
+  - '  '
+  - File
+  - names
+  - are
+  - orthogonal
+  - to
+  - '       '
+  - the
+  - nature
+  - of
+  - the
+  - content.
+  - '  '
+  - In
+  - particular
+  - while
+  - a
+  - file
+  - name
+  - or
+  - '       '
+  - a
+  - component
+  - of
+  - a
+  - name
+  - may
+  - be
+  - useful
+  - in
+  - some
+  - types
+  - of
+  - automated
+  - '       '
+  - processing
+  - of
+  - files
+  - the
+  - name
+  - or
+  - component
+  - might
+  - not
+  - be
+  - capable
+  - '       '
+  - of
+  - indicating
+  - subtleties
+  - such
+  - as
+  - proportion
+  - of
+  - textual
+  - (as
+  - '       '
+  - opposed
+  - to
+  - image
+  - or
+  - formatting
+  - directive)
+  - content.
+  - '  '
+  - This
+  - media
+  - '       '
+  - type
+  - SHOULD
+  - NOT
+  - be
+  - assigned
+  - a
+  - relationship
+  - with
+  - any
+  - file
+  - '       '
+  - '"extension"'
+  - where
+  - content
+  - may
+  - be
+  - untrusted
+  - unless
+  - there
+  - is
+  - '       '
+  - provision
+  - for
+  - human
+  - judgment
+  - that
+  - may
+  - be
+  - used
+  - to
+  - override
+  - that
+  - '       '
+  - relationship
+  - for
+  - individual
+  - files.
+  - '  '
+  - Where
+  - appropriate
+  - a
+  - file
+  - '       '
+  - name
+  - MAY
+  - be
+  - suggested
+  - by
+  - a
+  - suitable
+  - mechanism
+  - such
+  - as
+  - the
+  - one
+  - '       '
+  - specified
+  - in
+  - '[I17.RFC2183]'
+  - as
+  - amended
+  - by
+  - '[N5.RFC2231]'
+  - and
+  - '       '
+  - '[N6.Errata].'
+  magic_number: None; however, the content format is distinctive       (see "Published
+    specification").
+  magic_number_offset: 0
+text/turtle:
+  ext:
+  - .".ttl"
+  magic_number: Turtle documents may have the strings '@prefix' or '@base' (case dependent)
+    near the      beginning of the document.
+  magic_number_offset: 0
+text/uri-list:
+  ext:
+  - .uris
+  - or
+  - .uri
+  - recommended
+  magic_number: none at this time
+  magic_number_offset: 0
+text/vcard:
+  ext:
+  - .vcf
+  - .vcard
+text/vnd.DMClientScript:
+  ext:
+  - .dms
+text/vnd.IPTC.NITF:
+  ext:
+  - .xml
+text/vnd.IPTC.NewsML:
+  ext:
+  - .xml
+text/vnd.a:
+  ext:
+  - .a
+text/vnd.abc:
+  ext:
+  - .".abc"
+  - "\t\tIt"
+  - is
+  - recommended
+  - that
+  - abc
+  - file
+  - names
+  - should
+  - use
+  - this
+  - "\t\textension."
+  - '  '
+  - (Many
+  - HTTP
+  - servers
+  - use
+  - the
+  - file
+  - extension
+  - "\t\tas"
+  - an
+  - indicator
+  - of
+  - MIME
+  - type.)
+  - '  '
+  - "\t\tThe"
+  - ABC
+  - language
+  - uses
+  - the
+  - '''<'''
+  - and
+  - '''>'''
+  - characters.
+  - "\t\tRaw"
+  - ABC
+  - must
+  - not
+  - be
+  - embedded
+  - into
+  - HTML
+  - files
+  - and
+  - the
+  - "\t\tfile"
+  - extension
+  - '".html"'
+  - must
+  - be
+  - avoided.
+  magic_number: "\"%abc\" \t\tIt is strongly recommended that abc files should begin\
+    \ \t\twith this string.  An optional version string may \t\tfollow these first\
+    \ 4 characters on the first line."
+  magic_number_offset: 0
+text/vnd.ascii-art:
+  ext:
+  - .ascii
+text/vnd.curl:
+  ext:
+  - .curl
+text/vnd.debian.copyright:
+  ext:
+  - .No
+  - extension
+  - but
+  - the
+  - file
+  - is
+  - usually
+  - named
+  - '''copyright''.'
+text/vnd.dvb.subtitle:
+  ext:
+  - .sub
+text/vnd.esmertec.theme-descriptor:
+  ext:
+  - .jtd
+text/vnd.exchangeable:
+  ext:
+  - .VFK
+text/vnd.familysearch.gedcom:
+  ext:
+  - .ged
+  magic_number: See table at bottom of link under Published        specification.
+  magic_number_offset: 0
+text/vnd.ficlab.flt:
+  ext:
+  - .flt
+text/vnd.fly:
+  ext:
+  - .fly
+text/vnd.fmi.flexstor:
+  ext:
+  - .Generally
+  - '"flx"'
+  - but
+  - documents
+  - describing
+  - '  '
+  - "\t\t\tcertain"
+  - symbol
+  - table
+  - may
+  - allocate
+  - their
+  - '  '
+  - "\t\t\town"
+  - set
+  - of
+  - extensions.
+  magic_number: Format starts with string "flexstor".
+  magic_number_offset: 0
+text/vnd.gml:
+  ext:
+  - .gml
+text/vnd.graphviz:
+  ext:
+  - .gv
+  - .dot
+  magic_number: (not available)
+  magic_number_offset: 0
+text/vnd.hans:
+  ext:
+  - .hans
+text/vnd.hgl:
+  ext:
+  - .hgl
+text/vnd.in3d.3dml:
+  ext:
+  - .3dml
+  - '   '
+  - .3dm
+text/vnd.in3d.spot:
+  ext:
+  - .spot
+  - .spo
+text/vnd.ms-mediapackage:
+  ext:
+  - .mpf
+text/vnd.net2phone.commcenter.command:
+  ext:
+  - .ccc
+text/vnd.senx.warpscript:
+  ext:
+  - .mc2
+text/vnd.si.uricatalogue (OBSOLETED by request):
+  ext:
+  - .uric
+text/vnd.sosi:
+  ext:
+  - .sos
+text/vnd.sun.j2me.app-descriptor:
+  ext:
+  - .jad
+text/vnd.trolltech.linguist:
+  ext:
+  - .ts
+  magic_number: 0:"<!DOCTYPE TS><TS>"
+  magic_number_offset: 0
+text/vnd.wap.si:
+  ext:
+  - .si
+  - .xml
+text/vnd.wap.sl:
+  ext:
+  - .sl
+  - .xml
+text/vnd.wap.wml:
+  ext:
+  - .wml
+  - .xml
+text/vnd.wap.wmlscript:
+  ext:
+  - .wmls
+text/vtt:
+  ext:
+  - ."vtt"
+  magic_number: WebVTT files all begin with one of the following
+  magic_number_offset: 0
+text/wgsl:
+  ext:
+  - .wgsl
+text/xml:
+  ext:
+  - .xml
+  magic_number: None.        Although no byte sequences can be counted on to always
+    be       present, XML MIME entities in ASCII-compatible character sets       (including
+    UTF-8) often begin with hexadecimal 3C 3F 78 6D 6C       ("<?xml"), and those
+    in UTF-16 often begin with hexadecimal FE       FF 00 3C 00 3F 00 78 00 6D 00
+    6C or FF FE 3C 00 3F 00 78 00 6D       00 6C 00 (the Byte Order Mark (BOM) followed
+    by "<?xml").  For       more information, see Appendix F of [XML].
+  magic_number_offset: 0
+text/xml-external-parsed-entity:
+  ext:
+  - .xml
+  - or
+  - .ent
+  magic_number: Same as for application/xml (Section 9.1 of     RFC7303).
+  magic_number_offset: 0
+video/3gpp:
+  ext:
+  - .3gp
+  - and
+  - 3gpp
+  - are
+  - both
+  - declared
+  - at
+  magic_number: None.  However, the file-type box                                     must
+    occur first in the file, and                                     MUST contain
+    a 3GPP brand in its                                     compatible brands list.
+  magic_number_offset: 0
+video/3gpp-tt:
+  ext:
+  - .None.
+  magic_number: None.
+  magic_number_offset: 0
+video/3gpp2:
+  magic_number: None.  However, the file-type box must occur first in the file    and
+    MUST contain a 3GPP2 brand in its compatible brands list.
+  magic_number_offset: 0
+video/example:
+  ext:
+  - .not
+  - applicable.
+  magic_number: not applicable.
+  magic_number_offset: 0
+video/iso.segment:
+  ext:
+  - .m4s
+video/mj2:
+  ext:
+  - .mj2
+  - and
+  - mjp2
+  - are
+  - both
+  - declared
+  - at
+  magic_number: '12 byte string: X''0000 000C 6A50 2020                                    0D0A
+    870A'' (for all JPEG-2000 family                                    files)'
+  magic_number_offset: 0
+video/mp4:
+  ext:
+  - .mp4
+  - and
+  - mpg4
+  - are
+  - both
+  - declared
+  - at
+video/mpeg4-generic:
+  ext:
+  - .None.
+  - '  '
+  - A
+  - file
+  - format
+  - with
+  - the
+  - extension
+  - .mp4
+  - has
+  - been
+  - defined
+  - for
+  - MPEG-4
+  - content
+  - but
+  - is
+  - not
+  - directly
+  - correlated
+  - with
+  - this
+  - MIME
+  - type
+  - for
+  - which
+  - the
+  - sole
+  - purpose
+  - is
+  - RTP
+  - transport.
+video/ogg:
+  ext:
+  - .ogv
+  magic_number: The first four bytes, 0x4f 0x67 0x67 0x53, correspond to the string
+    "OggS".
+  magic_number_offset: 0
+video/raptorfec:
+  ext:
+  - .<none
+  - defined>
+  magic_number: <none defined>
+  magic_number_offset: 0
+video/vnd.dece.hd:
+  ext:
+  - .uvh
+  - .uvvh
+video/vnd.dece.mobile:
+  ext:
+  - .uvm
+  - .uvvm
+video/vnd.dece.mp4:
+  ext:
+  - .uvu
+  - .uvvu
+video/vnd.dece.pd:
+  ext:
+  - .uvp
+  - .uvvp
+video/vnd.dece.sd:
+  ext:
+  - .uvs
+  - .uvvs
+video/vnd.dece.video:
+  ext:
+  - .uvv
+  - .uvvv
+video/vnd.directv.mpeg:
+  ext:
+  - .undefined
+video/vnd.directv.mpeg-tts:
+  ext:
+  - .undefined
+video/vnd.dlna.mpeg-tts:
+  ext:
+  - .Undefined
+video/vnd.dvb.file:
+  ext:
+  - .'dvb'
+video/vnd.fvt:
+  ext:
+  - .fvt
+  magic_number: FVT
+  magic_number_offset: 0
+video/vnd.hns.video:
+  ext:
+  - .rm
+video/vnd.iptvforum.1dparityfec-1010:
+  ext:
+  - .Undefined
+video/vnd.iptvforum.1dparityfec-2005:
+  ext:
+  - .Undefined
+video/vnd.iptvforum.2dparityfec-1010:
+  ext:
+  - .Undefined
+video/vnd.iptvforum.2dparityfec-2005:
+  ext:
+  - .Undefined
+video/vnd.iptvforum.ttsavc:
+  ext:
+  - .Undefined
+video/vnd.iptvforum.ttsmpeg2:
+  ext:
+  - .Undefined
+video/vnd.mpegurl:
+  ext:
+  - .mxu
+  - or
+  - .m4u
+  - '  '
+  - (created
+  - '20'
+  - Nov
+  - 2000)
+  - '  '
+  - '[]'
+video/vnd.ms-playready.media.pyv:
+  ext:
+  - .pyv
+video/vnd.nokia.interleaved-multimedia:
+  ext:
+  - .nim
+  magic_number: '4 bytes at offset 0: 0x00 0x00 0x01 0xff'
+  magic_number_offset: 0
+video/vnd.objectvideo:
+  ext:
+  - .mp4
+video/vnd.radgamettools.bink:
+  ext:
+  - .*.bik
+  - '*.bk2'
+  magic_number: .
+  magic_number_offset: 0
+video/vnd.radgamettools.smacker:
+  ext:
+  - .*.smk
+  magic_number: .
+  magic_number_offset: 0
+video/vnd.sealed.mpeg1:
+  ext:
+  - .smpg
+  - .s11
+video/vnd.sealed.mpeg4:
+  ext:
+  - .smpg
+  - .s14
+video/vnd.sealed.swf:
+  ext:
+  - .sswf
+  - .ssw
+video/vnd.sealedmedia.softseal.mov:
+  ext:
+  - .smov
+  - .smo
+  - .s1q
+video/vnd.uvvu.mp4:
+  ext:
+  - .uvu
+  - .uvvu
+video/vnd.youtube.yt:
+  ext:
+  - .yt
+  magic_number: 'MP4 ftyp: 0x79 0x74 0x34 0x20'
+  magic_number_offset: 0

@@ -58,7 +58,12 @@ def get_subtype_templates():
 
     registries = [a.text for a in soup.find("ul").find_all("a")]
 
+    not_covered = []
+
     for registry in tqdm(registries):
+
+        if registry == "example":
+            continue
 
         subtype_templates[registry] = {}
 
@@ -66,7 +71,15 @@ def get_subtype_templates():
         for row in tqdm(table.find("tbody").find_all("tr")):
             cells = row.find_all("td")
             subtype_name = cells[0].text
-            subtype_href = cells[1].find("a")["href"]
+            try:
+                anchor = cells[1].find("a")
+            except Exception:
+                not_covered.append(f"{registry}/{subtype_name}")
+                continue
+            if anchor is None:
+                not_covered.append(f"{registry}/{subtype_name}")
+                continue
+            subtype_href = anchor["href"]
             subtype_url = IANA_URL[: IANA_URL.rindex("/") + 1] + subtype_href
             # Send a GET request to the URL
             response = requests.get(subtype_url)
@@ -83,7 +96,7 @@ def get_subtype_templates():
                     f"Failed to retrieve page for {subtype_name}: {response.status_code}"
                 )
 
-        break
+        print("\n".join(not_covered))
 
     return subtype_templates
 
