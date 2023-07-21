@@ -178,7 +178,7 @@ application/csvm+json:
 application/cwl:
   ext:
   - .cwl
-  magic_number_info: CWL documents often start with the US-ASCII string "#!/usr/bin/env     cwl-runner"
+  info: CWL documents often start with the US-ASCII string "#!/usr/bin/env     cwl-runner"
     (35 33 47 117 115 114 47 98 105 110 47 101 110 118 32     99 119 108 45 114 117
     110 110 101 114) but this is not required.     All CWL document have the US-ASCII
     string "cwlVersion" (99 119 108     86 101 114 115 105 111 110) as either the
@@ -187,7 +187,7 @@ application/cwl:
 application/cwl+json:
   ext:
   - .cwl.json
-  magic_number_info: All CWL document have the US-ASCII string "cwlVersion" (99 119 108     86
+  info: All CWL document have the US-ASCII string "cwlVersion" (99 119 108     86
     101 114 115 105 111 110) as a key in the topmost JSON     dictionary.
 application/dash+xml:
   ext:
@@ -201,20 +201,6 @@ application/dashdelta:
 application/davmount+xml:
   ext:
   - .davmount
-application/dialog-info+xml:
-  ext:
-  - .xml
-application/dicom:
-  ext:
-  - .dcm
-  - null
-  magic_number_info: 'DICM' at 128
-application/dicom+json:
-  ext:
-  - .json
-application/dicom+xml:
-  ext:
-  - .xml
 application/dskpp+xml:
   ext:
   - .xmls
@@ -256,7 +242,7 @@ application/exi:
   ext:
   - .exi
   magic_number: 0x24455849
-  magic_number_info: The first four octets may be hexadecimal 24 45 58 49 ("$EXI"). The
+  info: The first four octets may be hexadecimal 24 45 58 49 ("$EXI"). The
     first octet after these, or the first octet of the whole content if they are not
     present, has its high two bits set to values 1 and 0 in that order.
   magic_number_offset: 0
@@ -270,7 +256,7 @@ application/fdf:
   ext:
   - .fdf
   magic_number: "%FDF-"
-  magic_number_info: '"%FDF-" followed by the FDF        version number, e.g., "%FDF-1.2".
+  info: '"%FDF-" followed by the FDF        version number, e.g., "%FDF-1.2".
     These characters are in        US-ASCII encoding.'
   magic_number_oset: 0
 application/fdt+xml:
@@ -281,7 +267,7 @@ application/fits:
   - .fits
   - null
   magic_number: "SIMPLE = T"
-  magic_number_info: '"SIMPLE = T"  Jeff Uphoff of the National Radio Astronomy Observatory
+  info: '"SIMPLE = T"  Jeff Uphoff of the National Radio Astronomy Observatory
     (NRAO) has contributed database entries for the magic number file which is used
     by the Unix "file" command. Magic number files with these entries are distributed
     with a variety of Unix-like operating systems. In addition to recognizing a FITS
@@ -395,7 +381,7 @@ application/mets+xml:
   ext:
   - .mets
 application/mipc:
-  magic_number_info: "To first verify that the file is HDF5 formatted, the data consumer\
+  info: "To first verify that the file is HDF5 formatted, the data consumer\
     \     must search for the HDF5 superblock. The superblock may begin at     certain\
     \ predefined offsets within the HDF5 file, allowing a block     of unspecified\
     \ content for users to place additional information     at the beginning (and\
@@ -543,7 +529,7 @@ application/prs.nprend:
   - .rnd
   - .rct
 application/prs.plucker:
-  magic_number_info: "60\tstring\t\tDataPlkr\tPlucker document"
+  info: "60\tstring\t\tDataPlkr\tPlucker document"
 application/prs.rdf-xml-crypt:
   ext:
   - .rdf-crypt
@@ -670,7 +656,7 @@ application/simple-filter+xml:
   - .cl
   - .xml
 application/sipc:
-  magic_number_info: "To first verify that the file is HDF5 formatted, the data consumer\
+  info: "To first verify that the file is HDF5 formatted, the data consumer\
     \    must search for the HDF5 superblock. The superblock may begin at     certain\
     \ predefined offsets within the HDF5 file, allowing a block     of unspecified\
     \ content for users to place additional information     at the beginning (and\
@@ -689,7 +675,7 @@ application/smil (OBSOLETED in favor of application/smil+xml):
 application/soap+fastinfoset:
   ext:
   - .W3C
-  magic_number_info: "For details on the identification of a fast infoset document refer\
+  info: "For details on the identification of a fast infoset document refer\
     \ to the\r magic number section of the \"application/fastinfoset\" media type.\
     \ \r The identification of a W3C SOAP message infoset serialized as a fast\r infoset\
     \ document requires that the fast infoset document be parsed and that\r the properties\
@@ -702,7 +688,7 @@ application/soap+xml:
 application/sparql-query:
   ext:
   - .rq
-  magic_number_info: A SPARQL query may have the string 'PREFIX' (case independent) near
+  info: A SPARQL query may have the string 'PREFIX' (case independent) near
     the beginning of the document.
 application/sparql-results+xml:
   ext:
@@ -898,7 +884,7 @@ application/vnd.acucobol:
   ext:
   - .acu
   magic_number: 0x101214
-  magic_number_info: 0x10121420 and 0x10121421
+  info: 0x10121420 and 0x10121421
   magic_number_offset: 0
 application/vnd.acucorp:
   ext:
@@ -908,7 +894,7 @@ application/vnd.adobe.flash.movie:
   ext:
   - .swf
   magic_number: FWS
-  magic_number_info: FWS, CWS or ZWS
+  info: FWS, CWS or ZWS
   magic_number_offset: 0
 application/vnd.adobe.formscentral.fcdt:
   ext:
@@ -922,22 +908,22 @@ application/vnd.adobe.fxp:
 application/vnd.adobe.xdp+xml:
   ext:
   - .xdp
-  magic_number_info: 'XDP files are xml and use the namespace: http://ns.adobe.com'
+  info: 'XDP files are xml and use the namespace: http://ns.adobe.com'
 application/vnd.afpc.afplinedata-pagedef:
-  magic_number_info: As any other AFP object, Page Definitions are enclosed with a        "Begin"
+  info: As any other AFP object, Page Definitions are enclosed with a        "Begin"
     and an "End" structured field. A Page Definition starts
 application/vnd.afpc.cmoca-cmresource:
-  magic_number_info: Like any other AFP object, Color Management        Resources are enclosed
+  info: Like any other AFP object, Color Management        Resources are enclosed
     with a "Begin" and an "End" structured        field. A Color Management Resource
     is an object container and
 application/vnd.afpc.foca-charset:
-  magic_number_info: 0xD3A889 - Begin Font (BFN) Structured Field       0xD3A989 - End
+  info: 0xD3A889 - Begin Font (BFN) Structured Field       0xD3A989 - End
     Font (EFN) Structured Field
 application/vnd.afpc.foca-codedfont:
-  magic_number_info: 0xD3A88A - Begin Coded Font (BCF) Structured Field       0xD3A98A
+  info: 0xD3A88A - Begin Coded Font (BCF) Structured Field       0xD3A98A
     - End Coded Font (ECF) Structured Field
 application/vnd.afpc.foca-codepage:
-  magic_number_info: 0xD3A887 - Begin Code Page (BCP) Structured Field       0xD3A987 -
+  info: 0xD3A887 - Begin Code Page (BCP) Structured Field       0xD3A987 -
     End Code Page (ECP) Structured Field
 application/vnd.afpc.modca:
   ext:
@@ -946,32 +932,32 @@ application/vnd.afpc.modca:
   - .afp
   - .pseg3820
 application/vnd.afpc.modca-cmtable:
-  magic_number_info: As any other AFP object, Color Mapping Tables are       enclosed with
+  info: As any other AFP object, Color Mapping Tables are       enclosed with
     a "Begin" and an "End" structured field. A Color        Mapping Table is an object
     container and starts with the
   magic_number_offset: 0
 application/vnd.afpc.modca-formdef:
-  magic_number_info: 0xD3A8CD - Begin Form Map (BFM) Structured Field       0xD3A9CD -
+  info: 0xD3A8CD - Begin Form Map (BFM) Structured Field       0xD3A9CD -
     End Form Map (EFM) Structured Field
   magic_number_offset: 0
 application/vnd.afpc.modca-mediummap:
-  magic_number_info: 0xD3A8CC - Begin Medium Map (BMM) Structured Field       0xD3A9CC
+  info: 0xD3A8CC - Begin Medium Map (BMM) Structured Field       0xD3A9CC
     - End Medium Map (EMM) Structured Field
   magic_number_offset: 0
 application/vnd.afpc.modca-objectcontainer:
-  magic_number_info: 0xD3A892 - Begin Object Container (BOC) Structured Field       0xD3A992
+  info: 0xD3A892 - Begin Object Container (BOC) Structured Field       0xD3A992
     - End Object Container (EOC) Structured Field
   magic_number_offset: 0
 application/vnd.afpc.modca-overlay:
   ext:
   - .ovl
-  magic_number_info: Any object in the AFP specification has a byte        pattern that
+  info: Any object in the AFP specification has a byte        pattern that
     opens and closes the object. For Overlays the
   magic_number_offset: 0
 application/vnd.afpc.modca-pagesegment:
   ext:
   - .psg
-  magic_number_info: 0xD3A85F - Begin Page Segment (BPS) Structured Field       0xD3A95F
+  info: 0xD3A85F - Begin Page Segment (BPS) Structured Field       0xD3A95F
     - End Page Segment (EPS) Structured Field
   magic_number_offset: 0
 application/vnd.age:
@@ -2291,7 +2277,7 @@ application/vnd.koan:
   - '-'
   - SSEYO
   - Koan
-  - Tempate
+  -  Template
   - file
   - '-'
   - used
@@ -2596,8 +2582,7 @@ application/vnd.lotus-1-2-3:
 application/vnd.lotus-approach:
   ext:
   - .apr
-  - '                     '
-  - vew
+  - .vew
 application/vnd.lotus-freelance:
   ext:
   - .prz
@@ -4144,7 +4129,7 @@ application/yin+xml:
   - .yin
 application/zlib:
   magic_number: 0x78
-  magic_number_info: first byte is usually 0x78 but can also be 0x08, 0x18, 0x28, 0x38,
+  info: first byte is usually 0x78 but can also be 0x08, 0x18, 0x28, 0x38,
     0x48, 0x58, or 0x68. The first two bytes, when interpreted as an unsigned 16-bit
     number in big-endian byte order, contain a value that is a multiple of 31.
   magic_number_offset: 0
@@ -4161,12 +4146,12 @@ audio/3gpp:
   ext:
   - .3gp
   - .3gpp
-  magic_number_info: None.  However, the file-type box                                     must
+  info: None.  However, the file-type box                                     must
     occur first in the file, and                                     MUST contain
     a 3GPP brand in its                                     compatible brands list.
   magic_number_offset: 0
 audio/3gpp2:
-  magic_number_info: None.  However, the file-type box must occur first in the file,        and
+  info: None.  However, the file-type box must occur first in the file,        and
     MUST contain a 3GPP2 brand in its compatible brands list.
   magic_number_offset: 0
 audio/AMR:
@@ -4228,7 +4213,7 @@ audio/EVS:
   - .3gpp
 audio/G711-0:
   magic_number: '#!G7110A\n'
-  magic_number_info: '#!G7110A\n or #!G7110M\n (for A-law or MU-law       encodings respectively,
+  info: '#!G7110A\n or #!G7110M\n (for A-law or MU-law       encodings respectively,
     see Section 6).'
   magic_number_offset: 0
 audio/L16:
@@ -4271,7 +4256,7 @@ audio/iLBC:
 audio/mhas:
   ext:
   - .mhas
-  magic_number_info: "Receivers can search for the following
+  info: "Receivers can search for the following
       syncword within the binary data stream: mpeghAudioStreamPacket()
       0xC001A5 (24bit sequence)."
   magic_number_offset: 0
@@ -4300,13 +4285,13 @@ audio/prs.sid:
   - .sid
   - .psid
   magic_number: "PSID"
-  magic_number_info: "first 4 bytes are 0x50534944 - \"PSID\" or 0x52534944 - \"RSID\""
+  info: "first 4 bytes are 0x50534944 - \"PSID\" or 0x52534944 - \"RSID\""
   magic_number_offset: 0
 audio/sofa:
   ext:
   - .sofa
   magic_number: 0x894844460d0a1a0a
-  magic_number_info: as with HDF5
+  info: as with HDF5
   magic_number_offset: 0
 audio/sp-midi:
   ext:
@@ -4426,13 +4411,13 @@ audio/vnd.sealedmedia.softseal.mpeg:
 image/aces:
   ext:
   - .exr
-  magic_number: 0x76 2F 31 01 02 00 00 00 or 76 2F 31 01 02 04 00 00
-  magic_number_info: The attribute acesImageContainerFlag has value 1.
+  magic_number: 0x762F310102000000
+  info:  or 76 2F 31 01 02 04 00 00 The attribute acesImageContainerFlag has value 1
   magic_number_offset: 0
 image/apng:
   ext:
   - .apng
-  magic_number: 89 50 4E 47 0D 0A 1A 0A
+  magic_number: 0x89504E470D0A1A0A
   magic_number_offset: 0
 image/avci:
   ext:
@@ -4443,17 +4428,14 @@ image/avcs:
 image/avif:
   ext:
   - .avif
-  - heif
-  - heifs
-  - or
-  - hif
+  - .heif
+  - .heifs
+  - .hif
 image/bmp:
   ext:
   - .bmp
   - .dib
-  magic_number: 42 4D ("BM"), meaning "bitmap".  The next field       (BITMAPFILEHEADER
-    bfSize) is a little-endian DWORD indicating       the size of the bitmap content
-    in bytes.
+  magic_number: "BM"
   magic_number_offset: 0
 image/dicom-rle:
   ext:
@@ -4461,153 +4443,25 @@ image/dicom-rle:
 image/dpx:
   ext:
   - .dpx
-  magic_number: hex 53 44 50 58 (most-significant byte first       file) or 58 50
+  magic_number: 0x53445058
+  info: 0x53445058 (most-significant byte first       file) or 58 50
   magic_number_offset: 0
 image/emf:
   ext:
   - .emf
-  - (for
-  - both
-  - EMF
-  - and
-  - EMF+
-  - content)
-  magic_number: 01 00 00 00 (little-endian DWORD 0x00000001), corresponding to       the
+  info: 0x01000000
+  info: 0x01000000 (little-endian DWORD 0x00000001), corresponding to       the
     EMR_HEADER Type field.       The next field (EMR_HEADER Size) should be at least
     88 (little-       endian DWORD 0x00000050).
-  magic_number_offset: 0
-image/example:
-  ext:
-  - .not
-  - applicable.
-  magic_number: not applicable.
   magic_number_offset: 0
 image/fits:
   ext:
   - .fits
-  - '  '
-  - This
-  - file
-  - extension
-  - SHOULD
-  - NOT
-  - be
-  - interpreted
-  - as
-  - a
-  - prescription.
-  - '  '
-  - The
-  - FITS
-  - standard
-  - originated
-  - in
-  - the
-  - era
-  - when
-  - files
-  - were
-  - stored
-  - and
-  - exchanged
-  - via
-  - magnetic
-  - tape;
-  - it
-  - does
-  - not
-  - prescribe
-  - any
-  - nomenclature
-  - for
-  - files
-  - 'on'
-  - disk.
-  - Various
-  - sites
-  - within
-  - the
-  - FITS
-  - community
-  - have
-  - long-established
-  - practices
-  - where
-  - files
-  - are
-  - presumed
-  - to
-  - be
-  - FITS
-  - by
-  - context.
-  - File
-  - extensions
-  - used
-  - at
-  - such
-  - sites
-  - commonly
-  - indicate
-  - content
-  - of
-  - the
-  - file
-  - instead
-  - of
-  - the
-  - data
-  - format.
-  - '  '
-  - In
-  - the
-  - absence
-  - of
-  - other
-  - information
-  - it
-  - is
-  - reasonably
-  - safe
-  - to
-  - presume
-  - that
-  - a
-  - file
-  - name
-  - ending
-  - in
-  - '".fits"'
-  - is
-  - intended
-  - to
-  - be
-  - a
-  - FITS
-  - file.
-  - Nevertheless
-  - there
-  - are
-  - other
-  - commonly
-  - used
-  - extensions;
-  - e.g.
-  - '".fit"'
-  - '".fts"'
-  - and
-  - many
-  - others
-  - not
-  - suitable
-  - for
-  - listing
-  - in
-  - a
-  - media
-  - type
-  - registration.
-  magic_number: '"SIMPLE = T"  Jeff Uphoff of the National Radio Astronomy Observatory
+  - .fit
+  - .fts
+  - null
+  magic_number: "SIMPLE = T"
+  info: '"SIMPLE = T"  Jeff Uphoff of the National Radio Astronomy Observatory
     (NRAO) has contributed database entries for the magic number file which is used
     by the Unix "file" command. Magic number files with these entries are distributed
     with a variety of Unix-like operating systems. In addition to recognizing a FITS
@@ -4616,89 +4470,29 @@ image/fits:
   magic_number_offset: 0
 image/heic:
   ext:
-  - .heif
-  - (for
-  - subtype
-  - heif)
-  - heic
-  - (for
-  - subtype
-  - '        '
-  - heic)
-  - hif
-  - (for
-  - subtypes
-  - heif
-  - and
-  - heic)
+  - .heic
 image/heic-sequence:
   ext:
-  - .heifs
-  - (for
-  - subtype
-  - heif-sequence)
-  - heics
-  - (for
-  - '        '
-  - subtype
-  - heic-sequence)
-  - hif
-  - (for
-  - subtypes
-  - heif-sequence
-  - and
-  - '        '
-  - heic-sequence)
+  - .heics
 image/heif:
   ext:
   - .heif
-  - (for
-  - subtype
-  - heif)
-  - heic
-  - (for
-  - subtype
-  - '        '
-  - heic)
-  - hif
-  - (for
-  - subtypes
-  - heif
-  - and
-  - heic)
 image/heif-sequence:
   ext:
   - .heifs
-  - (for
-  - subtype
-  - heif-sequence)
-  - heics
-  - (for
-  - '        '
-  - subtype
-  - heic-sequence)
-  - hif
-  - (for
-  - subtypes
-  - heif-sequence
-  - and
-  - '        '
-  - heic-sequence)
 image/hej2k:
   ext:
   - .hej2
-  magic_number: None.
-  magic_number_offset: 0
 image/hsj2:
   ext:
   - .hsj2
 image/j2c:
   ext:
   - .j2c
-  - J2C
-  - j2k
-  - J2K
-  magic_number: 'Starts with the byte sequence: 0xFF 0x4F 0xFF        0x51'
+  - .J2C
+  - .j2k
+  - .J2K
+  magic_number: 0xFF4FFF51
   magic_number_offset: 0
 image/jls:
   ext:
@@ -4706,54 +4500,35 @@ image/jls:
 image/jp2:
   ext:
   - .jp2
-  - and
-  - jpg2
-  - are
-  - both
-  - declared
-  - at
-  magic_number: "12 byte string: X'0000 000C 6A50 2020\r                         \
-    \           0D0A 870A' (for all JPEG-2000 family\r                           \
-    \         files)"
+  - .jpg2
+  magic_number: 0x0000000C6A5020200D0A870A
   magic_number_offset: 0
 image/jph:
   ext:
   - .jph
-  magic_number: See Section 4.4 of RFC 3745
+  info: See Section 4.4 of RFC 3745
   magic_number_offset: 0
 image/jphc:
   ext:
   - .jhc
-  magic_number: 'Starts with the following 4-byte sequence:        0xFF 0x4F 0xFF
-    0x51'
+  magic_number: 0xFF4FFF51
   magic_number_offset: 0
 image/jpm:
   ext:
   - .jpm
-  - and
-  - jpgm
-  - are
-  - both
-  - declared
-  - at
-  magic_number: "12 byte string: X'0000 000C 6A50 2020\r                         \
-    \           0D0A 870A' (for all JPEG-2000 family\r                           \
-    \         files)"
+  - .jpgm
+  magic_number: 0x0000000C6A5020200D0A870A
   magic_number_offset: 0
 image/jpx:
   ext:
   - .jpf
-  - is
-  - declared
-  - at
-  magic_number: "12 byte string: X'0000 000C 6A50 2020\r                         \
-    \           0D0A 870A' (for all JPEG-2000 family\r                           \
-    \         files)"
+  magic_number: 0x0000000C6A5020200D0A870A
   magic_number_offset: 0
 image/jxr:
   ext:
   - .jxr
-  magic_number: Data begins with a FILE_HEADER( ) data structure, which begins  with
+  magic_number: 0x4949BC
+  info: Data begins with a FILE_HEADER( ) data structure, which begins  with
     a FIXED_FILE_HEADER_II_2BYTES field equal to 0x4949, followed by a FIXED_FILE_HEADER_0XBC_BYTE
     field equal to 0xBC, followed by a FILE_VERSION_ID which is equal to 1 for the
     current version of the Recommendation and International Standard (with other values
@@ -4772,14 +4547,12 @@ image/jxrS:
 image/jxs:
   ext:
   - .jxs
-  magic_number: Starts with 12-byte string 0x0000 000C 4A58 5320        0D0A 870A
-    as specified in ISO/IEC 21122-3.
+  magic_number: 0x0000000C4A5853200D0A870A
   magic_number_offset: 0
 image/jxsc:
   ext:
   - .jxsc
-  magic_number: Starts with the 4-byte string 0xFF10 FF50 as        specified in ISO/IEC
-    21122-1.
+  magic_number: 0xFF10FF50
   magic_number_offset: 0
 image/jxsi:
   ext:
@@ -4790,25 +4563,23 @@ image/jxss:
 image/ktx:
   ext:
   - .ktx
-  magic_number: 12 octets - { 0xAB, 0x4B, 0x54, 0x58, 0x20, 0x31, 0x31, 0xBB, 0x0D,
-    0x0A, 0x1A, 0x0A }
+  magic_number: 0xAB4B5458203131BB0D0A1A0A
   magic_number_offset: 0
 image/ktx2:
   ext:
   - .ktx2
-  magic_number: 12 octets { 0xAB,0x4B,0x54,0x58,0x20,0x32,0x30,0xBB,0x0D,0x0A,0x1A,0x0A
-    }
+  magic_number: 0xAB4B5458203230BB0D0A1A0A
   magic_number_offset: 0
 image/png:
   ext:
   - .png
-  magic_number: 89 50 4E 47 0D 0A 1A 0A
+  magic_number: 0x89504E470D0A1A0A
   magic_number_offset: 0
 image/prs.btif:
   ext:
   - .btif
-  - btf
-  magic_number: Since BTIF files are an extension of TIFF 6.0, the magic numbers        are
+  - .btf
+  info: Since BTIF files are an extension of TIFF 6.0, the magic numbers        are
     exactly the same as for TIFF 6.0.  The BTIF file        specification does not
     introduce any unique magic numbers        besides what's already present in TIFF
     6.0.  (See attached        specification)
@@ -4817,34 +4588,13 @@ image/prs.pti:
   ext:
   - .pti
 image/pwg-raster:
-  magic_number: 0x52.61.53.32
+  magic_number: 0x52615332
   magic_number_offset: 0
 image/svg+xml:
   ext:
   - .svg
-  - Note
-  - that
-  - the
-  - extension
-  - '''svgz'''
-  - is
-  - used
-  - as
-  - an
-  - alias
-  - for
-  - '''svg.gz'''
-  - '[rfc1952]'
-  - i.e.
-  - octet
-  - streams
-  - of
-  - type
-  - image/svg+xml
-  - subsequently
-  - compressed
-  - with
-  - gzip.
+  info: 'Note that the extension ".svgz" is used as an alias for ".svg.gz"
+        [rfc1952] i.e. octet streams of type image/svg+xml subsequently compressed with gzip.'
 image/t38:
   ext:
   - .T38
@@ -4860,7 +4610,7 @@ image/vnd.adobe.photoshop:
 image/vnd.airzip.accelerator.azv:
   ext:
   - .azv
-  magic_number: '0x415A0142'
+  magic_number: 0x415A0142
   magic_number_offset: 0
 image/vnd.dece.graphic:
   ext:
@@ -4974,91 +4724,17 @@ image/vnd.zbrush.pcx:
 image/webp:
   ext:
   - .webp
-  magic_number: The first 4 bytes are 0x52, 0x49, 0x46, 0x46 ('RIFF'), followed by
+  magic_number: 0x52494646
+  info: The first 4 bytes are 0x52, 0x49, 0x46, 0x46 ('RIFF'), followed by
     4 bytes for the RIFF chunk size. The next 7 bytes are 0x57, 0x45, 0x42, 0x50,
     0x56, 0x50, 0x38 ('WEBPVP8').
   magic_number_offset: 0
 image/wmf:
   ext:
   - .wmf
-  magic_number: D7 CD C6 9A (little-endian DWORD 0x9AC6CDD7)
+  magic_number: 0xD7CDC69A (little-endian DWORD 0x9AC6CDD7)
+  info: (little-endian DWORD 0x9AC6CDD7)
   magic_number_offset: 0
-image/x-emf - DEPRECATED in favor of image/emf:
-  ext:
-  - .emf
-  - (for
-  - both
-  - EMF
-  - and
-  - EMF+
-  - content)
-  magic_number: 01 00 00 00 (little-endian DWORD 0x00000001), corresponding to       the
-    EMR_HEADER Type field.       The next field (EMR_HEADER Size) should be at least
-    88 (little-       endian DWORD 0x00000050).
-  magic_number_offset: 0
-image/x-wmf - DEPRECATED in favor of image/wmf:
-  ext:
-  - .wmf
-  magic_number: D7 CD C6 9A (little-endian DWORD 0x9AC6CDD7)
-  magic_number_offset: 0
-message/disposition-notification:
-  ext:
-  - .disposition-notification
-message/example:
-  ext:
-  - .not
-  - applicable.
-  magic_number: not applicable.
-  magic_number_offset: 0
-message/global:
-  ext:
-  - .The
-  - extension
-  - '".u8msg"'
-  - is
-  - suggested.
-message/global-delivery-status:
-  ext:
-  - .The
-  - extension
-  - '".u8dsn"'
-  - is
-  - suggested.
-message/global-disposition-notification:
-  ext:
-  - .The
-  - extension
-  - '".u8mdn"'
-  - is
-  - suggested.
-message/global-headers:
-  ext:
-  - .In
-  - the
-  - event
-  - this
-  - is
-  - saved
-  - to
-  - a
-  - file
-  - the
-  - '       '
-  - extension
-  - '".u8hdr"'
-  - is
-  - suggested.
-message/imdn+xml:
-  ext:
-  - .cl
-  - or
-  - .xml
-message/vnd.si.simp (OBSOLETED by request):
-  magic_number: 53 49 4D 50 ("SIMP")
-  magic_number_offset: 0
-message/vnd.wfa.wsc:
-  ext:
-  - .WSC
 model/3mf:
   ext:
   - .3mf
@@ -5083,7 +4759,7 @@ model/obj:
 model/prc:
   ext:
   - .prc
-  magic_number: 'First 3 bytes are Hex: 50 52 43 (ASCII: "PRC")        as per ISO'
+  magic_number: 0x505243
   magic_number_offset: 0
 model/step:
   ext:
@@ -5107,12 +4783,12 @@ model/stl:
 model/u3d:
   ext:
   - .u3d
-  magic_number: 'First 4 bytes of the file are Hex: 55 33 44 00'
+  magic_number: 0x55334400
   magic_number_offset: 0
 model/vnd.bary:
   ext:
   - .bary
-  magic_number: 6 octets { 0xAB 0x42 0x41 0x52 0x59 0x20 }
+  magic_number: 0xAB4241525920
   magic_number_offset: 0
 model/vnd.cld:
   ext:
@@ -5122,7 +4798,7 @@ model/vnd.cld:
 model/vnd.collada+xml:
   ext:
   - .dae
-  magic_number: <COLLADA> is the root XML element
+  info: <COLLADA> is the root XML element
   magic_number_offset: 0
 model/vnd.dwf:
   ext:
@@ -5231,98 +4907,16 @@ model/x3d-vrml:
   - .x3dv
   magic_number: '#X3D'
   magic_number_offset: 0
-multipart/example:
-  ext:
-  - .not
-  - applicable.
-  magic_number: not applicable.
-  magic_number_offset: 0
-multipart/voice-message:
-  ext:
-  - .VPM
-multipart/x-mixed-replace:
-  ext:
-  - .No
-  - specific
-  - file
-  - extensions
-  - are
-  - recommended
-  - for
-  - '  '
-  - this
-  - type.
-  magic_number: No sequence of bytes can uniquely identify it.
-  magic_number_offset: 0
 text/cache-manifest:
   ext:
   - ."appcache"
   - '"manifest"'
-  magic_number: '"CACHE MANIFEST" followed by [ \t\r\n]'
+  magic_number: "CACHE MANIFEST"
   magic_number_offset: 0
 text/calendar:
   ext:
-  - .The
-  - file
-  - extension
-  - of
-  - '"ics"'
-  - is
-  - to
-  - be
-  - used
-  - to
-  - '       '
-  - designate
-  - a
-  - file
-  - containing
-  - (an
-  - arbitrary
-  - set
-  - of)
-  - calendaring
-  - '       '
-  - and
-  - scheduling
-  - information
-  - consistent
-  - with
-  - this
-  - MIME
-  - content
-  - '       '
-  - type.
-  - '        '
-  - The
-  - file
-  - extension
-  - of
-  - '"ifb"'
-  - is
-  - to
-  - be
-  - used
-  - to
-  - designate
-  - a
-  - file
-  - '       '
-  - containing
-  - free
-  - or
-  - busy
-  - time
-  - information
-  - consistent
-  - with
-  - this
-  - '       '
-  - MIME
-  - content
-  - type.
-  magic_number: None.
-  magic_number_offset: 0
+  - .ics
+  - .ifb
 text/cql:
   ext:
   - .CQL
@@ -5334,44 +4928,21 @@ text/csv:
   - .CSV
 text/dns:
   ext:
-  - .'soa'
-  - and
-  - '''zone'''
-  - are
-  - known
-  - to
-  - be
-  - used.
-  magic_number: None.
-  magic_number_offset: 0
-text/ecmascript (OBSOLETED in favor of text/javascript):
-  ext:
-  - .es
-  - .mjs
-text/example:
-  ext:
-  - .not
-  - applicable.
-  magic_number: not applicable.
-  magic_number_offset: 0
+  - .soa
+  - .zone
+  - null
 text/gff3:
   ext:
   - .gff3
-  magic_number: Although no byte sequences can be counted on        to always be present,
+  info: Although no byte sequences can be counted on        to always be present,
     GFF3 data in ASCII-compatible character        sets (including UTF-8) often begin
     with hexadecimal 23 23 67 66        66 2d 76 65 72 73 69 6f 6e 20 33 ("##gff-version
     3").
   magic_number_offset: 0
 text/html:
   ext:
-  - ."html"
-  - and
-  - '"htm"'
-  - are
-  - commonly
-  - used.
-  magic_number: No sequence of bytes can uniquely identify an HTML document.
-  magic_number_offset: 0
+  - .html
+  - .htm
 text/javascript:
   ext:
   - .js
@@ -5388,55 +4959,35 @@ text/mizar:
   - .miz
 text/n3:
   ext:
-  - .".n3"
-  magic_number: Notation3 documents may have the strings '@prefix' or '@base' (case
+  - .n3
+  info: Notation3 documents may have the strings '@prefix' or '@base' (case
     dependent) near the      beginning of the document.
   magic_number_offset: 0
 text/provenance-notation:
   ext:
-  - .".provn"
-  magic_number: PROV-N documents may have the strings 'document' near the beginning
+  - .provn
+  info: PROV-N documents may have the strings 'document' near the beginning
     of the document.
   magic_number_offset: 0
 text/prs.fallenstein.rst:
   ext:
   - .txt
   - .rst
-  magic_number: None.
-  magic_number_offset: 0
 text/prs.lines.tag:
   ext:
-  - .Suggest
   - .tag
-  - for
-  - general
-  - purpose
-  - tag
-  - files
-  - .dsc
-  - is
-  - used
-  - for
-  - tag
-  - descriptor
-  - files
-  magic_number: All tag data streams start Tag-xxx-version - where xxx is the particular
+  - null
+  info: All tag data streams start Tag-xxx-version - where xxx is the particular
     tag type.
   magic_number_offset: 0
 text/prs.prop.logic:
   ext:
   - .txt
-text/raptorfec:
-  ext:
-  - .<none
-  - defined>
-  magic_number: <none defined>
-  magic_number_offset: 0
 text/shaclc:
   ext:
   - .shaclc
   - .shc
-  magic_number: SHACLC documents will likely have the words        PREFIX or BASE
+  info: SHACLC documents will likely have the words        PREFIX or BASE
     (case sensitive) near the beginning of the        document. However, the same
     words may appear in Turtle and        SPARQL documents.
   magic_number_offset: 0
@@ -5446,193 +4997,16 @@ text/shex:
 text/spdx:
   ext:
   - .spdx
-text/troff:
-  ext:
-  - .Files
-  - do
-  - not
-  - require
-  - any
-  - specific
-  - '"extension".'
-  - '       '
-  - Many
-  - are
-  - in
-  - use
-  - as
-  - a
-  - convenience
-  - for
-  - mechanized
-  - processing
-  - of
-  - '       '
-  - files
-  - some
-  - associated
-  - with
-  - specific
-  - macro
-  - packages
-  - or
-  - '       '
-  - preprocessors;
-  - others
-  - are
-  - ad
-  - hoc.
-  - '  '
-  - File
-  - names
-  - are
-  - orthogonal
-  - to
-  - '       '
-  - the
-  - nature
-  - of
-  - the
-  - content.
-  - '  '
-  - In
-  - particular
-  - while
-  - a
-  - file
-  - name
-  - or
-  - '       '
-  - a
-  - component
-  - of
-  - a
-  - name
-  - may
-  - be
-  - useful
-  - in
-  - some
-  - types
-  - of
-  - automated
-  - '       '
-  - processing
-  - of
-  - files
-  - the
-  - name
-  - or
-  - component
-  - might
-  - not
-  - be
-  - capable
-  - '       '
-  - of
-  - indicating
-  - subtleties
-  - such
-  - as
-  - proportion
-  - of
-  - textual
-  - (as
-  - '       '
-  - opposed
-  - to
-  - image
-  - or
-  - formatting
-  - directive)
-  - content.
-  - '  '
-  - This
-  - media
-  - '       '
-  - type
-  - SHOULD
-  - NOT
-  - be
-  - assigned
-  - a
-  - relationship
-  - with
-  - any
-  - file
-  - '       '
-  - '"extension"'
-  - where
-  - content
-  - may
-  - be
-  - untrusted
-  - unless
-  - there
-  - is
-  - '       '
-  - provision
-  - for
-  - human
-  - judgment
-  - that
-  - may
-  - be
-  - used
-  - to
-  - override
-  - that
-  - '       '
-  - relationship
-  - for
-  - individual
-  - files.
-  - '  '
-  - Where
-  - appropriate
-  - a
-  - file
-  - '       '
-  - name
-  - MAY
-  - be
-  - suggested
-  - by
-  - a
-  - suitable
-  - mechanism
-  - such
-  - as
-  - the
-  - one
-  - '       '
-  - specified
-  - in
-  - '[I17.RFC2183]'
-  - as
-  - amended
-  - by
-  - '[N5.RFC2231]'
-  - and
-  - '       '
-  - '[N6.Errata].'
-  magic_number: None; however, the content format is distinctive       (see "Published
-    specification").
-  magic_number_offset: 0
 text/turtle:
   ext:
   - .".ttl"
-  magic_number: Turtle documents may have the strings '@prefix' or '@base' (case dependent)
+  info: Turtle documents may have the strings '@prefix' or '@base' (case dependent)
     near the      beginning of the document.
   magic_number_offset: 0
 text/uri-list:
   ext:
   - .uris
-  - or
   - .uri
-  - recommended
-  magic_number: none at this time
-  magic_number_offset: 0
 text/vcard:
   ext:
   - .vcf
@@ -5651,60 +5025,9 @@ text/vnd.a:
   - .a
 text/vnd.abc:
   ext:
-  - .".abc"
-  - "\t\tIt"
-  - is
-  - recommended
-  - that
-  - abc
-  - file
-  - names
-  - should
-  - use
-  - this
-  - "\t\textension."
-  - '  '
-  - (Many
-  - HTTP
-  - servers
-  - use
-  - the
-  - file
-  - extension
-  - "\t\tas"
-  - an
-  - indicator
-  - of
-  - MIME
-  - type.)
-  - '  '
-  - "\t\tThe"
-  - ABC
-  - language
-  - uses
-  - the
-  - '''<'''
-  - and
-  - '''>'''
-  - characters.
-  - "\t\tRaw"
-  - ABC
-  - must
-  - not
-  - be
-  - embedded
-  - into
-  - HTML
-  - files
-  - and
-  - the
-  - "\t\tfile"
-  - extension
-  - '".html"'
-  - must
-  - be
-  - avoided.
-  magic_number: "\"%abc\" \t\tIt is strongly recommended that abc files should begin\
+  - .abc
+  - null
+  info: "\"%abc\" \t\tIt is strongly recommended that abc files should begin\
     \ \t\twith this string.  An optional version string may \t\tfollow these first\
     \ 4 characters on the first line."
   magic_number_offset: 0
@@ -5830,8 +5153,23 @@ text/vnd.wap.wmlscript:
   - .wmls
 text/vtt:
   ext:
-  - ."vtt"
-  magic_number: WebVTT files all begin with one of the following
+  - .vtt
+  info: 'WebVTT files all begin with one of the following
+   byte sequences (where "EOF" means the end of the file):
+
+   EF BB BF 57 45 42 56 54 54 0A
+   EF BB BF 57 45 42 56 54 54 0D
+   EF BB BF 57 45 42 56 54 54 20
+   EF BB BF 57 45 42 56 54 54 09
+   EF BB BF 57 45 42 56 54 54 EOF
+   57 45 42 56 54 54 0A
+   57 45 42 56 54 54 0D
+   57 45 42 56 54 54 20
+   57 45 42 56 54 54 09
+   57 45 42 56 54 54 EOF
+
+   (An optional UTF-8 BOM, the ASCII string "WEBVTT", and finally a
+   space, tab, line break, or the end of the file.)'
   magic_number_offset: 0
 text/wgsl:
   ext:
@@ -5839,7 +5177,7 @@ text/wgsl:
 text/xml:
   ext:
   - .xml
-  magic_number: None.        Although no byte sequences can be counted on to always
+  info: None.        Although no byte sequences can be counted on to always
     be       present, XML MIME entities in ASCII-compatible character sets       (including
     UTF-8) often begin with hexadecimal 3C 3F 78 6D 6C       ("<?xml"), and those
     in UTF-16 often begin with hexadecimal FE       FF 00 3C 00 3F 00 78 00 6D 00
@@ -5848,38 +5186,19 @@ text/xml:
   magic_number_offset: 0
 text/xml-external-parsed-entity:
   ext:
-  - .xml
-  - or
   - .ent
-  magic_number: Same as for application/xml (Section 9.1 of     RFC7303).
-  magic_number_offset: 0
+  - null
 video/3gpp:
   ext:
   - .3gp
-  - and
-  - 3gpp
-  - are
-  - both
-  - declared
-  - at
-  magic_number: None.  However, the file-type box                                     must
+  - .3gpp
+  info: None.  However, the file-type box                                     must
     occur first in the file, and                                     MUST contain
     a 3GPP brand in its                                     compatible brands list.
   magic_number_offset: 0
-video/3gpp-tt:
-  ext:
-  - .None.
-  magic_number: None.
-  magic_number_offset: 0
 video/3gpp2:
-  magic_number: None.  However, the file-type box must occur first in the file    and
+  info: the file-type box must occur first in the file    and
     MUST contain a 3GPP2 brand in its compatible brands list.
-  magic_number_offset: 0
-video/example:
-  ext:
-  - .not
-  - applicable.
-  magic_number: not applicable.
   magic_number_offset: 0
 video/iso.segment:
   ext:
@@ -5887,69 +5206,17 @@ video/iso.segment:
 video/mj2:
   ext:
   - .mj2
-  - and
-  - mjp2
-  - are
-  - both
-  - declared
-  - at
-  magic_number: '12 byte string: X''0000 000C 6A50 2020                                    0D0A
-    870A'' (for all JPEG-2000 family                                    files)'
+  - .mjp2
+  magic_number: 0x0000000C6A5020200D0A870A
   magic_number_offset: 0
 video/mp4:
   ext:
   - .mp4
-  - and
-  - mpg4
-  - are
-  - both
-  - declared
-  - at
-video/mpeg4-generic:
-  ext:
-  - .None.
-  - '  '
-  - A
-  - file
-  - format
-  - with
-  - the
-  - extension
-  - .mp4
-  - has
-  - been
-  - defined
-  - for
-  - MPEG-4
-  - content
-  - but
-  - is
-  - not
-  - directly
-  - correlated
-  - with
-  - this
-  - MIME
-  - type
-  - for
-  - which
-  - the
-  - sole
-  - purpose
-  - is
-  - RTP
-  - transport.
+  - .mpg4
 video/ogg:
   ext:
   - .ogv
-  magic_number: The first four bytes, 0x4f 0x67 0x67 0x53, correspond to the string
-    "OggS".
-  magic_number_offset: 0
-video/raptorfec:
-  ext:
-  - .<none
-  - defined>
-  magic_number: <none defined>
+  magic_number: "OggS"
   magic_number_offset: 0
 video/vnd.dece.hd:
   ext:
