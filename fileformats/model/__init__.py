@@ -9,7 +9,7 @@ class Model(File):
 
 
 class _3mf(Model):
-    """"""
+    """3D modeling and slicing  software"""
 
     iana_mime = "model/3mf"
     ext = ".3mf"

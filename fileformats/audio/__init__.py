@@ -48,7 +48,16 @@ class _32kadpcm(Audio):
 
 
 class _3gpp(Audio):
-    """TODO: None.  However, the file-type box
+    """The type "audio/3gpp" MAY be used for
+    files containing audio but no visual
+    presentation.  Files served under
+    this type MUST NOT contain any
+    visual material. (Note that 3GPP
+    timed text is visually presented
+    and is considered to be visual
+    material).
+
+    TODO: None.  However, the file-type box
     must occur first in the file, and
     MUST contain a 3GPP brand in its
     compatible brands list."""
@@ -59,15 +68,22 @@ class _3gpp(Audio):
 
 
 class _3gpp2(Audio):
-    """TODO: None.  However, the file-type box must occur first in the file,
-    and MUST contain a 3GPP2 brand in its compatible brands list."""
+    """Multi-media
+
+    The type "audio/3gpp2" MAY be used for files containing audio but
+        no visual presentation.  Files served under this type MUST NOT
+        contain any visual material.  (Note that 3GPP timed text is
+        visually presented and is considered visual material).
+
+        TODO: None.  However, the file-type box must occur first in the file,
+        and MUST contain a 3GPP2 brand in its compatible brands list."""
 
     iana_mime = "audio/3gpp2"
     ext = None
 
 
 class Ac3(WithMagicNumber, Audio):
-    """"""
+    """Multichannel audio compression of audio and audio for video."""
 
     iana_mime = "audio/ac3"
     ext = None
@@ -75,7 +91,7 @@ class Ac3(WithMagicNumber, Audio):
 
 
 class Amr(Audio):
-    """"""
+    """This media type is used in numerous applications needing 	transport or storage of encoded voice.  Some examples include; 	Voice over IP, streaming media, voice messaging, and voice 	recording on digital cameras."""
 
     iana_mime = "audio/AMR"
     ext = ".amr"
@@ -91,7 +107,17 @@ class AmrWb(Audio):
 
 
 class AmrWb__(Audio):
-    """"""
+    """This MIME type is not applicable for file storage.
+    Instead, file storage of AMR-WB+ encoded audio is
+    specified within the 3GPP-defined ISO-based multimedia
+    file format defined in 3GPP TS 26.244; see reference
+    [14] of RFC 4352.  This file format has the MIME types
+    "audio/3GPP" or "video/3GPP" as defined by RFC 3839
+    [15].
+
+    This media type is used in numerous applications needing 	transport or storage of
+    encoded voice.  Some examples include; 	Voice over IP, streaming media, voice
+    messaging, and voice 	recording on digital cameras."""
 
     iana_mime = "audio/amr-wb+"
     ext = None
@@ -105,14 +131,15 @@ class Aptx(Audio):
 
 
 class Asc(Audio):
-    """"""
+    """MPEG 4 Audio servers and terminals that support
+    audio/mpeg4-generic RTP streams for mode rtp-midi."""
 
     iana_mime = "audio/asc"
     ext = None
 
 
 class AtracAdvancedLossless(Audio):
-    """"""
+    """Audio and video streaming and conferencing tools."""
 
     iana_mime = "audio/ATRAC-ADVANCED-LOSSLESS"
     ext = ".aal"
@@ -120,7 +147,7 @@ class AtracAdvancedLossless(Audio):
 
 
 class AtracX(Audio):
-    """"""
+    """Audio and video streaming and conferencing tools."""
 
     iana_mime = "audio/ATRAC-X"
     ext = ".atx"
@@ -128,7 +155,7 @@ class AtracX(Audio):
 
 
 class Atrac3(Audio):
-    """"""
+    """Audio and video streaming and conferencing tools."""
 
     iana_mime = "audio/ATRAC3"
     ext = ".at3"
@@ -178,7 +205,7 @@ class Dat12(Audio):
 
 
 class Dls(WithMagicNumber, Audio):
-    """"""
+    """Multi-media"""
 
     iana_mime = "audio/dls"
     ext = ".dls"
@@ -215,21 +242,22 @@ class DsrEs202212(Audio):
 
 
 class Dv(Audio):
-    """"""
+    """Audio and video streaming and
+    conferencing tools."""
 
     iana_mime = "audio/DV"
     ext = None
 
 
 class Dvi4(Audio):
-    """"""
+    """Audio and video streaming and conferencing tools."""
 
     iana_mime = "audio/DVI4"
     ext = None
 
 
 class Eac3(WithMagicNumber, Audio):
-    """"""
+    """Multichannel audio compression of audio, and audio for video."""
 
     iana_mime = "audio/eac3"
     ext = None
@@ -244,7 +272,10 @@ class Encaprtp(Audio):
 
 
 class Evrc(WithMagicNumber, Audio):
-    """"""
+    """It is expected that many VoIP applications (as well as mobile
+        applications) will use this type.
+
+    The following information applies for storage format only."""
 
     iana_mime = "audio/EVRC"
     ext = ".evc"
@@ -253,7 +284,7 @@ class Evrc(WithMagicNumber, Audio):
 
 
 class EvrcQcp(WithMagicNumber, Audio):
-    """"""
+    """no"""
 
     iana_mime = "audio/EVRC-QCP"
     ext = ".qcp"
@@ -262,21 +293,25 @@ class EvrcQcp(WithMagicNumber, Audio):
 
 
 class Evrc0(Audio):
-    """"""
+    """It is expected that many VoIP applications (as well as mobile
+    applications) will use this type."""
 
     iana_mime = "audio/EVRC0"
     ext = None
 
 
 class Evrc1(Audio):
-    """"""
+    """It is expected that many VoIP applications (as well as mobile
+    applications) will use this type."""
 
     iana_mime = "audio/EVRC1"
     ext = None
 
 
 class Evrcb(WithMagicNumber, Audio):
-    """"""
+    """It is expected that many VoIP applications (as well as mobile applications) will use this type.
+
+    The following information applies for the storage format only."""
 
     iana_mime = "audio/EVRCB"
     ext = ".evb"
@@ -285,21 +320,23 @@ class Evrcb(WithMagicNumber, Audio):
 
 
 class Evrcb0(Audio):
-    """"""
+    """It is expected that many VoIP applications (as well as mobile applications) will use this type."""
 
     iana_mime = "audio/EVRCB0"
     ext = None
 
 
 class Evrcb1(Audio):
-    """"""
+    """It is expected that many VoIP applications (as well as mobile
+    applications) will use this type."""
 
     iana_mime = "audio/EVRCB1"
     ext = None
 
 
 class Evrcnw(WithMagicNumber, Audio):
-    """"""
+    """It is expected that many VoIP applications (as well as mobile
+    applications) will use this type."""
 
     iana_mime = "audio/EVRCNW"
     ext = ".enw"
@@ -308,21 +345,23 @@ class Evrcnw(WithMagicNumber, Audio):
 
 
 class Evrcnw0(Audio):
-    """"""
+    """It is expected that many VoIP applications (as well as mobile
+    applications) will use this type."""
 
     iana_mime = "audio/EVRCNW0"
     ext = None
 
 
 class Evrcnw1(Audio):
-    """"""
+    """It is expected that many VoIP applications (as well as mobile
+    applications) will use this type."""
 
     iana_mime = "audio/EVRCNW1"
     ext = None
 
 
 class Evrcwb(WithMagicNumber, Audio):
-    """"""
+    """It is expected that many VoIP applications (as well as mobile applications) will use this type."""
 
     iana_mime = "audio/EVRCWB"
     ext = ".evw"
@@ -331,14 +370,14 @@ class Evrcwb(WithMagicNumber, Audio):
 
 
 class Evrcwb0(Audio):
-    """"""
+    """It is expected that many VoIP applications (as well as mobile applications) will use this type."""
 
     iana_mime = "audio/EVRCWB0"
     ext = None
 
 
 class Evrcwb1(Audio):
-    """"""
+    """It is expected that many VoIP applications (as well as mobile applications) will use this type."""
 
     iana_mime = "audio/EVRCWB1"
     ext = None
@@ -353,14 +392,17 @@ class Evs(Audio):
 
 
 class Flexfec(Audio):
-    """"""
+    """Multimedia applications that want to improve resiliency against packet loss by sending redundant data in addition to the source media."""
 
     iana_mime = "audio/flexfec"
     ext = None
 
 
 class Fwdred(Audio):
-    """"""
+    """It is expected that real-time audio/video, text streaming, and
+    conferencing tools/applications that want protection against
+    losses of a large number of consecutive frames will be interested
+    in using this type."""
 
     iana_mime = "audio/fwdred"
     ext = None
@@ -376,28 +418,29 @@ class G711_0(WithMagicNumber, Audio):
 
 
 class G719(Audio):
-    """"""
+    """Real-time audio applications
+    like Voice over IP and teleconference, and multi-media streaming."""
 
     iana_mime = "audio/G719"
     ext = None
 
 
 class G7221(Audio):
-    """"""
+    """Audio and Video streaming and conferencing applications."""
 
     iana_mime = "audio/G7221"
     ext = None
 
 
 class G722(Audio):
-    """"""
+    """Audio and video streaming and conferencing tools."""
 
     iana_mime = "audio/G722"
     ext = None
 
 
 class G723(Audio):
-    """"""
+    """Audio and video streaming and conferencing tools."""
 
     iana_mime = "audio/G723"
     ext = None
@@ -432,14 +475,14 @@ class G726_40(Audio):
 
 
 class G728(Audio):
-    """"""
+    """Audio and video streaming and conferencing tools."""
 
     iana_mime = "audio/G728"
     ext = None
 
 
 class G729(Audio):
-    """"""
+    """Audio and video streaming and conferencing tools."""
 
     iana_mime = "audio/G729"
     ext = None
@@ -453,28 +496,28 @@ class G7291(Audio):
 
 
 class G729d(Audio):
-    """"""
+    """Audio and video streaming and conferencing tools."""
 
     iana_mime = "audio/G729D"
     ext = None
 
 
 class G729e(Audio):
-    """"""
+    """Audio and video streaming and conferencing tools."""
 
     iana_mime = "audio/G729E"
     ext = None
 
 
 class Gsm(Audio):
-    """"""
+    """Audio and video streaming and conferencing tools."""
 
     iana_mime = "audio/GSM"
     ext = None
 
 
 class GsmEfr(Audio):
-    """"""
+    """Audio and video streaming and conferencing tools."""
 
     iana_mime = "audio/GSM-EFR"
     ext = None
@@ -503,14 +546,14 @@ class IpMrV2_5(Audio):
 
 
 class L8(Audio):
-    """"""
+    """Audio and video streaming and conferencing tools."""
 
     iana_mime = "audio/L8"
     ext = None
 
 
 class L16(Audio):
-    """"""
+    """The public domain "sox" and "rateconv" programs accept this 	type."""
 
     iana_mime = "audio/L16"
     ext = ".WAV"
@@ -532,7 +575,7 @@ class L24(Audio):
 
 
 class Lpc(Audio):
-    """"""
+    """Audio and video streaming and conferencing tools."""
 
     iana_mime = "audio/LPC"
     ext = None
@@ -567,7 +610,9 @@ class Melp2400(Audio):
 
 
 class Mhas(Audio):
-    """TODO: Receivers can search for the following syncword within the binary data stream: mpeghAudioStreamPacket() 0xC001A5 (24bit sequence)."""
+    """
+
+    TODO: Receivers can search for the following syncword within the binary data stream: mpeghAudioStreamPacket() 0xC001A5 (24bit sequence)."""
 
     iana_mime = "audio/mhas"
     ext = ".mhas"
@@ -595,7 +640,7 @@ class Mp4a_latm(Audio):
 
 
 class MpaRobust(Audio):
-    """"""
+    """Audio streaming tools (transmitting and receiving)"""
 
     iana_mime = "audio/mpa-robust"
     ext = None
@@ -618,7 +663,10 @@ class Ogg(WithMagicNumber, Audio):
 
 
 class Opus(Audio):
-    """"""
+    """Any application that requires the transport of speech or audio
+    data can use this media type.  Some examples are, but not limited
+    to, audio and video conferencing, Voice over IP, and media
+    streaming."""
 
     iana_mime = "audio/opus"
     ext = None
@@ -632,35 +680,43 @@ class Parityfec(Audio):
 
 
 class Pcma(Audio):
-    """"""
+    """Audio and video streaming and conferencing tools."""
 
     iana_mime = "audio/PCMA"
     ext = None
 
 
 class PcmaWb(Audio):
-    """"""
+    """Audio and video conferencing
+    tools."""
 
     iana_mime = "audio/PCMA-WB"
     ext = None
 
 
 class Pcmu(Audio):
-    """"""
+    """Audio and video streaming and conferencing tools."""
 
     iana_mime = "audio/PCMU"
     ext = None
 
 
 class PcmuWb(Audio):
-    """"""
+    """Audio and video conferencing
+    tools."""
 
     iana_mime = "audio/PCMU-WB"
     ext = None
 
 
 class Prs_Sid(WithMagicNumber, Audio):
-    """TODO: first 4 bytes are 0x50534944 - "PSID" or 0x52534944 - "RSID\" """
+    """The data is a binary memory chunk from a Commodore 64 with an attached
+    header. The header contains metadata such as composer, year of
+    publication
+    etc. The binary chunk is being interpreted as CSG 6510 microprocessor
+    instruction bytecodes attached to a Commodore 64 chipset.
+
+       TODO: first 4 bytes are 0x50534944 - "PSID" or 0x52534944 - "RSID\" """
 
     iana_mime = "audio/prs.sid"
     ext = ".sid"
@@ -676,7 +732,7 @@ class Qcelp(Audio):
 
 
 class Raptorfec(Audio):
-    """"""
+    """Real-time multimedia applications like video streaming, audio streaming, and video conferencing."""
 
     iana_mime = "audio/raptorfec"
     ext = None
@@ -704,7 +760,13 @@ class Rtploopback(Audio):
 
 
 class RtpMidi(Audio):
-    """"""
+    """Audio content-creation hardware, such as MIDI controller piano
+    keyboards and MIDI audio synthesizers.  Audio content-creation
+    software, such as music sequencers, digital audio workstations,
+    and soft synthesizers.  Computer operating systems, for network
+    support of MIDI Application Programmer Interfaces.  Content
+    distribution servers and terminals may use this media type for
+    low bitrate music coding."""
 
     iana_mime = "audio/rtp-midi"
     ext = None
@@ -725,7 +787,7 @@ class Scip(Audio):
 
 
 class Smv(WithMagicNumber, Audio):
-    """"""
+    """The following information applies to storage format only."""
 
     iana_mime = "audio/SMV"
     ext = ".smv"
@@ -741,7 +803,7 @@ class Smv0(Audio):
 
 
 class SmvQcp(WithMagicNumber, Audio):
-    """"""
+    """no"""
 
     iana_mime = "audio/SMV-QCP"
     ext = ".qcp"
@@ -750,7 +812,9 @@ class SmvQcp(WithMagicNumber, Audio):
 
 
 class Sofa(WithMagicNumber, Audio):
-    """TODO: as with HDF5"""
+    """
+
+    TODO: as with HDF5"""
 
     iana_mime = "audio/sofa"
     ext = ".sofa"
@@ -765,14 +829,15 @@ class SpMidi(Audio):
 
 
 class Speex(Audio):
-    """"""
+    """Audio streaming and conferencing applications."""
 
     iana_mime = "audio/speex"
     ext = None
 
 
 class T140c(Audio):
-    """"""
+    """This type is only defined for transfer
+    via RTP."""
 
     iana_mime = "audio/t140c"
     ext = None
@@ -821,21 +886,22 @@ class Tsvcis(Audio):
 
 
 class Uemclip(Audio):
-    """"""
+    """Audio and video streaming and
+    conferencing tools."""
 
     iana_mime = "audio/UEMCLIP"
     ext = None
 
 
 class Ulpfec(Audio):
-    """"""
+    """Multimedia applications that seek to improve resiliency to loss by sending additional data with the media stream."""
 
     iana_mime = "audio/ulpfec"
     ext = None
 
 
 class Usac(Audio):
-    """"""
+    """Unified Speech and Audio Coding (USAC) audio is device, platform, and vendor neutral and is supported by a wide range of encoders and decoders/players, for example for Multimedia, HLS Audio-Only Streams - IETF HTTP Live Streaming, SHOUTcast/Icecast2 Audio Streams."""
 
     iana_mime = "audio/usac"
     ext = ".loas"
@@ -843,7 +909,7 @@ class Usac(Audio):
 
 
 class Vdvi(Audio):
-    """"""
+    """Audio and video streaming and conferencing tools."""
 
     iana_mime = "audio/VDVI"
     ext = None

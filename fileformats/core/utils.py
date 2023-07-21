@@ -130,9 +130,9 @@ def fspaths_converter(
         fileformats.core.FileSet,
     ]
 ):
+    """Ensures fs-paths are a set of pathlib.Path"""
     import fileformats.core
 
-    """Ensures fs-paths are a set of pathlib.Path"""
     if isinstance(fspaths, fileformats.core.FileSet):
         fspaths = fspaths.fspaths
     elif isinstance(fspaths, (str, os.PathLike, bytes)):

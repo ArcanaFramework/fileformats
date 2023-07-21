@@ -65,7 +65,12 @@ class CacheManifest(WithMagicNumber, File):
 
 
 class Calendar(Text):
-    """"""
+    """This media type is designed
+    for widespread use by Internet calendaring and scheduling
+    applications.  In addition, applications in the workflow and
+    document management area might find this content-type applicable.
+    The iTIP [2446bis], iMIP [2447bis], and CalDAV [RFC4791] Internet
+    protocols directly use this media type also."""
 
     iana_mime = "text/calendar"
     ext = ".ics"
@@ -108,7 +113,7 @@ class CsvSchema(Text):
 
 
 class Dns(Text):
-    """"""
+    """DNS-related software, including software storing and using certificates stored in DNS."""
 
     iana_mime = "text/dns"
     ext = ".soa"
@@ -130,21 +135,26 @@ class Fhirpath(Text):
 
 
 class Flexfec(Text):
-    """"""
+    """Multimedia applications that want to improve resiliency against packet loss by sending redundant data in addition to the source media."""
 
     iana_mime = "text/flexfec"
     ext = None
 
 
 class Fwdred(Text):
-    """"""
+    """It is expected that real-time audio/video, text streaming, and
+    conferencing tools/applications that want protection against
+    losses of a large number of consecutive frames will be interested
+    in using this type."""
 
     iana_mime = "text/fwdred"
     ext = None
 
 
 class Gff3(Text):
-    """TODO: Although no byte sequences can be counted on
+    """
+
+    TODO: Although no byte sequences can be counted on
     to always be present, GFF3 data in ASCII-compatible character
     sets (including UTF-8) often begin with hexadecimal 23 23 67 66
     66 2d 76 65 72 73 69 6f 6e 20 33 ("##gff-version 3")."""
@@ -154,7 +164,7 @@ class Gff3(Text):
 
 
 class GrammarRefList(Text):
-    """"""
+    """MRCPv2 clients and servers"""
 
     iana_mime = "text/grammar-ref-list"
     ext = None
@@ -168,7 +178,8 @@ class Hl7v2(Text):
 
 
 class Javascript(Text):
-    """"""
+    """Script interpreters as
+    discussed in RFC 9239."""
 
     iana_mime = "text/javascript"
     ext = ".js"
@@ -176,7 +187,7 @@ class Javascript(Text):
 
 
 class JcrCnd(Text):
-    """"""
+    """Used by content repositories that implement the Content Repository For Java API (JCR)"""
 
     iana_mime = "text/jcr-cnd"
     ext = ".cnd"
@@ -190,7 +201,9 @@ class Mizar(Text):
 
 
 class N3(Text):
-    """TODO: Notation3 documents may have the strings '@prefix' or '@base' (case dependent) near the
+    """
+
+    TODO: Notation3 documents may have the strings '@prefix' or '@base' (case dependent) near the
     beginning of the document."""
 
     iana_mime = "text/n3"
@@ -198,7 +211,9 @@ class N3(Text):
 
 
 class Parameters(Text):
-    """"""
+    """Applications that use RTSP
+    and have additional parameters they like to read and set using the
+    RTSP GET_PARAMETER and SET_PARAMETER methods."""
 
     iana_mime = "text/parameters"
     ext = None
@@ -212,7 +227,9 @@ class Parityfec(Text):
 
 
 class ProvenanceNotation(Text):
-    """TODO: PROV-N documents may have the strings 'document' near the beginning of the document."""
+    """
+
+    TODO: PROV-N documents may have the strings 'document' near the beginning of the document."""
 
     iana_mime = "text/provenance-notation"
     ext = ".provn"
@@ -227,7 +244,9 @@ class Prs_Fallenstein_Rst(Text):
 
 
 class Prs_Lines_Tag(Text):
-    """TODO: All tag data streams start Tag-xxx-version - where xxx is the particular tag type."""
+    """
+
+    TODO: All tag data streams start Tag-xxx-version - where xxx is the particular tag type."""
 
     iana_mime = "text/prs.lines.tag"
     ext = ".tag"
@@ -242,7 +261,7 @@ class Prs_Prop_Logic(Text):
 
 
 class Raptorfec(Text):
-    """"""
+    """Real-time multimedia applications like video streaming, audio streaming, and video conferencing."""
 
     iana_mime = "text/raptorfec"
     ext = None
@@ -298,7 +317,10 @@ class Sgml(Text):
 
 
 class Shaclc(Text):
-    """TODO: SHACLC documents will likely have the words
+    """An implementations of SHACLC
+    is part of the TopQuadrant SHACL API
+
+    TODO: SHACLC documents will likely have the words
     PREFIX or BASE (case sensitive) near the beginning of the
     document. However, the same words may appear in Turtle and
     SPARQL documents."""
@@ -316,7 +338,9 @@ class Shex(Text):
 
 
 class Spdx(Text):
-    """"""
+    """The "charset" parameter is not used for the
+    defined subtype because the charset information is transported
+    inside the payload."""
 
     iana_mime = "text/spdx"
     ext = ".spdx"
@@ -330,7 +354,8 @@ class Strings(Text):
 
 
 class T140(Text):
-    """"""
+    """This type is only defined for transfer via
+    RTP."""
 
     iana_mime = "text/t140"
     ext = None
@@ -344,7 +369,9 @@ class Troff(Text):
 
 
 class Turtle(Text):
-    """TODO: Turtle documents may have the strings '@prefix' or '@base' (case dependent) near the
+    """
+
+    TODO: Turtle documents may have the strings '@prefix' or '@base' (case dependent) near the
     beginning of the document."""
 
     iana_mime = "text/turtle"
@@ -352,7 +379,7 @@ class Turtle(Text):
 
 
 class Ulpfec(Text):
-    """"""
+    """Multimedia applications that seek to improve resiliency to loss by sending additional data with the media stream."""
 
     iana_mime = "text/ulpfec"
     ext = None
@@ -367,7 +394,10 @@ class UriList(Text):
 
 
 class Vcard(Text):
-    """"""
+    """They are numerous, diverse,
+    and include mail user agents, instant messaging clients, address
+    book applications, directory servers, and customer relationship
+    management software."""
 
     iana_mime = "text/vcard"
     ext = ".vcf"
@@ -375,7 +405,10 @@ class Vcard(Text):
 
 
 class Vtt(Text):
-    """TODO: WebVTT files all begin with one of the following byte sequences (where "EOF" means the end of the file):
+    """Web browsers and other video
+    players.
+
+    TODO: WebVTT files all begin with one of the following byte sequences (where "EOF" means the end of the file):
     EF BB BF 57 45 42 56 54 54 0A EF BB BF 57 45 42 56 54 54 0D EF BB BF 57 45 42 56 54 54 20 EF BB BF 57 45 42 56 54 54 09 EF BB BF 57 45 42 56 54 54 EOF 57 45 42 56 54 54 0A 57 45 42 56 54 54 0D 57 45 42 56 54 54 20 57 45 42 56 54 54 09 57 45 42 56 54 54 EOF
     (An optional UTF-8 BOM, the ASCII string "WEBVTT", and finally a space, tab, line break, or the end of the file.)"""
 

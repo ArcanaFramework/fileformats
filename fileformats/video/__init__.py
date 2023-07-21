@@ -44,7 +44,9 @@ class _1d_interleaved_parityfec(Video):
 
 
 class _3gpp(Video):
-    """TODO: None.  However, the file-type box
+    """
+
+    TODO: None.  However, the file-type box
     must occur first in the file, and
     MUST contain a 3GPP brand in its
     compatible brands list."""
@@ -55,7 +57,9 @@ class _3gpp(Video):
 
 
 class _3gpp2(Video):
-    """TODO: the file-type box must occur first in the file
+    """Multi-media
+
+    TODO: the file-type box must occur first in the file
     and MUST contain a 3GPP2 brand in its compatible brands list."""
 
     iana_mime = "video/3gpp2"
@@ -98,7 +102,8 @@ class Celb(Video):
 
 
 class Dv(Video):
-    """"""
+    """Audio and video streaming and
+    conferencing tools."""
 
     iana_mime = "video/DV"
     ext = None
@@ -119,21 +124,21 @@ class Example(Video):
 
 
 class Ffv1(Video):
-    """"""
+    """Any application that requires the transport of  lossless video can use this media type. Some examples are, but not limited to, screen  recording, scientific imaging, and digital video preservation."""
 
     iana_mime = "video/FFV1"
     ext = None
 
 
 class Flexfec(Video):
-    """"""
+    """Multimedia applications that want to improve resiliency against packet loss by sending redundant data in addition to the source media."""
 
     iana_mime = "video/flexfec"
     ext = None
 
 
 class H261(Video):
-    """"""
+    """Audio and video streaming and conferencing applications."""
 
     iana_mime = "video/H261"
     ext = None
@@ -189,7 +194,8 @@ class H265(Video):
 
 
 class H266(Video):
-    """"""
+    """Any application that relies
+    on VVC-based video services over RTP"""
 
     iana_mime = "video/H266"
     ext = None
@@ -210,14 +216,15 @@ class Jpeg(Video):
 
 
 class Jpeg2000(Video):
-    """"""
+    """video streaming and communication"""
 
     iana_mime = "video/jpeg2000"
     ext = None
 
 
 class Jxsv(Video):
-    """"""
+    """Any application that transmits video over RTP (like SMPTE ST
+    2110)."""
 
     iana_mime = "video/jxsv"
     ext = None
@@ -275,7 +282,7 @@ class Mpeg4_generic(Video):
 
 
 class Nv(Video):
-    """"""
+    """Audio and video streaming and conferencing tools."""
 
     iana_mime = "video/nv"
     ext = None
@@ -296,7 +303,7 @@ class Pointer(Video):
 
 
 class Raptorfec(Video):
-    """"""
+    """Real-time multimedia applications like video streaming, audio streaming, and video conferencing."""
 
     iana_mime = "video/raptorfec"
     ext = None
@@ -338,7 +345,7 @@ class Scip(Video):
 
 
 class Smpte291(Video):
-    """"""
+    """Devices that stream real-time professional video, especially those that interoperate with legacy serial digital interfaces (SDI)."""
 
     iana_mime = "video/smpte291"
     ext = None
@@ -352,21 +359,21 @@ class Smpte292m(Video):
 
 
 class Ulpfec(Video):
-    """"""
+    """Multimedia applications that seek to improve resiliency to loss by sending additional data with the media stream."""
 
     iana_mime = "video/ulpfec"
     ext = None
 
 
 class Vc1(Video):
-    """"""
+    """Multimedia streaming and conferencing tools."""
 
     iana_mime = "video/vc1"
     ext = None
 
 
 class Vc2(Video):
-    """"""
+    """Video Communication."""
 
     iana_mime = "video/vc2"
     ext = None
