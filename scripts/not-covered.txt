@@ -1,0 +1,7 @@
+image/ief
+message/rfc822
+model/mesh
+model/vrml
+text/enriched
+text/richtext
+video/mpeg

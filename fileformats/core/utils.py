@@ -40,7 +40,11 @@ def include_testing_package(flag: bool = True):
 
 
 def find_matching(
-    fspaths: ty.List[Path], standard_only: bool = False, include_generic: bool = False
+    fspaths: ty.List[Path],
+    candidates: ty.Sequence = None,
+    standard_only: bool = False,
+    include_generic: bool = False,
+    skip_unconstrained: bool = True,
 ):
     """Detect the corresponding file format from a set of file-system paths
 
@@ -48,15 +52,22 @@ def find_matching(
     ----------
     fspaths : list[Path]
         file-system paths to detect the format of
+    candidates: sequence[DataType], optional
+        the candidates to select from, by default all file formats
     standard_only : bool, optional
         If you only want to return matches from the "standard" IANA types, by default False
-    include_generic : bool, optional
-        Include generic file-set types (i.e ones within the fileformats.generic package),
-        by default False
+    skip_unconstrained : bool, optional
+        skip formats that aren't constrained by extension, magic number or another check
     """
+    import fileformats.core.mixin
+
     fspaths = fspaths_converter(fspaths)
     matches = []
-    for frmt in fileformats.core.FileSet.all_formats:
+    if candidates is None:
+        candidates = fileformats.core.FileSet.all_formats
+    for frmt in candidates:
+        if skip_unconstrained and frmt.unconstrained:
+            continue
         namespace = frmt.namespace
         if (
             frmt.matches(fspaths)
@@ -119,9 +130,9 @@ def fspaths_converter(
         fileformats.core.FileSet,
     ]
 ):
+    """Ensures fs-paths are a set of pathlib.Path"""
     import fileformats.core
 
-    """Ensures fs-paths are a set of pathlib.Path"""
     if isinstance(fspaths, fileformats.core.FileSet):
         fspaths = fspaths.fspaths
     elif isinstance(fspaths, (str, os.PathLike, bytes)):
@@ -173,6 +184,8 @@ STANDARD_NAMESPACES = [
     "audio",
     "document",
     "image",
+    "misc",
+    "model",
     "numeric",
     "serialization",
     "text",
@@ -186,6 +199,8 @@ def to_mime_format_name(format_name: str):
             f"Cannot convert name of format class {format_name} to mime string as it "
             "contains triple underscore"
         )
+    if format_name.startswith("_"):
+        format_name = format_name[1:]
     format_name = format_name[0].lower() + format_name[1:]
     format_name = re.sub("__([A-Z])", lambda m: "+" + m.group(1).lower(), format_name)
     format_name = re.sub("_([A-Z])", lambda m: "." + m.group(1).lower(), format_name)
@@ -196,6 +211,8 @@ def to_mime_format_name(format_name: str):
 def from_mime_format_name(format_name: str):
     if format_name.startswith("x-"):
         format_name = format_name[2:]
+    if re.match(r"^[0-9]", format_name):
+        format_name = "_" + format_name
     format_name = format_name.capitalize()
     format_name = re.sub(r"(\.)(\w)", lambda m: "_" + m.group(2).upper(), format_name)
     format_name = re.sub(r"(\+)(\w)", lambda m: "__" + m.group(2).upper(), format_name)
@@ -294,12 +311,17 @@ def import_extras_module(klass: type) -> ty.Tuple[bool, str]:
             klass.__name__,
             klass.__module__,
         )
-        return True, None
+        return True, None, None
     sub_pkg = pkg_parts[1]
+    extras_pkg = "fileformats.extras." + sub_pkg
+    if sub_pkg in STANDARD_NAMESPACES:
+        extras_pypi = "fileformats-extras"
+    else:
+        extras_pypi = f"fileformats-{sub_pkg}-extras"
     try:
-        importlib.import_module("fileformats.extras." + sub_pkg)
+        importlib.import_module(extras_pkg)
     except ImportError:
         extras_imported = False
     else:
         extras_imported = True
-    return extras_imported, sub_pkg
+    return extras_imported, extras_pkg, extras_pypi

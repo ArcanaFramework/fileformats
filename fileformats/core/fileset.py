@@ -69,7 +69,7 @@ class FileSet(DataType):
     # type to None for any base classes that should not correspond to a MIME or MIME-like
     # type.
     iana_mime = None
-    ext = ""
+    ext = None
 
     # Store converters registered by @converter decorator that convert to FileSet
     # NB: each class will have its own version of this dictionary
@@ -171,6 +171,17 @@ class FileSet(DataType):
             format_name = to_mime_format_name(cls.__name__)
             mime_type = f"application/x-{format_name}"
         return mime_type
+
+    @classproperty
+    def strext(cls) -> str:
+        """Return extension that is guaranteed to be a string (i.e. not None)"""
+        return cls.ext if cls.ext is not None else ""
+
+    @classproperty
+    def unconstrained(cls) -> bool:
+        """Whether the file-format is unconstrained by extension, magic number or another
+        constraint"""
+        return not list(cls.required_properties())
 
     @classmethod
     def required_properties(cls):
@@ -327,7 +338,9 @@ class FileSet(DataType):
         ------
         FileFormatError
             When no paths match or more than one path matches the given extension"""
-        return [p for p in fspaths if any(str(p).endswith(e) for e in exts)]
+        return [
+            p for p in fspaths if any(e is None or str(p).endswith(e) for e in exts)
+        ]
 
     @classmethod
     def convert(cls, fileset, plugin="serial", task_name=None, **kwargs):
@@ -416,12 +429,12 @@ class FileSet(DataType):
                     f"Could not find converter between '{source_format.mime_like}' and "
                     f"'{cls.mime_like}' formats"
                 )
-                extras_imported, sub_pkg = import_extras_module(cls)
+                extras_imported, extras_pkg, extras_pypi = import_extras_module(cls)
                 if not extras_imported:
                     msg += (
-                        f'. Was not able to import "extras" module, fileformats.extras.{sub_pkg}, '
-                        f"you may want to try installing the 'fileformats-{sub_pkg}-extras' package "
-                        f"from PyPI (e.g. pip install fileformats-{sub_pkg}-extras)"
+                        f'. Was not able to import "extras" module, {extras_pkg}, '
+                        f"you may want to try installing the '{extras_pypi}' package "
+                        f"from PyPI (e.g. pip install {extras_pypi})"
                     )
                 raise FormatConversionError(msg) from None
             converter_tuple = available_converters[0]

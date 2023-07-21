@@ -34,12 +34,21 @@ class FsObject(FileSet, os.PathLike):
     def stem(self):
         return self.fspath.with_suffix("").name
 
+    @classproperty
+    def unconstrained(cls) -> bool:
+        """Whether the file-format is unconstrained by extension, magic number or another
+        constraint"""
+        # We have to subtract `fspath` from required properties as we defined unconstrained
+        # file-sets as ones that have more constraints than simply existing
+        return not (len(list(cls.required_properties())) - 1)
+
 
 class File(FsObject):
     """Generic file type"""
 
     binary = False
     is_dir = False
+    alternate_exts = ()
 
     @mark.required
     @property
@@ -52,6 +61,12 @@ class File(FsObject):
                 f"is a directory not a file"
             )
         return fspath
+
+    @classproperty
+    def unconstrained(cls) -> bool:
+        """Whether the file-format is unconstrained by extension, magic number or another
+        constraint"""
+        return super().unconstrained and (cls.ext is None or None in cls.alternate_exts)
 
     @classmethod
     def copy_ext(
@@ -179,6 +194,12 @@ class Directory(FsObject):
                     yield content_type([p])
                 except FormatMismatchError:
                     continue
+
+    @classproperty
+    def unconstrained(cls) -> bool:
+        """Whether the file-format is unconstrained by extension, magic number or another
+        constraint"""
+        return super().unconstrained and not cls.content_types
 
     @mark.check
     def validate_contents(self):

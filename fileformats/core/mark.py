@@ -132,25 +132,24 @@ def extra(method: ty.Callable):
 
     def decorated(obj, *args, **kwargs):
         cls = type(obj)
-        extras_imported, sub_pkg = import_extras_module(cls)
+        extras_imported, extras_pkg, extras_pypi = import_extras_module(cls)
         try:
             return method(obj, *args, **kwargs)
         except NotImplementedError:
             if extras_imported:
                 msg = f"No implementation for '{method.__name__}' extra for {cls.__name__} types"
             else:
-                extras_pkg = f"fileformats-{sub_pkg}-extras"
                 try:
-                    if check_package_exists_on_pypi(extras_pkg):
+                    if check_package_exists_on_pypi(extras_pypi):
                         msg += (
-                            f'. An "extras" package exists on PyPI ({extras_pkg}), '
+                            f'. An "extras" package exists on PyPI ({extras_pypi}), '
                             "which may contain an implementation, try installing it "
-                            f"(e.g. 'pip install {extras_pkg}') and check again"
+                            f"(e.g. 'pip install {extras_pypi}') and check again"
                         )
                 except urllib.error.URLError:
                     msg += (
                         '. Was not able to check whether an "extras" package '
-                        f"({extras_pkg}) exists on PyPI or not"
+                        f"({extras_pypi}) exists on PyPI or not"
                     )
             raise FileFormatsExtrasError(msg)
 
