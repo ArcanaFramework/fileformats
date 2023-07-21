@@ -195,7 +195,7 @@ class H266(Video):
     ext = None
 
 
-class Iso___segment(Video):
+class Iso_Segment(Video):
     """"""
 
     iana_mime = "video/iso.segment"
@@ -309,7 +309,7 @@ class Raw(Video):
     ext = None
 
 
-class Rtp_enc_aescm128(Video):
+class RtpEncAescm128(Video):
     """"""
 
     iana_mime = "video/rtp-enc-aescm128"

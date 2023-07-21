@@ -32,6 +32,9 @@ def generated_classes(scraped_json_file: str, editable_yaml_file: str, output_di
                 continue
 
             class_name = re.sub(
+                r"\-(\w)", lambda x: x.group(1).upper(), name.capitalize()
+            )
+            class_name = re.sub(
                 r"\+(\w)", lambda x: "__" + x.group(1).upper(), name.capitalize()
             )
             class_name = class_name.replace("-", "_")

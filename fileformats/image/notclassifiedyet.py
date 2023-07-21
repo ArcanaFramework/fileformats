@@ -47,7 +47,7 @@ class Cgm(Image):
     ext = None
 
 
-class Dicom_rle(Image):
+class DicomRle(Image):
     """"""
 
     iana_mime = "image/dicom-rle"
@@ -96,7 +96,7 @@ class Heic(Image):
     ext = ".heic"
 
 
-class Heic_sequence(Image):
+class HeicSequence(Image):
     """"""
 
     iana_mime = "image/heic-sequence"
@@ -110,7 +110,7 @@ class Heif(Image):
     ext = ".heif"
 
 
-class Heif_sequence(Image):
+class HeifSequence(Image):
     """"""
 
     iana_mime = "image/heif-sequence"
@@ -263,7 +263,7 @@ class Naplps(Image):
     ext = None
 
 
-class Prs___btif(Image):
+class Prs_Btif(Image):
     """TODO: Since BTIF files are an extension of TIFF 6.0, the magic numbers
     are exactly the same as for TIFF 6.0.  The BTIF file
     specification does not introduce any unique magic numbers
@@ -275,14 +275,14 @@ class Prs___btif(Image):
     alternative_exts = (".btf",)
 
 
-class Prs___pti(Image):
+class Prs_Pti(Image):
     """"""
 
     iana_mime = "image/prs.pti"
     ext = ".pti"
 
 
-class Pwg_raster(WithMagicNumber, Image):
+class PwgRaster(WithMagicNumber, Image):
     """"""
 
     iana_mime = "image/pwg-raster"
@@ -304,7 +304,7 @@ class T38(Image):
     ext = ".T38"
 
 
-class Tiff_fx(Image):
+class TiffFx(Image):
     """"""
 
     iana_mime = "image/tiff-fx"

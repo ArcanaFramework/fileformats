@@ -87,112 +87,112 @@ class Aif__Json(Json):
     ext = None
 
 
-class Alto_cdni__Json(Json):
+class AltoCdni__Json(Json):
     """"""
 
     iana_mime = "application/alto-cdni+json"
     ext = None
 
 
-class Alto_cdnifilter__Json(Json):
+class AltoCdnifilter__Json(Json):
     """"""
 
     iana_mime = "application/alto-cdnifilter+json"
     ext = None
 
 
-class Alto_costmap__Json(Json):
+class AltoCostmap__Json(Json):
     """"""
 
     iana_mime = "application/alto-costmap+json"
     ext = None
 
 
-class Alto_costmapfilter__Json(Json):
+class AltoCostmapfilter__Json(Json):
     """"""
 
     iana_mime = "application/alto-costmapfilter+json"
     ext = None
 
 
-class Alto_directory__Json(Json):
+class AltoDirectory__Json(Json):
     """"""
 
     iana_mime = "application/alto-directory+json"
     ext = None
 
 
-class Alto_endpointprop__Json(Json):
+class AltoEndpointprop__Json(Json):
     """"""
 
     iana_mime = "application/alto-endpointprop+json"
     ext = None
 
 
-class Alto_endpointpropparams__Json(Json):
+class AltoEndpointpropparams__Json(Json):
     """"""
 
     iana_mime = "application/alto-endpointpropparams+json"
     ext = None
 
 
-class Alto_endpointcost__Json(Json):
+class AltoEndpointcost__Json(Json):
     """"""
 
     iana_mime = "application/alto-endpointcost+json"
     ext = None
 
 
-class Alto_endpointcostparams__Json(Json):
+class AltoEndpointcostparams__Json(Json):
     """"""
 
     iana_mime = "application/alto-endpointcostparams+json"
     ext = None
 
 
-class Alto_error__Json(Json):
+class AltoError__Json(Json):
     """"""
 
     iana_mime = "application/alto-error+json"
     ext = None
 
 
-class Alto_networkmapfilter__Json(Json):
+class AltoNetworkmapfilter__Json(Json):
     """"""
 
     iana_mime = "application/alto-networkmapfilter+json"
     ext = None
 
 
-class Alto_networkmap__Json(Json):
+class AltoNetworkmap__Json(Json):
     """"""
 
     iana_mime = "application/alto-networkmap+json"
     ext = None
 
 
-class Alto_propmap__Json(Json):
+class AltoPropmap__Json(Json):
     """"""
 
     iana_mime = "application/alto-propmap+json"
     ext = None
 
 
-class Alto_propmapparams__Json(Json):
+class AltoPropmapparams__Json(Json):
     """"""
 
     iana_mime = "application/alto-propmapparams+json"
     ext = None
 
 
-class Alto_updatestreamcontrol__Json(Json):
+class AltoUpdatestreamcontrol__Json(Json):
     """"""
 
     iana_mime = "application/alto-updatestreamcontrol+json"
     ext = None
 
 
-class Alto_updatestreamparams__Json(Json):
+class AltoUpdatestreamparams__Json(Json):
     """"""
 
     iana_mime = "application/alto-updatestreamparams+json"
@@ -206,7 +206,7 @@ class Aml(File):
     ext = ".aml"
 
 
-class Andrew_inset(File):
+class AndrewInset(File):
     """"""
 
     iana_mime = "application/andrew-inset"
@@ -276,35 +276,35 @@ class Atomsvc__Xml(Xml):
     ext = ".atomsvc"
 
 
-class Atsc_dwd__Xml(Xml):
+class AtscDwd__Xml(Xml):
     """"""
 
     iana_mime = "application/atsc-dwd+xml"
     ext = ".dwd"
 
 
-class Atsc_dynamic_event_message(File):
+class AtscDynamicEventMessage(File):
     """"""
 
     iana_mime = "application/atsc-dynamic-event-message"
     ext = None
 
 
-class Atsc_held__Xml(Xml):
+class AtscHeld__Xml(Xml):
     """"""
 
     iana_mime = "application/atsc-held+xml"
     ext = ".held"
 
 
-class Atsc_rdt__Json(Json):
+class AtscRdt__Json(Json):
     """"""
 
     iana_mime = "application/atsc-rdt+json"
     ext = None
 
 
-class Atsc_rsat__Xml(Xml):
+class AtscRsat__Xml(Xml):
     """"""
 
     iana_mime = "application/atsc-rsat+xml"
@@ -318,28 +318,28 @@ class Atxml(File):
     ext = ".atxml"
 
 
-class Auth_policy__Xml(Xml):
+class AuthPolicy__Xml(Xml):
     """"""
 
     iana_mime = "application/auth-policy+xml"
     ext = ".apxml"
 
 
-class Automationml_aml__Xml(Xml):
+class AutomationmlAml__Xml(Xml):
     """"""
 
     iana_mime = "application/automationml-aml+xml"
     ext = ".aml"
 
 
-class Automationml_amlx__Zip(File):
+class AutomationmlAmlx__Zip(File):
     """"""
 
     iana_mime = "application/automationml-amlx+zip"
     ext = ".amlx"
 
 
-class Bacnet_xdd__Zip(WithMagicNumber, File):
+class BacnetXdd__Zip(WithMagicNumber, File):
     """"""
 
     iana_mime = "application/bacnet-xdd+zip"
@@ -347,7 +347,7 @@ class Bacnet_xdd__Zip(WithMagicNumber, File):
     magic_number = b"PK\003\004"
 
 
-class Batch_smtp(File):
+class BatchSmtp(File):
     """"""
 
     iana_mime = "application/batch-SMTP"
@@ -375,7 +375,7 @@ class Calendar__Xml(Xml):
     ext = ".xcs"
 
 
-class Call_completion(File):
+class CallCompletion(File):
     """"""
 
     iana_mime = "application/call-completion"
@@ -403,7 +403,7 @@ class Cbor(File):
     ext = ".cbor"
 
 
-class Cbor_seq(File):
+class CborSeq(File):
     """"""
 
     iana_mime = "application/cbor-seq"
@@ -445,35 +445,35 @@ class Cdfx__Xml(Xml):
     ext = ".cdfx"
 
 
-class Cdmi_capability(File):
+class CdmiCapability(File):
     """"""
 
     iana_mime = "application/cdmi-capability"
     ext = ".cdmia"
 
 
-class Cdmi_container(File):
+class CdmiContainer(File):
     """"""
 
     iana_mime = "application/cdmi-container"
     ext = ".cdmic"
 
 
-class Cdmi_domain(File):
+class CdmiDomain(File):
     """"""
 
     iana_mime = "application/cdmi-domain"
     ext = ".cdmid"
 
 
-class Cdmi_object(File):
+class CdmiObject(File):
     """"""
 
     iana_mime = "application/cdmi-object"
     ext = ".cdmio"
 
 
-class Cdmi_queue(File):
+class CdmiQueue(File):
     """"""
 
     iana_mime = "application/cdmi-queue"
@@ -530,7 +530,7 @@ class Clr(File):
     ext = ".1clr"
 
 
-class Clue_info__Xml(Xml):
+class ClueInfo__Xml(Xml):
     """"""
 
     iana_mime = "application/clue_info+xml"
@@ -558,14 +558,14 @@ class Cnrp__Xml(Xml):
     ext = None
 
 
-class Coap_group__Json(Json):
+class CoapGroup__Json(Json):
     """"""
 
     iana_mime = "application/coap-group+json"
     ext = ".json"
 
 
-class Coap_payload(File):
+class CoapPayload(File):
     """"""
 
     iana_mime = "application/coap-payload"
@@ -579,14 +579,14 @@ class Commonground(File):
     ext = None
 
 
-class Concise_problem_details__Cbor(File):
+class ConciseProblemDetails__Cbor(File):
     """"""
 
     iana_mime = "application/concise-problem-details+cbor"
     ext = None
 
 
-class Conference_info__Xml(Xml):
+class ConferenceInfo__Xml(Xml):
     """"""
 
     iana_mime = "application/conference-info+xml"
@@ -608,21 +608,21 @@ class Cose(File):
     ext = ".cbor"
 
 
-class Cose_key(File):
+class CoseKey(File):
     """"""
 
     iana_mime = "application/cose-key"
     ext = ".cbor"
 
 
-class Cose_key_set(File):
+class CoseKeySet(File):
     """"""
 
     iana_mime = "application/cose-key-set"
     ext = ".cbor"
 
 
-class Cose_x509(File):
+class CoseX509(File):
     """"""
 
     iana_mime = "application/cose-x509"
@@ -699,7 +699,7 @@ class Dash__Xml(Xml):
     ext = ".mpd"
 
 
-class Dash_patch__Xml(Xml):
+class DashPatch__Xml(Xml):
     """"""
 
     iana_mime = "application/dash-patch+xml"
@@ -720,7 +720,7 @@ class Davmount__Xml(Xml):
     ext = ".davmount"
 
 
-class Dca_rft(File):
+class DcaRft(File):
     """"""
 
     iana_mime = "application/dca-rft"
@@ -734,14 +734,14 @@ class Dcd(File):
     ext = ".dcd"
 
 
-class Dec_dx(File):
+class DecDx(File):
     """"""
 
     iana_mime = "application/dec-dx"
     ext = None
 
 
-class Dialog_info__Xml(Xml):
+class DialogInfo__Xml(Xml):
     """"""
 
     iana_mime = "application/dialog-info+xml"
@@ -797,7 +797,7 @@ class Dns__Json(Json):
     ext = None
 
 
-class Dns_message(File):
+class DnsMessage(File):
     """"""
 
     iana_mime = "application/dns-message"
@@ -846,7 +846,7 @@ class Dvcs(File):
     ext = ".dvc"
 
 
-class Edi_consent(File):
+class EdiConsent(File):
     """"""
 
     iana_mime = "application/EDI-consent"
@@ -860,7 +860,7 @@ class Edifact(File):
     ext = None
 
 
-class Edi_x12(File):
+class EdiX12(File):
     """"""
 
     iana_mime = "application/EDI-X12"
@@ -891,70 +891,70 @@ class Elm__Xml(Xml):
     ext = None
 
 
-class Emergencycalldata___cap__Xml(Xml):
+class Emergencycalldata_Cap__Xml(Xml):
     """"""
 
     iana_mime = "application/EmergencyCallData.cap+xml"
     ext = None
 
 
-class Emergencycalldata___comment__Xml(Xml):
+class Emergencycalldata_Comment__Xml(Xml):
     """"""
 
     iana_mime = "application/EmergencyCallData.Comment+xml"
     ext = ".xml"
 
 
-class Emergencycalldata___control__Xml(Xml):
+class Emergencycalldata_Control__Xml(Xml):
     """"""
 
     iana_mime = "application/EmergencyCallData.Control+xml"
     ext = ".xml"
 
 
-class Emergencycalldata___deviceinfo__Xml(Xml):
+class Emergencycalldata_Deviceinfo__Xml(Xml):
     """"""
 
     iana_mime = "application/EmergencyCallData.DeviceInfo+xml"
     ext = ".xml"
 
 
-class Emergencycalldata___ecall___msd(File):
+class Emergencycalldata_Ecall___msd(File):
     """"""
 
     iana_mime = "application/EmergencyCallData.eCall.MSD"
     ext = None
 
 
-class Emergencycalldata___legacyesn__Json(Json):
+class Emergencycalldata_Legacyesn__Json(Json):
     """"""
 
     iana_mime = "application/EmergencyCallData.LegacyESN+json"
     ext = ".json"
 
 
-class Emergencycalldata___providerinfo__Xml(Xml):
+class Emergencycalldata_Providerinfo__Xml(Xml):
     """"""
 
     iana_mime = "application/EmergencyCallData.ProviderInfo+xml"
     ext = ".xml"
 
 
-class Emergencycalldata___serviceinfo__Xml(Xml):
+class Emergencycalldata_Serviceinfo__Xml(Xml):
     """"""
 
     iana_mime = "application/EmergencyCallData.ServiceInfo+xml"
     ext = ".xml"
 
 
-class Emergencycalldata___subscriberinfo__Xml(Xml):
+class Emergencycalldata_Subscriberinfo__Xml(Xml):
     """"""
 
     iana_mime = "application/EmergencyCallData.SubscriberInfo+xml"
     ext = ".xml"
 
 
-class Emergencycalldata___veds__Xml(Xml):
+class Emergencycalldata_Veds__Xml(Xml):
     """"""
 
     iana_mime = "application/EmergencyCallData.VEDS+xml"
@@ -1015,7 +1015,7 @@ class Exi(WithMagicNumber, File):
     magic_number = "24455849"
 
 
-class Expect_ct_report__Json(Json):
+class ExpectCtReport__Json(Json):
     """"""
 
     iana_mime = "application/expect-ct-report+json"
@@ -1095,7 +1095,7 @@ class Flexfec(File):
     ext = None
 
 
-class Framework_attributes__Xml(Xml):
+class FrameworkAttributes__Xml(Xml):
     """"""
 
     iana_mime = "application/framework-attributes+xml"
@@ -1131,7 +1131,7 @@ class Geoxacml__Xml(Xml):
     ext = None
 
 
-class Gltf_buffer(File):
+class GltfBuffer(File):
     """"""
 
     iana_mime = "application/gltf-buffer"
@@ -1189,21 +1189,21 @@ class Hyperstudio(File):
     ext = None
 
 
-class Ibe_key_request__Xml(Xml):
+class IbeKeyRequest__Xml(Xml):
     """"""
 
     iana_mime = "application/ibe-key-request+xml"
     ext = None
 
 
-class Ibe_pkg_reply__Xml(Xml):
+class IbePkgReply__Xml(Xml):
     """"""
 
     iana_mime = "application/ibe-pkg-reply+xml"
     ext = None
 
 
-class Ibe_pp_data(File):
+class IbePpData(File):
     """"""
 
     iana_mime = "application/ibe-pp-data"
@@ -1217,7 +1217,7 @@ class Iges(File):
     ext = None
 
 
-class Im_iscomposing__Xml(Xml):
+class ImIscomposing__Xml(Xml):
     """"""
 
     iana_mime = "application/im-iscomposing+xml"
@@ -1231,28 +1231,28 @@ class Index(File):
     ext = None
 
 
-class Index___cmd(File):
+class Index_Cmd(File):
     """"""
 
     iana_mime = "application/index.cmd"
     ext = None
 
 
-class Index___obj(File):
+class Index_Obj(File):
     """"""
 
     iana_mime = "application/index.obj"
     ext = None
 
 
-class Index___response(File):
+class Index_Response(File):
     """"""
 
     iana_mime = "application/index.response"
     ext = None
 
 
-class Index___vnd(File):
+class Index_Vnd(File):
     """"""
 
     iana_mime = "application/index.vnd"
@@ -1302,7 +1302,7 @@ class Its__Xml(Xml):
     ext = ".its"
 
 
-class Java_archive(WithMagicNumber, File):
+class JavaArchive(WithMagicNumber, File):
     """"""
 
     iana_mime = "application/java-archive"
@@ -1345,14 +1345,14 @@ class Jscalendar__Json(Json):
     ext = None
 
 
-class Json_patch__Json(Json):
+class JsonPatch__Json(Json):
     """"""
 
     iana_mime = "application/json-patch+json"
     ext = ".json-patch"
 
 
-class Json_seq(File):
+class JsonSeq(File):
     """"""
 
     iana_mime = "application/json-seq"
@@ -1366,7 +1366,7 @@ class Jwk__Json(Json):
     ext = None
 
 
-class Jwk_set__Json(Json):
+class JwkSet__Json(Json):
     """"""
 
     iana_mime = "application/jwk-set+json"
@@ -1380,14 +1380,14 @@ class Jwt(File):
     ext = None
 
 
-class Kpml_request__Xml(Xml):
+class KpmlRequest__Xml(Xml):
     """"""
 
     iana_mime = "application/kpml-request+xml"
     ext = None
 
 
-class Kpml_response__Xml(Xml):
+class KpmlResponse__Xml(Xml):
     """"""
 
     iana_mime = "application/kpml-response+xml"
@@ -1408,7 +1408,7 @@ class Lgr__Xml(Xml):
     ext = ".lgr"
 
 
-class Link_format(File):
+class LinkFormat(File):
     """"""
 
     iana_mime = "application/link-format"
@@ -1429,7 +1429,7 @@ class Linkset__Json(Json):
     ext = None
 
 
-class Load_control__Xml(Xml):
+class LoadControl__Xml(Xml):
     """"""
 
     iana_mime = "application/load-control+xml"
@@ -1473,7 +1473,7 @@ class Lxf(File):
     ext = ".lxf"
 
 
-class Mac_binhex40(File):
+class MacBinhex40(File):
     """"""
 
     iana_mime = "application/mac-binhex40"
@@ -1530,91 +1530,91 @@ class Mathml__Xml(Xml):
     ext = ".mml"
 
 
-class Mathml_content__Xml(Xml):
+class MathmlContent__Xml(Xml):
     """"""
 
     iana_mime = "application/mathml-content+xml"
     ext = None
 
 
-class Mathml_presentation__Xml(Xml):
+class MathmlPresentation__Xml(Xml):
     """"""
 
     iana_mime = "application/mathml-presentation+xml"
     ext = None
 
 
-class Mbms_associated_procedure_description__Xml(Xml):
+class MbmsAssociatedProcedureDescription__Xml(Xml):
     """"""
 
     iana_mime = "application/mbms-associated-procedure-description+xml"
     ext = None
 
 
-class Mbms_deregister__Xml(Xml):
+class MbmsDeregister__Xml(Xml):
     """"""
 
     iana_mime = "application/mbms-deregister+xml"
     ext = None
 
 
-class Mbms_envelope__Xml(Xml):
+class MbmsEnvelope__Xml(Xml):
     """"""
 
     iana_mime = "application/mbms-envelope+xml"
     ext = None
 
 
-class Mbms_msk_response__Xml(Xml):
+class MbmsMskResponse__Xml(Xml):
     """"""
 
     iana_mime = "application/mbms-msk-response+xml"
     ext = None
 
 
-class Mbms_msk__Xml(Xml):
+class MbmsMsk__Xml(Xml):
     """"""
 
     iana_mime = "application/mbms-msk+xml"
     ext = None
 
 
-class Mbms_protection_description__Xml(Xml):
+class MbmsProtectionDescription__Xml(Xml):
     """"""
 
     iana_mime = "application/mbms-protection-description+xml"
     ext = None
 
 
-class Mbms_reception_report__Xml(Xml):
+class MbmsReceptionReport__Xml(Xml):
     """"""
 
     iana_mime = "application/mbms-reception-report+xml"
     ext = None
 
 
-class Mbms_register_response__Xml(Xml):
+class MbmsRegisterResponse__Xml(Xml):
     """"""
 
     iana_mime = "application/mbms-register-response+xml"
     ext = None
 
 
-class Mbms_register__Xml(Xml):
+class MbmsRegister__Xml(Xml):
     """"""
 
     iana_mime = "application/mbms-register+xml"
     ext = None
 
 
-class Mbms_schedule__Xml(Xml):
+class MbmsSchedule__Xml(Xml):
     """"""
 
     iana_mime = "application/mbms-schedule+xml"
     ext = None
 
 
-class Mbms_user_service_description__Xml(Xml):
+class MbmsUserServiceDescription__Xml(Xml):
     """"""
 
     iana_mime = "application/mbms-user-service-description+xml"
@@ -1635,14 +1635,14 @@ class Mbox(WithMagicNumber, File):
     magic_number = b"From "
 
 
-class Media_control__Xml(Xml):
+class MediaControl__Xml(Xml):
     """"""
 
     iana_mime = "application/media_control+xml"
     ext = None
 
 
-class Media_policy_dataset__Xml(Xml):
+class MediaPolicyDataset__Xml(Xml):
     """"""
 
     iana_mime = "application/media-policy-dataset+xml"
@@ -1656,7 +1656,7 @@ class Mediaservercontrol__Xml(Xml):
     ext = None
 
 
-class Merge_patch__Json(Json):
+class MergePatch__Json(Json):
     """"""
 
     iana_mime = "application/merge-patch+json"
@@ -1709,21 +1709,21 @@ class Mipc(File):
     ext = None
 
 
-class Missing_blocks__Cbor_seq(File):
+class MissingBlocks__Cbor_seq(File):
     """"""
 
     iana_mime = "application/missing-blocks+cbor-seq"
     ext = None
 
 
-class Mmt_aei__Xml(Xml):
+class MmtAei__Xml(Xml):
     """"""
 
     iana_mime = "application/mmt-aei+xml"
     ext = ".maei"
 
 
-class Mmt_usd__Xml(Xml):
+class MmtUsd__Xml(Xml):
     """"""
 
     iana_mime = "application/mmt-usd+xml"
@@ -1737,28 +1737,28 @@ class Mods__Xml(Xml):
     ext = ".mods"
 
 
-class Moss_keys(File):
+class MossKeys(File):
     """"""
 
     iana_mime = "application/moss-keys"
     ext = None
 
 
-class Moss_signature(File):
+class MossSignature(File):
     """"""
 
     iana_mime = "application/moss-signature"
     ext = None
 
 
-class Mosskey_data(File):
+class MosskeyData(File):
     """"""
 
     iana_mime = "application/mosskey-data"
     ext = None
 
 
-class Mosskey_request(File):
+class MosskeyRequest(File):
     """"""
 
     iana_mime = "application/mosskey-request"
@@ -1802,28 +1802,28 @@ class Mpeg4_iod_xmt(File):
     ext = None
 
 
-class Mrb_consumer__Xml(Xml):
+class MrbConsumer__Xml(Xml):
     """"""
 
     iana_mime = "application/mrb-consumer+xml"
     ext = ".xdf"
 
 
-class Mrb_publish__Xml(Xml):
+class MrbPublish__Xml(Xml):
     """"""
 
     iana_mime = "application/mrb-publish+xml"
     ext = ".xdf"
 
 
-class Msc_ivr__Xml(Xml):
+class MscIvr__Xml(Xml):
     """"""
 
     iana_mime = "application/msc-ivr+xml"
     ext = None
 
 
-class Msc_mixer__Xml(Xml):
+class MscMixer__Xml(Xml):
     """"""
 
     iana_mime = "application/msc-mixer+xml"
@@ -1844,7 +1844,7 @@ class Mud__Json(Json):
     ext = None
 
 
-class Multipart_core(File):
+class MultipartCore(File):
     """"""
 
     iana_mime = "application/multipart-core"
@@ -1858,14 +1858,14 @@ class Mxf(File):
     ext = ".mxf"
 
 
-class N_quads(File):
+class NQuads(File):
     """"""
 
     iana_mime = "application/n-quads"
     ext = ".nq"
 
 
-class N_triples(File):
+class NTriples(File):
     """"""
 
     iana_mime = "application/n-triples"
@@ -1879,21 +1879,21 @@ class Nasdata(File):
     ext = None
 
 
-class News_checkgroups(File):
+class NewsCheckgroups(File):
     """"""
 
     iana_mime = "application/news-checkgroups"
     ext = None
 
 
-class News_groupinfo(File):
+class NewsGroupinfo(File):
     """"""
 
     iana_mime = "application/news-groupinfo"
     ext = None
 
 
-class News_transmission(File):
+class NewsTransmission(File):
     """"""
 
     iana_mime = "application/news-transmission"
@@ -1922,35 +1922,35 @@ class Nss(File):
     ext = None
 
 
-class Oauth_authz_req__Jwt(File):
+class OauthAuthzReq__Jwt(File):
     """"""
 
     iana_mime = "application/oauth-authz-req+jwt"
     ext = None
 
 
-class Oblivious_dns_message(File):
+class ObliviousDnsMessage(File):
     """"""
 
     iana_mime = "application/oblivious-dns-message"
     ext = None
 
 
-class Ocsp_request(File):
+class OcspRequest(File):
     """"""
 
     iana_mime = "application/ocsp-request"
     ext = ".ORQ"
 
 
-class Ocsp_response(File):
+class OcspResponse(File):
     """"""
 
     iana_mime = "application/ocsp-response"
     ext = ".ORS"
 
 
-class Octet_stream(File):
+class OctetStream(File):
     """"""
 
     iana_mime = "application/octet-stream"
@@ -1978,7 +1978,7 @@ class Odx(File):
     ext = ".odx"
 
 
-class Oebps_package__Xml(Xml):
+class OebpsPackage__Xml(Xml):
     """"""
 
     iana_mime = "application/oebps-package+xml"
@@ -1994,14 +1994,14 @@ class Ogg(WithMagicNumber, File):
     magic_number = b"OggS"
 
 
-class Ohttp_keys(File):
+class OhttpKeys(File):
     """"""
 
     iana_mime = "application/ohttp-keys"
     ext = None
 
 
-class Opc_nodeset__Xml(Xml):
+class OpcNodeset__Xml(Xml):
     """"""
 
     iana_mime = "application/opc-nodeset+xml"
@@ -2059,7 +2059,7 @@ class Passport(File):
     ext = None
 
 
-class Patch_ops_error__Xml(Xml):
+class PatchOpsError__Xml(Xml):
     """"""
 
     iana_mime = "application/patch-ops-error+xml"
@@ -2081,28 +2081,28 @@ class Pdx(File):
     ext = ".pdx"
 
 
-class Pem_certificate_chain(File):
+class PemCertificateChain(File):
     """"""
 
     iana_mime = "application/pem-certificate-chain"
     ext = ".pem"
 
 
-class Pgp_encrypted(File):
+class PgpEncrypted(File):
     """"""
 
     iana_mime = "application/pgp-encrypted"
     ext = None
 
 
-class Pgp_keys(File):
+class PgpKeys(File):
     """"""
 
     iana_mime = "application/pgp-keys"
     ext = ".asc"
 
 
-class Pgp_signature(File):
+class PgpSignature(File):
     """"""
 
     iana_mime = "application/pgp-signature"
@@ -2110,7 +2110,7 @@ class Pgp_signature(File):
     alternative_exts = (".sig",)
 
 
-class Pidf_diff__Xml(Xml):
+class PidfDiff__Xml(Xml):
     """"""
 
     iana_mime = "application/pidf-diff+xml"
@@ -2167,28 +2167,28 @@ class Pkcs12(File):
     alternative_exts = (".pfx",)
 
 
-class Pkix_attr_cert(File):
+class PkixAttrCert(File):
     """"""
 
     iana_mime = "application/pkix-attr-cert"
     ext = ".ac"
 
 
-class Pkix_cert(File):
+class PkixCert(File):
     """"""
 
     iana_mime = "application/pkix-cert"
     ext = ".CER"
 
 
-class Pkix_crl(File):
+class PkixCrl(File):
     """"""
 
     iana_mime = "application/pkix-crl"
     ext = ".CRL"
 
 
-class Pkix_pkipath(File):
+class PkixPkipath(File):
     """"""
 
     iana_mime = "application/pkix-pkipath"
@@ -2209,7 +2209,7 @@ class Pls__Xml(Xml):
     ext = None
 
 
-class Poc_settings__Xml(Xml):
+class PocSettings__Xml(Xml):
     """"""
 
     iana_mime = "application/poc-settings+xml"
@@ -2223,7 +2223,7 @@ class Postscript(File):
     ext = None
 
 
-class Ppsp_tracker__Json(Json):
+class PpspTracker__Json(Json):
     """"""
 
     iana_mime = "application/ppsp-tracker+json"
@@ -2251,14 +2251,14 @@ class Provenance__Xml(Xml):
     ext = ".provx"
 
 
-class Prs___alvestrand___titrax_sheet(File):
+class Prs_Alvestrand___titrax_sheet(File):
     """"""
 
     iana_mime = "application/prs.alvestrand.titrax-sheet"
     ext = None
 
 
-class Prs___cww(File):
+class Prs_Cww(File):
     """"""
 
     iana_mime = "application/prs.cww"
@@ -2266,42 +2266,42 @@ class Prs___cww(File):
     alternative_exts = ("cww",)
 
 
-class Prs___cyn(File):
+class Prs_Cyn(File):
     """"""
 
     iana_mime = "application/prs.cyn"
     ext = None
 
 
-class Prs___hpub__Zip(File):
+class Prs_Hpub__Zip(File):
     """"""
 
     iana_mime = "application/prs.hpub+zip"
     ext = ".HPUB"
 
 
-class Prs___implied_document__Xml(Xml):
+class Prs_Implied_document__Xml(Xml):
     """"""
 
     iana_mime = "application/prs.implied-document+xml"
     ext = None
 
 
-class Prs___implied_executable(File):
+class Prs_Implied_executable(File):
     """"""
 
     iana_mime = "application/prs.implied-executable"
     ext = None
 
 
-class Prs___implied_structure(File):
+class Prs_Implied_structure(File):
     """"""
 
     iana_mime = "application/prs.implied-structure"
     ext = None
 
 
-class Prs___nprend(File):
+class Prs_Nprend(File):
     """"""
 
     iana_mime = "application/prs.nprend"
@@ -2309,21 +2309,21 @@ class Prs___nprend(File):
     alternative_exts = (".rct",)
 
 
-class Prs___plucker(File):
+class Prs_Plucker(File):
     """TODO: 60	string		DataPlkr	Plucker document"""
 
     iana_mime = "application/prs.plucker"
     ext = None
 
 
-class Prs___rdf_xml_crypt(File):
+class Prs_Rdf_xml_crypt(File):
     """"""
 
     iana_mime = "application/prs.rdf-xml-crypt"
     ext = ".rdf-crypt"
 
 
-class Prs___xsf__Xml(Xml):
+class Prs_Xsf__Xml(Xml):
     """"""
 
     iana_mime = "application/prs.xsf+xml"
@@ -2352,21 +2352,21 @@ class Rdf__Xml(Xml):
     ext = ".rdf"
 
 
-class Route_apd__Xml(Xml):
+class RouteApd__Xml(Xml):
     """"""
 
     iana_mime = "application/route-apd+xml"
     ext = ".rapd"
 
 
-class Route_s_tsid__Xml(Xml):
+class RouteSTsid__Xml(Xml):
     """"""
 
     iana_mime = "application/route-s-tsid+xml"
     ext = ".sls"
 
 
-class Route_usd__Xml(Xml):
+class RouteUsd__Xml(Xml):
     """"""
 
     iana_mime = "application/route-usd+xml"
@@ -2401,7 +2401,7 @@ class Reginfo__Xml(Xml):
     ext = ".rif"
 
 
-class Relax_ng_compact_syntax(File):
+class RelaxNgCompactSyntax(File):
     """"""
 
     iana_mime = "application/relax-ng-compact-syntax"
@@ -2415,14 +2415,14 @@ class Reputon__Json(Json):
     ext = None
 
 
-class Resource_lists_diff__Xml(Xml):
+class ResourceListsDiff__Xml(Xml):
     """"""
 
     iana_mime = "application/resource-lists-diff+xml"
     ext = ".rld"
 
 
-class Resource_lists__Xml(Xml):
+class ResourceLists__Xml(Xml):
     """"""
 
     iana_mime = "application/resource-lists+xml"
@@ -2450,49 +2450,49 @@ class Rlmi__Xml(Xml):
     ext = None
 
 
-class Rls_services__Xml(Xml):
+class RlsServices__Xml(Xml):
     """"""
 
     iana_mime = "application/rls-services+xml"
     ext = ".rs"
 
 
-class Rpki_checklist(File):
+class RpkiChecklist(File):
     """"""
 
     iana_mime = "application/rpki-checklist"
     ext = ".sig"
 
 
-class Rpki_ghostbusters(File):
+class RpkiGhostbusters(File):
     """"""
 
     iana_mime = "application/rpki-ghostbusters"
     ext = ".gbr"
 
 
-class Rpki_manifest(File):
+class RpkiManifest(File):
     """"""
 
     iana_mime = "application/rpki-manifest"
     ext = ".mft"
 
 
-class Rpki_publication(File):
+class RpkiPublication(File):
     """"""
 
     iana_mime = "application/rpki-publication"
     ext = None
 
 
-class Rpki_roa(File):
+class RpkiRoa(File):
     """"""
 
     iana_mime = "application/rpki-roa"
     ext = ".roa"
 
 
-class Rpki_updown(File):
+class RpkiUpdown(File):
     """"""
 
     iana_mime = "application/rpki-updown"
@@ -2535,7 +2535,7 @@ class Samlmetadata__Xml(Xml):
     ext = None
 
 
-class Sarif_external_properties__Json(Json):
+class SarifExternalProperties__Json(Json):
     """"""
 
     iana_mime = "application/sarif-external-properties+json"
@@ -2580,28 +2580,28 @@ class Scim__Json(Json):
     alternative_exts = (".scm",)
 
 
-class Scvp_cv_request(File):
+class ScvpCvRequest(File):
     """"""
 
     iana_mime = "application/scvp-cv-request"
     ext = ".SCQ"
 
 
-class Scvp_cv_response(File):
+class ScvpCvResponse(File):
     """"""
 
     iana_mime = "application/scvp-cv-response"
     ext = ".SCS"
 
 
-class Scvp_vp_request(File):
+class ScvpVpRequest(File):
     """"""
 
     iana_mime = "application/scvp-vp-request"
     ext = ".SPQ"
 
 
-class Scvp_vp_response(File):
+class ScvpVpResponse(File):
     """"""
 
     iana_mime = "application/scvp-vp-response"
@@ -2622,21 +2622,21 @@ class Secevent__Jwt(File):
     ext = None
 
 
-class Senml_etch__Cbor(File):
+class SenmlEtch__Cbor(File):
     """"""
 
     iana_mime = "application/senml-etch+cbor"
     ext = ".senml-etchc"
 
 
-class Senml_etch__Json(Json):
+class SenmlEtch__Json(Json):
     """"""
 
     iana_mime = "application/senml-etch+json"
     ext = ".senml-etchj"
 
 
-class Senml_exi(File):
+class SenmlExi(File):
     """"""
 
     iana_mime = "application/senml-exi"
@@ -2664,7 +2664,7 @@ class Senml__Xml(Xml):
     ext = ".senmlx"
 
 
-class Sensml_exi(File):
+class SensmlExi(File):
     """"""
 
     iana_mime = "application/sensml-exi"
@@ -2692,7 +2692,7 @@ class Sensml__Xml(Xml):
     ext = ".sensmlx"
 
 
-class Sep_exi(File):
+class SepExi(File):
     """"""
 
     iana_mime = "application/sep-exi"
@@ -2706,35 +2706,35 @@ class Sep__Xml(Xml):
     ext = None
 
 
-class Session_info(File):
+class SessionInfo(File):
     """"""
 
     iana_mime = "application/session-info"
     ext = None
 
 
-class Set_payment(File):
+class SetPayment(File):
     """"""
 
     iana_mime = "application/set-payment"
     ext = None
 
 
-class Set_payment_initiation(File):
+class SetPaymentInitiation(File):
     """"""
 
     iana_mime = "application/set-payment-initiation"
     ext = None
 
 
-class Set_registration(File):
+class SetRegistration(File):
     """"""
 
     iana_mime = "application/set-registration"
     ext = None
 
 
-class Set_registration_initiation(File):
+class SetRegistrationInitiation(File):
     """"""
 
     iana_mime = "application/set-registration-initiation"
@@ -2748,7 +2748,7 @@ class Sgml(File):
     ext = None
 
 
-class Sgml_open_catalog(File):
+class SgmlOpenCatalog(File):
     """"""
 
     iana_mime = "application/sgml-open-catalog"
@@ -2770,7 +2770,7 @@ class Sieve(File):
     alternative_exts = (".sieve",)
 
 
-class Simple_filter__Xml(Xml):
+class SimpleFilter__Xml(Xml):
     """"""
 
     iana_mime = "application/simple-filter+xml"
@@ -2778,7 +2778,7 @@ class Simple_filter__Xml(Xml):
     alternative_exts = (".xml",)
 
 
-class Simple_message_summary(File):
+class SimpleMessageSummary(File):
     """"""
 
     iana_mime = "application/simple-message-summary"
@@ -2851,7 +2851,7 @@ class Soap__Xml(Xml):
     ext = ".SOAP"
 
 
-class Sparql_query(File):
+class SparqlQuery(File):
     """TODO: A SPARQL query may have the string 'PREFIX' (case independent) near the beginning of the document."""
 
     iana_mime = "application/sparql-query"
@@ -2865,14 +2865,14 @@ class Spdx__Json(Json):
     ext = ".spdx.json"
 
 
-class Sparql_results__Xml(Xml):
+class SparqlResults__Xml(Xml):
     """"""
 
     iana_mime = "application/sparql-results+xml"
     ext = ".srx"
 
 
-class Spirits_event__Xml(Xml):
+class SpiritsEvent__Xml(Xml):
     """"""
 
     iana_mime = "application/spirits-event+xml"
@@ -2936,77 +2936,77 @@ class Swid__Xml(Xml):
     ext = ".swidtag"
 
 
-class Tamp_apex_update(File):
+class TampApexUpdate(File):
     """"""
 
     iana_mime = "application/tamp-apex-update"
     ext = ".tau"
 
 
-class Tamp_apex_update_confirm(File):
+class TampApexUpdateConfirm(File):
     """"""
 
     iana_mime = "application/tamp-apex-update-confirm"
     ext = ".auc"
 
 
-class Tamp_community_update(File):
+class TampCommunityUpdate(File):
     """"""
 
     iana_mime = "application/tamp-community-update"
     ext = ".tcu"
 
 
-class Tamp_community_update_confirm(File):
+class TampCommunityUpdateConfirm(File):
     """"""
 
     iana_mime = "application/tamp-community-update-confirm"
     ext = ".cuc"
 
 
-class Tamp_error(File):
+class TampError(File):
     """"""
 
     iana_mime = "application/tamp-error"
     ext = ".ter"
 
 
-class Tamp_sequence_adjust(File):
+class TampSequenceAdjust(File):
     """"""
 
     iana_mime = "application/tamp-sequence-adjust"
     ext = ".tsa"
 
 
-class Tamp_sequence_adjust_confirm(File):
+class TampSequenceAdjustConfirm(File):
     """"""
 
     iana_mime = "application/tamp-sequence-adjust-confirm"
     ext = ".sac"
 
 
-class Tamp_status_query(File):
+class TampStatusQuery(File):
     """"""
 
     iana_mime = "application/tamp-status-query"
     ext = ".tsq"
 
 
-class Tamp_status_response(File):
+class TampStatusResponse(File):
     """"""
 
     iana_mime = "application/tamp-status-response"
     ext = ".tsr"
 
 
-class Tamp_update(File):
+class TampUpdate(File):
     """"""
 
     iana_mime = "application/tamp-update"
     ext = ".tur"
 
 
-class Tamp_update_confirm(File):
+class TampUpdateConfirm(File):
     """"""
 
     iana_mime = "application/tamp-update-confirm"
@@ -3035,7 +3035,7 @@ class Tei__Xml(Xml):
     alternative_exts = (".teiCorpus", ".odd")
 
 
-class Tetra_isi(File):
+class TetraIsi(File):
     """"""
 
     iana_mime = "application/TETRA_ISI"
@@ -3049,21 +3049,21 @@ class Thraud__Xml(Xml):
     ext = ".tfi"
 
 
-class Timestamp_query(File):
+class TimestampQuery(File):
     """"""
 
     iana_mime = "application/timestamp-query"
     ext = None
 
 
-class Timestamp_reply(File):
+class TimestampReply(File):
     """"""
 
     iana_mime = "application/timestamp-reply"
     ext = None
 
 
-class Timestamped_data(File):
+class TimestampedData(File):
     """"""
 
     iana_mime = "application/timestamped-data"
@@ -3099,14 +3099,14 @@ class Tnauthlist(File):
     ext = None
 
 
-class Token_introspection__Jwt(File):
+class TokenIntrospection__Jwt(File):
     """"""
 
     iana_mime = "application/token-introspection+jwt"
     ext = None
 
 
-class Trickle_ice_sdpfrag(File):
+class TrickleIceSdpfrag(File):
     """"""
 
     iana_mime = "application/trickle-ice-sdpfrag"
@@ -3127,7 +3127,7 @@ class Ttml__Xml(Xml):
     ext = ".ttml"
 
 
-class Tve_trigger(File):
+class TveTrigger(File):
     """"""
 
     iana_mime = "application/tve-trigger"
@@ -3142,7 +3142,7 @@ class Tzif(WithMagicNumber, File):
     magic_number = "545a6966"
 
 
-class Tzif_leap(WithMagicNumber, File):
+class TzifLeap(WithMagicNumber, File):
     """"""
 
     iana_mime = "application/tzif-leap"
@@ -3157,28 +3157,28 @@ class Ulpfec(File):
     ext = None
 
 
-class Urc_grpsheet__Xml(Xml):
+class UrcGrpsheet__Xml(Xml):
     """"""
 
     iana_mime = "application/urc-grpsheet+xml"
     ext = ".gsheet"
 
 
-class Urc_ressheet__Xml(Xml):
+class UrcRessheet__Xml(Xml):
     """"""
 
     iana_mime = "application/urc-ressheet+xml"
     ext = ".rsheet"
 
 
-class Urc_targetdesc__Xml(Xml):
+class UrcTargetdesc__Xml(Xml):
     """"""
 
     iana_mime = "application/urc-targetdesc+xml"
     ext = ".td"
 
 
-class Urc_uisocketdesc__Xml(Xml):
+class UrcUisocketdesc__Xml(Xml):
     """"""
 
     iana_mime = "application/urc-uisocketdesc+xml"
@@ -3213,14 +3213,14 @@ class Voicexml__Xml(Xml):
     ext = None
 
 
-class Voucher_cms__Json(Json):
+class VoucherCms__Json(Json):
     """"""
 
     iana_mime = "application/voucher-cms+json"
     ext = ".vcj"
 
 
-class Vq_rtcpxr(File):
+class VqRtcpxr(File):
     """"""
 
     iana_mime = "application/vq-rtcpxr"
@@ -3243,21 +3243,21 @@ class Watcherinfo__Xml(Xml):
     alternative_exts = (".xml",)
 
 
-class Webpush_options__Json(Json):
+class WebpushOptions__Json(Json):
     """"""
 
     iana_mime = "application/webpush-options+json"
     ext = ".json"
 
 
-class Whoispp_query(File):
+class WhoisppQuery(File):
     """"""
 
     iana_mime = "application/whoispp-query"
     ext = None
 
 
-class Whoispp_response(File):
+class WhoisppResponse(File):
     """"""
 
     iana_mime = "application/whoispp-response"
@@ -3300,35 +3300,35 @@ class Wspolicy__Xml(Xml):
     ext = ".wspolicy"
 
 
-class X_pki_message(File):
+class XPkiMessage(File):
     """"""
 
     iana_mime = "application/x-pki-message"
     ext = None
 
 
-class X_www_form_urlencoded(File):
+class XWwwFormUrlencoded(File):
     """"""
 
     iana_mime = "application/x-www-form-urlencoded"
     ext = None
 
 
-class X_x509_ca_cert(File):
+class XX509_ca_cert(File):
     """"""
 
     iana_mime = "application/x-x509-ca-cert"
     ext = None
 
 
-class X_x509_ca_ra_cert(File):
+class XX509_ca_ra_cert(File):
     """"""
 
     iana_mime = "application/x-x509-ca-ra-cert"
     ext = None
 
 
-class X_x509_next_ca_cert(File):
+class XX509_next_ca_cert(File):
     """"""
 
     iana_mime = "application/x-x509-next-ca-cert"
@@ -3349,56 +3349,56 @@ class Xacml__Xml(Xml):
     ext = None
 
 
-class Xcap_att__Xml(Xml):
+class XcapAtt__Xml(Xml):
     """"""
 
     iana_mime = "application/xcap-att+xml"
     ext = ".xav"
 
 
-class Xcap_caps__Xml(Xml):
+class XcapCaps__Xml(Xml):
     """"""
 
     iana_mime = "application/xcap-caps+xml"
     ext = ".xca"
 
 
-class Xcap_diff__Xml(Xml):
+class XcapDiff__Xml(Xml):
     """"""
 
     iana_mime = "application/xcap-diff+xml"
     ext = ".xdf"
 
 
-class Xcap_el__Xml(Xml):
+class XcapEl__Xml(Xml):
     """"""
 
     iana_mime = "application/xcap-el+xml"
     ext = ".xel"
 
 
-class Xcap_error__Xml(Xml):
+class XcapError__Xml(Xml):
     """"""
 
     iana_mime = "application/xcap-error+xml"
     ext = ".xer"
 
 
-class Xcap_ns__Xml(Xml):
+class XcapNs__Xml(Xml):
     """"""
 
     iana_mime = "application/xcap-ns+xml"
     ext = ".xns"
 
 
-class Xcon_conference_info_diff__Xml(Xml):
+class XconConferenceInfoDiff__Xml(Xml):
     """"""
 
     iana_mime = "application/xcon-conference-info-diff+xml"
     ext = ".xml"
 
 
-class Xcon_conference_info__Xml(Xml):
+class XconConferenceInfo__Xml(Xml):
     """"""
 
     iana_mime = "application/xcon-conference-info+xml"
@@ -3434,7 +3434,7 @@ class Xliff__Xml(Xml):
     ext = ".xlf"
 
 
-class Xml_dtd(File):
+class XmlDtd(File):
     """"""
 
     iana_mime = "application/xml-dtd"
@@ -3442,14 +3442,14 @@ class Xml_dtd(File):
     alternative_exts = (".mod",)
 
 
-class Xml_external_parsed_entity(File):
+class XmlExternalParsedEntity(File):
     """"""
 
     iana_mime = "application/xml-external-parsed-entity"
     ext = ".ent"
 
 
-class Xml_patch__Xml(Xml):
+class XmlPatch__Xml(Xml):
     """"""
 
     iana_mime = "application/xml-patch+xml"
@@ -3493,35 +3493,35 @@ class Yang(File):
     ext = ".yang"
 
 
-class Yang_data__Cbor(File):
+class YangData__Cbor(File):
     """"""
 
     iana_mime = "application/yang-data+cbor"
     ext = None
 
 
-class Yang_data__Json(Json):
+class YangData__Json(Json):
     """"""
 
     iana_mime = "application/yang-data+json"
     ext = None
 
 
-class Yang_data__Xml(Xml):
+class YangData__Xml(Xml):
     """"""
 
     iana_mime = "application/yang-data+xml"
     ext = None
 
 
-class Yang_patch__Json(Json):
+class YangPatch__Json(Json):
     """"""
 
     iana_mime = "application/yang-patch+json"
     ext = None
 
 
-class Yang_patch__Xml(Xml):
+class YangPatch__Xml(Xml):
     """"""
 
     iana_mime = "application/yang-patch+xml"

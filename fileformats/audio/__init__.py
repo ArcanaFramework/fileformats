@@ -82,7 +82,7 @@ class Amr(Audio):
     alternative_exts = (".AMR",)
 
 
-class Amr_wb(Audio):
+class AmrWb(Audio):
     """"""
 
     iana_mime = "audio/AMR-WB"
@@ -90,7 +90,7 @@ class Amr_wb(Audio):
     alternative_exts = (".AWB",)
 
 
-class Amr_wb__(Audio):
+class AmrWb__(Audio):
     """"""
 
     iana_mime = "audio/amr-wb+"
@@ -111,7 +111,7 @@ class Asc(Audio):
     ext = None
 
 
-class Atrac_advanced_lossless(Audio):
+class AtracAdvancedLossless(Audio):
     """"""
 
     iana_mime = "audio/ATRAC-ADVANCED-LOSSLESS"
@@ -119,7 +119,7 @@ class Atrac_advanced_lossless(Audio):
     alternative_exts = (".aa3", ".omg")
 
 
-class Atrac_x(Audio):
+class AtracX(Audio):
     """"""
 
     iana_mime = "audio/ATRAC-X"
@@ -186,28 +186,28 @@ class Dls(WithMagicNumber, Audio):
     magic_number_offset = 8
 
 
-class Dsr_es201108(Audio):
+class DsrEs201108(Audio):
     """"""
 
     iana_mime = "audio/dsr-es201108"
     ext = None
 
 
-class Dsr_es202050(Audio):
+class DsrEs202050(Audio):
     """"""
 
     iana_mime = "audio/dsr-es202050"
     ext = None
 
 
-class Dsr_es202211(Audio):
+class DsrEs202211(Audio):
     """"""
 
     iana_mime = "audio/dsr-es202211"
     ext = None
 
 
-class Dsr_es202212(Audio):
+class DsrEs202212(Audio):
     """"""
 
     iana_mime = "audio/dsr-es202212"
@@ -252,7 +252,7 @@ class Evrc(WithMagicNumber, Audio):
     magic_number = b"#!EVRC\n"
 
 
-class Evrc_qcp(WithMagicNumber, Audio):
+class EvrcQcp(WithMagicNumber, Audio):
     """"""
 
     iana_mime = "audio/EVRC-QCP"
@@ -473,14 +473,14 @@ class Gsm(Audio):
     ext = None
 
 
-class Gsm_efr(Audio):
+class GsmEfr(Audio):
     """"""
 
     iana_mime = "audio/GSM-EFR"
     ext = None
 
 
-class Gsm_hr_08(Audio):
+class GsmHr_08(Audio):
     """"""
 
     iana_mime = "audio/GSM-HR-08"
@@ -495,7 +495,7 @@ class Ilbc(Audio):
     alternative_exts = (".LBC",)
 
 
-class Ip_mr_v2___5(Audio):
+class IpMrV2___5(Audio):
     """"""
 
     iana_mime = "audio/ip-mr_v2.5"
@@ -573,7 +573,7 @@ class Mhas(Audio):
     ext = ".mhas"
 
 
-class Mobile_xmf(Audio):
+class MobileXmf(Audio):
     """"""
 
     iana_mime = "audio/mobile-xmf"
@@ -594,7 +594,7 @@ class Mp4a_latm(Audio):
     ext = None
 
 
-class Mpa_robust(Audio):
+class MpaRobust(Audio):
     """"""
 
     iana_mime = "audio/mpa-robust"
@@ -638,7 +638,7 @@ class Pcma(Audio):
     ext = None
 
 
-class Pcma_wb(Audio):
+class PcmaWb(Audio):
     """"""
 
     iana_mime = "audio/PCMA-WB"
@@ -652,14 +652,14 @@ class Pcmu(Audio):
     ext = None
 
 
-class Pcmu_wb(Audio):
+class PcmuWb(Audio):
     """"""
 
     iana_mime = "audio/PCMU-WB"
     ext = None
 
 
-class Prs___sid(WithMagicNumber, Audio):
+class Prs_Sid(WithMagicNumber, Audio):
     """TODO: first 4 bytes are 0x50534944 - "PSID" or 0x52534944 - "RSID\" """
 
     iana_mime = "audio/prs.sid"
@@ -689,7 +689,7 @@ class Red(Audio):
     ext = None
 
 
-class Rtp_enc_aescm128(Audio):
+class RtpEncAescm128(Audio):
     """"""
 
     iana_mime = "audio/rtp-enc-aescm128"
@@ -703,7 +703,7 @@ class Rtploopback(Audio):
     ext = None
 
 
-class Rtp_midi(Audio):
+class RtpMidi(Audio):
     """"""
 
     iana_mime = "audio/rtp-midi"
@@ -740,7 +740,7 @@ class Smv0(Audio):
     ext = None
 
 
-class Smv_qcp(WithMagicNumber, Audio):
+class SmvQcp(WithMagicNumber, Audio):
     """"""
 
     iana_mime = "audio/SMV-QCP"
@@ -757,7 +757,7 @@ class Sofa(WithMagicNumber, Audio):
     magic_number = "894844460d0a1a0a"
 
 
-class Sp_midi(Audio):
+class SpMidi(Audio):
     """"""
 
     iana_mime = "audio/sp-midi"
@@ -785,21 +785,21 @@ class T38(Audio):
     ext = None
 
 
-class Telephone_event(Audio):
+class TelephoneEvent(Audio):
     """"""
 
     iana_mime = "audio/telephone-event"
     ext = None
 
 
-class Tetra_acelp(Audio):
+class TetraAcelp(Audio):
     """"""
 
     iana_mime = "audio/TETRA_ACELP"
     ext = None
 
 
-class Tetra_acelp_bb(Audio):
+class TetraAcelpBb(Audio):
     """"""
 
     iana_mime = "audio/TETRA_ACELP_BB"
@@ -849,7 +849,7 @@ class Vdvi(Audio):
     ext = None
 
 
-class Vmr_wb(Audio):
+class VmrWb(Audio):
     """"""
 
     iana_mime = "audio/VMR-WB"
@@ -863,7 +863,7 @@ class Vorbis(Audio):
     ext = None
 
 
-class Vorbis_config(Audio):
+class VorbisConfig(Audio):
     """"""
 
     iana_mime = "audio/vorbis-config"

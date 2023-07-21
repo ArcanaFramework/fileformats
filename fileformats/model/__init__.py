@@ -22,7 +22,7 @@ class E57(Model):
     ext = None
 
 
-class Gltf_binary(Model):
+class GltfBinary(Model):
     """"""
 
     iana_mime = "model/gltf-binary"
@@ -94,7 +94,7 @@ class Step__Zip(Model):
     ext = ".stpz"
 
 
-class Step_xml__Zip(Model):
+class StepXml__Zip(Model):
     """"""
 
     iana_mime = "model/step-xml+zip"

@@ -53,7 +53,7 @@ class _1d_interleaved_parityfec(Text):
     ext = None
 
 
-class Cache_manifest(WithMagicNumber, File):
+class CacheManifest(WithMagicNumber, File):
     """"""
 
     iana_mime = "text/cache-manifest"
@@ -77,14 +77,14 @@ class Cql(Text):
     ext = ".CQL"
 
 
-class Cql_expression(Text):
+class CqlExpression(Text):
     """"""
 
     iana_mime = "text/cql-expression"
     ext = None
 
 
-class Cql_identifier(Text):
+class CqlIdentifier(Text):
     """"""
 
     iana_mime = "text/cql-identifier"
@@ -98,7 +98,7 @@ class Css(Text):
     ext = ".css"
 
 
-class Csv_schema(Text):
+class CsvSchema(Text):
     """"""
 
     iana_mime = "text/csv-schema"
@@ -151,7 +151,7 @@ class Gff3(Text):
     ext = ".gff3"
 
 
-class Grammar_ref_list(Text):
+class GrammarRefList(Text):
     """"""
 
     iana_mime = "text/grammar-ref-list"
@@ -173,7 +173,7 @@ class Javascript(Text):
     alternative_exts = (".mjs",)
 
 
-class Jcr_cnd(Text):
+class JcrCnd(Text):
     """"""
 
     iana_mime = "text/jcr-cnd"
@@ -209,14 +209,14 @@ class Parityfec(Text):
     ext = None
 
 
-class Provenance_notation(Text):
+class ProvenanceNotation(Text):
     """TODO: PROV-N documents may have the strings 'document' near the beginning of the document."""
 
     iana_mime = "text/provenance-notation"
     ext = ".provn"
 
 
-class Prs___fallenstein___rst(Text):
+class Prs_Fallenstein___rst(Text):
     """"""
 
     iana_mime = "text/prs.fallenstein.rst"
@@ -224,7 +224,7 @@ class Prs___fallenstein___rst(Text):
     alternative_exts = (".rst",)
 
 
-class Prs___lines___tag(Text):
+class Prs_Lines___tag(Text):
     """TODO: All tag data streams start Tag-xxx-version - where xxx is the particular tag type."""
 
     iana_mime = "text/prs.lines.tag"
@@ -232,7 +232,7 @@ class Prs___lines___tag(Text):
     alternative_exts = (None,)
 
 
-class Prs___prop___logic(Text):
+class Prs_Prop___logic(Text):
     """"""
 
     iana_mime = "text/prs.prop.logic"
@@ -267,7 +267,7 @@ class Rtf(Text):
     ext = None
 
 
-class Rtp_enc_aescm128(Text):
+class RtpEncAescm128(Text):
     """"""
 
     iana_mime = "text/rtp-enc-aescm128"
@@ -356,7 +356,7 @@ class Ulpfec(Text):
     ext = None
 
 
-class Uri_list(Text):
+class UriList(Text):
     """"""
 
     iana_mime = "text/uri-list"
@@ -388,7 +388,7 @@ class Wgsl(Text):
     ext = ".wgsl"
 
 
-class Xml_external_parsed_entity(Text):
+class XmlExternalParsedEntity(Text):
     """"""
 
     iana_mime = "text/xml-external-parsed-entity"
