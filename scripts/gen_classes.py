@@ -23,9 +23,12 @@ def generated_classes(scraped_json_file: str, editable_yaml_file: str, output_di
 
         for name, mdata in formats.items():
 
-            if name.startswith("vnd."):
-                continue
-            if "deprecated" in name:
+            if (
+                name.startswith("vnd.")
+                or "deprecated" in name
+                or "obsoleted" in name
+                or name == "example"
+            ):
                 continue
 
             class_name = re.sub(
@@ -79,7 +82,7 @@ class {class_name}({bases}):
         with open(output_dir / (registry + ".py"), "w") as f:
             f.write("from fileformats.generic import File\n")
             f.write("from fileformats.core.mixin import WithMagicNumber\n\n")
-            f.write("\n\n".join(classes))
+            f.write("\n".join(classes))
 
 
 if __name__ == "__main__":

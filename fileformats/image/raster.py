@@ -28,6 +28,7 @@ class Bitmap(WithMagicNumber, RasterImage):
     ext = ".bmp"
     magic_number = b"BM"
     iana_mime = "image/bmp"
+    alternative_exts = (".dib",)
 
 
 class Gif(WithMagicNumber, RasterImage):
