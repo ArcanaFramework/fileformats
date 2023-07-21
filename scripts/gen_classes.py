@@ -63,6 +63,8 @@ class {class_name}({bases}):
                 code += f'    ext = "{exts[0]}"\n'
                 if len(exts) > 1:
                     code += f"    alternative_exts = {tuple(exts[1:])}\n"
+            else:
+                code += "    ext = None\n"
             if magic_number:
                 code += "    magic_number = "
                 if isinstance(magic_number, str):
