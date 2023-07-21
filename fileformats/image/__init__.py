@@ -7,7 +7,6 @@ from .notclassifiedyet import (
     Avci,
     Avcs,
     Avif,
-    Bmp,
     Cgm,
     Dicom_rle,
     Dpx,
@@ -45,5 +44,4 @@ from .notclassifiedyet import (
     Tiff_fx,
     Webp,
     Wmf,
-    X_emf,
 )
