@@ -289,8 +289,11 @@ def test_format_detection(work_dir):
         f.write("sample text")
 
     detected = find_matching(text_file, standard_only=True)
-    assert len(detected) == 1
-    assert detected[0] is fileformats.text.Plain
+    assert sorted(detected, key=lambda f: f.mime_like) == [
+        fileformats.text.Prs_Fallenstein_Rst,
+        fileformats.text.Prs_Prop_Logic,
+        fileformats.text.Unstructured,
+    ]
 
 
 def test_missing_dependency():

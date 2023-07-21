@@ -77,7 +77,7 @@ class Step(Model):
 
     iana_mime = "model/step"
     ext = ".p21"
-    alternative_exts = (".stp", ".step", ".stpnc", ".210")
+    alternate_exts = (".stp", ".step", ".stpnc", ".210")
 
 
 class Step__Xml(Model):

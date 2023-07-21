@@ -55,7 +55,7 @@ class _3gpp(Audio):
 
     iana_mime = "audio/3gpp"
     ext = ".3gp"
-    alternative_exts = (".3gpp",)
+    alternate_exts = (".3gpp",)
 
 
 class _3gpp2(Audio):
@@ -71,7 +71,7 @@ class Ac3(WithMagicNumber, Audio):
 
     iana_mime = "audio/ac3"
     ext = None
-    magic_number = "b77"
+    magic_number = "0B77"
 
 
 class Amr(Audio):
@@ -79,7 +79,7 @@ class Amr(Audio):
 
     iana_mime = "audio/AMR"
     ext = ".amr"
-    alternative_exts = (".AMR",)
+    alternate_exts = (".AMR",)
 
 
 class AmrWb(Audio):
@@ -87,7 +87,7 @@ class AmrWb(Audio):
 
     iana_mime = "audio/AMR-WB"
     ext = ".awb"
-    alternative_exts = (".AWB",)
+    alternate_exts = (".AWB",)
 
 
 class AmrWb__(Audio):
@@ -116,7 +116,7 @@ class AtracAdvancedLossless(Audio):
 
     iana_mime = "audio/ATRAC-ADVANCED-LOSSLESS"
     ext = ".aal"
-    alternative_exts = (".aa3", ".omg")
+    alternate_exts = (".aa3", ".omg")
 
 
 class AtracX(Audio):
@@ -124,7 +124,7 @@ class AtracX(Audio):
 
     iana_mime = "audio/ATRAC-X"
     ext = ".atx"
-    alternative_exts = (".aa3", ".omg")
+    alternate_exts = (".aa3", ".omg")
 
 
 class Atrac3(Audio):
@@ -132,7 +132,7 @@ class Atrac3(Audio):
 
     iana_mime = "audio/ATRAC3"
     ext = ".at3"
-    alternative_exts = (".aa3", ".omg")
+    alternate_exts = (".aa3", ".omg")
 
 
 class Basic(Audio):
@@ -233,7 +233,7 @@ class Eac3(WithMagicNumber, Audio):
 
     iana_mime = "audio/eac3"
     ext = None
-    magic_number = "b77"
+    magic_number = "0b77"
 
 
 class Encaprtp(Audio):
@@ -248,7 +248,7 @@ class Evrc(WithMagicNumber, Audio):
 
     iana_mime = "audio/EVRC"
     ext = ".evc"
-    alternative_exts = ("EVC",)
+    alternate_exts = ("EVC",)
     magic_number = b"#!EVRC\n"
 
 
@@ -257,7 +257,7 @@ class EvrcQcp(WithMagicNumber, Audio):
 
     iana_mime = "audio/EVRC-QCP"
     ext = ".qcp"
-    alternative_exts = (".QCP",)
+    alternate_exts = (".QCP",)
     magic_number = b"RIFF"
 
 
@@ -280,7 +280,7 @@ class Evrcb(WithMagicNumber, Audio):
 
     iana_mime = "audio/EVRCB"
     ext = ".evb"
-    alternative_exts = (".EVB",)
+    alternate_exts = (".EVB",)
     magic_number = b"#!EVRC-B\n"
 
 
@@ -303,7 +303,7 @@ class Evrcnw(WithMagicNumber, Audio):
 
     iana_mime = "audio/EVRCNW"
     ext = ".enw"
-    alternative_exts = (".ENW",)
+    alternate_exts = (".ENW",)
     magic_number = b"#!EVRCNW\n"
 
 
@@ -326,7 +326,7 @@ class Evrcwb(WithMagicNumber, Audio):
 
     iana_mime = "audio/EVRCWB"
     ext = ".evw"
-    alternative_exts = (".EVW",)
+    alternate_exts = (".EVW",)
     magic_number = b"#!EVCWB\n"
 
 
@@ -349,7 +349,7 @@ class Evs(Audio):
 
     iana_mime = "audio/EVS"
     ext = ".3gp"
-    alternative_exts = (".3gpp",)
+    alternate_exts = (".3gpp",)
 
 
 class Flexfec(Audio):
@@ -492,10 +492,10 @@ class Ilbc(Audio):
 
     iana_mime = "audio/iLBC"
     ext = ".lbc"
-    alternative_exts = (".LBC",)
+    alternate_exts = (".LBC",)
 
 
-class IpMrV2___5(Audio):
+class IpMrV2_5(Audio):
     """"""
 
     iana_mime = "audio/ip-mr_v2.5"
@@ -514,7 +514,7 @@ class L16(Audio):
 
     iana_mime = "audio/L16"
     ext = ".WAV"
-    alternative_exts = (".L16",)
+    alternate_exts = (".L16",)
 
 
 class L20(Audio):
@@ -613,7 +613,7 @@ class Ogg(WithMagicNumber, Audio):
 
     iana_mime = "audio/ogg"
     ext = ".oga"
-    alternative_exts = (".ogg", ".spx", ".opus")
+    alternate_exts = (".ogg", ".spx", ".opus")
     magic_number = b"OggS"
 
 
@@ -664,7 +664,7 @@ class Prs_Sid(WithMagicNumber, Audio):
 
     iana_mime = "audio/prs.sid"
     ext = ".sid"
-    alternative_exts = (".psid",)
+    alternate_exts = (".psid",)
     magic_number = b"PSID"
 
 
@@ -729,7 +729,7 @@ class Smv(WithMagicNumber, Audio):
 
     iana_mime = "audio/SMV"
     ext = ".smv"
-    alternative_exts = (".SMV",)
+    alternate_exts = (".SMV",)
     magic_number = b"#!SMV\n"
 
 
@@ -745,7 +745,7 @@ class SmvQcp(WithMagicNumber, Audio):
 
     iana_mime = "audio/SMV-QCP"
     ext = ".qcp"
-    alternative_exts = (".QCP",)
+    alternate_exts = (".QCP",)
     magic_number = b"RIFF"
 
 
@@ -839,7 +839,7 @@ class Usac(Audio):
 
     iana_mime = "audio/usac"
     ext = ".loas"
-    alternative_exts = (".xhe",)
+    alternate_exts = (".xhe",)
 
 
 class Vdvi(Audio):

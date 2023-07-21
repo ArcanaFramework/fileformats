@@ -3,12 +3,8 @@ import json
 from ..core import __version__, mark, DataType
 from ..core.mixin import WithClassifiers
 from ..generic import File
+from ..core.exceptions import FormatMismatchError
 from ..core.utils import MissingExtendedDependency
-
-try:
-    import yaml
-except ImportError:
-    yaml = MissingExtendedDependency("yaml", __name__)
 
 
 class Schema(DataType):
@@ -42,15 +38,22 @@ class DataSerialization(WithClassifiers, File):
 
     iana_mime = None
 
-    @mark.check
+    @mark.extra
     def load(self):
         """Load the contents of the file into a dictionary"""
         raise NotImplementedError
 
-    @classmethod
-    def save_new(fspath: Path, dct: dict):
+    @mark.extra
+    def save(data):
         """Serialise a dictionary to a new file"""
         raise NotImplementedError
+
+    @classmethod
+    def save_new(cls, fspath, data):
+        # We have to use a mock object as the data file hasn't been written yet
+        mock = cls.mock(fspath)
+        mock.save(data)
+        return cls(fspath)
 
 
 class Xml(DataSerialization):
@@ -64,29 +67,24 @@ class Json(DataSerialization):
 
     @mark.check
     def load(self):
-        with open(self.fspath) as f:
-            dct = json.load(f)
+        try:
+            with open(self.fspath) as f:
+                dct = json.load(f)
+        except json.JSONDecodeError as e:
+            raise FormatMismatchError(
+                f"'{self.fspath}' is not a valid JSON file"
+            ) from e
         return dct
 
-    @classmethod
-    def save_new(cls, fspath, dct):
-        with open(fspath, "w") as f:
-            json.dump(dct, f)
-        return cls(fspath)
+    def save(self, data):
+        with open(self.fspath, "w") as f:
+            json.dump(data, f)
 
 
 class Yaml(DataSerialization):
     ext = ".yaml"
     alternate_exts = (".yml",)
 
-    @mark.check
-    def load(self):
-        with open(self.fspath) as f:
-            dct = yaml.load(f, Loader=yaml.Loader)
-        return dct
 
-    @classmethod
-    def save_new(cls, fspath, dct):
-        with open(fspath, "w") as f:
-            yaml.dump(dct, f)
-        return cls(fspath)
+class Toml(DataSerialization):
+    ext = ".toml"

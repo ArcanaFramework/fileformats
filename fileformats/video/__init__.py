@@ -14,7 +14,7 @@ class Mp4(Video):
 
     iana_mime = "video/mp4"
     ext = ".mp4"
-    alternative_exts = (".mpg4",)
+    alternate_exts = (".mpg4",)
 
 
 class Webm(Video):
@@ -28,7 +28,7 @@ class Quicktime(Video):
     iana_mime = "video/quicktime"
 
 
-class Ogg(WithMagicNumber, File):
+class Ogg(WithMagicNumber, Video):
     """"""
 
     iana_mime = "video/ogg"
@@ -51,7 +51,7 @@ class _3gpp(Video):
 
     iana_mime = "video/3gpp"
     ext = ".3gp"
-    alternative_exts = (".3gpp",)
+    alternate_exts = (".3gpp",)
 
 
 class _3gpp2(Video):
@@ -223,12 +223,12 @@ class Jxsv(Video):
     ext = None
 
 
-class Mj2(WithMagicNumber, File):
+class Mj2(WithMagicNumber, Video):
     """"""
 
     iana_mime = "video/mj2"
     ext = ".mj2"
-    alternative_exts = (".mjp2",)
+    alternate_exts = (".mjp2",)
     magic_number = "c6a5020200d0a870a"
 
 

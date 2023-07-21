@@ -14,9 +14,11 @@ class Text(File):
 
 # General formats
 class Plain(Text):
-    ext = ".txt"
-    alternative_exts = (None,)
     iana_mime = "text/plain"
+
+
+class Unstructured(Text):
+    ext = ".txt"
 
 
 class Csv(Text):
@@ -38,7 +40,7 @@ class Html(Text):
 class Markdown(Text):
     iana_mime = "text/markdown"
     ext = ".md"
-    alternative_exts = (".markdown",)
+    alternate_exts = (".markdown",)
 
 
 class RestructedText(Text):
@@ -58,7 +60,7 @@ class CacheManifest(WithMagicNumber, File):
 
     iana_mime = "text/cache-manifest"
     ext = ".appcache"
-    alternative_exts = ('"manifest"',)
+    alternate_exts = ('"manifest"',)
     magic_number = b"CACHE MANIFEST"
 
 
@@ -67,7 +69,7 @@ class Calendar(Text):
 
     iana_mime = "text/calendar"
     ext = ".ics"
-    alternative_exts = (".ifb",)
+    alternate_exts = (".ifb",)
 
 
 class Cql(Text):
@@ -110,7 +112,7 @@ class Dns(Text):
 
     iana_mime = "text/dns"
     ext = ".soa"
-    alternative_exts = (".zone", None)
+    alternate_exts = (".zone", None)
 
 
 class Encaprtp(Text):
@@ -170,7 +172,7 @@ class Javascript(Text):
 
     iana_mime = "text/javascript"
     ext = ".js"
-    alternative_exts = (".mjs",)
+    alternate_exts = (".mjs",)
 
 
 class JcrCnd(Text):
@@ -216,23 +218,23 @@ class ProvenanceNotation(Text):
     ext = ".provn"
 
 
-class Prs_Fallenstein___rst(Text):
+class Prs_Fallenstein_Rst(Text):
     """"""
 
     iana_mime = "text/prs.fallenstein.rst"
     ext = ".txt"
-    alternative_exts = (".rst",)
+    alternate_exts = (".rst",)
 
 
-class Prs_Lines___tag(Text):
+class Prs_Lines_Tag(Text):
     """TODO: All tag data streams start Tag-xxx-version - where xxx is the particular tag type."""
 
     iana_mime = "text/prs.lines.tag"
     ext = ".tag"
-    alternative_exts = (None,)
+    alternate_exts = (None,)
 
 
-class Prs_Prop___logic(Text):
+class Prs_Prop_Logic(Text):
     """"""
 
     iana_mime = "text/prs.prop.logic"
@@ -260,11 +262,11 @@ class Rfc822_headers(Text):
     ext = None
 
 
-class Rtf(Text):
+class RichText(Text):
     """"""
 
     iana_mime = "text/rtf"
-    ext = None
+    ext = ".rtf"
 
 
 class RtpEncAescm128(Text):
@@ -303,7 +305,7 @@ class Shaclc(Text):
 
     iana_mime = "text/shaclc"
     ext = ".shaclc"
-    alternative_exts = (".shc",)
+    alternate_exts = (".shc",)
 
 
 class Shex(Text):
@@ -361,7 +363,7 @@ class UriList(Text):
 
     iana_mime = "text/uri-list"
     ext = ".uris"
-    alternative_exts = (".uri",)
+    alternate_exts = (".uri",)
 
 
 class Vcard(Text):
@@ -369,7 +371,7 @@ class Vcard(Text):
 
     iana_mime = "text/vcard"
     ext = ".vcf"
-    alternative_exts = (".vcard",)
+    alternate_exts = (".vcard",)
 
 
 class Vtt(Text):
@@ -393,4 +395,4 @@ class XmlExternalParsedEntity(Text):
 
     iana_mime = "text/xml-external-parsed-entity"
     ext = ".ent"
-    alternative_exts = (None,)
+    alternate_exts = (None,)

@@ -3,14 +3,14 @@ from fileformats.core.mixin import WithMagicNumber
 from fileformats.serialization import Xml, Json
 
 
-class _1d_interleaved_parityfec(File):
+class _1dInterleavedParityfec(File):
     """"""
 
     iana_mime = "application/1d-interleaved-parityfec"
     ext = None
 
 
-class _3gpdash_qoe_report__Xml(Xml):
+class _3gpdashQoeReport__Xml(Xml):
     """"""
 
     iana_mime = "application/3gpdash-qoe-report+xml"
@@ -31,7 +31,7 @@ class _3gpphalforms__Json(Json):
     ext = None
 
 
-class _3gpp_ims__Xml(Xml):
+class _3gppIms__Xml(Xml):
     """"""
 
     iana_mime = "application/3gpp-ims+xml"
@@ -919,7 +919,7 @@ class Emergencycalldata_Deviceinfo__Xml(Xml):
     ext = ".xml"
 
 
-class Emergencycalldata_Ecall___msd(File):
+class Emergencycalldata_Ecall_Msd(File):
     """"""
 
     iana_mime = "application/EmergencyCallData.eCall.MSD"
@@ -1109,7 +1109,7 @@ class Geo__Json(Json):
     ext = ".geojson"
 
 
-class Geo__Json_seq(File):
+class Geo__JsonSeq(File):
     """"""
 
     iana_mime = "application/geo+json-seq"
@@ -1709,7 +1709,7 @@ class Mipc(File):
     ext = None
 
 
-class MissingBlocks__Cbor_seq(File):
+class MissingBlocks__CborSeq(File):
     """"""
 
     iana_mime = "application/missing-blocks+cbor-seq"
@@ -1781,21 +1781,21 @@ class Mp4(File):
     alternative_exts = (".mpg4",)
 
 
-class Mpeg4_generic(File):
+class Mpeg4Generic(File):
     """"""
 
     iana_mime = "application/mpeg4-generic"
     ext = None
 
 
-class Mpeg4_iod(File):
+class Mpeg4Iod(File):
     """"""
 
     iana_mime = "application/mpeg4-iod"
     ext = None
 
 
-class Mpeg4_iod_xmt(File):
+class Mpeg4IodXmt(File):
     """"""
 
     iana_mime = "application/mpeg4-iod-xmt"
@@ -2038,7 +2038,7 @@ class P21__Zip(File):
     ext = ".stpz"
 
 
-class P2p_overlay__Xml(Xml):
+class P2pOverlay__Xml(Xml):
     """"""
 
     iana_mime = "application/p2p-overlay+xml"
@@ -2131,14 +2131,14 @@ class Pkcs10(File):
     ext = ".p10"
 
 
-class Pkcs7_mime(File):
+class Pkcs7Mime(File):
     """"""
 
     iana_mime = "application/pkcs7-mime"
     ext = None
 
 
-class Pkcs7_signature(File):
+class Pkcs7Signature(File):
     """"""
 
     iana_mime = "application/pkcs7-signature"
@@ -2152,7 +2152,7 @@ class Pkcs8(File):
     ext = ".p8"
 
 
-class Pkcs8_encrypted(File):
+class Pkcs8Encrypted(File):
     """"""
 
     iana_mime = "application/pkcs8-encrypted"
@@ -2251,7 +2251,7 @@ class Provenance__Xml(Xml):
     ext = ".provx"
 
 
-class Prs_Alvestrand___titrax_sheet(File):
+class Prs_Alvestrand_TitraxSheet(File):
     """"""
 
     iana_mime = "application/prs.alvestrand.titrax-sheet"
@@ -2280,21 +2280,21 @@ class Prs_Hpub__Zip(File):
     ext = ".HPUB"
 
 
-class Prs_Implied_document__Xml(Xml):
+class Prs_ImpliedDocument__Xml(Xml):
     """"""
 
     iana_mime = "application/prs.implied-document+xml"
     ext = None
 
 
-class Prs_Implied_executable(File):
+class Prs_ImpliedExecutable(File):
     """"""
 
     iana_mime = "application/prs.implied-executable"
     ext = None
 
 
-class Prs_Implied_structure(File):
+class Prs_ImpliedStructure(File):
     """"""
 
     iana_mime = "application/prs.implied-structure"
@@ -2316,7 +2316,7 @@ class Prs_Plucker(File):
     ext = None
 
 
-class Prs_Rdf_xml_crypt(File):
+class Prs_RdfXmlCrypt(File):
     """"""
 
     iana_mime = "application/prs.rdf-xml-crypt"
@@ -3279,7 +3279,7 @@ class Wita(File):
     ext = None
 
 
-class Wordperfect5___1(File):
+class Wordperfect5_1(File):
     """"""
 
     iana_mime = "application/wordperfect5.1"
@@ -3300,42 +3300,42 @@ class Wspolicy__Xml(Xml):
     ext = ".wspolicy"
 
 
-class XPkiMessage(File):
+class PkiMessage(File):
     """"""
 
     iana_mime = "application/x-pki-message"
     ext = None
 
 
-class XWwwFormUrlencoded(File):
+class WwwFormUrlencoded(File):
     """"""
 
     iana_mime = "application/x-www-form-urlencoded"
     ext = None
 
 
-class XX509_ca_cert(File):
+class X509CaCert(File):
     """"""
 
     iana_mime = "application/x-x509-ca-cert"
     ext = None
 
 
-class XX509_ca_ra_cert(File):
+class X509CaRaCert(File):
     """"""
 
     iana_mime = "application/x-x509-ca-ra-cert"
     ext = None
 
 
-class XX509_next_ca_cert(File):
+class X509NextCaCert(File):
     """"""
 
     iana_mime = "application/x-x509-next-ca-cert"
     ext = None
 
 
-class X400_bp(File):
+class X400Bp(File):
     """"""
 
     iana_mime = "application/x400-bp"

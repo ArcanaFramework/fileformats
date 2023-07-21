@@ -3,6 +3,7 @@ import re
 import shutil
 import json
 import yaml
+from fileformats.core.utils import from_mime_format_name
 
 
 def generated_classes(scraped_json_file: str, editable_yaml_file: str, output_dir: str):
@@ -31,16 +32,7 @@ def generated_classes(scraped_json_file: str, editable_yaml_file: str, output_di
             ):
                 continue
 
-            class_name = re.sub(
-                r"\-(\w)", lambda x: x.group(1).upper(), name.capitalize()
-            )
-            class_name = re.sub(
-                r"\+(\w)", lambda x: "__" + x.group(1).upper(), name.capitalize()
-            )
-            class_name = class_name.replace("-", "_")
-            class_name = class_name.replace(".", "___")
-            if re.match(r"^[0-9]", class_name):
-                class_name = "_" + class_name
+            class_name = from_mime_format_name(name)
 
             yml = editable_yaml.get(f"{registry}/{name}", {})
 
@@ -51,8 +43,8 @@ def generated_classes(scraped_json_file: str, editable_yaml_file: str, output_di
                 todo = "TODO: " + todo
             exts = yml.get("ext", [])
 
-            applications = formats.get("applications")
-            additional_info = formats.get("additional_info")
+            applications = mdata.get("applications")
+            additional_info = mdata.get("additional_info")
 
             desc = "\n\n".join(p for p in (applications, additional_info, todo) if p)
             desc = re.sub(r"\s\s\s+\n?", r"\n    ", desc)
