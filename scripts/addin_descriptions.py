@@ -23,7 +23,7 @@ def addin_descriptions(scraped_json_file: str):
 
         for mod_path in subpkg_path.iterdir():
 
-            if mod_path.name in ("__init__.py", "__pycache__") or mod_path.is_dir():
+            if mod_path.is_dir():
                 continue
 
             with open(mod_path) as f:
@@ -43,7 +43,11 @@ def addin_descriptions(scraped_json_file: str):
 
                 applications = mdata.get("applications")
                 additional_info = mdata.get("additional_info")
-                if additional_info and additional_info.lower() in ("none.", "n/a"):
+                if additional_info and additional_info.lower() in (
+                    "none",
+                    "none.",
+                    "n/a",
+                ):
                     additional_info = None
 
                 desc = "\n\n".join(p for p in (applications, additional_info) if p)
