@@ -38,7 +38,7 @@ file-format types.
 Notes on MIME-type coverage
 ---------------------------
 
-Support for all non-vendor/extended MIME types (i.e. ones not matching ``*/vnd.*`` or ``*/x-*``) has been
+Support for all non-vendor standard MIME types (i.e. ones not matching ``*/vnd.*`` or ``*/x-*``) has been
 added to *FileFormats* by semi-automatically scraping the `IANA MIME types`_ website for file
 extensions and magic numbers. As such, many of the formats in the library have not been properly
 tested on real data and so should be treated with some caution. If you encounter any issues with an implemented file
