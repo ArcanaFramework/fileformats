@@ -33,9 +33,20 @@ certain file types, or to peek at metadata fields to define specific sub-types
 See the `extension template <https://github.com/ArcanaFramework/fileformats-extension-template>`__
 for instructions on how to design *FileFormats* extensions modules to augment the
 standard file-types implemented in the main repository with custom domain/vendor-specific
-file-format types. Note that *FileFormats* is a new package, and only has limited support
-for standard formats at this stage, although the aim is to include all the official
-`IANA MIME types` (hopefully by scraping that site if anyone wants to have a go 😊).
+file-format types.
+
+Notes on MIME-type coverage
+---------------------------
+
+Support for all non-vendor/extended MIME types (i.e. ones not matching ``*/vnd.*`` or ``*/x-*``) has been
+added to *FileFormats* by semi-automatically scraping the `IANA MIME types`_ website for file
+extensions and magic numbers. As such, many of the formats in the library have not been properly
+tested on real data and so should be treated with some caution. If you encounter any issues with an implemented file
+type, please raise an issue in the `GitHub tracker <https://github.com/ArcanaFramework/fileformats/issues>`__.
+
+Adding support for vendor formats will be relatively straightforward, it just requires someone to do the job
+of manually curating the scraped data (a days work or so). Please get in touch if you are interested in helping out
+with this.
 
 
 Installation
