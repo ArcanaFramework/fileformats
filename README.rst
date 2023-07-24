@@ -98,9 +98,10 @@ for a boolean method that checks the validation use ``matches``
     if Png.matches(a_path_to_a_file):
         ... handle case ...
 
+Format Conversion
+-----------------
 
-There are a few selected converters between standard file-format types, perhaps most usefully
-between archive types and generic file/directories
+While not implemented in the main File-formats itself, file-formats provides hooks for other packages to implement extra behaviour such as format conversion. The `fileformats-extras <https://github.com/ArcanaFramework/fileformats-extras>`__ implements a number of converters between standard file-format types, e.g. archive types to/from generic file/directories, which if installed can be called using the `convert()` method.
 
 .. code-block:: python
 
