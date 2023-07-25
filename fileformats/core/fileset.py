@@ -776,10 +776,8 @@ class FileSet(DataType):
         if not fspaths:
             fspaths = []
             fspath = f"/mock/{cls.__name__.lower()}"
-            try:
+            if cls.ext:
                 fspath += cls.ext
-            except AttributeError:
-                pass
             fspaths.append(fspath)
         return mock_cls(fspaths=fspaths)
 
