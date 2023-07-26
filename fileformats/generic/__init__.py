@@ -48,7 +48,6 @@ class File(FsObject):
 
     binary = False
     is_dir = False
-    alternate_exts = ()
 
     @mark.required
     @property
@@ -115,15 +114,6 @@ class File(FsObject):
                 f.read(offset)
             contents = f.read(size)
         return contents
-
-    @classproperty
-    def possible_exts(cls):
-        possible = [cls.ext]
-        try:
-            possible.extend(cls.alternate_exts)
-        except AttributeError:
-            pass
-        return possible
 
     @property
     def actual_ext(self):
