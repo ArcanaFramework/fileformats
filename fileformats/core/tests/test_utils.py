@@ -13,7 +13,6 @@ from fileformats.core.utils import (
 )
 from fileformats.core.exceptions import MissingExtendedDepenciesError, FileFormatsError
 import fileformats.text
-import fileformats.numeric
 from conftest import write_test_file
 
 
@@ -292,7 +291,7 @@ def test_format_detection(work_dir):
     assert sorted(detected, key=lambda f: f.mime_like) == [
         fileformats.text.Prs_Fallenstein_Rst,
         fileformats.text.Prs_Prop_Logic,
-        fileformats.text.Unstructured,
+        fileformats.text.Txt,
     ]
 
 
