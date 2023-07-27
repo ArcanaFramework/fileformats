@@ -351,6 +351,8 @@ class FileSet(DataType):
         ------
         FileFormatError
             When no paths match or more than one path matches the given extension"""
+        if isinstance(fspaths, (str, Path)):
+            fspaths = [fspaths]
         if exts is None:
             if cls.ext is None:
                 return True
