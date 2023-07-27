@@ -46,7 +46,7 @@ class FsObject(FileSet, os.PathLike):
 class File(FsObject):
     """Generic file type"""
 
-    binary = False
+    binary = True
     is_dir = False
 
     @mark.required

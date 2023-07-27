@@ -10,6 +10,7 @@ from fileformats.serialization import (
 
 class Text(File):
     iana_mime = None
+    binary = False
 
 
 # General formats
