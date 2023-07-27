@@ -10,6 +10,7 @@ from fileformats.serialization import (
 
 class Text(File):
     iana_mime = None
+    binary = False
 
 
 # General formats
@@ -17,7 +18,7 @@ class Plain(Text):
     iana_mime = "text/plain"
 
 
-class Unstructured(Text):
+class Txt(Text):
     ext = ".txt"
 
 

@@ -4,7 +4,7 @@ from fileformats.core.fileset import FileSet, MockMixin
 from fileformats.testing import Foo
 
 
-@FileSet.generate_test_data.register
+@FileSet.generate_sample_data.register
 def generate_foo_data(file: Foo, dest_dir: Path) -> ty.List[Path]:
     foo_fspath = dest_dir / "test.foo"
     foo_fspath.write_text("foo")

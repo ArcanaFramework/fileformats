@@ -46,9 +46,8 @@ class FsObject(FileSet, os.PathLike):
 class File(FsObject):
     """Generic file type"""
 
-    binary = False
+    binary = True
     is_dir = False
-    alternate_exts = ()
 
     @mark.required
     @property
@@ -115,15 +114,6 @@ class File(FsObject):
                 f.read(offset)
             contents = f.read(size)
         return contents
-
-    @classproperty
-    def possible_exts(cls):
-        possible = [cls.ext]
-        try:
-            possible.extend(cls.alternate_exts)
-        except AttributeError:
-            pass
-        return possible
 
     @property
     def actual_ext(self):

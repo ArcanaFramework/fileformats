@@ -173,7 +173,7 @@ class DataType(metaclass=ABCMeta):
                     f"in any of the installed namespaces: {namespace_names}"
                 )
             elif len(matching_name) > 1:
-                namespace_names = [f.__module__.__name__ for f in matching_name]
+                namespace_names = [f.__module__ for f in matching_name]
                 raise FormatRecognitionError(
                     f"Ambiguous extended MIME type '{mime_string}', could refer to "
                     f"{', '.join(repr(f) for f in matching_name)} installed types. "

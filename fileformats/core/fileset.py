@@ -70,6 +70,7 @@ class FileSet(DataType):
     # type.
     iana_mime = None
     ext = None
+    alternate_exts = ()
 
     # Store converters registered by @converter decorator that convert to FileSet
     # NB: each class will have its own version of this dictionary
@@ -182,6 +183,15 @@ class FileSet(DataType):
         """Whether the file-format is unconstrained by extension, magic number or another
         constraint"""
         return not list(cls.required_properties())
+
+    @classproperty
+    def possible_exts(cls):
+        possible = [cls.ext]
+        try:
+            possible.extend(cls.alternate_exts)
+        except AttributeError:
+            pass
+        return possible
 
     @classmethod
     def required_properties(cls):
@@ -318,7 +328,9 @@ class FileSet(DataType):
         return matches[0]
 
     @classmethod
-    def matching_exts(cls, fspaths: ty.Set[Path], exts: ty.List[str]) -> ty.List[Path]:
+    def matching_exts(
+        cls, fspaths: ty.Set[Path], exts: ty.Optional[ty.List[str]] = None
+    ) -> ty.List[Path]:
         """Returns the paths out of the candidates provided that matches the
         given extension (by default the extension of the class)
 
@@ -326,8 +338,9 @@ class FileSet(DataType):
         ----------
         fspaths: list[Path]
             The paths to select from
-        ext: list[str]
-            the extensions to match
+        ext: list[str], optional
+            the extensions to match, by default the primary and alternate extensions of
+            the class
 
         Returns
         -------
@@ -338,6 +351,12 @@ class FileSet(DataType):
         ------
         FileFormatError
             When no paths match or more than one path matches the given extension"""
+        if isinstance(fspaths, (str, Path)):
+            fspaths = [fspaths]
+        if exts is None:
+            if cls.ext is None:
+                return True
+            exts = cls.possible_exts
         return [
             p for p in fspaths if any(e is None or str(p).endswith(e) for e in exts)
         ]
@@ -776,10 +795,8 @@ class FileSet(DataType):
         if not fspaths:
             fspaths = []
             fspath = f"/mock/{cls.__name__.lower()}"
-            try:
+            if cls.ext:
                 fspath += cls.ext
-            except AttributeError:
-                pass
             fspaths.append(fspath)
         return mock_cls(fspaths=fspaths)
 
@@ -803,10 +820,10 @@ class FileSet(DataType):
         # Need to use mock to get an instance in order to use the singledispatch-based
         # mark.extra decorator
         mock = cls.mock()
-        return cls(mock.generate_test_data(dest_dir))
+        return cls(mock.generate_sample_data(dest_dir))
 
     @mark.extra
-    def generate_test_data(self, dest_dir: Path) -> ty.Iterable[Path]:
+    def generate_sample_data(self, dest_dir: Path) -> ty.Iterable[Path]:
         """Generate test data at the fspaths of the file-set
 
         Parameters

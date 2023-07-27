@@ -5,21 +5,25 @@ from fileformats.core.mixin import WithSideCars, WithSeparateHeader
 
 class Y(File):
     ext = ".y"
+    binary = False
 
 
 class Z(File):
     ext = ".z"
+    binary = False
 
 
 class Xyz(WithSideCars, File):
 
     ext = ".x"
+    binary = False
     side_car_types = (Y, Z)
 
 
 class MyFormat(File):
 
     ext = ".my"
+    binary = False
 
 
 class MyFormatGz(MyFormat):
@@ -35,17 +39,20 @@ class MyFormatX(WithSideCars, MyFormat):
 class YourFormat(File):
 
     ext = ".yr"
+    binary = False
 
 
 class SeparateHeader(File):
 
     ext = ".hdr"
+    binary = False
 
 
 class ImageWithHeader(WithSeparateHeader, File):
 
     ext = ".img"
     header_type = SeparateHeader
+    binary = False
 
 
 class MyFormatGzX(MyFormatX, MyFormatGz):
@@ -59,3 +66,4 @@ class EncodedText(File):
     """
 
     ext = ".enc"
+    binary = False
