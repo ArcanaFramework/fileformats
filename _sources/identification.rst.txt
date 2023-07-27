@@ -27,12 +27,6 @@ cases where they will both match a given file set. If you are only interested in
 formats covered in the main fileformats package then you should use the ``standard_only``
 flag
 
-.. code-block::
-
-    >>> from fileformats.core import find_matching
-    >>> find_matching("/path/to/data.dat", standard_only=True)
-    [<class 'fileformats.numeric.DataFile'>]
-
 
 MIME Types
 ----------
