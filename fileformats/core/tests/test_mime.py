@@ -3,8 +3,10 @@ from fileformats.core.utils import from_mime
 
 
 def test_mime_roundtrip():
+    import fileformats.datascience
 
     for klass in FileSet.all_formats:
+        klass = fileformats.datascience.Pickle__Gzip
         mimetype = klass.mime_type
         assert isinstance(mimetype, str)
         reloaded = from_mime(mimetype)

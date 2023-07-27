@@ -33,6 +33,7 @@ def test_magic_fail(work_dir):
 class Header(File):
 
     ext = ".hdr"
+    binary = False
 
     def load(self):
         return dict(ln.split(":") for ln in self.contents.splitlines())
@@ -45,6 +46,7 @@ class FileWithSeparateHeader(WithSeparateHeader, File):
 
     image_type_key = "image-type"
     image_type = "sample-image-type"
+    binary = False
 
     @mark.check
     def check_image_type(self):
