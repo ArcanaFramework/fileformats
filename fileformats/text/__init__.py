@@ -17,7 +17,7 @@ class Plain(Text):
     iana_mime = "text/plain"
 
 
-class Unstructured(Text):
+class Txt(Text):
     ext = ".txt"
 
 
