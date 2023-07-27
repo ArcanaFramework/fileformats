@@ -820,10 +820,10 @@ class FileSet(DataType):
         # Need to use mock to get an instance in order to use the singledispatch-based
         # mark.extra decorator
         mock = cls.mock()
-        return cls(mock.generate_test_data(dest_dir))
+        return cls(mock.generate_sample_data(dest_dir))
 
     @mark.extra
-    def generate_test_data(self, dest_dir: Path) -> ty.Iterable[Path]:
+    def generate_sample_data(self, dest_dir: Path) -> ty.Iterable[Path]:
         """Generate test data at the fspaths of the file-set
 
         Parameters
