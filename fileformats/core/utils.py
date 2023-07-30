@@ -118,7 +118,7 @@ def to_mime(datatype: type, iana=False):
     if ty.get_origin(datatype) is list:
         dtype = ty.get_args(datatype)[0]
         if iana:
-            raise ValueError(
+            raise TypeError(
                 f"Cannot convert {datatype} to official mime-type as it is a list, "
                 'please use iana=False to convert to "mime-like" string instead'
             )
