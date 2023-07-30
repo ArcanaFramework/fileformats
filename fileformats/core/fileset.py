@@ -921,6 +921,8 @@ class FileSet(DataType):
     def decompose_fspath(
         cls, fspath: Path, mode: ExtensionDecomposition = ExtensionDecomposition.single
     ) -> ty.Tuple[Path, str, str]:
+        if isinstance(fspath, str):
+            fspath = Path(fspath)
         """Decompose an arbitrary file-system path into parent dir, stem and extension
         given the assumption on what constitutes an extension"""
         if mode == cls.ExtensionDecomposition.multiple:

@@ -78,8 +78,53 @@ def find_matching(
     return matches
 
 
-def from_mime(mime_str: str):
+def from_mime(mime_str: str) -> ty.Union["fileformats.core.DataType", ty.Type[ty.List]]:
+    """Resolves a MIME type (or MIME-like) string into the corresponding type
+
+    Parameters
+    ----------
+    mime_str : str
+        the MIME type, or MIME-like (i.e. using the fileformats namespace scheme
+        instead of putting all non-standard types into application/*), string to
+        resolve
+
+    Returns
+    -------
+    datatype : type
+        the resolved datatype
+    """
+    if mime_str.endswith("+list-of"):
+        dtype = fileformats.core.DataType.from_mime(mime_str[: -len("+list-of")])
+        return ty.List[dtype]
     return fileformats.core.DataType.from_mime(mime_str)
+
+
+def to_mime(datatype: type, iana=False):
+    """Returns the mime-type or mime-like (i.e. using fileformats namespaces instead
+    of putting all non-standard types in the applications/* registry) string corresponding
+    to the given datatype
+
+    Parameters
+    ----------
+    datatype : type
+        the datatype to get the mime string for
+
+    Returns
+    -------
+    mime_str : str
+        the MIME type string if `iana=True`, or MIME-like (i.e. using the fileformats
+        namespace scheme instead of putting all non-standard types into application/*)
+        if not
+    """
+    if ty.get_origin(datatype) is list:
+        dtype = ty.get_args(datatype)[0]
+        if iana:
+            raise ValueError(
+                f"Cannot convert {datatype} to official mime-type as it is a list, "
+                'please use iana=False to convert to "mime-like" string instead'
+            )
+        return dtype.mime_like + "+list-of"
+    return datatype.mime_type if iana else datatype.mime_like
 
 
 def subpackages(exclude: ty.Sequence[str] = _excluded_subpackages):
