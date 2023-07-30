@@ -19,22 +19,13 @@ For example, the `FileFormats Medimage Extension <https://github.com/ArcanaFrame
 implements a range of file formats used in medical imaging research under the
 ``fileformats.medimage`` namespace.
 
-When designing an extension packages, try to keep any external dependencies to a bare
-minimum in the base installation, and add them into the ``[extended]`` optional
-dependencies. When importing extended dependencies in a module, enclose them in
-a try-except statement that catches ImportErrors and sets the module to a
-``MissingExtendedDependency`` instead, e.g.
+When designing an extension packages, try to keep any external dependencies to an absolute
+minimum (ideally just `attrs`). If you would like to implement extra functionality into
+your format classes in addition to the core detection/validation, please use an "extra"
+hook and implement the method in an "extras" package (i.e. fileformats-<yournamespace>-extras),
+see the `extras template <https://github.com/ArcanaFramework/fileformats-extras-template>`__
+for further instructions.
 
-.. code-block:: python
-
-    from fileformats.core import MissingExtendedDependency
-    try:
-        import external_package
-    except ImportError:
-        external_package = MissingExtendedDependency("external_package", __name__)
-
-This will raise an informative error message, if a user attempts to access this the
-external package.
 
 Basic formats
 -------------
@@ -277,7 +268,11 @@ Converters between two equivalent formats are defined using Pydra_ dataflow engi
 of Pydra_ tasks, function tasks, Python functions decorated by ``@pydra.mark.task``, and
 shell-command tasks, which wrap command-line tools in Python classes. To register a
 Pydra_ task as a converter between two file formats it needs to be decorated with the
-``@fileformats.core.mark.converter`` decorator.
+``@fileformats.core.mark.converter`` decorator. Note that converters that rely on
+any additional dependencies should not be implemented in your extension package, rather
+in a sister "extras" package named `fileformats-<yournamespace>-extras`,
+see the `extras template <https://github.com/ArcanaFramework/fileformats-extras-template>`__
+for further instructions.
 
 Pydra uses type annotations to define the input and outputs of the tasks. It there is
 a input to the task named ``in_file``, and either a single anonymous output or an output

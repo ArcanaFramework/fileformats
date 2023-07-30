@@ -11,7 +11,6 @@ import logging
 import pkgutil
 from contextlib import contextmanager
 from fileformats.core.exceptions import (
-    MissingExtendedDepenciesError,
     FileFormatsError,
 )
 import fileformats.core
@@ -191,37 +190,6 @@ class classproperty(object):
 
     def __get__(self, obj, owner):
         return self.f(owner)
-
-
-class MissingExtendedDependency:
-    """Used as a placeholder for package dependencies that are only installed with the
-    "extended" install extra.
-
-    Parameters
-    ----------
-    pkg_name : str
-        name of the package to act as a placeholder for
-    module_path : str
-        path of the module, i.e. the value of the '__name__' global variable
-    """
-
-    def __init__(self, pkg_name: str, module_path: str):
-        self.pkg_name = pkg_name
-        module_parts = module_path.split(".")
-        assert module_parts[0] == "fileformats"
-        if module_parts[1] in STANDARD_NAMESPACES:
-            self.required_in = "fileformats"
-        else:
-            self.required_in = f"fileformats-{module_parts[1]}"
-
-    def __getattr__(self, _):
-        raise MissingExtendedDepenciesError(
-            f"Not able to access extended behaviour in {self.required_in} as required "
-            f"package '{self.pkg_name}' was not installed. Please reinstall "
-            f"{self.required_in} with 'extended' install extra to access extended "
-            f"behaviour of the format classes (such as loading and conversion), i.e.\n\n"
-            f"    $ python3 -m pip install {self.required_in}[extended]"
-        )
 
 
 STANDARD_NAMESPACES = [

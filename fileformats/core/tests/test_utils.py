@@ -9,9 +9,8 @@ from fileformats.generic import File, Directory, FsObject
 from fileformats.core.mixin import WithSeparateHeader
 from fileformats.core.utils import (
     find_matching,
-    MissingExtendedDependency,
 )
-from fileformats.core.exceptions import MissingExtendedDepenciesError, FileFormatsError
+from fileformats.core.exceptions import FileFormatsError
 import fileformats.text
 from conftest import write_test_file
 
@@ -293,13 +292,6 @@ def test_format_detection(work_dir):
         fileformats.text.Prs_Prop_Logic,
         fileformats.text.Txt,
     ]
-
-
-def test_missing_dependency():
-    missing_dep = MissingExtendedDependency("missing_dep", "fileformats.image")
-
-    with pytest.raises(MissingExtendedDepenciesError):
-        missing_dep.an_attr
 
 
 def test_hash(tmp_path: Path):
