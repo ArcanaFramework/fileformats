@@ -77,7 +77,7 @@ def find_matching(
     return matches
 
 
-def from_mime(mime_str: str) -> ty.Union["fileformats.core.DataType", ty.Type[ty.List]]:
+def from_mime(mime_str: str):
     """Resolves a MIME type (or MIME-like) string into the corresponding type
 
     Parameters
@@ -92,10 +92,13 @@ def from_mime(mime_str: str) -> ty.Union["fileformats.core.DataType", ty.Type[ty
     datatype : type
         the resolved datatype
     """
+    if mime_str.endswith(LIST_MIME):
+        item_mime = mime_str[: -len(LIST_MIME)]
+        if item_mime.startswith("[") and item_mime.endswith("]"):
+            item_mime = item_mime[1:-1]
+        return ty.List[from_mime(item_mime)]
     if "," in mime_str:
         return ty.Union.__getitem__(tuple(from_mime(t) for t in mime_str.split(",")))
-    if mime_str.endswith(LIST_MIME):
-        return ty.List[fileformats.core.DataType.from_mime(mime_str[: -len(LIST_MIME)])]
     return fileformats.core.DataType.from_mime(mime_str)
 
 
@@ -125,7 +128,11 @@ def to_mime(datatype: type, official=False):
             'file-type, please use official=False to convert to "mime-like" string instead'
         )
     if origin is list:
-        return ty.get_args(datatype)[0].mime_like + LIST_MIME
+        item_mime = to_mime(ty.get_args(datatype)[0])
+        if "," in item_mime:
+            item_mime = "[" + item_mime + "]"
+        item_mime += LIST_MIME
+        return item_mime
     if origin is ty.Union:
         return ",".join(t.mime_like for t in ty.get_args(datatype))
     return datatype.mime_type if official else datatype.mime_like
