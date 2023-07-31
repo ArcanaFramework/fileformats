@@ -297,7 +297,7 @@ def test_format_detection(work_dir):
     assert sorted(detected, key=lambda f: f.mime_like) == [
         fileformats.text.Prs_Fallenstein_Rst,
         fileformats.text.Prs_Prop_Logic,
-        fileformats.text.TxtFile,
+        fileformats.text.TextFile,
     ]
 
 

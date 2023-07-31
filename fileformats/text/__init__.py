@@ -18,7 +18,7 @@ class Plain(Text):
     iana_mime = "text/plain"
 
 
-class TxtFile(Text):
+class TextFile(Text):
     ext = ".txt"
 
 
