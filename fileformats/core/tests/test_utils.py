@@ -14,7 +14,7 @@ from fileformats.core.utils import (
     from_mime,
 )
 from fileformats.core.exceptions import FileFormatsError
-from fileformats.testing import Foo
+from fileformats.testing import Foo, Bar
 import fileformats.text
 from conftest import write_test_file
 
@@ -399,6 +399,11 @@ def test_to_from_list_mime_roundtrip():
     assert from_mime(mime_str) == ty.List[Foo]
 
 
-def test_list_iana_mime_fail():
-    with pytest.raises(TypeError, match="to official mime-type as it is a list"):
-        to_mime(ty.List[Foo], iana=True)
+def test_to_from_union_mime_roundtrip():
+    mime_str = to_mime(ty.Union[Foo, Bar])
+    assert from_mime(mime_str) == ty.Union[Foo, Bar]
+
+
+def test_official_mime_fail():
+    with pytest.raises(TypeError, match="as it is not a proper file-type"):
+        to_mime(ty.List[Foo], official=True)

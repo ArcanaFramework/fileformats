@@ -92,13 +92,14 @@ def from_mime(mime_str: str) -> ty.Union["fileformats.core.DataType", ty.Type[ty
     datatype : type
         the resolved datatype
     """
-    if mime_str.endswith("+list-of"):
-        dtype = fileformats.core.DataType.from_mime(mime_str[: -len("+list-of")])
-        return ty.List[dtype]
+    if "," in mime_str:
+        return ty.Union.__getitem__(tuple(from_mime(t) for t in mime_str.split(",")))
+    if mime_str.endswith(LIST_MIME):
+        return ty.List[fileformats.core.DataType.from_mime(mime_str[: -len(LIST_MIME)])]
     return fileformats.core.DataType.from_mime(mime_str)
 
 
-def to_mime(datatype: type, iana=False):
+def to_mime(datatype: type, official=False):
     """Returns the mime-type or mime-like (i.e. using fileformats namespaces instead
     of putting all non-standard types in the applications/* registry) string corresponding
     to the given datatype
@@ -107,6 +108,8 @@ def to_mime(datatype: type, iana=False):
     ----------
     datatype : type
         the datatype to get the mime string for
+    official : bool
+        whether to use the official mime-type instead of mime-like
 
     Returns
     -------
@@ -115,15 +118,17 @@ def to_mime(datatype: type, iana=False):
         namespace scheme instead of putting all non-standard types into application/*)
         if not
     """
-    if ty.get_origin(datatype) is list:
-        dtype = ty.get_args(datatype)[0]
-        if iana:
-            raise TypeError(
-                f"Cannot convert {datatype} to official mime-type as it is a list, "
-                'please use iana=False to convert to "mime-like" string instead'
-            )
-        return dtype.mime_like + "+list-of"
-    return datatype.mime_type if iana else datatype.mime_like
+    origin = ty.get_origin(datatype)
+    if official and (origin or datatype.namespace == "field"):
+        raise TypeError(
+            f"Cannot convert {datatype} to official mime-type as it is not a proper "
+            'file-type, please use official=False to convert to "mime-like" string instead'
+        )
+    if origin is list:
+        return ty.get_args(datatype)[0].mime_like + LIST_MIME
+    if origin is ty.Union:
+        return ",".join(t.mime_like for t in ty.get_args(datatype))
+    return datatype.mime_type if official else datatype.mime_like
 
 
 def subpackages(exclude: ty.Sequence[str] = _excluded_subpackages):
@@ -338,3 +343,6 @@ def import_extras_module(klass: type) -> ty.Tuple[bool, str]:
     else:
         extras_imported = True
     return extras_imported, extras_pkg, extras_pypi
+
+
+LIST_MIME = "+list-of"
