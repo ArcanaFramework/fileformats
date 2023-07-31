@@ -11,7 +11,6 @@ import logging
 import pkgutil
 from contextlib import contextmanager
 from fileformats.core.exceptions import (
-    MissingExtendedDepenciesError,
     FileFormatsError,
 )
 import fileformats.core
@@ -79,7 +78,64 @@ def find_matching(
 
 
 def from_mime(mime_str: str):
+    """Resolves a MIME type (or MIME-like) string into the corresponding type
+
+    Parameters
+    ----------
+    mime_str : str
+        the MIME type, or MIME-like (i.e. using the fileformats namespace scheme
+        instead of putting all non-standard types into application/*), string to
+        resolve
+
+    Returns
+    -------
+    datatype : type
+        the resolved datatype
+    """
+    if mime_str.endswith(LIST_MIME):
+        item_mime = mime_str[: -len(LIST_MIME)]
+        if item_mime.startswith("[") and item_mime.endswith("]"):
+            item_mime = item_mime[1:-1]
+        return ty.List[from_mime(item_mime)]
+    if "," in mime_str:
+        return ty.Union.__getitem__(tuple(from_mime(t) for t in mime_str.split(",")))
     return fileformats.core.DataType.from_mime(mime_str)
+
+
+def to_mime(datatype: type, official=False):
+    """Returns the mime-type or mime-like (i.e. using fileformats namespaces instead
+    of putting all non-standard types in the applications/* registry) string corresponding
+    to the given datatype
+
+    Parameters
+    ----------
+    datatype : type
+        the datatype to get the mime string for
+    official : bool
+        whether to use the official mime-type instead of mime-like
+
+    Returns
+    -------
+    mime_str : str
+        the MIME type string if `iana=True`, or MIME-like (i.e. using the fileformats
+        namespace scheme instead of putting all non-standard types into application/*)
+        if not
+    """
+    origin = ty.get_origin(datatype)
+    if official and (origin or datatype.namespace == "field"):
+        raise TypeError(
+            f"Cannot convert {datatype} to official mime-type as it is not a proper "
+            'file-type, please use official=False to convert to "mime-like" string instead'
+        )
+    if origin is list:
+        item_mime = to_mime(ty.get_args(datatype)[0])
+        if "," in item_mime:
+            item_mime = "[" + item_mime + "]"
+        item_mime += LIST_MIME
+        return item_mime
+    if origin is ty.Union:
+        return ",".join(t.mime_like for t in ty.get_args(datatype))
+    return datatype.mime_type if official else datatype.mime_like
 
 
 def subpackages(exclude: ty.Sequence[str] = _excluded_subpackages):
@@ -146,37 +202,6 @@ class classproperty(object):
 
     def __get__(self, obj, owner):
         return self.f(owner)
-
-
-class MissingExtendedDependency:
-    """Used as a placeholder for package dependencies that are only installed with the
-    "extended" install extra.
-
-    Parameters
-    ----------
-    pkg_name : str
-        name of the package to act as a placeholder for
-    module_path : str
-        path of the module, i.e. the value of the '__name__' global variable
-    """
-
-    def __init__(self, pkg_name: str, module_path: str):
-        self.pkg_name = pkg_name
-        module_parts = module_path.split(".")
-        assert module_parts[0] == "fileformats"
-        if module_parts[1] in STANDARD_NAMESPACES:
-            self.required_in = "fileformats"
-        else:
-            self.required_in = f"fileformats-{module_parts[1]}"
-
-    def __getattr__(self, _):
-        raise MissingExtendedDepenciesError(
-            f"Not able to access extended behaviour in {self.required_in} as required "
-            f"package '{self.pkg_name}' was not installed. Please reinstall "
-            f"{self.required_in} with 'extended' install extra to access extended "
-            f"behaviour of the format classes (such as loading and conversion), i.e.\n\n"
-            f"    $ python3 -m pip install {self.required_in}[extended]"
-        )
 
 
 STANDARD_NAMESPACES = [
@@ -325,3 +350,6 @@ def import_extras_module(klass: type) -> ty.Tuple[bool, str]:
     else:
         extras_imported = True
     return extras_imported, extras_pkg, extras_pypi
+
+
+LIST_MIME = "+list-of"

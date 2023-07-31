@@ -4,7 +4,6 @@ from ..core import __version__, mark, DataType
 from ..core.mixin import WithClassifiers
 from ..generic import File
 from ..core.exceptions import FormatMismatchError
-from ..core.utils import MissingExtendedDependency
 
 
 class Schema(DataType):

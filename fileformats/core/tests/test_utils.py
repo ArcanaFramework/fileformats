@@ -2,6 +2,7 @@ from pathlib import Path
 import os.path
 import random
 import shutil
+import typing as ty
 import time
 import pytest
 from fileformats.core import FileSet, mark
@@ -9,51 +10,53 @@ from fileformats.generic import File, Directory, FsObject
 from fileformats.core.mixin import WithSeparateHeader
 from fileformats.core.utils import (
     find_matching,
-    MissingExtendedDependency,
+    to_mime,
+    from_mime,
 )
-from fileformats.core.exceptions import MissingExtendedDepenciesError, FileFormatsError
+from fileformats.core.exceptions import FileFormatsError
+from fileformats.testing import Foo, Bar
 import fileformats.text
 from conftest import write_test_file
 
 
-class Bar(File):
-    ext = ".bar"
+class Mario(File):
+    ext = ".mario"
 
 
-class Foo(WithSeparateHeader, File):
-    ext = ".foo"
-    header_type = Bar
+class Luigi(WithSeparateHeader, File):
+    ext = ".luigi"
+    header_type = Mario
 
 
-class Baz(Directory):
-    content_types = (Bar,)
+class Bowser(Directory):
+    content_types = (Mario,)
 
 
 @pytest.fixture
-def baz_dir(work_dir):
-    baz_dir = work_dir / "baz"
-    baz_dir.mkdir()
+def bowser_dir(work_dir):
+    bowser_dir = work_dir / "bowser"
+    bowser_dir.mkdir()
     for i in range(5):
-        bar_fspath = baz_dir / f"{i}.bar"
+        bar_fspath = bowser_dir / f"{i}.mario"
         write_test_file(bar_fspath)
-    return Baz(baz_dir)
+    return Bowser(bowser_dir)
 
 
 @pytest.fixture
-def foo_file(work_dir):
-    foo_fspath = work_dir / "x.foo"
-    write_test_file(foo_fspath)
-    bar_fspath = work_dir / "y.bar"
+def luigi_file(work_dir):
+    luigi_fspath = work_dir / "x.luigi"
+    write_test_file(luigi_fspath)
+    bar_fspath = work_dir / "y.mario"
     write_test_file(bar_fspath)
-    return Foo([foo_fspath, bar_fspath])
+    return Luigi([luigi_fspath, bar_fspath])
 
 
-@pytest.fixture(params=["foo", "baz"])
-def fsobject(foo_file, baz_dir, request):
-    if request.param == "foo":
-        return foo_file
-    elif request.param == "baz":
-        return baz_dir
+@pytest.fixture(params=["luigi", "bowser"])
+def fsobject(luigi_file, bowser_dir, request):
+    if request.param == "luigi":
+        return luigi_file
+    elif request.param == "bowser":
+        return bowser_dir
     else:
         assert False
 
@@ -196,11 +199,11 @@ def test_copy_collation_stem(work_dir: Path, dest_dir: Path):
     assert all(p.stem == "newfile" for p in cpy.fspaths)
 
 
-def test_copy_collation_with_stem_not_adjacent(foo_file: Foo, dest_dir):
+def test_copy_collation_with_stem_not_adjacent(luigi_file: Luigi, dest_dir):
     with pytest.raises(
         FileFormatsError, match="when collation is not set to 'adjacent'"
     ):
-        foo_file.copy(dest_dir, collation="any", new_stem="new")
+        luigi_file.copy(dest_dir, collation="any", new_stem="new")
 
 
 def test_copy_collation_leave_diff_dir(work_dir: Path, dest_dir: Path):
@@ -231,7 +234,7 @@ def test_copy_collation_leave_diff_dir(work_dir: Path, dest_dir: Path):
 def test_copy_ext(work_dir):
     assert (
         File.copy_ext(
-            work_dir / "x.foo.bar",
+            work_dir / "x.luigi.mario",
             work_dir / "y",
             decomposition_mode=FileSet.ExtensionDecomposition.none,
         )
@@ -239,46 +242,49 @@ def test_copy_ext(work_dir):
     )
     assert (
         File.copy_ext(
-            work_dir / "x.foo.bar",
+            work_dir / "x.luigi.mario",
             work_dir / "y",
             decomposition_mode=FileSet.ExtensionDecomposition.single,
         )
-        == work_dir / "y.bar"
+        == work_dir / "y.mario"
     )
     assert (
         File.copy_ext(
-            work_dir / "x.foo.bar",
+            work_dir / "x.luigi.mario",
             work_dir / "y",
             decomposition_mode=FileSet.ExtensionDecomposition.multiple,
         )
-        == work_dir / "y.foo.bar"
+        == work_dir / "y.luigi.mario"
     )
-    assert Bar.copy_ext(work_dir / "x.foo.bar", work_dir / "y") == work_dir / "y.bar"
+    assert (
+        Mario.copy_ext(work_dir / "x.luigi.mario", work_dir / "y")
+        == work_dir / "y.mario"
+    )
 
 
 def test_decompose_fspaths(work_dir):
-    class FooBar(File):
-        ext = ".foo.bar"
+    class LuigiMario(File):
+        ext = ".luigi.mario"
 
-    class DoubleBar(FileSet):
+    class DoubleMario(FileSet):
         @mark.required
         @property
         def bar(self):
-            return Bar(self.select_by_ext(Bar))
+            return Mario(self.select_by_ext(Mario))
 
         @mark.required
         @property
-        def foo_bar(self):
-            return FooBar(self.select_by_ext(FooBar))
+        def luigi_bar(self):
+            return LuigiMario(self.select_by_ext(LuigiMario))
 
-    fspath = work_dir / "file.foo.bar"
+    fspath = work_dir / "file.luigi.mario"
     Path.touch(fspath)
-    double_bar = DoubleBar(fspath)
+    double_bar = DoubleMario(fspath)
 
     with pytest.warns(match="whereas it is also interpreted as a"):
         decomposed = double_bar.decomposed_fspaths()
 
-    assert decomposed == [(work_dir, "file.foo", ".bar")]
+    assert decomposed == [(work_dir, "file.luigi", ".mario")]
 
 
 def test_format_detection(work_dir):
@@ -291,15 +297,8 @@ def test_format_detection(work_dir):
     assert sorted(detected, key=lambda f: f.mime_like) == [
         fileformats.text.Prs_Fallenstein_Rst,
         fileformats.text.Prs_Prop_Logic,
-        fileformats.text.Txt,
+        fileformats.text.TextFile,
     ]
-
-
-def test_missing_dependency():
-    missing_dep = MissingExtendedDependency("missing_dep", "fileformats.image")
-
-    with pytest.raises(MissingExtendedDepenciesError):
-        missing_dep.an_attr
 
 
 def test_hash(tmp_path: Path):
@@ -321,7 +320,7 @@ def test_hash_function_files_mismatch(tmp_path: Path):
 
 
 def test_hash_dir(tmp_path: Path):
-    dir1 = tmp_path / "foo"
+    dir1 = tmp_path / "luigi"
     dir2 = tmp_path / "bar"
     for d in (dir1, dir2):
         d.mkdir()
@@ -388,3 +387,32 @@ def test_hash_files(fsobject: FsObject, work_dir: Path, dest_dir: Path):
     )
     cpy = fsobject.copy(dest_dir)
     assert cpy.hash_files() == fsobject.hash_files()
+
+
+def test_to_from_mime_roundtrip():
+    mime_str = to_mime(Foo)
+    assert isinstance(mime_str, str)
+    assert from_mime(mime_str) == Foo
+
+
+def test_to_from_list_mime_roundtrip():
+    mime_str = to_mime(ty.List[Foo])
+    assert isinstance(mime_str, str)
+    assert from_mime(mime_str) == ty.List[Foo]
+
+
+def test_to_from_union_mime_roundtrip():
+    mime_str = to_mime(ty.Union[Foo, Bar])
+    assert isinstance(mime_str, str)
+    assert from_mime(mime_str) == ty.Union[Foo, Bar]
+
+
+def test_to_from_list_union_mime_roundtrip():
+    mime_str = to_mime(ty.List[ty.Union[Foo, Bar]])
+    assert isinstance(mime_str, str)
+    assert from_mime(mime_str) == ty.List[ty.Union[Foo, Bar]]
+
+
+def test_official_mime_fail():
+    with pytest.raises(TypeError, match="as it is not a proper file-type"):
+        to_mime(ty.List[Foo], official=True)
