@@ -391,21 +391,25 @@ def test_hash_files(fsobject: FsObject, work_dir: Path, dest_dir: Path):
 
 def test_to_from_mime_roundtrip():
     mime_str = to_mime(Foo)
+    assert isinstance(mime_str, str)
     assert from_mime(mime_str) == Foo
 
 
 def test_to_from_list_mime_roundtrip():
     mime_str = to_mime(ty.List[Foo])
+    assert isinstance(mime_str, str)
     assert from_mime(mime_str) == ty.List[Foo]
 
 
 def test_to_from_union_mime_roundtrip():
     mime_str = to_mime(ty.Union[Foo, Bar])
+    assert isinstance(mime_str, str)
     assert from_mime(mime_str) == ty.Union[Foo, Bar]
 
 
 def test_to_from_list_union_mime_roundtrip():
     mime_str = to_mime(ty.List[ty.Union[Foo, Bar]])
+    assert isinstance(mime_str, str)
     assert from_mime(mime_str) == ty.List[ty.Union[Foo, Bar]]
 
 
