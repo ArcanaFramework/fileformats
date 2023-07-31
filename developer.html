@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="prev" title="Format Identification" href="identification.html" />
 
-    <!-- Generated with Sphinx 7.1.0 and Furo 2023.07.26 -->
-        <title>Developer Guide - FileFormats v0.8.1</title>
+    <!-- Generated with Sphinx 7.1.1 and Furo 2023.07.26 -->
+        <title>Developer Guide - FileFormats v0.8.2</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=53e15035" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
@@ -129,7 +129,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">FileFormats v0.8.1</div></a>
+      <a href="index.html"><div class="brand">FileFormats v0.8.2</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -152,7 +152,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">FileFormats v0.8.1</span>
+  <span class="sidebar-brand-text">FileFormats v0.8.2</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -213,20 +213,12 @@ including CI/CD workflows.</p>
 For example, the <a class="reference external" href="https://github.com/ArcanaFramework/fileformats-medimage">FileFormats Medimage Extension</a>
 implements a range of file formats used in medical imaging research under the
 <code class="docutils literal notranslate"><span class="pre">fileformats.medimage</span></code> namespace.</p>
-<p>When designing an extension packages, try to keep any external dependencies to a bare
-minimum in the base installation, and add them into the <code class="docutils literal notranslate"><span class="pre">[extended]</span></code> optional
-dependencies. When importing extended dependencies in a module, enclose them in
-a try-except statement that catches ImportErrors and sets the module to a
-<code class="docutils literal notranslate"><span class="pre">MissingExtendedDependency</span></code> instead, e.g.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">MissingExtendedDependency</span>
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">external_package</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="n">external_package</span> <span class="o">=</span> <span class="n">MissingExtendedDependency</span><span class="p">(</span><span class="s2">&quot;external_package&quot;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>This will raise an informative error message, if a user attempts to access this the
-external package.</p>
+<p>When designing an extension packages, try to keep any external dependencies to an absolute
+minimum (ideally just <cite>attrs</cite>). If you would like to implement extra functionality into
+your format classes in addition to the core detection/validation, please use an &quot;extra&quot;
+hook and implement the method in an &quot;extras&quot; package (i.e. fileformats-&lt;yournamespace&gt;-extras),
+see the <a class="reference external" href="https://github.com/ArcanaFramework/fileformats-extras-template">extras template</a>
+for further instructions.</p>
 </section>
 <section id="basic-formats">
 <h2>Basic formats<a class="headerlink" href="#basic-formats" title="Permalink to this heading">#</a></h2>
@@ -441,7 +433,11 @@ files and another one for little endian files. Therefore we can't just use the
 of <a class="reference external" href="https://pydra.readthedocs.io">Pydra</a> tasks, function tasks, Python functions decorated by <code class="docutils literal notranslate"><span class="pre">&#64;pydra.mark.task</span></code>, and
 shell-command tasks, which wrap command-line tools in Python classes. To register a
 <a class="reference external" href="https://pydra.readthedocs.io">Pydra</a> task as a converter between two file formats it needs to be decorated with the
-<code class="docutils literal notranslate"><span class="pre">&#64;fileformats.core.mark.converter</span></code> decorator.</p>
+<code class="docutils literal notranslate"><span class="pre">&#64;fileformats.core.mark.converter</span></code> decorator. Note that converters that rely on
+any additional dependencies should not be implemented in your extension package, rather
+in a sister &quot;extras&quot; package named <cite>fileformats-&lt;yournamespace&gt;-extras</cite>,
+see the <a class="reference external" href="https://github.com/ArcanaFramework/fileformats-extras-template">extras template</a>
+for further instructions.</p>
 <p>Pydra uses type annotations to define the input and outputs of the tasks. It there is
 a input to the task named <code class="docutils literal notranslate"><span class="pre">in_file</span></code>, and either a single anonymous output or an output
 named <code class="docutils literal notranslate"><span class="pre">out_file</span></code>, and both are format classes, then no arguments need to be passed
@@ -634,7 +630,7 @@ FormatB.</p>
       
     </aside>
   </div>
-</div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=50797464"></script>
+</div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=2acfcf8b"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="_static/scripts/furo.js?v=32e29ea5"></script>
