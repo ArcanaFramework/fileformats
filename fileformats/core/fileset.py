@@ -791,7 +791,7 @@ class FileSet(DataType):
             a file-set that will pass type-checking as an instance of the given
             fileset class but which doesn't actually point to any FS objects.
         """
-        mock_cls = type(cls.__name__ + "Mock", (MockMixin, cls), {})
+        mock_cls = type(cls.__name__ + "Mock", (MockMixin, cls), {"TRUE_CLASS": cls})
         if not fspaths:
             fspaths = []
             fspath = f"/mock/{cls.__name__.lower()}"

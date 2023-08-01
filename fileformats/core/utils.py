@@ -327,7 +327,11 @@ def import_extras_module(klass: type) -> ty.Tuple[bool, str]:
     sub_pkg : str
         the name of the sub-package that was attempted to be loaded
     """
-
+    # Check for Mock class
+    try:
+        klass = klass.TRUE_CLASS
+    except AttributeError:
+        pass
     pkg_parts = klass.__module__.split(".")
     if pkg_parts[0] != "fileformats":
         logger.debug(

@@ -128,13 +128,14 @@ def extra(method: ty.Callable):
     """A decorator which uses singledispatch to facilitate the registering of
     "extra" functionality in external packages (e.g. "fileformats-extras")"""
 
-    functools.wraps(method)
+    dispatch_method = functools.singledispatch(method)
 
+    @functools.wraps(method)
     def decorated(obj, *args, **kwargs):
         cls = type(obj)
         extras_imported, extras_pkg, extras_pypi = import_extras_module(cls)
         try:
-            return method(obj, *args, **kwargs)
+            return dispatch_method(obj, *args, **kwargs)
         except NotImplementedError:
             if extras_imported:
                 msg = f"No implementation for '{method.__name__}' extra for {cls.__name__} types"
@@ -153,4 +154,5 @@ def extra(method: ty.Callable):
                     )
             raise FileFormatsExtrasError(msg)
 
-    return functools.singledispatch(decorated)
+    decorated.register = dispatch_method.register
+    return decorated
