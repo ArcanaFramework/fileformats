@@ -7,8 +7,7 @@ exclude =
     docs/sphinxext/
     docs/tools/
     docs/conf.py
-    arcana/_version.py
-    versioneer.py
+    fileformats/core/_version.py
     docs/source/conf.py
 max-line-length = 88
 select = C,E,F,W,B,B950
