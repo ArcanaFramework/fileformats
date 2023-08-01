@@ -137,9 +137,8 @@ def extra(method: ty.Callable):
         try:
             return dispatch_method(obj, *args, **kwargs)
         except NotImplementedError:
-            if extras_imported:
-                msg = f"No implementation for '{method.__name__}' extra for {cls.__name__} types"
-            else:
+            msg = f"No implementation for '{method.__name__}' extra for {cls.__name__} types"
+            if not extras_imported:
                 try:
                     if check_package_exists_on_pypi(extras_pypi):
                         msg += (
