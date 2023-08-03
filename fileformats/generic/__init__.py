@@ -3,7 +3,11 @@ import typing as ty
 from pathlib import Path
 import attrs
 from fileformats.core.fileset import FileSet
-from fileformats.core.exceptions import FormatMismatchError, FileFormatsError
+from fileformats.core.exceptions import (
+    FormatMismatchError,
+    FileFormatsError,
+    UnconstrainedExtensionException,
+)
 from fileformats.core import mark
 from fileformats.core.utils import classproperty
 from fileformats.core.mixin import WithClassifiers
@@ -118,12 +122,15 @@ class File(FsObject):
     @property
     def actual_ext(self):
         "The actual file extension (out of the primary  and alternate extensions possible)"
-        matching = [e for e in self.possible_exts if self.fspath.name.endswith(e)]
+        constrained_exts = [
+            e for e in self.possible_exts if e is not None
+        ]  # strip out unconstrained
+        matching = [e for e in constrained_exts if self.fspath.name.endswith(e)]
         if not matching:
-            assert False, (
-                f"extension of fspath {self.fspath} is not in possible extensions for "
-                f"{type(self)} class: {self.possible_exts}. This should have been "
-                "checked at initialisation"
+            raise UnconstrainedExtensionException(
+                f"Cannot determine actual extension of {self.fspath}, as it doesn't "
+                f"match any of the defined extensions {constrained_exts} "
+                "(i.e. matches the None extension)"
             )
         # Return the longest matching extension, useful for optional extensions
         return sorted(matching, key=len)[-1]

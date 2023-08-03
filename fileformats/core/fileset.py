@@ -27,6 +27,7 @@ from .converter import SubtypeVar
 from .exceptions import (
     FileFormatsError,
     FormatMismatchError,
+    UnconstrainedExtensionException,
     FormatConversionError,
     FileFormatsExtrasError,
     FileFormatsExtrasPkgUninstalledError,
@@ -453,7 +454,7 @@ class FileSet(DataType):
                     msg += (
                         f'. Was not able to import "extras" module, {extras_pkg}, '
                         f"you may want to try installing the '{extras_pypi}' package "
-                        f"from PyPI (e.g. pip install {extras_pypi})"
+                        f"from PyPI (e.g. pip install {extras_pypi}) or check it isn't broken"
                     )
                 raise FormatConversionError(msg) from None
             converter_tuple = available_converters[0]
@@ -892,7 +893,15 @@ class FileSet(DataType):
         nested = self.nested_filesets()
         for fileset in [self] + nested:
             if isinstance(fileset, File):
-                decomposed = (fileset.fspath.parent, fileset.stem, fileset.actual_ext)
+                try:
+                    decomposed = (
+                        fileset.fspath.parent,
+                        fileset.stem,
+                        fileset.actual_ext,
+                    )
+                except UnconstrainedExtensionException:
+                    implicit.add(fileset.fspath)
+                    continue
                 if fileset.fspath in implicit:
                     decomposed_fspaths.append(decomposed)
                     implicit.remove(fileset.fspath)
@@ -1093,6 +1102,8 @@ class FileSet(DataType):
             collation mode is set to "adjacent". By default True
         """
         mode = self.CopyMode[mode] if isinstance(mode, str) else mode
+        if new_stem:
+            supported_modes -= self.CopyMode.leave
         selected_mode = mode & supported_modes
         if len(self.fspaths) == 1:
             # If there is only one path to copy, then collation isn't meaningful
@@ -1122,7 +1133,7 @@ class FileSet(DataType):
             )
         if selected_mode & self.CopyMode.leave:
             return self  # Don't need to do anything
-        if collation == self.CopyCollation.adjacent:
+        if collation == self.CopyCollation.adjacent or new_stem:
             decomposed_fspaths = self.decomposed_fspaths(
                 required_only=trim, decomposition_mode=extension_decomposition
             )
@@ -1165,18 +1176,16 @@ class FileSet(DataType):
                 f"Cannot copy {self} because none of the fspaths in the file-set are "
                 "required. Set trim=False to copy all file-paths"
             )
+        # Set default for new_stem if not provided and collating file-set to be adjacent
         if collation == self.CopyCollation.adjacent:
             if new_stem is None:
                 new_stem = sorted(decomposed_fspaths)[0][1]
-            # Warning we redefine fspaths_to_copy as list of tuples not Paths
+        # WARNING we redefine fspaths_to_copy as list of tuples not Paths
+        if new_stem:
             fspaths_to_copy = decomposed_fspaths
-        elif new_stem is not None:
-            raise FileFormatsError(
-                f"'stem' ({new_stem}) provided to FileSet.copy() method when collation is "
-                f"not set to 'adjacent' ({collation})"
-            )
+
         for fspath in fspaths_to_copy:
-            if collation == self.CopyCollation.adjacent:
+            if new_stem:
                 # fspath is a path decomposed into parent, stem, ext instead of a Path
                 parent_dir, old_stem, ext = fspath
                 fspath = parent_dir / (old_stem + ext)  # reconstruct into a Path

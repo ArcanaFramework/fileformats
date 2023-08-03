@@ -14,6 +14,10 @@ class FormatRecognitionError(KeyError, FileFormatsError):
     "Did not find a format class corresponding to a MIME, or MIME-like, type string"
 
 
+class UnconstrainedExtensionException(FileFormatsError):
+    "Did not find a format class corresponding to a MIME, or MIME-like, type string"
+
+
 class FileFormatsExtrasError(FileFormatsError):
     """If there is an "extras hook" in the datatype class but no methods have been
     registered on it"""
