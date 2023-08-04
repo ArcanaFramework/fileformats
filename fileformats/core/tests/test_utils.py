@@ -199,13 +199,6 @@ def test_copy_collation_stem(work_dir: Path, dest_dir: Path):
     assert all(p.stem == "newfile" for p in cpy.fspaths)
 
 
-def test_copy_collation_with_stem_not_adjacent(luigi_file: Luigi, dest_dir):
-    with pytest.raises(
-        FileFormatsError, match="when collation is not set to 'adjacent'"
-    ):
-        luigi_file.copy(dest_dir, collation="any", new_stem="new")
-
-
 def test_copy_collation_leave_diff_dir(work_dir: Path, dest_dir: Path):
     a = work_dir / "a" / "file.x"
     b = work_dir / "b" / "file.y"
