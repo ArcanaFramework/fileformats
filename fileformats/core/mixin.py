@@ -1,4 +1,5 @@
 from pathlib import Path
+import re
 import typing as ty
 from collections import Counter
 from . import mark
@@ -14,8 +15,10 @@ class WithMagicNumber:
 
     Class Attrs
     -----------
-    magic_number : str
-        the magic number/string to search for at the start of the file
+    magic_number : str or bytes
+        the magic number/string to search for at the start of the file. If a unicode
+        string then it is interpreted as the byte code in hex, if a bytes object, then
+        it is treated as the byte string directly.
     binary : bool
         if the file-format is a binary type then this flag needs to be set in order to
         read the contents properly
@@ -25,7 +28,7 @@ class WithMagicNumber:
 
     magic_number_offset = 0
     binary: bool
-    magic_number: ty.Union[str, int]
+    magic_number: ty.Union[str, bytes]
 
     @mark.check
     def check_magic_number(self):
@@ -47,6 +50,54 @@ class WithMagicNumber:
                 f"Magic number of file {read_magic_str} doesn't match expected "
                 f"{magic_str}"
             )
+
+
+class WithMagicVersion:
+    """Mixin class for Files with version numbers embedded within "magic numbers"
+    the start of their contents.
+
+    Class Attrs
+    -----------
+    magic_pattern : bytes
+        the magic number/string to search for at the start of the file
+    magic_pattern_offset : int, optional
+        the offset in bytes from the start of the file that the magic pattern is read from
+    magic_pattern_maxlength : int, optional
+        the maximum length of the pattern, i.e. the length of the byte-string that will
+        be read from the file, by default it will be the length of the magic_pattern
+        string (which will probably be longer than the string it matches due to the
+        special characters in the regex)
+    """
+
+    binary: bool
+    magic_pattern: bytes
+    magic_pattern_offset = 0
+    magic_pattern_maxlength = None
+
+    @mark.required
+    @property
+    def version(self) -> ty.Union[str, ty.Tuple[str]]:
+        read_length = (
+            self.magic_pattern_length
+            if self.magic_pattern_length
+            else len(self.magic_pattern)
+        )
+        read_bytes = self.read_contents(read_length, offset=self.magic_pattern_offset)
+        match = re.match(self.magic_pattern, read_bytes)
+        if not match:
+            raise FormatMismatchError(
+                f"Byte-string of length {read_length} at {self.magic_pattern_offset} "
+                f"({read_bytes}), doesn't match expected pattern, {self.magic_pattern}"
+            )
+        version = tuple(b.decode("utf-8") for b in match.groups())
+        if not version:
+            raise FileFormatsError(
+                f"No version patterns found in magic pattern of {type(self).__name__} "
+                f"class, {self.magic_pattern}"
+            )
+        if len(version) == 1:
+            version = version[0]
+        return version
 
 
 class WithAdjacentFiles:
