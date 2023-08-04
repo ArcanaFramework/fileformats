@@ -1243,3 +1243,6 @@ class MockMixin:
     def _type_name(cls):
         assert cls.__name__.endswith("Mock")
         return cls.__name__[: -len("Mock")]
+
+    def __bytes_repr__(self, cache):
+        yield from (str(fspath).encode() for fspath in self.fspaths)
