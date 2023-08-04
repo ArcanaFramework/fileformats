@@ -726,7 +726,7 @@ class FileSet(DataType):
                 crytpo_obj.update(bytes_str)
         return crytpo_obj.hexdigest()
 
-    def hash_files(self, crypto=None, **kwargs) -> dict[str, bytes]:
+    def hash_files(self, crypto=None, **kwargs) -> ty.Dict[str, bytes]:
         """Calculate hashes for all files in the file-set based on the relative paths and
         contents of its constituent files
 
