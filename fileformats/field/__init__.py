@@ -113,9 +113,16 @@ def boolean_converter(value):
 
 def array_converter(value):
     if isinstance(value, str):
-        if value.startswith("[") and value.endswith("]"):
+        if (value.startswith("[") and value.endswith("]")) or (
+            value.startswith("(") and value.endswith(")")
+        ):
             value = value[1:-1]
-        elif value.startswith("[") or value.endswith("]"):
+        elif (
+            value.startswith("[")
+            or value.endswith("]")
+            or value.startswith("(")
+            or value.endswith(")")
+        ):
             raise FormatMismatchError(f"Unmatched brackets in array field {value}")
         value = tuple(v.strip() for v in value.split(","))
     else:
@@ -128,7 +135,6 @@ def array_converter(value):
 
 @attrs.define(repr=False)
 class Text(Singular):
-
     value: str = attrs.field(converter=text_converter)
 
     primitive = str
@@ -142,7 +148,6 @@ class Text(Singular):
 
 @attrs.define(repr=False)
 class Integer(Singular, ScalarMixin):
-
     value: int = attrs.field(converter=integer_converter)
 
     primitive = int
@@ -162,7 +167,6 @@ class Integer(Singular, ScalarMixin):
 
 @attrs.define(repr=False)
 class Decimal(Singular, ScalarMixin):
-
     value: decimal.Decimal = attrs.field(converter=decimal_converter)
 
     primitive = float
@@ -179,7 +183,6 @@ class Decimal(Singular, ScalarMixin):
 
 @attrs.define(repr=False)
 class Boolean(Singular, LogicalMixin):
-
     primitive = bool
 
     value: bool = attrs.field(converter=boolean_converter)
@@ -196,7 +199,6 @@ class Boolean(Singular, LogicalMixin):
 
 @attrs.define(auto_attribs=False, repr=False)
 class Array(WithClassifiers, Field):
-
     # WithClassifiers class attrs
     classifiers_attr_name: str = "item_type"
     multiple_classifiers: bool = False
