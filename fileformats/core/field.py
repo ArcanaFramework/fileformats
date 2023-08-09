@@ -30,7 +30,7 @@ class Field(DataType):
         return {}
 
     @classproperty
-    def all_fields(cls) -> list[ty.Type[Field]]:  # pylint: disable=no-self-argument
+    def all_fields(cls) -> ty.List[ty.Type[Field]]:  # pylint: disable=no-self-argument
         """Iterate over all field formats in fileformats.* namespaces"""
         import fileformats.field  # noqa
 
