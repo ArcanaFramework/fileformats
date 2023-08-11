@@ -644,9 +644,10 @@ class FileSet(DataType):
         if relative_to is None:
             relative_to = Path(os.path.commonpath(self.fspaths))
             if all(p.is_file() and p.parent == relative_to for p in self.fspaths):
-                relative_to /= os.path.commonprefix(
-                    [p.name for p in self.fspaths]
-                ).rstrip(".")
+                relpath = os.path.commonprefix([p.name for p in self.fspaths])
+                if relpath != ".":
+                    relpath = relpath.rstrip(".")
+                relative_to /= relpath
         # yield the absolute base path if using mtimes instead of contents
         if mtime:
             yield ("<base-path>", iter([str(relative_to.absolute()).encode()]))
