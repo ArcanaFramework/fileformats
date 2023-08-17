@@ -198,7 +198,7 @@ class Boolean(Singular, LogicalMixin):
 
 
 @attrs.define(auto_attribs=False, repr=False)
-class Array(WithClassifiers, Field):
+class Array(WithClassifiers, Field, ty.Sequence):
     # WithClassifiers class attrs
     classifiers_attr_name: str = "item_type"
     multiple_classifiers: bool = False
@@ -231,3 +231,9 @@ class Array(WithClassifiers, Field):
 
     def __hash__(self):
         return hash(self.value)
+
+    def __len__(self):
+        return len(self.value)
+
+    def __getitem__(self, index):
+        return self.value[index]

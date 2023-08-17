@@ -1,4 +1,5 @@
 import attrs
+from pathlib import Path
 import pytest
 from pydra.engine.specs import File
 from fileformats.testing import Foo, Bar, Baz, Qux
@@ -12,7 +13,7 @@ except ImportError:
     pydra = None
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def foo_bar_converter(work_dir):
     @mark.converter
     @pydra.mark.task
@@ -23,7 +24,7 @@ def foo_bar_converter(work_dir):
     return foo_bar_converter_
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def baz_bar_converter(work_dir):
     @mark.converter(out_file="out")
     @pydra.mark.task
@@ -35,7 +36,7 @@ def baz_bar_converter(work_dir):
     return baz_bar_converter_
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def FooQuxConverter():
     from pydra.engine import specs
     from pydra import ShellCommandTask
@@ -51,7 +52,7 @@ def FooQuxConverter():
         ),
         (
             "out_file",
-            str,
+            Path,
             {
                 "help_string": "output file name",
                 "argstr": "",
@@ -118,7 +119,7 @@ def test_get_converter_fail(work_dir):
 
 
 @pytest.mark.skipif(pydra is None, reason="Pydra could not be imported")
-def test_convert_functask(work_dir):
+def test_convert_functask(foo_bar_converter, work_dir):
 
     fspath = work_dir / "test.foo"
     write_test_file(fspath)
@@ -129,7 +130,7 @@ def test_convert_functask(work_dir):
 
 
 @pytest.mark.skipif(pydra is None, reason="Pydra could not be imported")
-def test_convert_shellcmd(work_dir):
+def test_convert_shellcmd(FooQuxConverter, work_dir):
 
     fspath = work_dir / "test.foo"
     write_test_file(fspath)
