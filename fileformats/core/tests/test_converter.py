@@ -14,24 +14,24 @@ except ImportError:
 
 
 @pytest.fixture(scope="session")
-def foo_bar_converter(work_dir):
+def foo_bar_converter(tmp_path):
     @mark.converter
     @pydra.mark.task
     @pydra.mark.annotate({"return": {"out_file": Bar}})
     def foo_bar_converter_(in_file: Foo):
-        return Bar(write_test_file(work_dir / "bar.bar", in_file.contents))
+        return Bar(write_test_file(tmp_path / "bar.bar", in_file.contents))
 
     return foo_bar_converter_
 
 
 @pytest.fixture(scope="session")
-def baz_bar_converter(work_dir):
+def baz_bar_converter(tmp_path):
     @mark.converter(out_file="out")
     @pydra.mark.task
     @pydra.mark.annotate({"return": {"out": Bar}})
     def baz_bar_converter_(in_file: Baz):
         assert in_file
-        return Bar(write_test_file(work_dir / "bar.bar", in_file.contents))
+        return Bar(write_test_file(tmp_path / "bar.bar", in_file.contents))
 
     return baz_bar_converter_
 
