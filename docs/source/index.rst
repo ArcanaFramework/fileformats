@@ -71,15 +71,16 @@ Validate an mp4 audio file's extension and magic number simply by instantiating 
 
    >>> from fileformats.audio import Mp4
    >>> mp4_file = Mp4("/path/to/audio.mp4")  # checks it exists, its extension and magic number
-   >>> mp4_file.fspath
+   >>> str(mp4_file)
    "/path/to/audio.mp4"
 
-The created `FileSet` object can then be treated like a "path-like" object, e.g. when opening files
+The created ``FileSet`` object implements ``os.PathLike`` so can used in place of ``str``
+or ``pathlib.Path`` in most cases, e.g. when opening files
 
    >>> fp = open(mp4_file, "rb")
    >>> contents = fp.read()
 
-and converts to its path in string templates, e.g.
+or in string templates, e.g.
 
    >>> import subprocess
    >>> subprocess.run(f"cp {mp4_file} new-dest.mp4", shell=True)
