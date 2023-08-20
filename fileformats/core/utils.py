@@ -343,7 +343,7 @@ def import_extras_module(klass: type) -> ty.Tuple[bool, str]:
         return True, None, None
     sub_pkg = pkg_parts[1]
     extras_pkg = "fileformats.extras." + sub_pkg
-    if sub_pkg in STANDARD_NAMESPACES:
+    if sub_pkg in STANDARD_NAMESPACES + ["testing"]:
         extras_pypi = "fileformats-extras"
     else:
         extras_pypi = f"fileformats-{sub_pkg}-extras"
