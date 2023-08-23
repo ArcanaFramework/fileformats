@@ -117,7 +117,6 @@ def converter(
                 task_spec,
                 in_file=in_file,
                 out_file=out_file_local,
-                converter_kwargs=converter_kwargs,
             )
         target.register_converter(
             source_format=source, converter_tuple=(task_spec, converter_kwargs)
