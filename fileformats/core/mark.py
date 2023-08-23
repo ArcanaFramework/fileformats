@@ -114,7 +114,10 @@ def converter(
             )
         if in_file != "in_file" or out_file_local != "out_file":
             task_spec = ConverterWrapper(
-                task_spec, in_file=in_file, out_file=out_file_local
+                task_spec,
+                in_file=in_file,
+                out_file=out_file_local,
+                converter_kwargs=converter_kwargs,
             )
         target.register_converter(
             source_format=source, converter_tuple=(task_spec, converter_kwargs)

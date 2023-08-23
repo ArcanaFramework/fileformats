@@ -1,5 +1,6 @@
 from abc import ABCMeta
 import typing as ty
+from copy import copy
 import attrs
 from .utils import describe_task
 from .exceptions import FileFormatsError
@@ -17,6 +18,7 @@ class ConverterWrapper:
     task_spec: ty.Callable
     in_file: ty.Optional[str] = None
     out_file: ty.Optional[str] = None
+    converter_kwargs: ty.Dict[str, ty.Any] = attrs.field(factory=dict)
 
     def __call__(self, name=None, **kwargs):
         from pydra.engine import Workflow
@@ -26,7 +28,9 @@ class ConverterWrapper:
         wf = Workflow(
             name=name, input_spec=list(set(["in_file"] + list(kwargs))), **kwargs
         )
-        wf.add(self.task_spec(name="task", **{self.in_file: wf.lzin.in_file}))
+        kwargs = copy(self.converter_kwargs)
+        kwargs[self.in_file] = wf.lzin.in_file
+        wf.add(self.task_spec(name="task", **kwargs))
         wf.set_output([("out_file", getattr(wf.task.lzout, self.out_file))])
         return wf
 
