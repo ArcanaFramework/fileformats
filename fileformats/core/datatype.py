@@ -59,7 +59,7 @@ class DataType(metaclass=ABCMeta):
                 f"Cannot create reversible MIME type for {cls} as it is not in the "
                 "fileformats namespace"
             )
-        return module_parts[1]
+        return module_parts[1].replace("_", "-")
 
     @classproperty
     def all_types(self):
@@ -152,6 +152,7 @@ class DataType(metaclass=ABCMeta):
             return FileSet.formats_by_iana_mime[mime_string]
         except KeyError:
             pass
+        namespace = namespace.replace("-", "_")
         if namespace == "application":
             # We treat the "application" namespace as a catch-all for any formats that are
             # not explicitly covered by the IANA standard (which is kind of how the IANA
