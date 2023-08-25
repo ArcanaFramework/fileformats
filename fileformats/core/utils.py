@@ -346,7 +346,7 @@ def import_extras_module(klass: type) -> ty.Tuple[bool, str]:
     if sub_pkg in STANDARD_NAMESPACES + ["testing"]:
         extras_pypi = "fileformats-extras"
     else:
-        extras_pypi = f"fileformats-{sub_pkg}-extras"
+        extras_pypi = f"fileformats-{sub_pkg.replace('_', '-')}-extras"
     try:
         importlib.import_module(extras_pkg)
     except ImportError:
