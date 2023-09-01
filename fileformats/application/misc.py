@@ -1,6 +1,6 @@
 from fileformats.generic import File
 from fileformats.core.mixin import WithMagicNumber
-from fileformats.serialization import Xml, Json
+from .serialization import Xml, Json
 
 
 class _1dInterleavedParityfec(File):

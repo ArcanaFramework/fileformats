@@ -1,5 +1,5 @@
 from fileformats.generic import File
-from fileformats.serialization import Json
+from fileformats.application import Json
 from fileformats.core.mixin import WithSideCars, WithSeparateHeader
 
 

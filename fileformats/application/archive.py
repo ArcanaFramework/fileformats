@@ -1,5 +1,3 @@
-from fileformats.core import __version__
-from warnings import warn
 from fileformats.core import FileSet
 from fileformats.core.mixin import WithClassifiers
 from fileformats.generic import File

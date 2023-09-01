@@ -1,7 +1,7 @@
 from ..core import __version__
 from fileformats.core.mixin import WithMagicNumber
 from fileformats.generic import File
-from fileformats.serialization import (
+from fileformats.application import (
     Json,
     Xml,
     Yaml,

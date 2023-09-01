@@ -4,7 +4,7 @@ import pytest
 import pydra.mark
 from fileformats.core import from_mime, DataType, FileSet
 from fileformats.core.mark import converter
-from fileformats.archive import Zip
+from fileformats.application import Zip
 from fileformats.generic import DirectoryContaining
 from fileformats.field import Array, Integer, Decimal, Text, Boolean
 from fileformats.core.exceptions import (

@@ -1,6 +1,5 @@
-from ..core import __version__
 from fileformats.generic import File
-from fileformats.archive import Zip
+from .archive import Zip
 from fileformats.core.mixin import WithMagicNumber
 
 
