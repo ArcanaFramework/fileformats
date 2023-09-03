@@ -4,6 +4,7 @@ import typing as ty
 from collections import Counter
 from . import mark
 from .fileset import FileSet
+from .classifier import Classifier
 from .utils import classproperty, describe_task, to_mime_format_name
 from .converter import SubtypeVar
 from .exceptions import FileFormatsError, FormatMismatchError, FormatRecognitionError
@@ -222,12 +223,12 @@ class WithClassifiers:
     ``Array[Integer]`` for an array containing integers, or DicomDir[T1w, Brain] for a
     T1-weighted MRI scan of the brain in DICOM format.
 
-        class MyFormatWithContents(WithContents, File):
+        class MyFormatWithClassifiers(WithClassifiers, File):
 
             ext = ".myf
 
 
-        def my_func(file: MyFormatWithContents[Integer]):
+        def my_func(file: MyFormatWithClassifiers[Integer]):
             ...
 
     A unique class will be returned (i.e. multiple calls with the same arguments will
@@ -303,17 +304,15 @@ class WithClassifiers:
             classifiers = tuple(classifiers)
         else:
             classifiers = (classifiers,)
-        if cls.allowed_classifiers:
-            not_allowed = [
-                q
-                for q in classifiers
-                if not any(issubclass(q, t) for t in cls.allowed_classifiers)
-            ]
-            if not_allowed:
-                raise FileFormatsError(
-                    f"Invalid content types provided to {cls} (must be subclasses of "
-                    f"{cls.allowed_classifiers}): {not_allowed}"
-                )
+        allowed = cls.allowed_classifiers if cls.allowed_classifiers else [Classifier]
+        not_allowed = [
+            q for q in classifiers if not any(issubclass(q, t) for t in allowed)
+        ]
+        if not_allowed:
+            raise FileFormatsError(
+                f"Invalid content types provided to {cls} (must be subclasses of "
+                f"{allowed}): {not_allowed}"
+            )
         # Sort content types if order isn't important
         if cls.multiple_classifiers:
             if not cls.ordered_classifiers:
@@ -370,11 +369,11 @@ class WithClassifiers:
             class_attrs[cls.classifiers_attr_name] = (
                 classifiers if cls.multiple_classifiers else classifiers[0]
             )
-            qualifier_names = [t.__name__ for t in classifiers]
+            classifier_names = [t.__name__ for t in classifiers]
             if not cls.ordered_classifiers:
-                qualifier_names.sort()
+                classifier_names.sort()
             classified = type(
-                f"{'_'.join(qualifier_names)}__{cls.__name__}",
+                f"{'_'.join(classifier_names)}__{cls.__name__}",
                 (cls,),
                 class_attrs,
             )

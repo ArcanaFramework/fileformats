@@ -18,9 +18,10 @@ from .utils import (
     from_mime_format_name,
     IANA_MIME_TYPE_REGISTRIES,
 )
+from .classifier import Classifier
 
 
-class DataType(metaclass=ABCMeta):
+class DataType(Classifier, metaclass=ABCMeta):
     is_fileset = False
     is_field = False
 
@@ -253,11 +254,6 @@ class DataType(metaclass=ABCMeta):
         return cls._generically_qualifies_by_name
 
     _generically_qualifies_by_name = None  # Register all generically classified types
-
-    @classproperty
-    def _type_name(cls):
-        """Name of type to be used in __repr__. Defined here so it can be overridden"""
-        return cls.__name__
 
     REQUIRED_ANNOTATION = "__fileformats_required__"
     CHECK_ANNOTATION = "__fileformats_check__"

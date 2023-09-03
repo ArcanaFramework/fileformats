@@ -18,7 +18,7 @@ import fileformats.core
 logger = logging.getLogger("fileformats")
 
 
-_excluded_subpackages = set(["core", "testing"])
+_excluded_subpackages = set(["core", "testing", "serialization", "archive", "document"])
 
 
 def include_testing_package(flag: bool = True):
