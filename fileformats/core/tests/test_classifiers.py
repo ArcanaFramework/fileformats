@@ -363,3 +363,7 @@ def test_wildcard_ordered_qualifier_converters():
     R[A, B, C, D].get_converter(L[A, B, C])
     with pytest.raises(FormatConversionError):
         R[A, E, C, D].get_converter(L[A, B, C])
+
+
+def test_classifier_groups():
+    pass
