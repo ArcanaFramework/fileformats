@@ -1,29 +1,41 @@
 from fileformats.core import Classifier
+from fileformats.generic import File
+from fileformats.core.mixin import WithClassifiers
 
 
-class T(Classifier):
+class CategoryA(Classifier):
     pass
 
 
-class U(Classifier):
+class CategoryB(Classifier):
     pass
 
 
-class V(Classifier):
+class U(CategoryA):
     pass
 
 
-class W(Classifier):
+class V(CategoryA):
     pass
 
 
-class X(Classifier):
+class W(V):
     pass
 
 
-class Y(Classifier):
+class X(CategoryB):
     pass
 
 
-class Z(Classifier):
+class Y(X):
     pass
+
+
+class Z(Y):
+    pass
+
+
+class Classified(WithClassifiers, File):
+    classifiers_attr_name = "classifiers"
+    classifiers = ()
+    ext = ".cls"

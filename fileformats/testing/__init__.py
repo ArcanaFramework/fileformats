@@ -13,4 +13,4 @@ from .headers import (
     EncodedText,
 )
 from .classifiers.file import A, B, C, D, E, F, G, H, J, K, L, M, N, P, Q, R, TestField
-from .classifiers.generic import T, U, V, W, X, Y, Z
+from .classifiers.generic import Classified, U, V, W, X, Y, Z

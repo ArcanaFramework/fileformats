@@ -1,4 +1,10 @@
 from .utils import classproperty
+from .exceptions import FileFormatsError
+
+
+class ClassifierCategory:
+    """Base class for classifier categories. Only one member of each category is permitted
+    in args for classified classes"""
 
 
 class Classifier:
@@ -11,7 +17,14 @@ class Classifier:
         return cls.__name__
 
     @classproperty
-    def category(cls):
+    def classifier_category(cls) -> "ClassifierCategory":
         """The base classifier in the ontological root. There can only be one classifier
         in each category in a set of classifiers"""
-        return [c for c in cls.__mro__ if issubclass(c, Classifier)][-1]
+        categories = [c for c in cls.__mro__ if issubclass(c, ClassifierCategory)]
+        if len(categories) > 1:
+            raise FileFormatsError(
+                f"Classifier {cls} cannot inherit from multiple categories ({categories})"
+            )
+        if not categories:
+            return None
+        return categories[0]

@@ -1,10 +1,9 @@
 from pathlib import Path
 import re
 import typing as ty
-from collections import Counter
+from collections import defaultdict
 from . import mark
 from .fileset import FileSet
-from .classifier import Classifier
 from .utils import classproperty, describe_task, to_mime_format_name
 from .converter import SubtypeVar
 from .exceptions import FileFormatsError, FormatMismatchError, FormatRecognitionError
@@ -304,25 +303,43 @@ class WithClassifiers:
             classifiers = tuple(classifiers)
         else:
             classifiers = (classifiers,)
-        allowed = cls.allowed_classifiers if cls.allowed_classifiers else [Classifier]
-        not_allowed = [
-            q for q in classifiers if not any(issubclass(q, t) for t in allowed)
-        ]
-        if not_allowed:
-            raise FileFormatsError(
-                f"Invalid content types provided to {cls} (must be subclasses of "
-                f"{allowed}): {not_allowed}"
-            )
+        if cls.allowed_classifiers:
+            not_allowed = [
+                q
+                for q in classifiers
+                if not any(issubclass(q, t) for t in cls.allowed_classifiers)
+            ]
+            if not_allowed:
+                raise FileFormatsError(
+                    f"Invalid content types provided to {cls} (must be subclasses of "
+                    f"{cls.allowed_classifiers}): {not_allowed}"
+                )
         # Sort content types if order isn't important
         if cls.multiple_classifiers:
             if not cls.ordered_classifiers:
-                # TODO: should check to see if classifiers are subclasses of each other
-                repetitions = [t for t, c in Counter(classifiers).items() if c > 1]
+                # Sort the classifiers into categories and ensure that there aren't more
+                # than one type for each category. Otherwise, if the classifier doesn't
+                # belong to a category, check to see that there aren't multiple sub-classes
+                # in the classifier set
+                repetitions = defaultdict(list)
+                for classifier in classifiers:
+                    category = getattr(classifier, "classifier_category", None)
+                    if category:
+                        repetitions[category].append(classifier)
+                    else:
+                        repetitions[classifier] = [
+                            c for c in classifiers if issubclass(c, classifier)
+                        ]
+                repetitions = [t for t in repetitions.items() if len(t[1]) > 1]
                 if repetitions:
                     raise FileFormatsError(
-                        f"Cannot have more than one occurrence of a qualifier "
-                        f"({repetitions}) for {cls} class when "
-                        f"{cls.__name__}.ordered_classifiers is false"
+                        "Cannot have more than one occurrence of a classifier category "
+                        f"or subclasses for {cls} class when "
+                        f"{cls.__name__}.ordered_classifiers is false:\n"
+                        "\n".join(
+                            f"{k!r}: " + ", ".join(repr(x) for x in v)
+                            for k, v in repetitions
+                        )
                     )
                 classifiers = frozenset(classifiers)
         else:

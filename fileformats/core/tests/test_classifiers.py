@@ -31,6 +31,13 @@ from fileformats.testing import (
     Q,
     R,
     TestField,
+    Classified,
+    U,
+    V,
+    W,
+    X,
+    # Y,
+    Z,
 )
 
 
@@ -137,30 +144,43 @@ def test_subtype_testing_20():
     assert issubclass(N[J, K], N[J, H])  # J is subclass of H,
 
 
-def test_qualifier_fails():
+def test_file_classifiers1():
     H[A, B, C]  # A, B, C are all allowable qualifier
+
+
+def test_file_classifiers2():
     F[D]  # F has no restriction on qualifier types
 
-    with pytest.raises(FileFormatsError) as e:
+
+def test_file_classifiers3():
+    with pytest.raises(FileFormatsError, match="Invalid content types provided to"):
         H[D]
-    assert "Invalid content types provided to" in str(e)
 
-    with pytest.raises(FileFormatsError) as e:
+
+def test_file_classifiers4():
+    with pytest.raises(
+        FileFormatsError, match="Cannot have more than one occurrence of a qualifier"
+    ):
         H[A, B, A]
-    assert "Cannot have more than one occurrence of a qualifier" in str(e)
 
+
+def test_file_classifiers5():
     K[A, B, A]  # ordered classifiers allow repeats
 
-    with pytest.raises(FileFormatsError) as e:
-        Q[A]
-    assert (
-        "Default value for classifiers attribute 'new_classifiers_attr' needs to be set"
-        in str(e)
-    )
 
-    with pytest.raises(FileFormatsError) as e:
+def test_file_classifiers6():
+    with pytest.raises(
+        FileFormatsError,
+        match="Default value for classifiers attribute 'new_classifiers_attr' needs to be set",
+    ):
+        Q[A]
+
+
+def test_file_classifiers7():
+    with pytest.raises(
+        FileFormatsError, match="Multiple classifiers not permitted for "
+    ):
         M[A, B]
-    assert "Multiple classifiers not permitted for " in str(e)
 
 
 # (source_format=F, target_format=H)
@@ -365,5 +385,28 @@ def test_wildcard_ordered_qualifier_converters():
         R[A, E, C, D].get_converter(L[A, B, C])
 
 
-def test_classifier_groups():
-    pass
+def test_classifier_categories1():
+    Classified[U, X]
+
+
+def test_classifier_categories2():
+    Classified[W, Z]
+
+
+def test_classifier_categories3():
+    with pytest.raises(FileFormatsError, match="Cannot have more than one occurrence"):
+        Classified[U, V]
+
+
+def test_classifier_categories4():
+    with pytest.raises(FileFormatsError, match="Cannot have more than one occurrence"):
+        Classified[U, W]
+
+
+def test_classifier_categories5():
+    Classified[A, B]
+
+
+def test_classifier_categories6():
+    with pytest.raises(FileFormatsError, match="Cannot have more than one occurrence"):
+        Classified[C, E]
