@@ -336,7 +336,7 @@ class WithClassifiers:
                         "Cannot have more than one occurrence of a classifier category "
                         f"or subclasses for {cls} class when "
                         f"{cls.__name__}.ordered_classifiers is false:\n"
-                        "\n".join(
+                        + "\n".join(
                             f"{k!r}: " + ", ".join(repr(x) for x in v)
                             for k, v in repetitions
                         )
@@ -628,12 +628,12 @@ class WithClassifiers:
         return namespace
 
     @property
-    def _type_name(self):
+    def type_name(self):
         """Name of type including classifiers to be used in __repr__"""
         if self.is_classified:
             unclassified = self.unclassified.__name__
         else:
             unclassified = type(self).__name__
         return (
-            unclassified + "[" + ", ".join(t._type_name for t in self.classifiers) + "]"
+            unclassified + "[" + ", ".join(t.type_name for t in self.classifiers) + "]"
         )

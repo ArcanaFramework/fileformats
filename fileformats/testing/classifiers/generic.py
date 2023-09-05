@@ -1,30 +1,33 @@
-from fileformats.core import Classifier
+from fileformats.core import Classifier, ClassifierCategory
 from fileformats.generic import File
 from fileformats.core.mixin import WithClassifiers
 
 
-class CategoryA(Classifier):
+class CategoryA(ClassifierCategory):
     pass
 
 
-class CategoryB(Classifier):
+class CategoryB(ClassifierCategory):
     pass
 
 
-class U(CategoryA):
-    pass
+class U(Classifier):
+
+    classifier_category = CategoryA
 
 
-class V(CategoryA):
-    pass
+class V(Classifier):
+
+    classifier_category = CategoryA
 
 
 class W(V):
     pass
 
 
-class X(CategoryB):
-    pass
+class X(Classifier):
+
+    classifier_category = CategoryB
 
 
 class Y(X):

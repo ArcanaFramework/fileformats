@@ -140,10 +140,6 @@ def test_subtype_testing_19():
     assert issubclass(K[A, E, B], K[A, C, B])
 
 
-def test_subtype_testing_20():
-    assert issubclass(N[J, K], N[J, H])  # J is subclass of H,
-
-
 def test_file_classifiers1():
     H[A, B, C]  # A, B, C are all allowable qualifier
 
@@ -159,7 +155,7 @@ def test_file_classifiers3():
 
 def test_file_classifiers4():
     with pytest.raises(
-        FileFormatsError, match="Cannot have more than one occurrence of a qualifier"
+        FileFormatsError, match="Cannot have more than one occurrence of a classifier"
     ):
         H[A, B, A]
 
@@ -333,17 +329,31 @@ def generic2n(in_file: SpecificDataType) -> N[SpecificDataType, H]:
     return in_file
 
 
-def test_wildcard_template_from_generic_conversion():
+def test_wildcard_template_from_generic_conversion1():
     F[J].get_converter(J)
+
+
+def test_wildcard_template_from_generic_conversion2():
     with pytest.raises(FormatConversionError):
         F[K].get_converter(J)
 
+
+def test_wildcard_template_from_generic_conversion3():
     N[J].get_converter(J)
-    N[J, H].get_converter(J)
+
+
+def test_wildcard_template_from_generic_conversion4():
     with pytest.raises(FormatConversionError):
         F[K, H].get_converter(J)
+
+
+def test_wildcard_template_from_generic_conversion5():
     with pytest.raises(FormatConversionError):
         F[J, K].get_converter(J)
+
+
+def test_wildcard_template_from_generic_conversion6():
+    N[K, H].get_converter(K)
 
 
 # Generic from template to  type

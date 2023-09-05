@@ -22,7 +22,7 @@ class Field(DataType):
         return str(self.value)
 
     def __repr__(self):
-        return f"{self._type_name}({str(self)})"
+        return f"{self.type_name}({str(self)})"
 
     @property
     def metadata(self):

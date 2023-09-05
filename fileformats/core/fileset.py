@@ -83,7 +83,7 @@ class FileSet(DataType):
         return hash(self.fspaths)
 
     def __repr__(self):
-        return f"{self._type_name}('" + "', '".join(str(p) for p in self.fspaths) + "')"
+        return f"{self.type_name}('" + "', '".join(str(p) for p in self.fspaths) + "')"
 
     def __attrs_post_init__(self):
         # Check required properties don't raise errors
@@ -1240,7 +1240,7 @@ class MockMixin:
         pass
 
     @classproperty
-    def _type_name(cls):
+    def type_name(cls):
         assert cls.__name__.endswith("Mock")
         return cls.__name__[: -len("Mock")]
 
