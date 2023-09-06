@@ -394,6 +394,7 @@ class WithClassifiers:
                 (cls,),
                 class_attrs,
             )
+            classified.__module__ = cls.__module__
             cls._classified_subtypes[classifiers] = classified
         return classified
 
