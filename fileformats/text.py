@@ -1,11 +1,6 @@
 from .core import __version__  # noqa
 from fileformats.core.mixin import WithMagicNumber
 from fileformats.generic import File
-from fileformats.application import (  # noqa
-    Json,
-    Xml,
-    Yaml,
-)  # These are sometimes/historically considered part of the text registry so we import them here
 
 
 class Text(File):
@@ -430,3 +425,10 @@ class XmlExternalParsedEntity(Text):
     iana_mime = "text/xml-external-parsed-entity"
     ext = ".ent"
     alternate_exts = (None,)
+
+
+from fileformats.application import (  # noqa
+    Json,
+    Xml,
+    Yaml,
+)  # These are sometimes/historically considered part of the text registry so we import them here
