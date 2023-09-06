@@ -1,11 +1,8 @@
 import os
-import typing as ty
 from pathlib import Path
-import attrs
 from fileformats.core.fileset import FileSet
 from fileformats.core.exceptions import (
     FormatMismatchError,
-    FileFormatsError,
     UnconstrainedExtensionException,
 )
 from fileformats.core import mark
