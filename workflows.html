@@ -1,12 +1,12 @@
 <!doctype html>
-<html class="no-js" lang="English">
+<html class="no-js" lang="English" data-content_root="./">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Format Identification" href="identification.html" /><link rel="prev" title="FileFormats" href="index.html" />
 
-    <!-- Generated with Sphinx 7.1.2 and Furo 2023.07.26 -->
-        <title>Data Workflows - FileFormats v0.8.6</title>
+    <!-- Generated with Sphinx 7.2.5 and Furo 2023.08.19 -->
+        <title>Data Workflows - FileFormats v0.9.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d8449d71" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
@@ -129,7 +129,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">FileFormats v0.8.6</div></a>
+      <a href="index.html"><div class="brand">FileFormats v0.9.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -152,7 +152,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">FileFormats v0.8.6</span>
+  <span class="sidebar-brand-text">FileFormats v0.9.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -199,17 +199,17 @@
         </div>
         <article role="main">
           <section id="data-workflows">
-<h1>Data Workflows<a class="headerlink" href="#data-workflows" title="Permalink to this heading">#</a></h1>
+<h1>Data Workflows<a class="headerlink" href="#data-workflows" title="Link to this heading">#</a></h1>
 <p><em>FileFormats</em> is primarily designed for the typing of data workflows to ensure
 that data is transferred between workflow nodes in compatible formats. See <a class="reference external" href="https://pydra.readthedocs.io">Pydra</a>
 and <a class="reference external" href="https://gitlab.com/radiology/infrastructure/fastr">Fastr</a> for examples of compatible workflow engines.</p>
 <section id="base-features">
-<h2>Base features<a class="headerlink" href="#base-features" title="Permalink to this heading">#</a></h2>
+<h2>Base features<a class="headerlink" href="#base-features" title="Link to this heading">#</a></h2>
 <p>Base features are available for all types within <em>FileFormats</em> and its extension
 packages using the base install. They are designed to be broadly available for a large
 range of types and very light-weight in terms of external dependencies.</p>
 <section id="validation">
-<h3>Validation<a class="headerlink" href="#validation" title="Permalink to this heading">#</a></h3>
+<h3>Validation<a class="headerlink" href="#validation" title="Link to this heading">#</a></h3>
 <p>In the basic case, <em>FileFormats</em> can be used for checking the format of files and
 directories against known types. Typically, there are two layers of checks, ones
 performed on the file-system paths alone,</p>
@@ -272,7 +272,7 @@ e.g.</p>
 </div>
 </section>
 <section id="path-handling">
-<h3>Path handling<a class="headerlink" href="#path-handling" title="Permalink to this heading">#</a></h3>
+<h3>Path handling<a class="headerlink" href="#path-handling" title="Link to this heading">#</a></h3>
 <p>Once a file object is initiated you are able to access the &quot;required properties&quot; of the
 format class, which for single file formats is typically just the file-system path,
 <code class="docutils literal notranslate"><span class="pre">fspath</span></code>.</p>
@@ -337,7 +337,7 @@ is rendered.</p>
 </section>
 </section>
 <section id="extras">
-<h2>Extras<a class="headerlink" href="#extras" title="Permalink to this heading">#</a></h2>
+<h2>Extras<a class="headerlink" href="#extras" title="Link to this heading">#</a></h2>
 <p>In addition to the basic features of validation and path handling, it is possible to
 implement methods to interact with the data of file format objects via &quot;extras hooks&quot;.
 Such features are added to selected
@@ -347,7 +347,7 @@ so are by no means comprehensive, and <strong>are very much provided &quot;as-is
 are kept separate and only installed if the <code class="docutils literal notranslate"><span class="pre">[extended]</span></code> install option is used
 (i.e. <code class="docutils literal notranslate"><span class="pre">python3</span> <span class="pre">-m</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">filformats[extended]</span></code>).</p>
 <section id="metadata">
-<h3>Metadata<a class="headerlink" href="#metadata" title="Permalink to this heading">#</a></h3>
+<h3>Metadata<a class="headerlink" href="#metadata" title="Link to this heading">#</a></h3>
 <p>If there has been an extras overload registered for the <code class="docutils literal notranslate"><span class="pre">read_metadata</span></code> method,
 then metadata associated with the fileset can be accessed via the <code class="docutils literal notranslate"><span class="pre">metadata</span></code> property,
 e.g.</p>
@@ -357,7 +357,7 @@ e.g.</p>
 </div>
 </section>
 <section id="load-saving-data">
-<h3>Load/saving data<a class="headerlink" href="#load-saving-data" title="Permalink to this heading">#</a></h3>
+<h3>Load/saving data<a class="headerlink" href="#load-saving-data" title="Link to this heading">#</a></h3>
 <p>Several classes in the base fileformats package implement <code class="docutils literal notranslate"><span class="pre">load</span></code> and <code class="docutils literal notranslate"><span class="pre">save</span></code> methods.
 An advantage of implementing them  in the format class is that objects instantiated from
 them can then be duck-typed in calling functions/methods. For example, both <code class="docutils literal notranslate"><span class="pre">Yaml</span></code> and
@@ -372,7 +372,7 @@ them can then be duck-typed in calling functions/methods. For example, both <cod
 <p>Also, when providing the the <code class="docutils literal notranslate"><span class="pre">WithSeparateHeader</span></code> and <code class="docutils literal notranslate"><span class="pre">WithSideCars</span></code> mixin classes will</p>
 </section>
 <section id="conversion">
-<h3>Conversion<a class="headerlink" href="#conversion" title="Permalink to this heading">#</a></h3>
+<h3>Conversion<a class="headerlink" href="#conversion" title="Link to this heading">#</a></h3>
 <p>Several conversion methods are available between equivalent file-formats in the standard
 classes. For example, archive types such as <code class="docutils literal notranslate"><span class="pre">Zip</span></code> can be converted into and generic
 file/directories using the <code class="docutils literal notranslate"><span class="pre">convert</span></code> classmethod of the target format to convert to</p>
@@ -486,9 +486,9 @@ classmethod</p>
       
     </aside>
   </div>
-</div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=3a569720"></script>
+</div><script src="_static/documentation_options.js?v=269f141a"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
-    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=32e29ea5"></script>
     </body>
 </html>

@@ -1,12 +1,12 @@
 <!doctype html>
-<html class="no-js" lang="English">
+<html class="no-js" lang="English" data-content_root="./">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="prev" title="Format Identification" href="identification.html" />
 
-    <!-- Generated with Sphinx 7.1.2 and Furo 2023.07.26 -->
-        <title>Developer Guide - FileFormats v0.8.6</title>
+    <!-- Generated with Sphinx 7.2.5 and Furo 2023.08.19 -->
+        <title>Developer Guide - FileFormats v0.9.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d8449d71" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
@@ -129,7 +129,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">FileFormats v0.8.6</div></a>
+      <a href="index.html"><div class="brand">FileFormats v0.9.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -152,7 +152,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">FileFormats v0.8.6</span>
+  <span class="sidebar-brand-text">FileFormats v0.9.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -199,12 +199,12 @@
         </div>
         <article role="main">
           <section id="developer-guide">
-<h1>Developer Guide<a class="headerlink" href="#developer-guide" title="Permalink to this heading">#</a></h1>
+<h1>Developer Guide<a class="headerlink" href="#developer-guide" title="Link to this heading">#</a></h1>
 <p><em>FileFormats</em> has been designed so that file-formats specified by standard features,
 such as file extension and magic number can be implemented in a few lines, while
 still being flexible enough handle any weird whacky file formats used in obscure domains.</p>
 <section id="extension-packages">
-<h2>Extension packages<a class="headerlink" href="#extension-packages" title="Permalink to this heading">#</a></h2>
+<h2>Extension packages<a class="headerlink" href="#extension-packages" title="Link to this heading">#</a></h2>
 <p>Format classes not covered by <a class="reference external" href="https://www.iana_mime.org/assignments/media-types/media-types.xhtml">IANA Media Types</a> should be implemented in a separate
 <em>FileFormats</em> extension packages. New extension packages can be conveniently created from
 the FileFormats extension template, <a class="reference external" href="https://github.com/ArcanaFramework/fileformats-medimage">https://github.com/ArcanaFramework/fileformats-medimage</a>,
@@ -221,7 +221,7 @@ see the <a class="reference external" href="https://github.com/ArcanaFramework/f
 for further instructions.</p>
 </section>
 <section id="basic-formats">
-<h2>Basic formats<a class="headerlink" href="#basic-formats" title="Permalink to this heading">#</a></h2>
+<h2>Basic formats<a class="headerlink" href="#basic-formats" title="Link to this heading">#</a></h2>
 <p>In the simplest case of a file format identified by its extension alone, you only need
 to inherit from the <code class="docutils literal notranslate"><span class="pre">fileformats.generic.File</span></code> class and set the <code class="docutils literal notranslate"><span class="pre">ext</span></code> attr, e.g</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.generic</span> <span class="kn">import</span> <span class="n">File</span>
@@ -243,7 +243,7 @@ set the <code class="docutils literal notranslate"><span class="pre">content_typ
 </div>
 </section>
 <section id="standard-mixins">
-<h2>Standard mixins<a class="headerlink" href="#standard-mixins" title="Permalink to this heading">#</a></h2>
+<h2>Standard mixins<a class="headerlink" href="#standard-mixins" title="Link to this heading">#</a></h2>
 <p>If the format is a binary file with a magic number (identifying byte string at start of
 file), you can use the <code class="docutils literal notranslate"><span class="pre">fileformats.core.mixin.WithMagicNumber</span></code> mixin. For files with
 magic numbers you will also need to set the <code class="docutils literal notranslate"><span class="pre">binary</span></code> attr to True.</p>
@@ -303,7 +303,7 @@ method resolution order of the types bases, so that they can override methods in
 </div>
 </section>
 <section id="custom-format-patterns">
-<h2>Custom format patterns<a class="headerlink" href="#custom-format-patterns" title="Permalink to this heading">#</a></h2>
+<h2>Custom format patterns<a class="headerlink" href="#custom-format-patterns" title="Link to this heading">#</a></h2>
 <p>While the standard mixin classes should cover 90% of all formats, in the wild-west of
 scientific data formats you might need to write custom validators using the
 <code class="docutils literal notranslate"><span class="pre">&#64;fileformats.core.mark.required</span></code> and <code class="docutils literal notranslate"><span class="pre">&#64;fileformats.core.mark.check</span></code> decorators.</p>
@@ -427,7 +427,7 @@ files and another one for little endian files. Therefore we can't just use the
 <code class="docutils literal notranslate"><span class="pre">fileformats.core.mark.check</span></code>.</p>
 </section>
 <section id="converters">
-<h2>Converters<a class="headerlink" href="#converters" title="Permalink to this heading">#</a></h2>
+<h2>Converters<a class="headerlink" href="#converters" title="Link to this heading">#</a></h2>
 <p>Converters between two equivalent formats are defined using <a class="reference external" href="https://pydra.readthedocs.io">Pydra</a> dataflow engine
 <a class="reference external" href="https://pydra.readthedocs.io/en/latest/components.html">tasks</a>. There are two types
 of <a class="reference external" href="https://pydra.readthedocs.io">Pydra</a> tasks, function tasks, Python functions decorated by <code class="docutils literal notranslate"><span class="pre">&#64;pydra.mark.task</span></code>, and
@@ -630,9 +630,9 @@ FormatB.</p>
       
     </aside>
   </div>
-</div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=3a569720"></script>
+</div><script src="_static/documentation_options.js?v=269f141a"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
-    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=32e29ea5"></script>
     </body>
 </html>

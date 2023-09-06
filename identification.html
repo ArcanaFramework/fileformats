@@ -1,12 +1,12 @@
 <!doctype html>
-<html class="no-js" lang="English">
+<html class="no-js" lang="English" data-content_root="./">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Developer Guide" href="developer.html" /><link rel="prev" title="Data Workflows" href="workflows.html" />
 
-    <!-- Generated with Sphinx 7.1.2 and Furo 2023.07.26 -->
-        <title>Format Identification - FileFormats v0.8.6</title>
+    <!-- Generated with Sphinx 7.2.5 and Furo 2023.08.19 -->
+        <title>Format Identification - FileFormats v0.9.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d8449d71" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
@@ -129,7 +129,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">FileFormats v0.8.6</div></a>
+      <a href="index.html"><div class="brand">FileFormats v0.9.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -152,7 +152,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">FileFormats v0.8.6</span>
+  <span class="sidebar-brand-text">FileFormats v0.9.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -199,12 +199,12 @@
         </div>
         <article role="main">
           <section id="format-identification">
-<h1>Format Identification<a class="headerlink" href="#format-identification" title="Permalink to this heading">#</a></h1>
+<h1>Format Identification<a class="headerlink" href="#format-identification" title="Link to this heading">#</a></h1>
 <p>In addition to simply importing and using a format class in your Python code, format classes
 can be loaded from their <a class="reference external" href="https://www.iana_mime.org/assignments/media-types/media-types.xhtml">MIME type</a> or detected from
 file-system objects.</p>
 <section id="detecting-formats">
-<h2>Detecting formats<a class="headerlink" href="#detecting-formats" title="Permalink to this heading">#</a></h2>
+<h2>Detecting formats<a class="headerlink" href="#detecting-formats" title="Link to this heading">#</a></h2>
 <p>While not a primary design goal of the <em>FileFormats</em> library, it is
 possible to detect the formats that match a given set of files using the <code class="docutils literal notranslate"><span class="pre">find_matching</span></code>
 function. Note that it isn't always possible to uniquely identify a single format, since
@@ -222,7 +222,7 @@ formats covered in the main fileformats package then you should use the <code cl
 flag</p>
 </section>
 <section id="mime-types">
-<h2>MIME Types<a class="headerlink" href="#mime-types" title="Permalink to this heading">#</a></h2>
+<h2>MIME Types<a class="headerlink" href="#mime-types" title="Link to this heading">#</a></h2>
 <p>Namespaces in the <code class="docutils literal notranslate"><span class="pre">fileformats</span></code> package are largely named after MIME type registries
 as defined by the <a class="reference external" href="https://www.iana_mime.org/assignments/media-types/media-types.xhtml">Internet Assigned Numbering Authority (IANA)</a>.
 The difference is that there is no &quot;application&quot; registry, which acts as a
@@ -265,7 +265,7 @@ unless IANA compliance is required.</p>
 </div>
 </section>
 <section id="mime-like-types">
-<h2>MIME-like types<a class="headerlink" href="#mime-like-types" title="Permalink to this heading">#</a></h2>
+<h2>MIME-like types<a class="headerlink" href="#mime-like-types" title="Link to this heading">#</a></h2>
 <p>To avoid the issue with format classes in separate namespaces mapping onto the same
 IANA-style MIME type, as well as improving readability of the MIME string (i.e. not
 drowning in a sea of &quot;application/x-*&quot; types), it can be preferable in some use cases
@@ -370,9 +370,9 @@ types, so it is possible to roundtrip from both.</p>
       
     </aside>
   </div>
-</div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=3a569720"></script>
+</div><script src="_static/documentation_options.js?v=269f141a"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
-    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=32e29ea5"></script>
     </body>
 </html>

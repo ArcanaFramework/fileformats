@@ -1,12 +1,12 @@
 <!doctype html>
-<html class="no-js" lang="English">
+<html class="no-js" lang="English" data-content_root="./">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Data Workflows" href="workflows.html" />
 
-    <!-- Generated with Sphinx 7.1.2 and Furo 2023.07.26 -->
-        <title>FileFormats v0.8.6</title>
+    <!-- Generated with Sphinx 7.2.5 and Furo 2023.08.19 -->
+        <title>FileFormats v0.9.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d8449d71" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
@@ -129,7 +129,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="#"><div class="brand">FileFormats v0.8.6</div></a>
+      <a href="#"><div class="brand">FileFormats v0.9.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -152,7 +152,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="#">
   
   
-  <span class="sidebar-brand-text">FileFormats v0.8.6</span>
+  <span class="sidebar-brand-text">FileFormats v0.9.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -199,7 +199,7 @@
         </div>
         <article role="main">
           <section id="fileformats">
-<span id="home"></span><h1>FileFormats<a class="headerlink" href="#fileformats" title="Permalink to this heading">#</a></h1>
+<span id="home"></span><h1>FileFormats<a class="headerlink" href="#fileformats" title="Link to this heading">#</a></h1>
 <a class="reference external image-reference" href="https://github.com/arcanaframework/fileformats/actions/workflows/tests.yml"><img alt="https://github.com/arcanaframework/fileformats/actions/workflows/tests.yml/badge.svg" src="https://github.com/arcanaframework/fileformats/actions/workflows/tests.yml/badge.svg" /></a>
 <a class="reference external image-reference" href="https://codecov.io/gh/arcanaframework/fileformats"><img alt="https://codecov.io/gh/arcanaframework/fileformats/branch/main/graph/badge.svg?token=UIS0OGPST7" src="https://codecov.io/gh/arcanaframework/fileformats/branch/main/graph/badge.svg?token=UIS0OGPST7" /></a>
 <a class="reference external image-reference" href="https://pypi.python.org/pypi/fileformats/"><img alt="Supported Python versions" src="https://img.shields.io/pypi/pyversions/fileformats.svg" /></a>
@@ -219,7 +219,7 @@ and &quot;magic numbers&quot;, where applicable. In addition to these generic me
 routines for exotic file formats, e.g. formats that require inspection of headers to
 locate other members of the &quot;file set&quot;.</p>
 <section id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">#</a></h2>
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
 <p><em>FileFormats</em> can be installed for Python &gt;=3.7 using <em>pip</em></p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>fileformats
 </pre></div>
@@ -235,27 +235,28 @@ the <code class="docutils literal notranslate"><span class="pre">extended</span>
 </div>
 </section>
 <section id="quick-example">
-<h2>Quick Example<a class="headerlink" href="#quick-example" title="Permalink to this heading">#</a></h2>
+<h2>Quick Example<a class="headerlink" href="#quick-example" title="Link to this heading">#</a></h2>
 <p>Validate an mp4 audio file's extension and magic number simply by instantiating the class.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.audio</span> <span class="kn">import</span> <span class="n">Mp4</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mp4_file</span> <span class="o">=</span> <span class="n">Mp4</span><span class="p">(</span><span class="s2">&quot;/path/to/audio.mp4&quot;</span><span class="p">)</span>  <span class="c1"># checks it exists, its extension and magic number</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mp4_file</span><span class="o">.</span><span class="n">fspath</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">mp4_file</span><span class="p">)</span>
 <span class="go">&quot;/path/to/audio.mp4&quot;</span>
 </pre></div>
 </div>
-<p>The created <cite>FileSet</cite> object can then be treated like a &quot;path-like&quot; object, e.g. when opening files</p>
+<p>The created <code class="docutils literal notranslate"><span class="pre">FileSet</span></code> object implements <code class="docutils literal notranslate"><span class="pre">os.PathLike</span></code> so can used in place of <code class="docutils literal notranslate"><span class="pre">str</span></code>
+or <code class="docutils literal notranslate"><span class="pre">pathlib.Path</span></code> in most cases, e.g. when opening files</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fp</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">mp4_file</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">contents</span> <span class="o">=</span> <span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>and converts to its path in string templates, e.g.</p>
+<p>or in string templates, e.g.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cp </span><span class="si">{</span><span class="n">mp4_file</span><span class="si">}</span><span class="s2"> new-dest.mp4&quot;</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
 <section id="license">
-<h2>License<a class="headerlink" href="#license" title="Permalink to this heading">#</a></h2>
+<h2>License<a class="headerlink" href="#license" title="Link to this heading">#</a></h2>
 <p>This work is licensed under a
 <a class="reference external" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a></p>
 <a class="reference external image-reference" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons Attribution 4.0 International License" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a>
@@ -322,9 +323,9 @@ the <code class="docutils literal notranslate"><span class="pre">extended</span>
       
     </aside>
   </div>
-</div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=3a569720"></script>
+</div><script src="_static/documentation_options.js?v=269f141a"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
-    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=32e29ea5"></script>
     </body>
 </html>
