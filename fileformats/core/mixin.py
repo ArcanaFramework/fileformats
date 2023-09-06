@@ -1,7 +1,7 @@
 from pathlib import Path
 import re
 import typing as ty
-from collections import Counter
+from collections import defaultdict
 from . import mark
 from .fileset import FileSet
 from .utils import classproperty, describe_task, to_mime_format_name
@@ -222,12 +222,12 @@ class WithClassifiers:
     ``Array[Integer]`` for an array containing integers, or DicomDir[T1w, Brain] for a
     T1-weighted MRI scan of the brain in DICOM format.
 
-        class MyFormatWithContents(WithContents, File):
+        class MyFormatWithClassifiers(WithClassifiers, File):
 
             ext = ".myf
 
 
-        def my_func(file: MyFormatWithContents[Integer]):
+        def my_func(file: MyFormatWithClassifiers[Integer]):
             ...
 
     A unique class will be returned (i.e. multiple calls with the same arguments will
@@ -317,13 +317,29 @@ class WithClassifiers:
         # Sort content types if order isn't important
         if cls.multiple_classifiers:
             if not cls.ordered_classifiers:
-                # TODO: should check to see if classifiers are subclasses of each other
-                repetitions = [t for t, c in Counter(classifiers).items() if c > 1]
+                # Sort the classifiers into categories and ensure that there aren't more
+                # than one type for each category. Otherwise, if the classifier doesn't
+                # belong to a category, check to see that there aren't multiple sub-classes
+                # in the classifier set
+                repetitions = defaultdict(list)
+                for classifier in classifiers:
+                    category = getattr(classifier, "classifier_category", None)
+                    if category:
+                        repetitions[category].append(classifier)
+                    else:
+                        repetitions[classifier] = [
+                            c for c in classifiers if issubclass(c, classifier)
+                        ]
+                repetitions = [t for t in repetitions.items() if len(t[1]) > 1]
                 if repetitions:
                     raise FileFormatsError(
-                        f"Cannot have more than one occurrence of a qualifier "
-                        f"({repetitions}) for {cls} class when "
-                        f"{cls.__name__}.ordered_classifiers is false"
+                        "Cannot have more than one occurrence of a classifier category "
+                        f"or subclasses for {cls} class when "
+                        f"{cls.__name__}.ordered_classifiers is false:\n"
+                        + "\n".join(
+                            f"{k!r}: " + ", ".join(repr(x) for x in v)
+                            for k, v in repetitions
+                        )
                     )
                 classifiers = frozenset(classifiers)
         else:
@@ -370,11 +386,11 @@ class WithClassifiers:
             class_attrs[cls.classifiers_attr_name] = (
                 classifiers if cls.multiple_classifiers else classifiers[0]
             )
-            qualifier_names = [t.__name__ for t in classifiers]
+            classifier_names = [t.__name__ for t in classifiers]
             if not cls.ordered_classifiers:
-                qualifier_names.sort()
+                classifier_names.sort()
             classified = type(
-                f"{'_'.join(qualifier_names)}__{cls.__name__}",
+                f"{'_'.join(classifier_names)}__{cls.__name__}",
                 (cls,),
                 class_attrs,
             )
@@ -612,12 +628,12 @@ class WithClassifiers:
         return namespace
 
     @property
-    def _type_name(self):
+    def type_name(self):
         """Name of type including classifiers to be used in __repr__"""
         if self.is_classified:
             unclassified = self.unclassified.__name__
         else:
             unclassified = type(self).__name__
         return (
-            unclassified + "[" + ", ".join(t._type_name for t in self.classifiers) + "]"
+            unclassified + "[" + ", ".join(t.type_name for t in self.classifiers) + "]"
         )

@@ -1,7 +1,7 @@
-from ..core import __version__
+from .core import __version__  # noqa
 from fileformats.core.mixin import WithMagicNumber
 from fileformats.generic import File
-from fileformats.serialization import (
+from fileformats.application import (  # noqa
     Json,
     Xml,
     Yaml,

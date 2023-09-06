@@ -4,7 +4,7 @@ import pytest
 import pydra.mark
 from fileformats.core import from_mime, DataType, FileSet
 from fileformats.core.mark import converter
-from fileformats.archive import Zip
+from fileformats.application import Zip
 from fileformats.generic import DirectoryContaining
 from fileformats.field import Array, Integer, Decimal, Text, Boolean
 from fileformats.core.exceptions import (
@@ -31,6 +31,13 @@ from fileformats.testing import (
     Q,
     R,
     TestField,
+    Classified,
+    U,
+    V,
+    W,
+    X,
+    # Y,
+    Z,
 )
 
 
@@ -133,34 +140,43 @@ def test_subtype_testing_19():
     assert issubclass(K[A, E, B], K[A, C, B])
 
 
-def test_subtype_testing_20():
-    assert issubclass(N[J, K], N[J, H])  # J is subclass of H,
-
-
-def test_qualifier_fails():
+def test_file_classifiers1():
     H[A, B, C]  # A, B, C are all allowable qualifier
+
+
+def test_file_classifiers2():
     F[D]  # F has no restriction on qualifier types
 
-    with pytest.raises(FileFormatsError) as e:
+
+def test_file_classifiers3():
+    with pytest.raises(FileFormatsError, match="Invalid content types provided to"):
         H[D]
-    assert "Invalid content types provided to" in str(e)
 
-    with pytest.raises(FileFormatsError) as e:
+
+def test_file_classifiers4():
+    with pytest.raises(
+        FileFormatsError, match="Cannot have more than one occurrence of a classifier"
+    ):
         H[A, B, A]
-    assert "Cannot have more than one occurrence of a qualifier" in str(e)
 
+
+def test_file_classifiers5():
     K[A, B, A]  # ordered classifiers allow repeats
 
-    with pytest.raises(FileFormatsError) as e:
-        Q[A]
-    assert (
-        "Default value for classifiers attribute 'new_classifiers_attr' needs to be set"
-        in str(e)
-    )
 
-    with pytest.raises(FileFormatsError) as e:
+def test_file_classifiers6():
+    with pytest.raises(
+        FileFormatsError,
+        match="Default value for classifiers attribute 'new_classifiers_attr' needs to be set",
+    ):
+        Q[A]
+
+
+def test_file_classifiers7():
+    with pytest.raises(
+        FileFormatsError, match="Multiple classifiers not permitted for "
+    ):
         M[A, B]
-    assert "Multiple classifiers not permitted for " in str(e)
 
 
 # (source_format=F, target_format=H)
@@ -313,17 +329,31 @@ def generic2n(in_file: SpecificDataType) -> N[SpecificDataType, H]:
     return in_file
 
 
-def test_wildcard_template_from_generic_conversion():
+def test_wildcard_template_from_generic_conversion1():
     F[J].get_converter(J)
+
+
+def test_wildcard_template_from_generic_conversion2():
     with pytest.raises(FormatConversionError):
         F[K].get_converter(J)
 
+
+def test_wildcard_template_from_generic_conversion3():
     N[J].get_converter(J)
-    N[J, H].get_converter(J)
+
+
+def test_wildcard_template_from_generic_conversion4():
     with pytest.raises(FormatConversionError):
         F[K, H].get_converter(J)
+
+
+def test_wildcard_template_from_generic_conversion5():
     with pytest.raises(FormatConversionError):
         F[J, K].get_converter(J)
+
+
+def test_wildcard_template_from_generic_conversion6():
+    N[K, H].get_converter(K)
 
 
 # Generic from template to  type
@@ -363,3 +393,30 @@ def test_wildcard_ordered_qualifier_converters():
     R[A, B, C, D].get_converter(L[A, B, C])
     with pytest.raises(FormatConversionError):
         R[A, E, C, D].get_converter(L[A, B, C])
+
+
+def test_classifier_categories1():
+    Classified[U, X]
+
+
+def test_classifier_categories2():
+    Classified[W, Z]
+
+
+def test_classifier_categories3():
+    with pytest.raises(FileFormatsError, match="Cannot have more than one occurrence"):
+        Classified[U, V]
+
+
+def test_classifier_categories4():
+    with pytest.raises(FileFormatsError, match="Cannot have more than one occurrence"):
+        Classified[U, W]
+
+
+def test_classifier_categories5():
+    Classified[A, B]
+
+
+def test_classifier_categories6():
+    with pytest.raises(FileFormatsError, match="Cannot have more than one occurrence"):
+        Classified[C, E]

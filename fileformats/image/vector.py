@@ -1,5 +1,5 @@
 from .base import Image
-from fileformats.serialization import InformalSchema, Xml
+from fileformats.application import InformalSchema, Xml
 
 
 class VectorImage(Image):

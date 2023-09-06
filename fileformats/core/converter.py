@@ -23,10 +23,10 @@ class ConverterWrapper:
 
         if name is None:
             name = f"{self.task_spec.__name__}_wrapper"
-        wf = Workflow(
-            name=name, input_spec=list(set(["in_file"] + list(kwargs))), **kwargs
-        )
-        wf.add(self.task_spec(name="task", **{self.in_file: wf.lzin.in_file}))
+        wf = Workflow(name=name, input_spec=["in_file"])
+        task_kwargs = {self.in_file: wf.lzin.in_file}
+        task_kwargs.update(kwargs)
+        wf.add(self.task_spec(name="task", **task_kwargs))
         wf.set_output([("out_file", getattr(wf.task.lzout, self.out_file))])
         return wf
 

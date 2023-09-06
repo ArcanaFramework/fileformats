@@ -1,5 +1,5 @@
-from ..core import __version__
-from ..core.mixin import WithMagicNumber
+from .core import __version__  # noqa
+from .core.mixin import WithMagicNumber
 from fileformats.generic import File
 
 

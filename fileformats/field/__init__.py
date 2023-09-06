@@ -143,7 +143,7 @@ class Text(Singular):
         return hash(self.value)
 
     def __repr__(self):
-        return f'{self._type_name}("{self.value}")'
+        return f'{self.type_name}("{self.value}")'
 
 
 @attrs.define(repr=False)

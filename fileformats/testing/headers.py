@@ -1,14 +1,14 @@
 from fileformats.generic import File
-from fileformats.serialization import Json
+from fileformats.application import Json
 from fileformats.core.mixin import WithSideCars, WithSeparateHeader
 
 
-class Y(File):
+class YFile(File):
     ext = ".y"
     binary = False
 
 
-class Z(File):
+class Zfile(File):
     ext = ".z"
     binary = False
 
@@ -17,7 +17,7 @@ class Xyz(WithSideCars, File):
 
     ext = ".x"
     binary = False
-    side_car_types = (Y, Z)
+    side_car_types = (YFile, Zfile)
 
 
 class MyFormat(File):

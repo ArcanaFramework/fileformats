@@ -18,7 +18,7 @@ import fileformats.core
 logger = logging.getLogger("fileformats")
 
 
-_excluded_subpackages = set(["core", "testing"])
+_excluded_subpackages = set(["core", "testing", "serialization", "archive", "document"])
 
 
 def include_testing_package(flag: bool = True):
@@ -70,7 +70,7 @@ def find_matching(
         namespace = frmt.namespace
         if (
             frmt.matches(fspaths)
-            and (not standard_only or namespace in STANDARD_NAMESPACES)
+            and (not standard_only or namespace in IANA_MIME_TYPE_REGISTRIES)
             and (include_generic or namespace != "generic")
         ):
             matches.append(frmt)
@@ -204,15 +204,14 @@ class classproperty(object):
         return self.f(owner)
 
 
-STANDARD_NAMESPACES = [
-    "archive",
+IANA_MIME_TYPE_REGISTRIES = [
+    "application",
     "audio",
-    "document",
+    "font",
     "image",
-    "misc",
+    "message",
     "model",
-    "numeric",
-    "serialization",
+    "multipart",
     "text",
     "video",
 ]
@@ -343,10 +342,10 @@ def import_extras_module(klass: type) -> ty.Tuple[bool, str]:
         return True, None, None
     sub_pkg = pkg_parts[1]
     extras_pkg = "fileformats.extras." + sub_pkg
-    if sub_pkg in STANDARD_NAMESPACES + ["testing"]:
+    if sub_pkg in IANA_MIME_TYPE_REGISTRIES + ["testing"]:
         extras_pypi = "fileformats-extras"
     else:
-        extras_pypi = f"fileformats-{sub_pkg}-extras"
+        extras_pypi = f"fileformats-{sub_pkg.replace('_', '-')}-extras"
     try:
         importlib.import_module(extras_pkg)
     except ImportError:

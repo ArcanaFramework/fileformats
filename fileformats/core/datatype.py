@@ -16,10 +16,12 @@ from .utils import (
     to_mime_format_name,
     add_exc_note,
     from_mime_format_name,
+    IANA_MIME_TYPE_REGISTRIES,
 )
+from .classifier import Classifier
 
 
-class DataType(metaclass=ABCMeta):
+class DataType(Classifier, metaclass=ABCMeta):
     is_fileset = False
     is_field = False
 
@@ -59,7 +61,7 @@ class DataType(metaclass=ABCMeta):
                 f"Cannot create reversible MIME type for {cls} as it is not in the "
                 "fileformats namespace"
             )
-        return module_parts[1]
+        return module_parts[1].replace("_", "-")
 
     @classproperty
     def all_types(self):
@@ -148,29 +150,36 @@ class DataType(metaclass=ABCMeta):
             raise FormatRecognitionError(
                 f"Format '{mime_string}' is not a valid MIME-like format of <namespace>/<format>"
             )
+        else:
+            namespace = namespace.replace("-", "_")
+        # Attempt to load file type using their `iana_mime` attribute
         try:
             return FileSet.formats_by_iana_mime[mime_string]
         except KeyError:
             pass
-        if namespace == "application":
-            # We treat the "application" namespace as a catch-all for any formats that are
-            # not explicitly covered by the IANA standard (which is kind of how the IANA
+        if namespace == "application" and format_name.startswith("x-"):
+            # We treat the "application/x-" namespace as a catch-all for any formats
+            # that are not explicitly covered by the IANA standard (which is how the IANA
             # treats it). Therefore, we loop through all subclasses across the different
             # namespaces to find one that matches the name.
-            if not format_name.startswith("x-"):
-                raise FormatRecognitionError(
-                    "Did not find class matching official (i.e. non-extension) MIME type "
-                    f"{mime_string} (i.e. one not starting with 'application/x-'"
-                ) from None
             format_name = format_name[2:]  # remove "x-" prefix
             matching_name = FileSet.formats_by_name[format_name]
+            matching_name = [
+                m
+                for m in matching_name
+                if m.__module__ not in IANA_MIME_TYPE_REGISTRIES
+            ]
             if not matching_name:
-                namespace_names = [n.__name__ for n in subpackages()]
+                namespace_names = [
+                    p.__name__
+                    for p in subpackages()
+                    if p.__name__ not in IANA_MIME_TYPE_REGISTRIES
+                ]
                 class_name = from_mime_format_name(format_name)
                 raise FormatRecognitionError(
                     f"Did not find class matching extension the class name '{class_name}' "
                     f"corresponding to MIME type '{mime_string}' "
-                    f"in any of the installed namespaces: {namespace_names}"
+                    f"in any of the installed nonnamespaces: {namespace_names}"
                 )
             elif len(matching_name) > 1:
                 namespace_names = [f.__module__ for f in matching_name]
@@ -245,11 +254,6 @@ class DataType(metaclass=ABCMeta):
         return cls._generically_qualifies_by_name
 
     _generically_qualifies_by_name = None  # Register all generically classified types
-
-    @classproperty
-    def _type_name(cls):
-        """Name of type to be used in __repr__. Defined here so it can be overridden"""
-        return cls.__name__
 
     REQUIRED_ANNOTATION = "__fileformats_required__"
     CHECK_ANNOTATION = "__fileformats_check__"

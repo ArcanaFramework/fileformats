@@ -1,6 +1,32 @@
+from fileformats.core import __version__
+from .archive import (
+    Archive,
+    Zip,
+    Bzip,
+    Gzip,
+    Tar,
+    TarGzip,
+)
+from .document import (
+    Document,
+    Pdf,
+    Msword,
+    MswordX,
+    Postscript,
+)
+from .serialization import (
+    Schema,
+    JsonSchema,
+    XmlSchema,
+    InformalSchema,
+    DataSerialization,
+    Xml,
+    Json,
+    Yaml,
+    Toml,
+)
 from .medical import Dicom
-from ..text import Javascript
-from .unclassified import (
+from .misc import (
     _1dInterleavedParityfec,
     _3gpdashQoeReport__Xml,
     _3gpphal__Json,
@@ -472,7 +498,6 @@ from .unclassified import (
     Xfdf,
     Xhtml__Xml,
     Xliff__Xml,
-    Xml,
     XmlDtd,
     XmlExternalParsedEntity,
     XmlPatch__Xml,
@@ -490,3 +515,4 @@ from .unclassified import (
     Zlib,
     Zstd,
 )
+from ..text import Javascript

@@ -1,4 +1,4 @@
-from ..core import __version__
+from .core import __version__  # noqa
 from fileformats.generic import File
 from fileformats.core.mixin import WithMagicNumber
 

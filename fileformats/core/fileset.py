@@ -19,7 +19,7 @@ from .utils import (
     classproperty,
     fspaths_converter,
     to_mime_format_name,
-    STANDARD_NAMESPACES,
+    IANA_MIME_TYPE_REGISTRIES,
     describe_task,
     import_extras_module,
 )
@@ -83,7 +83,7 @@ class FileSet(DataType):
         return hash(self.fspaths)
 
     def __repr__(self):
-        return f"{self._type_name}('" + "', '".join(str(p) for p in self.fspaths) + "')"
+        return f"{self.type_name}('" + "', '".join(str(p) for p in self.fspaths) + "')"
 
     def __attrs_post_init__(self):
         # Check required properties don't raise errors
@@ -558,7 +558,7 @@ class FileSet(DataType):
     @classproperty
     def standard_formats(cls):
         """Iterate over all formats in the standard fileformats.* namespaces"""
-        return (f for f in cls.all_formats if f.namespace in STANDARD_NAMESPACES)
+        return (f for f in cls.all_formats if f.namespace in IANA_MIME_TYPE_REGISTRIES)
 
     @classproperty
     def formats_by_iana_mime(cls):
@@ -567,7 +567,7 @@ class FileSet(DataType):
             cls._formats_by_iana_mime = {
                 f.iana_mime: f
                 for f in FileSet.all_formats
-                if getattr(f, "iana_mime", None) is not None
+                if f.__dict__.get("iana_mime") is not None
             }
         return cls._formats_by_iana_mime
 
@@ -1240,7 +1240,7 @@ class MockMixin:
         pass
 
     @classproperty
-    def _type_name(cls):
+    def type_name(cls):
         assert cls.__name__.endswith("Mock")
         return cls.__name__[: -len("Mock")]
 
