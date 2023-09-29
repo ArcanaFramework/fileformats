@@ -135,24 +135,27 @@ def extra(method: ty.Callable):
     @functools.wraps(method)
     def decorated(obj, *args, **kwargs):
         cls = type(obj)
-        extras_imported, extras_pkg, extras_pypi = import_extras_module(cls)
+        extras = []
+        for tp in cls.referenced_types():
+            extras.append(import_extras_module(tp))
         try:
             return dispatch_method(obj, *args, **kwargs)
         except NotImplementedError:
             msg = f"No implementation for '{method.__name__}' extra for {cls.__name__} types"
-            if not extras_imported:
-                try:
-                    if check_package_exists_on_pypi(extras_pypi):
+            for extra in extras:
+                if not extra.imported:
+                    try:
+                        if check_package_exists_on_pypi(extra.pypi):
+                            msg += (
+                                f'. An "extras" package exists on PyPI ({extra.pypi}), '
+                                "which may contain an implementation, try installing it "
+                                f"(e.g. 'pip install {extra.pypi}') and check again"
+                            )
+                    except urllib.error.URLError:
                         msg += (
-                            f'. An "extras" package exists on PyPI ({extras_pypi}), '
-                            "which may contain an implementation, try installing it "
-                            f"(e.g. 'pip install {extras_pypi}') and check again"
+                            '. Was not able to check whether an "extras" package '
+                            f"({extra.pypi}) exists on PyPI or not"
                         )
-                except urllib.error.URLError:
-                    msg += (
-                        '. Was not able to check whether an "extras" package '
-                        f"({extras_pypi}) exists on PyPI or not"
-                    )
             raise FileFormatsExtrasError(msg)
 
     decorated.register = dispatch_method.register

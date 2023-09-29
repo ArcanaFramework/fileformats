@@ -311,7 +311,14 @@ def check_package_exists_on_pypi(package_name: str, timeout: int = 5) -> bool:
     return True
 
 
-def import_extras_module(klass: type) -> ty.Tuple[bool, str]:
+class ExtrasModule:
+    def __init__(self, imported: bool, pkg: str, pypi: str):
+        self.imported = imported
+        self.pkg = pkg
+        self.pypi = pypi
+
+
+def import_extras_module(klass: type) -> ExtrasModule:
     """Attempt to load extras module corresponding to the provided class's module
 
     Parameters
@@ -352,7 +359,7 @@ def import_extras_module(klass: type) -> ty.Tuple[bool, str]:
         extras_imported = False
     else:
         extras_imported = True
-    return extras_imported, extras_pkg, extras_pypi
+    return ExtrasModule(extras_imported, extras_pkg, extras_pypi)
 
 
 LIST_MIME = "+list-of"

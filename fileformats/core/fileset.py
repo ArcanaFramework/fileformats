@@ -24,6 +24,7 @@ from .utils import (
     import_extras_module,
 )
 from .converter import SubtypeVar
+from .classifier import Classifier
 from .exceptions import (
     FileFormatsError,
     FormatMismatchError,
@@ -775,6 +776,25 @@ class FileSet(DataType):
         for key, chunk_iter in self.byte_chunks():
             yield (",'" + key + "'=").encode()
             yield from chunk_iter
+
+    @classmethod
+    def referenced_types(cls) -> ty.Set[Classifier]:
+        """Returns a flattened list of nested types referenced within the fileset type
+
+        Returns
+        -------
+        types : set[Classifier]
+            all the types that are referenced in shape or form within the class
+        """
+        types = set([cls])
+        for b in cls.__mro__:
+            try:
+                nested = b.nested_types
+            except AttributeError:
+                continue
+            for t in nested:
+                types.update(t.referenced_types())
+        return types
 
     @classmethod
     def mock(cls, *fspaths: ty.Tuple[ty.Union[Path, str]]) -> Self:

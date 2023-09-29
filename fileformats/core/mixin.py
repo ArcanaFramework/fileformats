@@ -165,6 +165,10 @@ class WithSeparateHeader(WithAdjacentFiles):
         the file-format of the header file
     """
 
+    @classproperty
+    def nested_types(cls):
+        return (cls.header_type,)
+
     @mark.required
     @property
     def header(self):
@@ -213,6 +217,10 @@ class WithSideCars(WithAdjacentFiles):
                     to_mime_format_name(type(side_car).__name__)
                 ] = side_car_metadata
         return metadata
+
+    @classproperty
+    def nested_types(cls):
+        return cls.side_car_types
 
 
 class WithClassifiers:
@@ -283,6 +291,10 @@ class WithClassifiers:
     @classproperty
     def is_classified(cls):  # pylint: disable=no-self-argument
         return "unclassified" in cls.__dict__
+
+    @classproperty
+    def nested_types(cls):
+        return cls.classifiers
 
     @classmethod
     def wildcard_classifiers(cls, classifiers=None):

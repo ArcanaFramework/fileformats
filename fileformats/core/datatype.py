@@ -24,6 +24,7 @@ from .classifier import Classifier
 class DataType(Classifier, metaclass=ABCMeta):
     is_fileset = False
     is_field = False
+    nested_types = ()
 
     @classmethod
     def type_var(cls, name):

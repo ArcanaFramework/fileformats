@@ -1,4 +1,6 @@
 import os
+import random
+import string
 import itertools
 from pathlib import Path
 from fileformats.core.fileset import FileSet
@@ -280,12 +282,13 @@ def fsobject_generate_sample_data(fsobject: FsObject, dest_dir: Path):
 
 @FileSet.generate_sample_data.register
 def file_generate_sample_data(file: File, dest_dir: Path):
+    FILE_LENGTH = 100
     type_name = file.type_name.lower()
     fname = f"a-{type_name}"
     if file.ext:
         fname += file.ext
     a_file = dest_dir / fname
-    if a_file.binary:
+    if file.binary:
         if hasattr(file, "magic_number"):
             offset = getattr(file, "magic_number_offset", 0)
             btes = os.urandom(offset)
@@ -296,10 +299,10 @@ def file_generate_sample_data(file: File, dest_dir: Path):
             )
         else:
             btes = b""
-        btes += os.urandom(100)  # write some dummy data
+        btes += os.urandom(FILE_LENGTH)  # write some dummy data
         a_file.write_bytes(btes)
     else:
-        a_file.write_text(f"a sample '{file.mime_like()}' file")
+        a_file.write_text("".join(random.choices(string.printable, k=FILE_LENGTH)))
     fspaths = [a_file]
     if hasattr(file, "header_type"):
         fspaths.extend(file.header_type.sample(dest_dir).fspaths)
@@ -313,7 +316,7 @@ def file_generate_sample_data(file: File, dest_dir: Path):
 def directory_generate_sample_data(directory: Directory, dest_dir: Path):
     a_dir = dest_dir / "a-dir"
     a_dir.mkdir()
-    File.sample(a_dir)
+    File.sample(a_dir)  # Add a sample file for good measure
     return [a_dir]
 
 
@@ -332,5 +335,5 @@ def directory_containing_generate_sample_data(
 @FileSet.generate_sample_data.register
 def set_of_sample_data(set_of: SetOf, dest_dir: Path):
     return list(
-        itertools.chain(t.sample(dest_dir).fspaths for t in set_of.content_types)
+        itertools.chain(*(t.sample(dest_dir).fspaths for t in set_of.content_types))
     )
