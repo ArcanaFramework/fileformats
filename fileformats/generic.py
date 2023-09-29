@@ -265,3 +265,26 @@ class SetOf(WithClassifiers, TypedSet):
     classifiers_attr_name = "content_types"
     allowed_classifiers = (FileSet,)
     generically_qualifies = True
+
+
+@FileSet.generate_sample_data.register
+def fsobject_generate_sample_data(file: FsObject, dest_dir: Path):
+    a_file = dest_dir / "a-fsobject"
+    a_file.write_text("a sample fs-object")
+    return [a_file]
+
+
+@FileSet.generate_sample_data.register
+def file_generate_sample_data(file: File, dest_dir: Path):
+    a_file = dest_dir / "a-file"
+    a_file.write_text("a sample file")
+    return [a_file]
+
+
+@FileSet.generate_sample_data.register
+def directory_generate_sample_data(file: Directory, dest_dir: Path):
+    a_dir = dest_dir / "a-dir"
+    a_dir.mkdir()
+    a_file = a_dir / "a_file.x"
+    a_file.write_text("a sample file within a sample directory")
+    return [a_dir]
