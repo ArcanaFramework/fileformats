@@ -1,4 +1,6 @@
 import json
+import typing as ty
+from pathlib import Path
 from ..core import mark, DataType
 from ..core.mixin import WithClassifiers
 from ..generic import File
@@ -87,3 +89,11 @@ class Yaml(DataSerialization):
 
 class Toml(DataSerialization):
     ext = ".toml"
+
+
+@File.generate_sample_data.register
+def generate_json_sample_data(js: Json, dest_dir: Path) -> ty.List[Path]:
+    js_file = dest_dir / "a-json.json"
+    with open(js_file, "w") as f:
+        json.dump({"a": True, "b": "two", "c": 3, "d": [4, 5.0, 6]}, f)
+    return [js_file]
