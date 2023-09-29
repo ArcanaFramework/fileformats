@@ -97,3 +97,21 @@ def generate_json_sample_data(js: Json, dest_dir: Path) -> ty.List[Path]:
     with open(js_file, "w") as f:
         json.dump({"a": True, "b": "two", "c": 3, "d": [4, 5.0, 6]}, f)
     return [js_file]
+
+
+@File.generate_sample_data.register
+def generate_yaml_sample_data(yml: Yaml, dest_dir: Path) -> ty.List[Path]:
+    yml_file = dest_dir / "a-yaml.yaml"
+    with open(yml_file, "w") as f:
+        f.write(
+            """# Generated sample YAML file by FileFormats
+a: True
+b: two
+c: 3
+d:
+- 4
+- 5.0
+- 6
+"""
+        )
+    return [yml_file]
