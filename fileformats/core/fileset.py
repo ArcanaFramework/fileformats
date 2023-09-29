@@ -450,12 +450,12 @@ class FileSet(DataType):
                     f"Could not find converter between '{source_format.mime_like}' and "
                     f"'{cls.mime_like}' formats"
                 )
-                extras_imported, extras_pkg, extras_pypi = import_extras_module(cls)
-                if not extras_imported:
+                extras_mod = import_extras_module(cls)
+                if not extras_mod.imported:
                     msg += (
-                        f'. Was not able to import "extras" module, {extras_pkg}, '
-                        f"you may want to try installing the '{extras_pypi}' package "
-                        f"from PyPI (e.g. pip install {extras_pypi}) or check it isn't broken"
+                        f'. Was not able to import "extras" module, {extras_mod.pkg}, '
+                        f"you may want to try installing the '{extras_mod.pypi}' package "
+                        f"from PyPI (e.g. pip install {extras_mod.pypi}) or check it isn't broken"
                     )
                 raise FormatConversionError(msg) from None
             converter_tuple = available_converters[0]
