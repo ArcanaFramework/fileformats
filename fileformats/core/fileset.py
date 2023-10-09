@@ -975,6 +975,45 @@ class FileSet(DataType):
             ext = ""
         return fspath.parent, stem, ext
 
+    @classmethod
+    def from_paths(
+        cls, fspaths: ty.Iterable[Path], common_ok: bool = False
+    ) -> ty.Tuple[ty.Set["FileSet"], ty.Set[Path]]:
+        """Finds all instances of the fileset class that can be constructed from a
+        collection of file-system paths.
+
+        Parameters
+        ----------
+        fspaths : Iterable[Path]
+            file-system paths to instantiate file-sets from
+        common_ok : bool
+            whether secondary file-system paths can be shared between multiple instances
+            of the returned filesets
+
+        Returns
+        -------
+        filesets : set[FileSet]
+            file-sets instantiated from the provided paths
+        remaining : set[Path]
+            remaining file-system paths that weren't used in any of the file-sets
+        """
+        fspaths = list(fspaths)  # guard against iterator exhaustion
+        filesets = set()
+        remaining = set(fspaths)
+        for fspath in fspaths:
+            try:
+                fileset = cls(fspath)
+            except FormatMismatchError:
+                continue
+            else:
+                filesets.add(fileset)
+                fileset.trim_paths()  # only included required paths in the file set
+                if not common_ok and not all(p in remaining for p in fileset.fspaths):
+                    continue
+                for p in fileset.fspaths:
+                    remaining.remove(p)
+        return filesets, remaining
+
     class CopyMode(Enum):
         """Designates the desired behaviour of the FileSet.copy() method with regards to
         symbolic, hard or full copies
