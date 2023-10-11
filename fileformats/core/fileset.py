@@ -822,7 +822,7 @@ class FileSet(DataType):
         return mock_cls(fspaths=fspaths)
 
     @classmethod
-    def sample(cls, dest_dir: ty.Optional[Path] = None) -> Self:
+    def sample(cls, dest_dir: ty.Optional[Path] = None, seed: int = 0) -> Self:
         """Return an sample instance of the file-set type for classes where the
         `test_data` extra has been implemented
 
@@ -830,6 +830,9 @@ class FileSet(DataType):
         ----------
         dest_dir : Path, optional
             the path in which to create the test data
+        seed : int
+            seed used to generate content. Defaults to 0 (rather than a timestamp), so
+            the default method call produces consistent runs between calls
 
         Returns
         -------
@@ -841,7 +844,7 @@ class FileSet(DataType):
         # Need to use mock to get an instance in order to use the singledispatch-based
         # mark.extra decorator
         mock = cls.mock()
-        fspaths = mock.generate_sample_data(dest_dir)
+        fspaths = mock.generate_sample_data(dest_dir, seed)
         try:
             obj = cls(fspaths)
         except FormatMismatchError as e:
@@ -853,13 +856,16 @@ class FileSet(DataType):
         return obj
 
     @mark.extra
-    def generate_sample_data(self, dest_dir: Path) -> ty.Iterable[Path]:
+    def generate_sample_data(self, dest_dir: Path, seed: int = 0) -> ty.Iterable[Path]:
         """Generate test data at the fspaths of the file-set
 
         Parameters
         ----------
         dest_dir : Path
             the directory to generate the test data within
+        seed : int
+            seed used to generate content. Defaults to 0 (rather than a timestamp), so
+            the default method call produces consistent runs between calls
 
         Returns
         -------
@@ -1314,3 +1320,18 @@ class MockMixin:
 
     def __bytes_repr__(self, cache):
         yield from (str(fspath).encode() for fspath in self.fspaths)
+
+    @classproperty
+    def namespace(cls):
+        """The "namespace" the format belongs to under the "fileformats" umbrella
+        namespace"""
+        for base in cls.__mro__:
+            if issubclass(base, MockMixin):
+                continue
+            try:
+                return base.namespace
+            except FileFormatsError:
+                pass
+        raise FileFormatsError(
+            f"None of of the bases classes of {cls} ({cls.__mro__}) have a valid namespace"
+        )

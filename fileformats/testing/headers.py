@@ -8,7 +8,7 @@ class YFile(File):
     binary = False
 
 
-class Zfile(File):
+class ZFile(File):
     ext = ".z"
     binary = False
 
@@ -17,7 +17,7 @@ class Xyz(WithSideCars, File):
 
     ext = ".x"
     binary = False
-    side_car_types = (YFile, Zfile)
+    side_car_types = (YFile, ZFile)
 
 
 class MyFormat(File):

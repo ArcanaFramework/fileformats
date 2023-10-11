@@ -1,20 +1,20 @@
 from pathlib import Path
 import os.path
 import random
+from collections import Counter
 import shutil
+import itertools
 import typing as ty
 import time
 import pytest
 from fileformats.core import FileSet, mark
 from fileformats.generic import File, Directory, FsObject
 from fileformats.core.mixin import WithSeparateHeader
-from fileformats.core.utils import (
-    find_matching,
-    to_mime,
-    from_mime,
-)
+from fileformats.core.utils import find_matching, to_mime, from_mime, from_paths
 from fileformats.core.exceptions import FileFormatsError
-from fileformats.testing import Foo, Bar
+from fileformats.testing import Foo, Bar, Xyz, YFile, ZFile
+from fileformats.application import Json, Yaml, Zip
+from fileformats.text import Plain, TextFile
 import fileformats.text
 from conftest import write_test_file
 
@@ -383,25 +383,25 @@ def test_hash_files(fsobject: FsObject, work_dir: Path, dest_dir: Path):
 
 
 def test_to_from_mime_roundtrip():
-    mime_str = to_mime(Foo)
+    mime_str = to_mime(Foo, official=False)
     assert isinstance(mime_str, str)
     assert from_mime(mime_str) == Foo
 
 
 def test_to_from_list_mime_roundtrip():
-    mime_str = to_mime(ty.List[Foo])
+    mime_str = to_mime(ty.List[Foo], official=False)
     assert isinstance(mime_str, str)
     assert from_mime(mime_str) == ty.List[Foo]
 
 
 def test_to_from_union_mime_roundtrip():
-    mime_str = to_mime(ty.Union[Foo, Bar])
+    mime_str = to_mime(ty.Union[Foo, Bar], official=False)
     assert isinstance(mime_str, str)
     assert from_mime(mime_str) == ty.Union[Foo, Bar]
 
 
 def test_to_from_list_union_mime_roundtrip():
-    mime_str = to_mime(ty.List[ty.Union[Foo, Bar]])
+    mime_str = to_mime(ty.List[ty.Union[Foo, Bar]], official=False)
     assert isinstance(mime_str, str)
     assert from_mime(mime_str) == ty.List[ty.Union[Foo, Bar]]
 
@@ -409,3 +409,79 @@ def test_to_from_list_union_mime_roundtrip():
 def test_official_mime_fail():
     with pytest.raises(TypeError, match="as it is not a proper file-type"):
         to_mime(ty.List[Foo], official=True)
+
+
+def test_from_paths(tmp_path):
+    filesets = []
+    filesets.append(Json.sample(tmp_path, seed=1))
+    filesets.append(Json.sample(tmp_path, seed=2))
+    filesets.append(Json.sample(tmp_path, seed=3))
+    filesets.append(Yaml.sample(tmp_path, seed=1))
+    filesets.append(Yaml.sample(tmp_path, seed=2))
+    filesets.append(Zip.sample(tmp_path))
+    filesets.append(Foo.sample(tmp_path, seed=1))
+    filesets.append(Foo.sample(tmp_path, seed=2))
+    filesets.append(Foo.sample(tmp_path, seed=3))
+    filesets.append(Bar.sample(tmp_path))
+    filesets.append(TextFile.sample(tmp_path))
+
+    fspaths = list(itertools.chain(*(f.fspaths for f in filesets)))
+
+    detected = from_paths(fspaths, Json, Yaml, Zip, Foo, Bar, TextFile)
+
+    assert set(detected) == set(filesets)
+
+    count = Counter(type(f) for f in detected)
+
+    assert count[Json] == 3
+    assert count[Zip] == 1
+    assert count[Yaml] == 2
+    assert count[Foo] == 3
+    assert count[Bar] == 1
+    assert count[TextFile] == 1
+
+    # redetect, but use a plain text file instead of TextFile
+    detected = from_paths(fspaths, Json, Yaml, Zip, Foo, Bar, Plain)
+
+    count = Counter(type(f) for f in detected)
+
+    assert count[Plain] == 1
+
+    with pytest.raises(
+        FileFormatsError, match="were not recognised by any of the candidate"
+    ):
+        from_paths(fspaths, Json, Yaml, Zip, Foo, Bar)
+
+    from_paths(fspaths, Json, Yaml, Zip, Foo, Bar, ignore=r".*\.txt")
+
+
+def test_from_paths_shared_side_cars(tmp_path):
+    # Create two filesets that share common side-car files
+    filesets = []
+    xyz1 = Xyz.sample(tmp_path, seed=1)
+    filesets.append(xyz1)
+    x_file = tmp_path / "file.x"
+    x_file.write_text("test")
+    filesets.append(Xyz([x_file] + xyz1.side_cars))
+
+    fspaths = list(itertools.chain(*(f.fspaths for f in filesets)))
+
+    detected = from_paths(fspaths, Xyz, YFile, ZFile, common_ok=True)
+
+    assert set(detected) == set(filesets)
+
+    count = Counter(type(f) for f in detected)
+
+    assert count[Xyz] == 2
+    assert count[YFile] == 0
+    assert count[ZFile] == 0
+
+    detected = from_paths(fspaths, Xyz, common_ok=False, ignore=r".*\.x")
+
+    assert set(detected) == set(filesets)
+
+    count = Counter(type(f) for f in detected)
+
+    assert count[Xyz] == 1
+    assert count[YFile] == 0
+    assert count[ZFile] == 0

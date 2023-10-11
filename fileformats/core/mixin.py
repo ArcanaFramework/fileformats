@@ -650,3 +650,32 @@ class WithClassifiers:
         return (
             unclassified + "[" + ", ".join(t.type_name for t in self.classifiers) + "]"
         )
+
+
+@FileSet.generate_sample_data.register
+def with_header_generate_sample_data(
+    file: WithSeparateHeader, dest_dir: Path, seed: ty.Union[int, str]
+) -> ty.List[Path]:
+    import fileformats.generic
+
+    fspaths = fileformats.generic.file_generate_sample_data(file, dest_dir, seed)
+    assert len(fspaths) == 1
+    primary = fspaths[0]
+    header: Path = file.header_type.sample(dest_dir, seed=seed + 1).fspath
+    fspaths.append(header.rename(primary.with_suffix(file.header_type.strext)))
+    return fspaths
+
+
+@FileSet.generate_sample_data.register
+def with_side_cars_generate_sample_data(
+    file: WithSideCars, dest_dir: Path, seed: ty.Union[int, str]
+) -> ty.List[Path]:
+    import fileformats.generic
+
+    fspaths = fileformats.generic.file_generate_sample_data(file, dest_dir, seed)
+    assert len(fspaths) == 1
+    primary = fspaths[0]
+    for side_car_type in file.side_car_types:
+        side_car: Path = side_car_type.sample(dest_dir, seed=seed + 1).fspath
+        fspaths.append(side_car.rename(primary.with_suffix(side_car_type.strext)))
+    return fspaths

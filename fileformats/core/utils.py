@@ -2,6 +2,8 @@ from __future__ import annotations
 import importlib
 import operator
 from pathlib import Path
+import random
+import string
 import inspect
 import typing as ty
 import re
@@ -16,6 +18,7 @@ from fileformats.core.exceptions import (
     FormatRecognitionError,
 )
 import fileformats.core
+
 
 logger = logging.getLogger("fileformats")
 
@@ -218,7 +221,7 @@ def from_paths(
         filesets.extend(fsets)
     if ignore:
         ignore_re = re.compile(ignore)
-        remaining = [p for p in remaining if not ignore_re.match(p)]
+        remaining = [p for p in remaining if not ignore_re.match(p.name)]
     if remaining:
         raise FileFormatsError(
             "the following file-system paths were not recognised by any of the "
@@ -453,3 +456,41 @@ def import_extras_module(klass: type) -> ExtrasModule:
 
 
 LIST_MIME = "+list-of"
+
+
+def random_filename(
+    seed_or_rng: ty.Union[random.Random, int],
+    file_type: ty.Type[fileformats.core.FileSet] = None,
+    length: int = 32,
+):
+    """Generates a random filename of length `length` and extension `ext`
+
+    Parameters
+    ----------
+    seed_or_rng : random.Random or int
+        used to seed the random number generator
+    file_type : Type[FileSet], optional
+        type of the file to generate the filename for, used to append any extensions
+        and seed the random number generator if required
+    length : int
+        length of the filename (minus extension)
+
+    Returns
+    -------
+    filename : str
+        randomly generated filename
+    """
+    if file_type is None:
+        import fileformats.generic
+
+        file_type = fileformats.generic.FsObject
+    if isinstance(seed_or_rng, random.Random):
+        rng = seed_or_rng
+    else:
+        if not inspect.isclass(file_type):
+            file_type = type(file_type)
+        rng = random.Random(str(seed_or_rng) + file_type.mime_like)
+    fname = "".join(rng.choices(string.ascii_letters + string.digits, k=length))
+    if file_type and file_type.ext:
+        fname += file_type.ext
+    return fname

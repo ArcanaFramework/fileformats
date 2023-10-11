@@ -2,6 +2,7 @@ from ..core import __version__
 from .basic import Foo, Bar, Baz, Qux
 from .headers import (
     YFile,
+    ZFile,
     Xyz,
     MyFormat,
     MyFormatGz,
