@@ -822,7 +822,9 @@ class FileSet(DataType):
         return mock_cls(fspaths=fspaths)
 
     @classmethod
-    def sample(cls, dest_dir: ty.Optional[Path] = None, seed: int = 0) -> Self:
+    def sample(
+        cls, dest_dir: ty.Optional[Path] = None, seed: int = 0, stem: str = None
+    ) -> Self:
         """Return an sample instance of the file-set type for classes where the
         `test_data` extra has been implemented
 
@@ -833,6 +835,8 @@ class FileSet(DataType):
         seed : int
             seed used to generate content. Defaults to 0 (rather than a timestamp), so
             the default method call produces consistent runs between calls
+        stem : str
+            the filename stem to give the file
 
         Returns
         -------
@@ -844,7 +848,7 @@ class FileSet(DataType):
         # Need to use mock to get an instance in order to use the singledispatch-based
         # mark.extra decorator
         mock = cls.mock()
-        fspaths = mock.generate_sample_data(dest_dir, seed)
+        fspaths = mock.generate_sample_data(dest_dir, seed, stem)
         try:
             obj = cls(fspaths)
         except FormatMismatchError as e:
@@ -856,7 +860,9 @@ class FileSet(DataType):
         return obj
 
     @mark.extra
-    def generate_sample_data(self, dest_dir: Path, seed: int = 0) -> ty.Iterable[Path]:
+    def generate_sample_data(
+        self, dest_dir: Path, seed: int = 0, stem: str = None
+    ) -> ty.Iterable[Path]:
         """Generate test data at the fspaths of the file-set
 
         Parameters
@@ -866,6 +872,8 @@ class FileSet(DataType):
         seed : int
             seed used to generate content. Defaults to 0 (rather than a timestamp), so
             the default method call produces consistent runs between calls
+        stem : str
+            the filename stem to give the file
 
         Returns
         -------

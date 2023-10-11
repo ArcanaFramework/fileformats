@@ -6,7 +6,7 @@ from ..core import mark, DataType
 from ..core.mixin import WithClassifiers
 from ..generic import File
 from ..core.exceptions import FormatMismatchError
-from ..core.utils import random_filename
+from ..core.utils import gen_filename
 
 
 class Schema(DataType):
@@ -94,8 +94,10 @@ class Toml(DataSerialization):
 
 
 @File.generate_sample_data.register
-def generate_json_sample_data(js: Json, dest_dir: Path, seed: int) -> ty.List[Path]:
-    js_file = dest_dir / random_filename(seed, file_type=js)
+def generate_json_sample_data(
+    js: Json, dest_dir: Path, seed: int, stem: ty.Optional[str]
+) -> ty.List[Path]:
+    js_file = dest_dir / gen_filename(seed, file_type=js, stem=stem)
     rng = Random(seed + 1)
     with open(js_file, "w") as f:
         json.dump(
@@ -106,8 +108,10 @@ def generate_json_sample_data(js: Json, dest_dir: Path, seed: int) -> ty.List[Pa
 
 
 @File.generate_sample_data.register
-def generate_yaml_sample_data(yml: Yaml, dest_dir: Path, seed: int) -> ty.List[Path]:
-    yml_file = dest_dir / random_filename(seed, file_type=yml)
+def generate_yaml_sample_data(
+    yml: Yaml, dest_dir: Path, seed: int, stem: ty.Optional[str]
+) -> ty.List[Path]:
+    yml_file = dest_dir / gen_filename(seed, file_type=yml, stem=stem)
     rng = Random(seed + 1)
     with open(yml_file, "w") as f:
         f.write(

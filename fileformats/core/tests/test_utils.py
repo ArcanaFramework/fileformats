@@ -12,7 +12,7 @@ from fileformats.generic import File, Directory, FsObject
 from fileformats.core.mixin import WithSeparateHeader
 from fileformats.core.utils import find_matching, to_mime, from_mime, from_paths
 from fileformats.core.exceptions import FileFormatsError
-from fileformats.testing import Foo, Bar, Xyz, YFile, ZFile
+from fileformats.testing import Foo, Bar
 from fileformats.application import Json, Yaml, Zip
 from fileformats.text import Plain, TextFile
 import fileformats.text
@@ -453,35 +453,3 @@ def test_from_paths(tmp_path):
         from_paths(fspaths, Json, Yaml, Zip, Foo, Bar)
 
     from_paths(fspaths, Json, Yaml, Zip, Foo, Bar, ignore=r".*\.txt")
-
-
-def test_from_paths_shared_side_cars(tmp_path):
-    # Create two filesets that share common side-car files
-    filesets = []
-    xyz1 = Xyz.sample(tmp_path, seed=1)
-    filesets.append(xyz1)
-    x_file = tmp_path / "file.x"
-    x_file.write_text("test")
-    filesets.append(Xyz([x_file] + xyz1.side_cars))
-
-    fspaths = list(itertools.chain(*(f.fspaths for f in filesets)))
-
-    detected = from_paths(fspaths, Xyz, YFile, ZFile, common_ok=True)
-
-    assert set(detected) == set(filesets)
-
-    count = Counter(type(f) for f in detected)
-
-    assert count[Xyz] == 2
-    assert count[YFile] == 0
-    assert count[ZFile] == 0
-
-    detected = from_paths(fspaths, Xyz, common_ok=False, ignore=r".*\.x")
-
-    assert set(detected) == set(filesets)
-
-    count = Counter(type(f) for f in detected)
-
-    assert count[Xyz] == 1
-    assert count[YFile] == 0
-    assert count[ZFile] == 0

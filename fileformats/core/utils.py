@@ -458,10 +458,11 @@ def import_extras_module(klass: type) -> ExtrasModule:
 LIST_MIME = "+list-of"
 
 
-def random_filename(
+def gen_filename(
     seed_or_rng: ty.Union[random.Random, int],
     file_type: ty.Type[fileformats.core.FileSet] = None,
     length: int = 32,
+    stem: ty.Optional[str] = None,
 ):
     """Generates a random filename of length `length` and extension `ext`
 
@@ -474,6 +475,8 @@ def random_filename(
         and seed the random number generator if required
     length : int
         length of the filename (minus extension)
+    stem : str, optional
+        the stem to use for the filename if provided
 
     Returns
     -------
@@ -484,13 +487,16 @@ def random_filename(
         import fileformats.generic
 
         file_type = fileformats.generic.FsObject
-    if isinstance(seed_or_rng, random.Random):
-        rng = seed_or_rng
+    if stem:
+        fname = stem
     else:
-        if not inspect.isclass(file_type):
-            file_type = type(file_type)
-        rng = random.Random(str(seed_or_rng) + file_type.mime_like)
-    fname = "".join(rng.choices(string.ascii_letters + string.digits, k=length))
+        if isinstance(seed_or_rng, random.Random):
+            rng = seed_or_rng
+        else:
+            if not inspect.isclass(file_type):
+                file_type = type(file_type)
+            rng = random.Random(str(seed_or_rng) + file_type.mime_like)
+        fname = "".join(rng.choices(string.ascii_letters + string.digits, k=length))
     if file_type and file_type.ext:
         fname += file_type.ext
     return fname

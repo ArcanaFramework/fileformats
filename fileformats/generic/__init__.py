@@ -11,7 +11,7 @@ from fileformats.core.exceptions import (
     UnconstrainedExtensionException,
 )
 from fileformats.core import mark
-from fileformats.core.utils import classproperty, random_filename
+from fileformats.core.utils import classproperty, gen_filename
 from fileformats.core.mixin import WithClassifiers
 
 
@@ -278,16 +278,19 @@ FILE_LENGTH = 1000
 
 @FileSet.generate_sample_data.register
 def fsobject_generate_sample_data(
-    fsobject: FsObject, dest_dir: Path, seed: int
+    fsobject: FsObject, dest_dir: Path, seed: int, stem: ty.Optional[str]
 ) -> ty.List[Path]:
-    a_file = dest_dir / random_filename(seed, file_type=fsobject)
+    a_file = dest_dir / gen_filename(seed, file_type=fsobject, stem=stem)
     a_file.write_text("".join(random.choices(string.printable, k=FILE_LENGTH)))
     return [a_file]
 
 
 @FileSet.generate_sample_data.register
-def file_generate_sample_data(file: File, dest_dir: Path, seed: int) -> ty.List[Path]:
-    fname = random_filename(seed, file_type=file)
+def file_generate_sample_data(
+    file: File, dest_dir: Path, seed: int, stem: ty.Optional[str]
+) -> ty.List[Path]:
+    fname = gen_filename(seed, file_type=file, stem=stem)
+    stem = fname[: -len(file.strext)]
     a_file = dest_dir / fname
     if file.binary:
         if hasattr(file, "magic_number"):
@@ -309,19 +312,19 @@ def file_generate_sample_data(file: File, dest_dir: Path, seed: int) -> ty.List[
         a_file.write_text("".join(random.choices(string.printable, k=FILE_LENGTH)))
     fspaths = [a_file]
     if hasattr(file, "header_type"):
-        fspaths.extend(file.header_type.sample(dest_dir).fspaths)
+        fspaths.extend(file.header_type.sample(dest_dir, stem=stem).fspaths)
     if hasattr(file, "side_car_types"):
         for side_car_type in file.side_car_types:
-            fspaths.extend(side_car_type.sample(dest_dir).fspaths)
+            fspaths.extend(side_car_type.sample(dest_dir, stem=stem).fspaths)
     return fspaths
 
 
 @FileSet.generate_sample_data.register
 def directory_generate_sample_data(
-    directory: Directory, dest_dir: Path, seed: int
+    directory: Directory, dest_dir: Path, seed: int, stem: ty.Optional[str]
 ) -> ty.List[Path]:
     rng = Random(str(seed) + directory.mime_like)
-    a_dir = dest_dir / random_filename(rng)
+    a_dir = dest_dir / gen_filename(rng, stem=stem)
     a_dir.mkdir()
     File.sample(a_dir, seed=rng)  # Add a sample file for good measure
     return [a_dir]
@@ -329,10 +332,10 @@ def directory_generate_sample_data(
 
 @FileSet.generate_sample_data.register
 def directory_containing_generate_sample_data(
-    directory: DirectoryContaining, dest_dir: Path, seed: int
+    directory: DirectoryContaining, dest_dir: Path, seed: int, stem: ty.Optional[str]
 ) -> ty.List[Path]:
     rng = Random(str(seed) + directory.mime_like)
-    a_dir = dest_dir / random_filename(rng)
+    a_dir = dest_dir / gen_filename(rng, stem=stem)
     a_dir.mkdir()
     for tp in directory.content_types:
         tp.sample(a_dir, seed=rng)
@@ -340,10 +343,15 @@ def directory_containing_generate_sample_data(
 
 
 @FileSet.generate_sample_data.register
-def set_of_sample_data(set_of: SetOf, dest_dir: Path, seed: int) -> ty.List[Path]:
+def set_of_sample_data(
+    set_of: SetOf, dest_dir: Path, seed: int, stem: ty.Optional[str]
+) -> ty.List[Path]:
     rng = Random(str(seed) + set_of.mime_like)
     return list(
         itertools.chain(
-            *(t.sample(dest_dir, seed=rng).fspaths for t in set_of.content_types)
+            *(
+                t.sample(dest_dir, seed=rng, stem=stem).fspaths
+                for t in set_of.content_types
+            )
         )
     )
