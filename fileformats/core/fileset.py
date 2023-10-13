@@ -86,6 +86,9 @@ class FileSet(DataType):
     def __repr__(self):
         return f"{self.type_name}('" + "', '".join(str(p) for p in self.fspaths) + "')"
 
+    def __getitem__(self, name):
+        return self.metadata[name]
+
     def __attrs_post_init__(self):
         # Check required properties don't raise errors
         for prop_name in self.required_properties():
@@ -116,31 +119,6 @@ class FileSet(DataType):
                 )
                 msg += "\n".join(str(p) for p in parent.iterdir())
             raise FileNotFoundError(msg)
-
-    @property
-    def metadata(self):
-        """Lazily load metadata from `read_metadata` extra if implemented, returning an
-        empty metadata array if not"""
-        try:
-            metadata = self._metadata
-        except AttributeError:
-            try:
-                self._metadata = self.read_metadata()
-            except FileFormatsExtrasPkgUninstalledError:
-                raise
-            except FileFormatsExtrasPkgNotCheckedError as e:
-                logger.warning(str(e))
-                metadata = {}
-            except FileFormatsExtrasError:
-                metadata = {}
-            else:
-                metadata = self._metadata
-        return metadata
-
-    @mark.extra
-    def read_metadata(self) -> ty.Dict[str, ty.Any]:
-        """Reads any metadata associated with the fileset and returns it as a dict"""
-        raise NotImplementedError
 
     @property
     def parent(self) -> Path:
@@ -194,6 +172,26 @@ class FileSet(DataType):
         except AttributeError:
             pass
         return possible
+
+    @functools.cached_property
+    def metadata(self) -> ty.Dict[str, ty.Any]:
+        """Lazily load metadata from `read_metadata` extra if implemented, returning an
+        empty metadata array if not"""
+        try:
+            metadata = self.read_metadata()
+        except FileFormatsExtrasPkgUninstalledError:
+            raise
+        except FileFormatsExtrasPkgNotCheckedError as e:
+            logger.warning(str(e))
+            metadata = {}
+        except FileFormatsExtrasError:
+            metadata = {}
+        return metadata
+
+    @mark.extra
+    def read_metadata(self) -> ty.Dict[str, ty.Any]:
+        """Reads any metadata associated with the fileset and returns it as a dict"""
+        raise NotImplementedError
 
     @classmethod
     def required_properties(cls):
@@ -822,7 +820,9 @@ class FileSet(DataType):
         return mock_cls(fspaths=fspaths)
 
     @classmethod
-    def sample(cls, dest_dir: ty.Optional[Path] = None) -> Self:
+    def sample(
+        cls, dest_dir: ty.Optional[Path] = None, seed: int = 0, stem: str = None
+    ) -> Self:
         """Return an sample instance of the file-set type for classes where the
         `test_data` extra has been implemented
 
@@ -830,6 +830,11 @@ class FileSet(DataType):
         ----------
         dest_dir : Path, optional
             the path in which to create the test data
+        seed : int
+            seed used to generate content. Defaults to 0 (rather than a timestamp), so
+            the default method call produces consistent runs between calls
+        stem : str
+            the filename stem to give the file
 
         Returns
         -------
@@ -841,7 +846,7 @@ class FileSet(DataType):
         # Need to use mock to get an instance in order to use the singledispatch-based
         # mark.extra decorator
         mock = cls.mock()
-        fspaths = mock.generate_sample_data(dest_dir)
+        fspaths = mock.generate_sample_data(dest_dir, seed, stem)
         try:
             obj = cls(fspaths)
         except FormatMismatchError as e:
@@ -853,13 +858,20 @@ class FileSet(DataType):
         return obj
 
     @mark.extra
-    def generate_sample_data(self, dest_dir: Path) -> ty.Iterable[Path]:
+    def generate_sample_data(
+        self, dest_dir: Path, seed: int = 0, stem: str = None
+    ) -> ty.Iterable[Path]:
         """Generate test data at the fspaths of the file-set
 
         Parameters
         ----------
         dest_dir : Path
             the directory to generate the test data within
+        seed : int
+            seed used to generate content. Defaults to 0 (rather than a timestamp), so
+            the default method call produces consistent runs between calls
+        stem : str
+            the filename stem to give the file
 
         Returns
         -------
@@ -974,6 +986,45 @@ class FileSet(DataType):
             stem = fspath
             ext = ""
         return fspath.parent, stem, ext
+
+    @classmethod
+    def from_paths(
+        cls, fspaths: ty.Iterable[Path], common_ok: bool = False
+    ) -> ty.Tuple[ty.Set["FileSet"], ty.Set[Path]]:
+        """Finds all instances of the fileset class that can be constructed from a
+        collection of file-system paths.
+
+        Parameters
+        ----------
+        fspaths : Iterable[Path]
+            file-system paths to instantiate file-sets from
+        common_ok : bool
+            whether secondary file-system paths can be shared between multiple instances
+            of the returned filesets
+
+        Returns
+        -------
+        filesets : set[FileSet]
+            file-sets instantiated from the provided paths
+        remaining : set[Path]
+            remaining file-system paths that weren't used in any of the file-sets
+        """
+        fspaths = [Path(p) for p in fspaths]
+        filesets = set()
+        remaining = set(fspaths)
+        for fspath in fspaths:
+            try:
+                fileset = cls(fspath)
+            except FormatMismatchError:
+                continue
+            else:
+                filesets.add(fileset)
+                fileset.trim_paths()  # only included required paths in the file set
+                if not common_ok and not all(p in remaining for p in fileset.fspaths):
+                    continue
+                for p in fileset.fspaths:
+                    remaining.remove(p)
+        return filesets, remaining
 
     class CopyMode(Enum):
         """Designates the desired behaviour of the FileSet.copy() method with regards to
@@ -1275,3 +1326,18 @@ class MockMixin:
 
     def __bytes_repr__(self, cache):
         yield from (str(fspath).encode() for fspath in self.fspaths)
+
+    @classproperty
+    def namespace(cls):
+        """The "namespace" the format belongs to under the "fileformats" umbrella
+        namespace"""
+        for base in cls.__mro__:
+            if issubclass(base, MockMixin):
+                continue
+            try:
+                return base.namespace
+            except FileFormatsError:
+                pass
+        raise FileFormatsError(
+            f"None of of the bases classes of {cls} ({cls.__mro__}) have a valid namespace"
+        )

@@ -7,4 +7,5 @@ from .utils import (
     to_mime,
     from_mime,
     find_matching,
+    from_paths,
 )

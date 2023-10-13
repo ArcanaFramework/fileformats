@@ -14,7 +14,6 @@ from .utils import (
     classproperty,
     subpackages,
     to_mime_format_name,
-    add_exc_note,
     from_mime_format_name,
     IANA_MIME_TYPE_REGISTRIES,
 )
@@ -110,19 +109,7 @@ class DataType(Classifier, metaclass=ABCMeta):
         type
             the corresponding file format class
         """
-        mime = f"{cls.namespace}/{to_mime_format_name(cls.__name__)}"
-        try:
-            cls.from_mime(mime)
-        except FormatRecognitionError as e:
-            add_exc_note(
-                e,
-                (
-                    f"Cannot create reversible MIME type for {cls} as it is not present "
-                    f"in a top-level fileformats namespace package '{cls.namespace}'"
-                ),
-            )
-            raise e
-        return mime
+        return f"{cls.namespace}/{to_mime_format_name(cls.__name__)}"
 
     @classmethod
     def from_mime(cls, mime_string):

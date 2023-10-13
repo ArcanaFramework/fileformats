@@ -1,6 +1,9 @@
 from __future__ import annotations
 import importlib
+import operator
 from pathlib import Path
+import random
+import string
 import inspect
 import typing as ty
 import re
@@ -12,8 +15,10 @@ import pkgutil
 from contextlib import contextmanager
 from fileformats.core.exceptions import (
     FileFormatsError,
+    FormatRecognitionError,
 )
 import fileformats.core
+
 
 logger = logging.getLogger("fileformats")
 
@@ -102,7 +107,7 @@ def from_mime(mime_str: str):
     return fileformats.core.DataType.from_mime(mime_str)
 
 
-def to_mime(datatype: type, official=False):
+def to_mime(datatype: type, official: bool = True):
     """Returns the mime-type or mime-like (i.e. using fileformats namespaces instead
     of putting all non-standard types in the applications/* registry) string corresponding
     to the given datatype
@@ -128,14 +133,102 @@ def to_mime(datatype: type, official=False):
             'file-type, please use official=False to convert to "mime-like" string instead'
         )
     if origin is list:
-        item_mime = to_mime(ty.get_args(datatype)[0])
+        item_mime = to_mime(ty.get_args(datatype)[0], official=official)
         if "," in item_mime:
             item_mime = "[" + item_mime + "]"
         item_mime += LIST_MIME
         return item_mime
     if origin is ty.Union:
-        return ",".join(t.mime_like for t in ty.get_args(datatype))
-    return datatype.mime_type if official else datatype.mime_like
+        return ",".join(to_mime(t, official=official) for t in ty.get_args(datatype))
+    mime = datatype.mime_type if official else datatype.mime_like
+    if official:
+        mime = datatype.mime_type
+    else:
+        mime = datatype.mime_like
+        try:
+            from_mime(mime)
+        except FormatRecognitionError as e:
+            add_exc_note(
+                e,
+                (
+                    f"Cannot create reversible MIME type for {datatype}. Please ensure "
+                    "it is imported into a top-level fileformats namespace package "
+                    f"'{datatype.namespace}'"
+                ),
+            )
+            raise e
+    return mime
+
+
+def from_paths(
+    fspaths: ty.Iterable[Path],
+    *candidates: ty.Tuple[ty.Type[fileformats.core.FileSet]],
+    common_ok: bool = False,
+    ignore: ty.Optional[str] = None,
+) -> ty.List[fileformats.core.FileSet]:
+    """Given a list of candidate classes (defaults to all installed in alphabetical order),
+    instantiates all possible file-set instances from a collection of file-system paths.
+
+    Note that the order in which the candidates are provided is important as the first
+    valid match for each path will be returned.
+
+    Parameters
+    ----------
+    fspaths : ty.Iterable[Path]
+        file-system paths to instantiate file-sets from
+    *candidates : tuple[fileformats.core.FileSet]
+        the file-set classes to instantiate. If none are provided, then all installed
+        filesets will be tried in alphabetical order of their "mime-like" representation.
+    common_ok : bool
+        whether file-system paths can be used as secondary files in multiple file-sets
+    ignore: str, optional
+        regular expression pattern for file/directory names to ignore if they aren't
+        used in any of the returned file-sets. Any remaining file-paths that are not
+        matched by this pattern will cause an error to be raised.
+
+    Returns
+    -------
+    list[fileformats.core.FileSet]
+        the instantiated file-sets
+    """
+    if candidates:
+        # Unwrap any nested tuples into a flat list of file-setclasses
+        unwrapped = []
+
+        def unwrap(candidate):
+            if ty.get_origin(candidate) is ty.Union:
+                for arg in ty.get_args(candidate):
+                    unwrapped.extend(unwrap(arg))
+            else:
+                unwrapped.append(candidate)
+
+        for candidate in candidates:
+            unwrap(candidate)
+        candidates = unwrapped
+        candidates_str = ", ".join(c.mime_like for c in candidates)
+    else:
+        # Use all installed file-set classes if no candidates are provided, sorted
+        # alphabetically to ensure behaviour is consistent between runs
+        candidates = sorted(
+            fileformats.core.FileSet.subclasses(), key=operator.attrgetter("mime_like")
+        )
+        candidates_str = "all installed"
+
+    remaining = fspaths
+    filesets = []
+    for candidate in candidates:
+        fsets, remaining = candidate.from_paths(remaining, common_ok=common_ok)
+        filesets.extend(fsets)
+    if ignore:
+        ignore_re = re.compile(ignore)
+        remaining = [p for p in remaining if not ignore_re.match(p.name)]
+    if remaining:
+        raise FileFormatsError(
+            "the following file-system paths were not recognised by any of the "
+            f"candidate formats ({candidates_str}):\n"
+            + "\n".join(str(p) for p in remaining)
+        )
+    return filesets
 
 
 def subpackages(exclude: ty.Sequence[str] = _excluded_subpackages):
@@ -363,3 +456,47 @@ def import_extras_module(klass: type) -> ExtrasModule:
 
 
 LIST_MIME = "+list-of"
+
+
+def gen_filename(
+    seed_or_rng: ty.Union[random.Random, int],
+    file_type: ty.Type[fileformats.core.FileSet] = None,
+    length: int = 32,
+    stem: ty.Optional[str] = None,
+):
+    """Generates a random filename of length `length` and extension `ext`
+
+    Parameters
+    ----------
+    seed_or_rng : random.Random or int
+        used to seed the random number generator
+    file_type : Type[FileSet], optional
+        type of the file to generate the filename for, used to append any extensions
+        and seed the random number generator if required
+    length : int
+        length of the filename (minus extension)
+    stem : str, optional
+        the stem to use for the filename if provided
+
+    Returns
+    -------
+    filename : str
+        randomly generated filename
+    """
+    if file_type is None:
+        import fileformats.generic
+
+        file_type = fileformats.generic.FsObject
+    if stem:
+        fname = stem
+    else:
+        if isinstance(seed_or_rng, random.Random):
+            rng = seed_or_rng
+        else:
+            if not inspect.isclass(file_type):
+                file_type = type(file_type)
+            rng = random.Random(str(seed_or_rng) + file_type.mime_like)
+        fname = "".join(rng.choices(string.ascii_letters + string.digits, k=length))
+    if file_type and file_type.ext:
+        fname += file_type.ext
+    return fname
