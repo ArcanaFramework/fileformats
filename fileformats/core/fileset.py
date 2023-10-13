@@ -86,6 +86,9 @@ class FileSet(DataType):
     def __repr__(self):
         return f"{self.type_name}('" + "', '".join(str(p) for p in self.fspaths) + "')"
 
+    def __getitem__(self, name):
+        return self.metadata[name]
+
     def __attrs_post_init__(self):
         # Check required properties don't raise errors
         for prop_name in self.required_properties():
@@ -116,31 +119,6 @@ class FileSet(DataType):
                 )
                 msg += "\n".join(str(p) for p in parent.iterdir())
             raise FileNotFoundError(msg)
-
-    @property
-    def metadata(self):
-        """Lazily load metadata from `read_metadata` extra if implemented, returning an
-        empty metadata array if not"""
-        try:
-            metadata = self._metadata
-        except AttributeError:
-            try:
-                self._metadata = self.read_metadata()
-            except FileFormatsExtrasPkgUninstalledError:
-                raise
-            except FileFormatsExtrasPkgNotCheckedError as e:
-                logger.warning(str(e))
-                metadata = {}
-            except FileFormatsExtrasError:
-                metadata = {}
-            else:
-                metadata = self._metadata
-        return metadata
-
-    @mark.extra
-    def read_metadata(self) -> ty.Dict[str, ty.Any]:
-        """Reads any metadata associated with the fileset and returns it as a dict"""
-        raise NotImplementedError
 
     @property
     def parent(self) -> Path:
@@ -194,6 +172,26 @@ class FileSet(DataType):
         except AttributeError:
             pass
         return possible
+
+    @functools.cached_property
+    def metadata(self) -> ty.Dict[str, ty.Any]:
+        """Lazily load metadata from `read_metadata` extra if implemented, returning an
+        empty metadata array if not"""
+        try:
+            metadata = self.read_metadata()
+        except FileFormatsExtrasPkgUninstalledError:
+            raise
+        except FileFormatsExtrasPkgNotCheckedError as e:
+            logger.warning(str(e))
+            metadata = {}
+        except FileFormatsExtrasError:
+            metadata = {}
+        return metadata
+
+    @mark.extra
+    def read_metadata(self) -> ty.Dict[str, ty.Any]:
+        """Reads any metadata associated with the fileset and returns it as a dict"""
+        raise NotImplementedError
 
     @classmethod
     def required_properties(cls):
@@ -1011,7 +1009,7 @@ class FileSet(DataType):
         remaining : set[Path]
             remaining file-system paths that weren't used in any of the file-sets
         """
-        fspaths = list(fspaths)  # guard against iterator exhaustion
+        fspaths = [Path(p) for p in fspaths]
         filesets = set()
         remaining = set(fspaths)
         for fspath in fspaths:
