@@ -3,15 +3,19 @@ requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [project]
-name = "fileformats"
-description = "Classes for representing different file formats in Python classes for use in type hinting in data workflows"
-readme = "README.rst"
+name = "fileformats-extras"
+description = "Extra methods for accessing and manipulating the underlying data of fileformats classes"
+readme = "../README.rst"
 requires-python = ">=3.8"
 dependencies = [
-    "attrs>=22.1.0",
-    "typing_extensions >=4.6.3; python_version < '3.11'"
+    "fileformats",
+    "imageio >=2.24.0",
+    "pydra >= 0.22.0",
+    "PyYAML>=6.0",
+    "pydicom >=2.3",
+    "medimages4tests",
 ]
-license = {file = "LICENSE"}
+license = {file = "../LICENSE"}
 authors = [
     {name = "Thomas G. Close", email = "tom.g.close@gmail.com"},
 ]
@@ -19,12 +23,8 @@ maintainers = [
     {name = "Thomas G. Close", email = "tom.g.close@gmail.com"},
 ]
 keywords = [
-    "file-formats",
+    "file formats",
     "data",
-    "filetype",
-    "magic numbers",
-    "file extension",
-    "MIME",
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -34,6 +34,7 @@ classifiers = [
     "Operating System :: MacOS :: MacOS X",
     "Operating System :: Microsoft :: Windows",
     "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -49,53 +50,31 @@ dev = [
     "codespell",
     "flake8",
     "flake8-pyproject",
-    "fileformats[test]",
 ]
 test = [
     "pytest >=6.2.5",
     "pytest-env>=0.6.2",
     "pytest-cov>=2.12.1",
-    "pydra >=0.23.0a0",
-    "fileformats-extras",
-]
-docs = [
-    "packaging",
-    "docutils>=0.10",
-    "mock>1.0",
-    "sphinx >=2.1.2",
-    "sphinx-argparse>=0.2.0",
-    "sphinx-click>=3.1",
-    "furo>=2022.2.14.1",
-    "numpydoc>=0.6.0",
+    "codecov",
+    "medimages4tests",
 ]
 
 [project.urls]
-repository = "https://github.com/ArcanaFramework/fileformats"
-
+repository = "https://github.com/ArcanaFramework/fileformats-extras"
 
 [tool.hatch.version]
 source = "vcs"
+raw-options = {root = ".."}
 
 [tool.hatch.build.hooks.vcs]
-version-file = "fileformats/core/_version.py"
+version-file = "fileformats/extras/core/_version.py"
 
-[tool.hatch.metadata]
-allow-direct-references = true
-
-[tool.hatch.build]
-packages = [
-    "fileformats",
-]
-exclude = [
-    "tests",
-]
-include = [
-    "./fileformats"
-]
+[tool.hatch.build.targets.wheel]
+packages = ["fileformats"]
 
 [tool.black]
 target-version = ['py38']
-exclude = "fileformats/core/_version.py"
+exclude = "fileformats/extras/core/_version.py"
 
 [tool.codespell]
 ignore-words = ".codespell-ignorewords"
@@ -107,4 +86,4 @@ per-file-ignores = [
 ]
 max-line-length = 88
 select = "C,E,F,W,B,B950"
-extend-ignore = ['E203', 'E501', 'E129', 'W503']
+extend-ignore = ['E203', 'E501', 'E129', 'F403']

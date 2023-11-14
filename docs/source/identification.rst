@@ -19,7 +19,7 @@ there may be several matching formats for, non-descript binary file formats that
 
     >>> from fileformats.core import find_matching
     >>> find_matching("/path/to/word.doc")
-    [<class 'fileformats.document.Msword'>]
+    [<class 'fileformats.application.Msword'>]
 
 Note that the installation of additional sub-packages may cause detection code to
 break if your code doesn't the potential of new formats being added with overlapping
@@ -36,9 +36,9 @@ as defined by the `Internet Assigned Numbering Authority (IANA) <https://www.ian
 The difference is that there is no "application" registry, which acts as a
 bit of a catch-all in the MIME-type specification. Instead, types that
 fall under the "application" registry are grouped by the types of data that they
-store, e.g. ``fileformats.archive`` for (typically compressed) archives such as
-zip, bzip, gzip, etc..., ``fileformats.document`` for PDFs, word docs,
-``fileformats.serialization`` for JSON, YAML and XML, etc...
+store, e.g. ``fileformats.application`` for (typically compressed) archives such as
+zip, bzip, gzip, etc..., ``fileformats.application`` for PDFs, word docs,
+``fileformats.application`` for JSON, YAML and XML, etc...
 
 Format class can be converted to and from MIME type strings using the ``to_mime`` and
 ``from_mime`` functions. If the the ``iana_mime`` attribute
@@ -48,7 +48,7 @@ by the , e.g.
 .. code-block:: python
 
     from fileformats.core import to_mime, from_mime
-    from fileformats.document import MswordX
+    from fileformats.application import MswordX
 
     Loaded = from_mime("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
     assert Loaded is MswordX
@@ -90,8 +90,8 @@ This is accessed via the ``mime_like`` class-property.
 .. code-block::
 
     >>> from fileformats.core import to_mime
-    >>> from fileformats.archive import Bzip
-    >>> from fileformats.serialization import Json
+    >>> from fileformats.application import Bzip
+    >>> from fileformats.application import Json
     >>> Bzip.mime_like
     "archive/bzip"
     >>> Json.mime_like
@@ -103,7 +103,7 @@ types, so it is possible to roundtrip from both.
 .. code-block:: python
 
     from fileformats.core import to_mime, from_mime
-    from from fileformats.archive import Bzip
+    from from fileformats.application import Bzip
 
     # Using official-style MIME string
     mime_type = Bzip.mime_type

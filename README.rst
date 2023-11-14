@@ -105,7 +105,7 @@ While not implemented in the main File-formats itself, file-formats provides hoo
 
 .. code-block:: python
 
-    from fileformats.archive import Zip
+    from fileformats.application import Zip
     from fileformats.generic import Directory
 
     zip_file = Zip.convert(Directory("/path/to/a/directory"))
@@ -119,7 +119,7 @@ wider Pydra_ workflows by creating a converter task
 
     import pydra
     from pydra.tasks.mypackage import MyTask
-    from fileformats.serialization import Json, Yaml
+    from fileformats.application import Json, Yaml
 
     wf = pydra.Workflow(name="a_workflow", input_spec=["in_json"])
     wf.add(
