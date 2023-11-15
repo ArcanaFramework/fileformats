@@ -1,11 +1,13 @@
-name: tests
+name: CI/CD
 
 on:
   push:
-    branches:
-      - main
-      - develop
+    branches: [ main, develop ]
+    tags: [ '*' ]
   pull_request:
+    branches: [ main, develop ]
+  repository_dispatch:
+    types: [create-release]
 
 defaults:
   run:
