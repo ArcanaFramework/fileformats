@@ -183,9 +183,9 @@ class FileSet(DataType):
             raise
         except FileFormatsExtrasPkgNotCheckedError as e:
             logger.warning(str(e))
-            metadata = {}
+            metadata = None
         except FileFormatsExtrasError:
-            metadata = {}
+            metadata = None
         return metadata
 
     @mark.extra
