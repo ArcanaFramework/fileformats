@@ -4,6 +4,9 @@ FileFormats Extras
     :target: https://github.com/arcanaframework/fileformats-extras/actions/workflows/tests.yml
 .. image:: https://codecov.io/gh/arcanaframework/fileformats-extras/branch/main/graph/badge.svg?token=UIS0OGPST7
     :target: https://codecov.io/gh/arcanaframework/fileformats-extras
+.. image:: https://img.shields.io/pypi/pyversions/fileformats-extras.svg
+   :target: https://pypi.python.org/pypi/fileformats-extras/
+   :alt: Supported Python versions
 .. image:: https://img.shields.io/pypi/v/fileformats-extras.svg
    :target: https://pypi.python.org/pypi/fileformats-extras/
    :alt: Latest Version
