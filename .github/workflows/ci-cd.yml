@@ -147,6 +147,7 @@ jobs:
       with:
         user: __token__
         password: ${{ secrets.PYPI_API_TOKEN }}
+        packages-dir: ${{ matrix.pkg-dir }}/dist
     - name: Download built docs
       uses: actions/download-artifact@v3
       with:
