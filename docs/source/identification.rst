@@ -89,13 +89,12 @@ This is accessed via the ``mime_like`` class-property.
 
 .. code-block::
 
-    >>> from fileformats.core import to_mime
-    >>> from fileformats.application import Bzip
-    >>> from fileformats.application import Json
-    >>> Bzip.mime_like
-    "archive/bzip"
-    >>> Json.mime_like
-    "serialization/json"
+    >>> from fileformats.datascience import Hdf5
+    >>> from fileformats.medimage import Nifti1
+    >>> Hdf5.mime_like
+    "datascience/hdf5"
+    >>> Nifti1.mime_like
+    "medimage/nifti1"
 
 The ``from_mime`` function will resolve both official-style MIME types and the MIME-like
 types, so it is possible to roundtrip from both.
@@ -103,17 +102,17 @@ types, so it is possible to roundtrip from both.
 .. code-block:: python
 
     from fileformats.core import to_mime, from_mime
-    from from fileformats.application import Bzip
+    from from fileformats.medimage import DicomSeries
 
     # Using official-style MIME string
-    mime_type = Bzip.mime_type
-    assert mime_type == "application/x-bzip"
-    assert from_mime(mime_type) is Bzip
+    mime_type = DicomSeries.mime_type
+    assert mime_type == "application/x-dicom-series"
+    assert from_mime(mime_type) is DicomSeries
 
     # Using MIME-like string
-    mimelike_type = Bzip.mime_like
-    assert mimelike_type == "archive/bzip"
-    assert from_mime(mimelike_type) is Bzip
+    mimelike_type = DicomSeries.mime_like
+    assert mimelike_type == "medimage/dicom-series"
+    assert from_mime(mimelike_type) is DicomSeries
 
 
 .. _`MIME type`: https://www.iana_mime.org/assignments/media-types/media-types.xhtml
