@@ -1,4 +1,5 @@
 from pathlib import Path
+import platform
 import pytest
 from fileformats.generic import File
 from fileformats.field import Integer, Boolean, Decimal, Array, Text
@@ -22,7 +23,11 @@ class TestFile(File):
 
 
 def test_file_repr():
-    assert repr(Foo.mock()) == "Foo('/mock/foo.foo')"
+    if platform.system() == "Windows":
+        expected = f"Foo('{Path().cwd().drive}\\mock\\foo.foo')"
+    else:
+        expected = "Foo('/mock/foo.foo')"
+    assert repr(Foo.mock()) == expected
 
 
 def test_field_repr():
