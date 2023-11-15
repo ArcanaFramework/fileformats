@@ -60,7 +60,7 @@ test = [
 ]
 
 [project.urls]
-repository = "https://github.com/ArcanaFramework/fileformats-extras"
+repository = "https://github.com/ArcanaFramework/fileformats"
 
 [tool.hatch.version]
 source = "vcs"

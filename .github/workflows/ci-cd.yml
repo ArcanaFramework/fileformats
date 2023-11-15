@@ -82,7 +82,7 @@ jobs:
         fail_ci_if_error: true
         token: ${{ secrets.CODECOV_TOKEN }}
 
-  docs:
+  build-docs:
     runs-on: ubuntu-latest
 
     steps:
@@ -111,7 +111,7 @@ jobs:
         path: docs/build/html
 
   deploy:
-    needs: [test, test-extras, docs]
+    needs: [test, test-extras, build-docs]
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -147,18 +147,37 @@ jobs:
       with:
         user: __token__
         password: ${{ secrets.PYPI_API_TOKEN }}
+        packages-dir: ${{ matrix.pkg-dir }}/dist
+
+  deploy-docs:
+    needs: [deploy]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: recursive
+        fetch-depth: 0
+    - name: Unset header
+      # checkout@v2 adds a header that makes branch protection report errors
+      # because the Github action bot is not a collaborator on the repo
+      run: git config --local --unset http.https://github.com/.extraheader
     - name: Download built docs
       uses: actions/download-artifact@v3
       with:
         name: built-docs
         path: docs/build/html
+    - name: Check for PyPI token on tag
+      id: deployable
+      if: github.event_name == 'release'
+      env:
+        PYPI_API_TOKEN: "${{ secrets.PYPI_API_TOKEN }}"
+      run: if [ -n "$PYPI_API_TOKEN" ]; then echo "DEPLOY=true" >> $GITHUB_OUTPUT; fi
     - name: Deploy Docs to GitHub Pages
       if: steps.deployable.outputs.DEPLOY
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GHPAGES_DEPLOY_KEY }}
         publish_dir: docs/build/html
-
 
 # Deploy on tags if PYPI_API_TOKEN is defined in the repository secrets.
 # Secrets are not accessible in the if: condition [0], so set an output variable [1]
