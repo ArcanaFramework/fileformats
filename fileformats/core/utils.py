@@ -59,9 +59,11 @@ def find_matching(
     candidates: sequence[DataType], optional
         the candidates to select from, by default all file formats
     standard_only : bool, optional
-        If you only want to return matches from the "standard" IANA types, by default False
+        If you only want to return matches from the "standard" IANA types. Only relevant
+        if candidates is None, by default False
     skip_unconstrained : bool, optional
-        skip formats that aren't constrained by extension, magic number or another check
+        skip formats that aren't constrained by extension, magic number or another check.
+        Only relevant if candidates is None
     """
     import fileformats.core.mixin
 

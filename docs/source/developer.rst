@@ -143,7 +143,7 @@ are included when the class is instantiated with just the primary ".shp" file.
 .. code-block:: python
 
     from fileformats.generic import File
-    from fileformats.serialization import Xml
+    from fileformats.application import Xml
     from fileformats.mixin import WithAdjacentFiles
     from fileformats.core import mark
 
