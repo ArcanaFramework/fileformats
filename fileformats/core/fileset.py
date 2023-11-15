@@ -35,7 +35,7 @@ from .exceptions import (
     FileFormatsExtrasPkgNotCheckedError,
 )
 from .datatype import DataType
-from . import mark
+from . import hook
 
 try:
     from typing import Self
@@ -188,7 +188,7 @@ class FileSet(DataType):
             metadata = None
         return metadata
 
-    @mark.extra
+    @hook.extra
     def read_metadata(self) -> ty.Dict[str, ty.Any]:
         """Reads any metadata associated with the fileset and returns it as a dict"""
         raise NotImplementedError
@@ -518,7 +518,7 @@ class FileSet(DataType):
         converter_tuple: ty.Tuple[ty.Callable, ty.Dict[str, ty.Any]],
     ):
         """Registers a converter task within a class attribute. Called by the
-        @fileformats.mark.converter decorator.
+        @fileformats.hook.converter decorator.
 
         Parameters
         ----------
@@ -844,7 +844,7 @@ class FileSet(DataType):
         if not dest_dir:
             dest_dir = Path(tempfile.mkdtemp())
         # Need to use mock to get an instance in order to use the singledispatch-based
-        # mark.extra decorator
+        # hook.extra decorator
         mock = cls.mock()
         fspaths = mock.generate_sample_data(dest_dir, seed, stem)
         try:
@@ -857,7 +857,7 @@ class FileSet(DataType):
             )
         return obj
 
-    @mark.extra
+    @hook.extra
     def generate_sample_data(
         self, dest_dir: Path, seed: int = 0, stem: str = None
     ) -> ty.Iterable[Path]:

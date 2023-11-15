@@ -7,7 +7,7 @@ import itertools
 import typing as ty
 import time
 import pytest
-from fileformats.core import FileSet, mark
+from fileformats.core import FileSet, hook
 from fileformats.generic import File, Directory, FsObject
 from fileformats.core.mixin import WithSeparateHeader
 from fileformats.core.utils import find_matching, to_mime, from_mime, from_paths
@@ -260,12 +260,12 @@ def test_decompose_fspaths(work_dir):
         ext = ".luigi.mario"
 
     class DoubleMario(FileSet):
-        @mark.required
+        @hook.required
         @property
         def bar(self):
             return Mario(self.select_by_ext(Mario))
 
-        @mark.required
+        @hook.required
         @property
         def luigi_bar(self):
             return LuigiMario(self.select_by_ext(LuigiMario))

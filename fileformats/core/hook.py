@@ -39,7 +39,7 @@ def check(method):
     Parameters
     ----------
     method : Function
-        the method to mark as a check
+        the method to hook as a check
     """
     method.__annotations__[DataType.CHECK_ANNOTATION] = None
     return method
