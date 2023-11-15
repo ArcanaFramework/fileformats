@@ -82,7 +82,7 @@ jobs:
         fail_ci_if_error: true
         token: ${{ secrets.CODECOV_TOKEN }}
 
-  docs:
+  build-docs:
     runs-on: ubuntu-latest
 
     steps:
@@ -111,7 +111,7 @@ jobs:
         path: docs/build/html
 
   deploy:
-    needs: [test, test-extras, docs]
+    needs: [test, test-extras, build-docs]
     runs-on: ubuntu-latest
     strategy:
       matrix:
