@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Developer Guide" href="developer.html" /><link rel="prev" title="Data Workflows" href="workflows.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
-        <title>Format Identification - FileFormats v0.9.4</title>
+        <title>Format Identification - FileFormats v0.1.dev1+g9f449a3</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d8449d71" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
@@ -129,7 +129,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">FileFormats v0.9.4</div></a>
+      <a href="index.html"><div class="brand">FileFormats v0.1.dev1+g9f449a3</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -152,7 +152,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">FileFormats v0.9.4</span>
+  <span class="sidebar-brand-text">FileFormats v0.1.dev1+g9f449a3</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -212,7 +212,7 @@ there may be several matching formats for, non-descript binary file formats that
 &quot;.dat&quot; extension for example.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">find_matching</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">find_matching</span><span class="p">(</span><span class="s2">&quot;/path/to/word.doc&quot;</span><span class="p">)</span>
-<span class="go">[&lt;class &#39;fileformats.document.Msword&#39;&gt;]</span>
+<span class="go">[&lt;class &#39;fileformats.application.Msword&#39;&gt;]</span>
 </pre></div>
 </div>
 <p>Note that the installation of additional sub-packages may cause detection code to
@@ -228,15 +228,15 @@ as defined by the <a class="reference external" href="https://www.iana_mime.org/
 The difference is that there is no &quot;application&quot; registry, which acts as a
 bit of a catch-all in the MIME-type specification. Instead, types that
 fall under the &quot;application&quot; registry are grouped by the types of data that they
-store, e.g. <code class="docutils literal notranslate"><span class="pre">fileformats.archive</span></code> for (typically compressed) archives such as
-zip, bzip, gzip, etc..., <code class="docutils literal notranslate"><span class="pre">fileformats.document</span></code> for PDFs, word docs,
-<code class="docutils literal notranslate"><span class="pre">fileformats.serialization</span></code> for JSON, YAML and XML, etc...</p>
+store, e.g. <code class="docutils literal notranslate"><span class="pre">fileformats.application</span></code> for (typically compressed) archives such as
+zip, bzip, gzip, etc..., <code class="docutils literal notranslate"><span class="pre">fileformats.application</span></code> for PDFs, word docs,
+<code class="docutils literal notranslate"><span class="pre">fileformats.application</span></code> for JSON, YAML and XML, etc...</p>
 <p>Format class can be converted to and from MIME type strings using the <code class="docutils literal notranslate"><span class="pre">to_mime</span></code> and
 <code class="docutils literal notranslate"><span class="pre">from_mime</span></code> functions. If the the <code class="docutils literal notranslate"><span class="pre">iana_mime</span></code> attribute
 is present in the type class, it should correspond to a formally recognised MIME type
 by the , e.g.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">to_mime</span><span class="p">,</span> <span class="n">from_mime</span>
-<span class="kn">from</span> <span class="nn">fileformats.document</span> <span class="kn">import</span> <span class="n">MswordX</span>
+<span class="kn">from</span> <span class="nn">fileformats.application</span> <span class="kn">import</span> <span class="n">MswordX</span>
 
 <span class="n">Loaded</span> <span class="o">=</span> <span class="n">from_mime</span><span class="p">(</span><span class="s2">&quot;application/vnd.openxmlformats-officedocument.wordprocessingml.document&quot;</span><span class="p">)</span>
 <span class="k">assert</span> <span class="n">Loaded</span> <span class="ow">is</span> <span class="n">MswordX</span>
@@ -273,8 +273,8 @@ not to worry with closely matching the MIME-type specification for non-standard 
 and just use the <em>FileFormats</em> namespace inplace of the generic &quot;application/x-&quot; prefix.
 This is accessed via the <code class="docutils literal notranslate"><span class="pre">mime_like</span></code> class-property.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">to_mime</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.archive</span> <span class="kn">import</span> <span class="n">Bzip</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.serialization</span> <span class="kn">import</span> <span class="n">Json</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.application</span> <span class="kn">import</span> <span class="n">Bzip</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.application</span> <span class="kn">import</span> <span class="n">Json</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Bzip</span><span class="o">.</span><span class="n">mime_like</span>
 <span class="go">&quot;archive/bzip&quot;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Json</span><span class="o">.</span><span class="n">mime_like</span>
@@ -284,7 +284,7 @@ This is accessed via the <code class="docutils literal notranslate"><span class=
 <p>The <code class="docutils literal notranslate"><span class="pre">from_mime</span></code> function will resolve both official-style MIME types and the MIME-like
 types, so it is possible to roundtrip from both.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">to_mime</span><span class="p">,</span> <span class="n">from_mime</span>
-<span class="kn">from</span> <span class="nn">from</span> <span class="n">fileformats</span><span class="o">.</span><span class="n">archive</span> <span class="kn">import</span> <span class="nn">Bzip</span>
+<span class="kn">from</span> <span class="nn">from</span> <span class="n">fileformats</span><span class="o">.</span><span class="n">application</span> <span class="kn">import</span> <span class="nn">Bzip</span>
 
 <span class="c1"># Using official-style MIME string</span>
 <span class="n">mime_type</span> <span class="o">=</span> <span class="n">Bzip</span><span class="o">.</span><span class="n">mime_type</span>
@@ -370,7 +370,7 @@ types, so it is possible to roundtrip from both.</p>
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=36064cb1"></script>
+</div><script src="_static/documentation_options.js?v=52822465"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=32e29ea5"></script>

@@ -208,7 +208,7 @@ them can then be duck-typed in calling functions/methods. For example, both ``Ya
 
 .. code-block:: python
 
-    from fileformats.serialization import DataSerialization
+    from fileformats.application import DataSerialization
 
     def read_json_or_yaml_to_dict(serialized: DataSerialization):
         return serialized.load()
@@ -224,7 +224,7 @@ file/directories using the ``convert`` classmethod of the target format to conve
 
 .. code-block:: python
 
-    from fileformats.archive import Zip
+    from fileformats.application import Zip
     from fileformats.generic import Directory
 
     zip_file = Zip.convert(Directory("/path/to/a/directory"))
