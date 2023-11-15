@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "fileformats-extras"
-description = "Extra methods for accessing and manipulating the underlying data of fileformats classes"
-readme = "../README.rst"
+description = "Extra methods for accessing and manipulating the underlying data referenced by fileformats classes"
+readme = "README.rst"
 requires-python = ">=3.8"
 dependencies = [
     "fileformats",
@@ -15,7 +15,7 @@ dependencies = [
     "pydicom >=2.3",
     "medimages4tests",
 ]
-license = {file = "../LICENSE"}
+license = {file = "LICENSE"}
 authors = [
     {name = "Thomas G. Close", email = "tom.g.close@gmail.com"},
 ]

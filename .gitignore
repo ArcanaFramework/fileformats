@@ -10,7 +10,7 @@
 .settings/
 /build/
 /dist
-/src/fileformats-*/dist
+/extras/dist
 /docs/build
 /docs/source/_build
 .pytest_cache/
