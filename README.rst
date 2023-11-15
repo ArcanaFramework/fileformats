@@ -1,7 +1,7 @@
 FileFormats
 ===========
-.. image:: https://github.com/arcanaframework/fileformats/actions/workflows/tests.yml/badge.svg
-   :target: https://github.com/arcanaframework/fileformats/actions/workflows/tests.yml
+.. image:: https://github.com/arcanaframework/fileformats/actions/workflows/ci-cd.yml/badge.svg
+   :target: https://github.com/arcanaframework/fileformats/actions/workflows/ci-cd.yml
 .. image:: https://codecov.io/gh/arcanaframework/fileformats/branch/main/graph/badge.svg?token=UIS0OGPST7
    :target: https://codecov.io/gh/arcanaframework/fileformats
 .. image:: https://img.shields.io/pypi/pyversions/fileformats.svg
@@ -10,7 +10,7 @@ FileFormats
 .. image:: https://img.shields.io/pypi/v/fileformats.svg
    :target: https://pypi.python.org/pypi/fileformats/
    :alt: Latest Version
-.. image:: https://github.com/ArcanaFramework/fileformats/actions/workflows/docs.yml/badge.svg
+.. image:: https://img.shields.io/badge/docs-built-green
    :target: https://arcanaframework.github.io/fileformats/
    :alt: docs
 
