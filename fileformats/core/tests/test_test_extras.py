@@ -13,7 +13,7 @@ def test_sample():
 def test_mock():
     mock = Foo.mock()
     if platform.system() == "Windows":
-        expected_root = Path().cwd().drive
+        expected_root = Path(Path().cwd().drive)
     else:
         expected_root = Path("/")
     assert mock.fspath == expected_root / "mock" / "foo.foo"
