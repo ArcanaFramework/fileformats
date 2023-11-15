@@ -2,7 +2,7 @@ import json
 import typing as ty
 from random import Random
 from pathlib import Path
-from ..core import mark, DataType
+from ..core import hook, DataType
 from ..core.mixin import WithClassifiers
 from ..generic import File
 from ..core.exceptions import FormatMismatchError
@@ -41,12 +41,12 @@ class DataSerialization(WithClassifiers, File):
 
     iana_mime = None
 
-    @mark.extra
+    @hook.extra
     def load(self):
         """Load the contents of the file into a dictionary"""
         raise NotImplementedError
 
-    @mark.extra
+    @hook.extra
     def save(data):
         """Serialise a dictionary to a new file"""
         raise NotImplementedError
@@ -68,7 +68,7 @@ class Json(DataSerialization):
     ext = ".json"
     allowed_classifiers = (JsonSchema, InformalSchema)
 
-    @mark.check
+    @hook.check
     def load(self):
         try:
             with open(self.fspath) as f:

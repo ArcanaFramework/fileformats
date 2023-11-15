@@ -1,10 +1,11 @@
 from pathlib import Path
+import platform
 import pytest
 from fileformats.generic import File
 from fileformats.field import Integer, Boolean, Decimal, Array, Text
 from fileformats.testing import Foo
 from fileformats.core.exceptions import FileFormatsError, FormatMismatchError
-from fileformats.core import mark
+from fileformats.core import hook
 from conftest import write_test_file
 
 
@@ -22,7 +23,11 @@ class TestFile(File):
 
 
 def test_file_repr():
-    assert repr(Foo.mock()) == "Foo('/mock/foo.foo')"
+    if platform.system() == "Windows":
+        expected = f"Foo('{Path().cwd().drive}\\mock\\foo.foo')"
+    else:
+        expected = "Foo('/mock/foo.foo')"
+    assert repr(Foo.mock()) == expected
 
 
 def test_field_repr():
@@ -157,12 +162,12 @@ def test_header_overwrite(work_dir):
 
 
 class YFile(ImageWithInlineHeader):
-    @mark.required
+    @hook.required
     @property
     def y(self):
         return self.metadata["y"]
 
-    @mark.check
+    @hook.check
     def y_value(self):
         if self.y <= 10:
             raise FormatMismatchError(f"'y' property is not > 10 ({self.y})")

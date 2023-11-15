@@ -10,7 +10,7 @@ import pydra.mark
 import pydra.engine.specs
 from fileformats.generic import FsObject
 from fileformats.core.utils import set_cwd
-from fileformats.core import mark, FileSet
+from fileformats.core import hook, FileSet
 from fileformats.application import Zip, Tar, TarGzip
 
 
@@ -47,10 +47,10 @@ ZIP_COMPRESSION_ANNOT = (
 Compressed = FileSet.type_var("Compressed")
 
 
-@mark.converter(source_format=FsObject, target_format=Tar)
-@mark.converter(source_format=FsObject, target_format=TarGzip, compression="gz")
-@mark.converter(source_format=Compressed, target_format=Tar[Compressed])
-@mark.converter(
+@hook.converter(source_format=FsObject, target_format=Tar)
+@hook.converter(source_format=FsObject, target_format=TarGzip, compression="gz")
+@hook.converter(source_format=Compressed, target_format=Tar[Compressed])
+@hook.converter(
     source_format=Compressed, target_format=TarGzip[Compressed], compression="gz"
 )
 @pydra.mark.task
@@ -102,10 +102,10 @@ def create_tar(
     return Path(out_file)
 
 
-@mark.converter(source_format=Tar, target_format=FsObject)
-@mark.converter(source_format=TarGzip, target_format=FsObject)
-@mark.converter(source_format=Tar[Compressed], target_format=Compressed)
-@mark.converter(source_format=TarGzip[Compressed], target_format=Compressed)
+@hook.converter(source_format=Tar, target_format=FsObject)
+@hook.converter(source_format=TarGzip, target_format=FsObject)
+@hook.converter(source_format=Tar[Compressed], target_format=Compressed)
+@hook.converter(source_format=TarGzip[Compressed], target_format=Compressed)
 @pydra.mark.task
 @pydra.mark.annotate({"return": {"out_file": Path}})
 def extract_tar(
@@ -136,8 +136,8 @@ def extract_tar(
     return extracted[0]
 
 
-@mark.converter(source_format=FsObject, target_format=Zip)
-@mark.converter(source_format=Compressed, target_format=Zip[Compressed])
+@hook.converter(source_format=FsObject, target_format=Zip)
+@hook.converter(source_format=Compressed, target_format=Zip[Compressed])
 @pydra.mark.task
 @pydra.mark.annotate(
     {
@@ -198,8 +198,8 @@ def create_zip(
     return Path(out_file)
 
 
-@mark.converter(source_format=Zip, target_format=FsObject)
-@mark.converter(source_format=Zip[Compressed], target_format=Compressed)
+@hook.converter(source_format=Zip, target_format=FsObject)
+@hook.converter(source_format=Zip[Compressed], target_format=Compressed)
 @pydra.mark.task
 @pydra.mark.annotate({"return": {"out_file": Path}})
 def extract_zip(in_file: Zip, extract_dir: Path) -> Path:

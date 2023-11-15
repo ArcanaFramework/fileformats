@@ -16,7 +16,7 @@ jobs:
   test:
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: [macos-latest, ubuntu-latest, windows-latest]
         python-version: ["3.8", "3.12"]
       fail-fast: false
     runs-on: ${{ matrix.os }}
@@ -39,41 +39,9 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Update build tools
-      run: python -m pip install --upgrade pip
+      run: python3 -m pip install --upgrade pip
     - name: Install Package
-      run: python -m pip install -e .[test]
-    - name: Pytest
-      run: pytest -vvs ./fileformats
-
-  test-extras:
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        python-version: ["3.8", "3.12"]
-      fail-fast: false
-    runs-on: ${{ matrix.os }}
-    defaults:
-      run:
-        shell: bash -l {0}
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    - name: Unset header
-      # checkout@v2 adds a header that makes branch protection report errors
-      # because the Github action bot is not a collaborator on the repo
-      run: git config --local --unset http.https://github.com/.extraheader
-    - name: Fetch tags
-      run: git fetch --prune --unshallow
-    - name: Disable etelemetry
-      run:  echo "NO_ET=TRUE" >> $GITHUB_ENV
-    - name: Set up Python ${{ matrix.python-version }} on ${{ matrix.os }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Update build tools
-      run: python -m pip install --upgrade pip
-    - name: Install Package
-      run: python -m pip install -e . -e ./extras[test]
+      run: python3 -m pip install -e .[test] -e ./extras[test]
     - name: Pytest
       run: pytest -vvs --cov fileformats --cov-config .coveragerc --cov-report xml .
     - name: Upload coverage to Codecov
@@ -82,40 +50,14 @@ jobs:
         fail_ci_if_error: true
         token: ${{ secrets.CODECOV_TOKEN }}
 
-  build-docs:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-    - name: Unset header
-      # checkout@v2 adds a header that makes branch protection report errors
-      # because the Github action bot is not a collaborator on the repo
-      run: git config --local --unset http.https://github.com/.extraheader
-    - name: Setup Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.x
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install .[docs]
-    - name: Build documentation
-      run: |
-        cd docs
-        make html
-        cd ..
-    - uses: actions/upload-artifact@v3
-      with:
-        name: built-docs
-        path: docs/build/html
-
-  deploy:
-    needs: [test, test-extras, build-docs]
+  build:
+    needs: [test]
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        pkg-dir: [".", "./extras"]
+        pkg:
+          - ["main", "."]
+          - ["extras", "./extras"]
     steps:
     - uses: actions/checkout@v3
       with:
@@ -130,11 +72,53 @@ jobs:
       with:
         python-version: '3.12'
     - name: Install build tools
-      run: python -m pip install build twine
+      run: python3 -m pip install build twine
     - name: Build source and wheel distributions
-      run: python -m build ${{ matrix.pkg-dir }}
+      run: python3 -m build ${{ matrix.pkg[1] }}
     - name: Check distributions
-      run: twine check ${{ matrix.pkg-dir }}/dist/*
+      run: twine check ${{ matrix.pkg[1] }}/dist/*
+    - uses: actions/upload-artifact@v3
+      with:
+        name: built-${{ matrix.pkg[0] }}
+        path: ${{ matrix.pkg[1] }}/dist
+
+  build-docs:
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    - name: Unset header
+      # checkout@v2 adds a header that makes branch protection report errors
+      # because the Github action bot is not a collaborator on the repo
+      run: git config --local --unset http.https://github.com/.extraheader
+    - name: Setup Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.x
+    - name: Install dependencies
+      run: |
+        python3 -m pip install --upgrade pip
+        pip install .[docs]
+    - name: Build documentation
+      run: |
+        cd docs
+        make html
+        cd ..
+    - uses: actions/upload-artifact@v3
+      with:
+        name: built-docs
+        path: docs/build/html
+
+  deploy:
+    needs: [build, build-docs]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download build
+      uses: actions/download-artifact@v3
+      with:
+        name: built-main
+        path: dist
     - name: Check for PyPI token on tag
       id: deployable
       if: github.event_name == 'release'
@@ -147,25 +131,38 @@ jobs:
       with:
         user: __token__
         password: ${{ secrets.PYPI_API_TOKEN }}
-        packages-dir: ${{ matrix.pkg-dir }}/dist
 
-  deploy-docs:
-    needs: [deploy]
+  deploy-extras:
+    needs: [build, deploy]
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - name: Download build
+      uses: actions/download-artifact@v3
       with:
-        submodules: recursive
-        fetch-depth: 0
-    - name: Unset header
-      # checkout@v2 adds a header that makes branch protection report errors
-      # because the Github action bot is not a collaborator on the repo
-      run: git config --local --unset http.https://github.com/.extraheader
+        name: built-extras
+        path: dist
+    - name: Check for PyPI token on tag
+      id: deployable
+      if: github.event_name == 'release'
+      env:
+        EXTRAS_PYPI_API_TOKEN: "${{ secrets.EXTRAS_PYPI_API_TOKEN }}"
+      run: if [ -n "$EXTRAS_PYPI_API_TOKEN" ]; then echo "DEPLOY=true" >> $GITHUB_OUTPUT; fi
+    - name: Upload to PyPI
+      if: steps.deployable.outputs.DEPLOY
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        user: __token__
+        password: ${{ secrets.EXTRAS_PYPI_API_TOKEN }}
+
+  deploy-docs:
+    needs: [build-docs, deploy]
+    runs-on: ubuntu-latest
+    steps:
     - name: Download built docs
       uses: actions/download-artifact@v3
       with:
         name: built-docs
-        path: docs/build/html
+        path: docs-build
     - name: Check for PyPI token on tag
       id: deployable
       if: github.event_name == 'release'
@@ -177,7 +174,7 @@ jobs:
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GHPAGES_DEPLOY_KEY }}
-        publish_dir: docs/build/html
+        publish_dir: docs-build
 
 # Deploy on tags if PYPI_API_TOKEN is defined in the repository secrets.
 # Secrets are not accessible in the if: condition [0], so set an output variable [1]

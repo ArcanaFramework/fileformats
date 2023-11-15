@@ -99,7 +99,7 @@ class SubtypeVar:
         source_format: type,
         converter_tuple: ty.Tuple[ty.Callable, ty.Dict[str, ty.Any]],
     ):
-        """Registers a converter task within a class attribute. Called by the @fileformats.mark.converter
+        """Registers a converter task within a class attribute. Called by the @fileformats.hook.converter
         decorator.
 
         Parameters

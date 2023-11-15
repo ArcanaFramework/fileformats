@@ -10,7 +10,7 @@ from fileformats.core.exceptions import (
     FormatMismatchError,
     UnconstrainedExtensionException,
 )
-from fileformats.core import mark
+from fileformats.core import hook
 from fileformats.core.utils import classproperty, gen_filename
 from fileformats.core.mixin import WithClassifiers
 
@@ -18,7 +18,7 @@ from fileformats.core.mixin import WithClassifiers
 class FsObject(FileSet, os.PathLike):
     "Generic file-system object, can be either a file or a directory"
 
-    @mark.required
+    @hook.required
     @property
     def fspath(self):
         if len(self.fspaths) > 1:
@@ -55,7 +55,7 @@ class File(FsObject):
     binary = True
     is_dir = False
 
-    @mark.required
+    @hook.required
     @property
     def fspath(self):
         fspath = self.select_by_ext()
@@ -154,7 +154,7 @@ class Directory(FsObject):
 
     content_types = ()
 
-    @mark.required
+    @hook.required
     @property
     def fspath(self):
         # fspaths are checked for existence with the exception of mock classes
@@ -200,7 +200,7 @@ class Directory(FsObject):
         constraint"""
         return super().unconstrained and not cls.content_types
 
-    @mark.check
+    @hook.check
     def validate_contents(self):
         if not self.content_types:
             return
@@ -238,7 +238,7 @@ class TypedSet(FileSet):
                 except FormatMismatchError:
                     continue
 
-    @mark.check
+    @hook.check
     def validate_contents(self):
         if not self.content_types:
             return

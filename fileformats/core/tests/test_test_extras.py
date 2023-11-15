@@ -1,4 +1,5 @@
 from pathlib import Path
+import platform
 from fileformats.core.fileset import MockMixin
 from fileformats.testing import Foo
 
@@ -11,6 +12,10 @@ def test_sample():
 
 def test_mock():
     mock = Foo.mock()
-    assert mock.fspath == Path("/mock/foo.foo")
+    if platform.system() == "Windows":
+        expected = Path(f"{Path().cwd().drive}\\mock\\foo.foo")
+    else:
+        expected = Path("/mock/foo.foo")
+    assert mock.fspath == expected
     assert not mock.fspath.exists()
     assert isinstance(mock, MockMixin)

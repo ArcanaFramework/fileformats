@@ -4,12 +4,12 @@ import tempfile
 import yaml
 import pydra.mark
 import pydra.engine.specs
-from fileformats.core import mark
+from fileformats.core import hook
 from fileformats.application import DataSerialization, Json, Yaml
 
 
-@mark.converter(target_format=Json, output_format=Json)
-@mark.converter(target_format=Yaml, output_format=Yaml)
+@hook.converter(target_format=Json, output_format=Json)
+@hook.converter(target_format=Yaml, output_format=Yaml)
 @pydra.mark.task
 @pydra.mark.annotate({"return": {"out_file": DataSerialization}})
 def convert_data_serialization(
