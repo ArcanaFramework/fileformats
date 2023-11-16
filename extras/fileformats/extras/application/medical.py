@@ -10,7 +10,7 @@ import medimages4tests.dummy.dicom.mri.t1w.siemens.skyra.syngo_d13c
 @FileSet.read_metadata.register
 def dicom_read_metadata(dicom: Dicom, specific_tags=None) -> ty.Mapping[str, ty.Any]:
     dcm = pydicom.dcmread(dicom.fspath, specific_tags=specific_tags)
-    [getattr(dcm, a) for a in dir(dcm)]  # Ensure all keywords are set
+    [getattr(dcm, a, None) for a in dir(dcm)]  # Ensure all keywords are set
     metadata = {
         e.keyword: e.value  # type: ignore[union-attr]
         for e in dcm.elements()
