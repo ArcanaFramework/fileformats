@@ -4,6 +4,7 @@ import struct
 from enum import Enum, IntEnum
 from warnings import warn
 import tempfile
+from random import Random
 from collections import Counter
 import typing as ty
 import shutil
@@ -871,7 +872,10 @@ class FileSet(DataType):
 
     @hook.extra
     def generate_sample_data(
-        self, dest_dir: Path, seed: int = 0, stem: ty.Optional[str] = None
+        self,
+        dest_dir: Path,
+        seed: ty.Union[int, Random] = 0,
+        stem: ty.Optional[str] = None,
     ) -> ty.Iterable[Path]:
         """Generate test data at the fspaths of the file-set
 

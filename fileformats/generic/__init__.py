@@ -278,7 +278,10 @@ FILE_LENGTH = 1000
 
 @FileSet.generate_sample_data.register
 def fsobject_generate_sample_data(
-    fsobject: FsObject, dest_dir: Path, seed: int, stem: ty.Optional[str]
+    fsobject: FsObject,
+    dest_dir: Path,
+    seed: ty.Union[int, Random] = 0,
+    stem: ty.Optional[str] = None,
 ) -> ty.Iterable[Path]:
     a_file = dest_dir / gen_filename(seed, file_type=fsobject, stem=stem)
     a_file.write_text("".join(random.choices(string.printable, k=FILE_LENGTH)))
@@ -287,7 +290,10 @@ def fsobject_generate_sample_data(
 
 @FileSet.generate_sample_data.register
 def file_generate_sample_data(
-    file: File, dest_dir: Path, seed: int, stem: ty.Optional[str]
+    file: File,
+    dest_dir: Path,
+    seed: ty.Union[int, Random] = 0,
+    stem: ty.Optional[str] = None,
 ) -> ty.Iterable[Path]:
     fname = gen_filename(seed, file_type=file, stem=stem)
     stem = fname[: -len(file.strext)]
@@ -321,7 +327,10 @@ def file_generate_sample_data(
 
 @FileSet.generate_sample_data.register
 def directory_generate_sample_data(
-    directory: Directory, dest_dir: Path, seed: int, stem: ty.Optional[str]
+    directory: Directory,
+    dest_dir: Path,
+    seed: ty.Union[int, Random] = 0,
+    stem: ty.Optional[str] = None,
 ) -> ty.Iterable[Path]:
     rng = Random(str(seed) + directory.mime_like)
     a_dir = dest_dir / gen_filename(rng, stem=stem)
@@ -332,7 +341,10 @@ def directory_generate_sample_data(
 
 @FileSet.generate_sample_data.register
 def directory_containing_generate_sample_data(
-    directory: DirectoryContaining, dest_dir: Path, seed: int, stem: ty.Optional[str]
+    directory: DirectoryContaining,
+    dest_dir: Path,
+    seed: ty.Union[int, Random] = 0,
+    stem: ty.Optional[str] = None,
 ) -> ty.Iterable[Path]:
     rng = Random(str(seed) + directory.mime_like)
     a_dir = dest_dir / gen_filename(rng, stem=stem)
@@ -344,7 +356,10 @@ def directory_containing_generate_sample_data(
 
 @FileSet.generate_sample_data.register
 def set_of_sample_data(
-    set_of: SetOf, dest_dir: Path, seed: int, stem: ty.Optional[str]
+    set_of: SetOf,
+    dest_dir: Path,
+    seed: ty.Union[int, Random] = 0,
+    stem: ty.Optional[str] = None,
 ) -> ty.Iterable[Path]:
     rng = Random(str(seed) + set_of.mime_like)
     return list(
