@@ -19,3 +19,7 @@ def test_mock():
     assert mock.fspath == expected
     assert not mock.fspath.exists()
     assert isinstance(mock, MockMixin)
+
+
+def test_extra_errors():
+    pass

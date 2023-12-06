@@ -1,4 +1,3 @@
-from __future__ import annotations
 import os
 from copy import copy
 import struct
@@ -189,18 +188,31 @@ class FileSet(DataType):
         return metadata
 
     @hook.extra
-    def read_metadata(self) -> ty.Dict[str, ty.Any]:
-        """Reads any metadata associated with the fileset and returns it as a dict"""
+    def read_metadata(
+        self, selected_keys: ty.Optional[ty.Sequence[str]] = None
+    ) -> ty.Mapping[str, ty.Any]:
+        """Reads any metadata associated with the fileset and returns it as a dict
+
+        Parameters
+        ----------
+        selected_keys : Sequence[str], optional
+            selected keys to load instead of loading the complete metadata set
+
+        Returns
+        -------
+        metadata : Mapping[str, Any]
+            a mapping from names of the metadata fields to their values
+        """
         raise NotImplementedError
 
     @classmethod
-    def required_properties(cls):
+    def required_properties(cls) -> ty.Generator[str, None, None]:
         """Find all properties required to treat file-set as being in the format specified
         by the class
 
         Returns
         -------
-        iter(str)
+        Generator[str, None, None]
             an iterator over all properties names marked as "required"
         """
         fileset_props = dir(FileSet)
@@ -235,7 +247,7 @@ class FileSet(DataType):
                     required.add(path)
         return required
 
-    def nested_filesets(self) -> ty.List[FileSet]:
+    def nested_filesets(self) -> ty.List["FileSet"]:
         """Returns all nested filesets that are required for the format
 
         Returns
@@ -609,7 +621,7 @@ class FileSet(DataType):
         relative_to: ty.Optional[os.PathLike] = None,
         ignore_hidden_files: bool = False,
         ignore_hidden_dirs: bool = False,
-    ) -> ty.Generator[str, ty.Generator[bytes]]:
+    ) -> ty.Generator[ty.Tuple[str, bytes], None, None]:
         """Yields relative paths for all files within the file-set along with iterators
         over their byte-contents. To be used when generating hashes for the file set.
 
@@ -859,7 +871,7 @@ class FileSet(DataType):
 
     @hook.extra
     def generate_sample_data(
-        self, dest_dir: Path, seed: int = 0, stem: str = None
+        self, dest_dir: Path, seed: int = 0, stem: ty.Optional[str] = None
     ) -> ty.Iterable[Path]:
         """Generate test data at the fspaths of the file-set
 

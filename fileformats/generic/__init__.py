@@ -279,7 +279,7 @@ FILE_LENGTH = 1000
 @FileSet.generate_sample_data.register
 def fsobject_generate_sample_data(
     fsobject: FsObject, dest_dir: Path, seed: int, stem: ty.Optional[str]
-) -> ty.List[Path]:
+) -> ty.Iterable[Path]:
     a_file = dest_dir / gen_filename(seed, file_type=fsobject, stem=stem)
     a_file.write_text("".join(random.choices(string.printable, k=FILE_LENGTH)))
     return [a_file]
@@ -288,7 +288,7 @@ def fsobject_generate_sample_data(
 @FileSet.generate_sample_data.register
 def file_generate_sample_data(
     file: File, dest_dir: Path, seed: int, stem: ty.Optional[str]
-) -> ty.List[Path]:
+) -> ty.Iterable[Path]:
     fname = gen_filename(seed, file_type=file, stem=stem)
     stem = fname[: -len(file.strext)]
     a_file = dest_dir / fname
@@ -322,7 +322,7 @@ def file_generate_sample_data(
 @FileSet.generate_sample_data.register
 def directory_generate_sample_data(
     directory: Directory, dest_dir: Path, seed: int, stem: ty.Optional[str]
-) -> ty.List[Path]:
+) -> ty.Iterable[Path]:
     rng = Random(str(seed) + directory.mime_like)
     a_dir = dest_dir / gen_filename(rng, stem=stem)
     a_dir.mkdir()
@@ -333,7 +333,7 @@ def directory_generate_sample_data(
 @FileSet.generate_sample_data.register
 def directory_containing_generate_sample_data(
     directory: DirectoryContaining, dest_dir: Path, seed: int, stem: ty.Optional[str]
-) -> ty.List[Path]:
+) -> ty.Iterable[Path]:
     rng = Random(str(seed) + directory.mime_like)
     a_dir = dest_dir / gen_filename(rng, stem=stem)
     a_dir.mkdir()
@@ -345,7 +345,7 @@ def directory_containing_generate_sample_data(
 @FileSet.generate_sample_data.register
 def set_of_sample_data(
     set_of: SetOf, dest_dir: Path, seed: int, stem: ty.Optional[str]
-) -> ty.List[Path]:
+) -> ty.Iterable[Path]:
     rng = Random(str(seed) + set_of.mime_like)
     return list(
         itertools.chain(
