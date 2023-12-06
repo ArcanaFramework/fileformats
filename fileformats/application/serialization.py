@@ -95,7 +95,10 @@ class Toml(DataSerialization):
 
 @FileSet.generate_sample_data.register
 def generate_json_sample_data(
-    js: Json, dest_dir: Path, seed: int, stem: ty.Optional[str]
+    js: Json,
+    dest_dir: Path,
+    seed: ty.Union[int, Random] = 0,
+    stem: ty.Optional[str] = None,
 ) -> ty.Iterable[Path]:
     js_file = dest_dir / gen_filename(seed, file_type=js, stem=stem)
     rng = Random(seed + 1)
@@ -109,7 +112,10 @@ def generate_json_sample_data(
 
 @FileSet.generate_sample_data.register
 def generate_yaml_sample_data(
-    yml: Yaml, dest_dir: Path, seed: int, stem: ty.Optional[str]
+    yml: Yaml,
+    dest_dir: Path,
+    seed: ty.Union[int, Random] = 0,
+    stem: ty.Optional[str] = None,
 ) -> ty.Iterable[Path]:
     yml_file = dest_dir / gen_filename(seed, file_type=yml, stem=stem)
     rng = Random(seed + 1)
