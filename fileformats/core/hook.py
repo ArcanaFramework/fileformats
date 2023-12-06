@@ -213,4 +213,4 @@ class ExtraRegisterer:
                 f"decorated method {method} and the registered override {function}:\n"
                 + "\n".join(differences)
             )
-        self.dispatch.register(function)
+        return self.dispatch.register(function)
