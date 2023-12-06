@@ -199,13 +199,13 @@ class ExtraRegisterer:
             ftype = fparam.annotation
             if mname != fname:
                 differences.append(
-                    f"Name of parameter at position {i}: {mname} vs {fname}"
+                    f"name of parameter at position {i}: {mname} vs {fname}"
                 )
             elif not type_match(mtype, ftype):
                 differences.append(f"Type of '{mname}' arg: {mtype} vs {ftype}")
         if not type_match(msig.return_annotation, fsig.return_annotation):
             differences.append(
-                f"Return type: {msig.return_annotation} vs {fsig.return_annotation}"
+                f"return type: {msig.return_annotation} vs {fsig.return_annotation}"
             )
         if differences:
             raise TypeError(
