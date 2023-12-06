@@ -2,7 +2,7 @@ import json
 import typing as ty
 from random import Random
 from pathlib import Path
-from ..core import hook, DataType
+from ..core import hook, DataType, FileSet
 from ..core.mixin import WithClassifiers
 from ..generic import File
 from ..core.exceptions import FormatMismatchError
@@ -42,12 +42,12 @@ class DataSerialization(WithClassifiers, File):
     iana_mime = None
 
     @hook.extra
-    def load(self):
+    def load(self) -> dict:
         """Load the contents of the file into a dictionary"""
         raise NotImplementedError
 
     @hook.extra
-    def save(data):
+    def save(self, data: dict):
         """Serialise a dictionary to a new file"""
         raise NotImplementedError
 
@@ -93,10 +93,10 @@ class Toml(DataSerialization):
     ext = ".toml"
 
 
-@File.generate_sample_data.register
+@FileSet.generate_sample_data.register
 def generate_json_sample_data(
     js: Json, dest_dir: Path, seed: int, stem: ty.Optional[str]
-) -> ty.List[Path]:
+) -> ty.Iterable[Path]:
     js_file = dest_dir / gen_filename(seed, file_type=js, stem=stem)
     rng = Random(seed + 1)
     with open(js_file, "w") as f:
@@ -107,10 +107,10 @@ def generate_json_sample_data(
     return [js_file]
 
 
-@File.generate_sample_data.register
+@FileSet.generate_sample_data.register
 def generate_yaml_sample_data(
     yml: Yaml, dest_dir: Path, seed: int, stem: ty.Optional[str]
-) -> ty.List[Path]:
+) -> ty.Iterable[Path]:
     yml_file = dest_dir / gen_filename(seed, file_type=yml, stem=stem)
     rng = Random(seed + 1)
     with open(yml_file, "w") as f:

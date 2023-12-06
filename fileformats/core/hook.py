@@ -1,5 +1,7 @@
 import importlib
 import typing as ty
+import inspect
+from itertools import zip_longest
 import functools
 import attrs
 import urllib.error
@@ -158,5 +160,57 @@ def extra(method: ty.Callable):
                         )
             raise FileFormatsExtrasError(msg)
 
-    decorated.register = dispatch_method.register
+    decorated.register = ExtraRegisterer(dispatch_method)
     return decorated
+
+
+class ExtraRegisterer:
+    def __init__(self, dispatch):
+        self.dispatch = dispatch
+
+    def __call__(self, function: ty.Callable):
+        method = self.dispatch.__wrapped__
+        msig = inspect.signature(method)
+        fsig = inspect.signature(function)
+
+        def type_match(a, b) -> bool:
+            return isinstance(a, str) or isinstance(b, str) or a == b
+
+        differences = []
+        for i, (mparam, fparam) in enumerate(
+            zip_longest(
+                list(msig.parameters.values())[1:], list(fsig.parameters.values())[1:]
+            )
+        ):
+            if mparam is None:
+                differences.append(
+                    f"found additional argument, '{fparam.name}', at position {i}"
+                )
+                continue
+            if fparam is None:
+                if mparam.default is mparam.empty:
+                    differences.append(
+                        f"override missing required argument '{mparam.name}'"
+                    )
+                continue
+            mname = mparam.name
+            fname = fparam.name
+            mtype = mparam.annotation
+            ftype = fparam.annotation
+            if mname != fname:
+                differences.append(
+                    f"name of parameter at position {i}: {mname} vs {fname}"
+                )
+            elif not type_match(mtype, ftype):
+                differences.append(f"Type of '{mname}' arg: {mtype} vs {ftype}")
+        if not type_match(msig.return_annotation, fsig.return_annotation):
+            differences.append(
+                f"return type: {msig.return_annotation} vs {fsig.return_annotation}"
+            )
+        if differences:
+            raise TypeError(
+                f"Arguments differ between the signature of the "
+                f"decorated method {method} and the registered override {function}:\n"
+                + "\n".join(differences)
+            )
+        self.dispatch.register(function)
