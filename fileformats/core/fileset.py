@@ -44,7 +44,6 @@ except ImportError:
 
 
 FILE_CHUNK_LEN_DEFAULT = 8192
-EMPTY_METADATA = -1
 
 
 logger = logging.getLogger("fileformats")
@@ -69,14 +68,14 @@ class FileSet(DataType):
 
     fspaths: ty.FrozenSet[Path] = attrs.field(default=None, converter=fspaths_converter)
     _metadata: ty.Optional[ty.Dict[str, ty.Any]] = attrs.field(
-        default=EMPTY_METADATA,
+        default=False,
         eq=False,
         order=False,
     )
 
     @_metadata.validator
     def metadata_validator(self, _, val):
-        if not (val == EMPTY_METADATA or val is None or isinstance(val, dict)):
+        if val and not isinstance(val, dict):
             raise TypeError(
                 f"Fileset metadata value needs to be None or dict, not {val} ({self.fspaths})"
             )
@@ -191,7 +190,7 @@ class FileSet(DataType):
     def metadata(self) -> ty.Dict[str, ty.Any]:
         """Lazily load metadata from `read_metadata` extra if implemented, returning an
         empty metadata array if not"""
-        if self._metadata != EMPTY_METADATA:
+        if self._metadata is not False:
             return self._metadata
         try:
             self._metadata = self.read_metadata()
@@ -213,6 +212,12 @@ class FileSet(DataType):
         selected_keys : Union[Sequence[str], None]
             the keys of the values to load. If None, all values are loaded
         """
+        if (
+            self._metadata
+            and selected_keys is not None
+            and set(selected_keys).issubset(self._metadata)
+        ):
+            return
         self._metadata = self.read_metadata(selected_keys)
 
     @hook.extra
