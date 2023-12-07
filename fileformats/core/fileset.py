@@ -44,12 +44,13 @@ except ImportError:
 
 
 FILE_CHUNK_LEN_DEFAULT = 8192
+EMPTY_METADATA = -1
 
 
 logger = logging.getLogger("fileformats")
 
 
-@attrs.define(slots=False, repr=False)
+@attrs.define(repr=False)
 class FileSet(DataType):
     """
     The base class for all format types within the fileformats package. A generic
@@ -61,11 +62,24 @@ class FileSet(DataType):
     ----------
     fspaths : set[Path]
         a set of file-system paths pointing to all the resources in the file-set
-    checks : bool
-        whether to run in-depth "checks" to verify the file format
+    metadata : dict[str, Any]
+        metadata associated with the file-set, typically lazily loaded via `read_metadata`
+        extras hook
     """
 
     fspaths: ty.FrozenSet[Path] = attrs.field(default=None, converter=fspaths_converter)
+    _metadata: ty.Optional[ty.Dict[str, ty.Any]] = attrs.field(
+        default=EMPTY_METADATA,
+        eq=False,
+        order=False,
+    )
+
+    @_metadata.validator
+    def metadata_validator(self, _, val):
+        if not (val == EMPTY_METADATA or val is None or isinstance(val, dict)):
+            raise TypeError(
+                f"Fileset metadata value needs to be None or dict, not {val} ({self.fspaths})"
+            )
 
     # Explicitly set the Internet Assigned Numbers Authority (https://iana_mime.org) MIME
     # type to None for any base classes that should not correspond to a MIME or MIME-like
@@ -173,20 +187,33 @@ class FileSet(DataType):
             pass
         return possible
 
-    @functools.cached_property
+    @property
     def metadata(self) -> ty.Dict[str, ty.Any]:
         """Lazily load metadata from `read_metadata` extra if implemented, returning an
         empty metadata array if not"""
+        if self._metadata != EMPTY_METADATA:
+            return self._metadata
         try:
-            metadata = self.read_metadata()
+            self._metadata = self.read_metadata()
         except FileFormatsExtrasPkgUninstalledError:
             raise
         except FileFormatsExtrasPkgNotCheckedError as e:
             logger.warning(str(e))
-            metadata = None
+            self._metadata = None
         except FileFormatsExtrasError:
-            metadata = None
-        return metadata
+            self._metadata = None
+        return self._metadata
+
+    def select_metadata(self, selected_keys: ty.Union[ty.Sequence[str], None]):
+        """Selects a subset of the metadata to be read and stored instead all available
+        (i.e for performance reasons).
+
+        Parameters
+        ----------
+        selected_keys : Union[Sequence[str], None]
+            the keys of the values to load. If None, all values are loaded
+        """
+        self._metadata = self.read_metadata(selected_keys)
 
     @hook.extra
     def read_metadata(
