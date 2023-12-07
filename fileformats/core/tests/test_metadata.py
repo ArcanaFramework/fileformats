@@ -44,3 +44,15 @@ def test_select_metadata(file_with_metadata):
     file_with_metadata.select_metadata(["a", "b", "c"])
     assert file_with_metadata.metadata["a"] == "1"
     assert sorted(file_with_metadata.metadata) == ["a", "b", "c"]
+
+
+def test_select_metadata_reload(file_with_metadata):
+    file_with_metadata.select_metadata(["a", "b", "c"])
+    assert sorted(file_with_metadata.metadata) == ["a", "b", "c"]
+    # add new metadata line to check that it isn't loaded
+    with open(file_with_metadata, "a") as f:
+        f.write("\nf:6")
+    file_with_metadata.select_metadata(["a", "b"])
+    assert sorted(file_with_metadata.metadata) == ["a", "b", "c"]
+    file_with_metadata.select_metadata(None)
+    assert sorted(file_with_metadata.metadata) == ["a", "b", "c", "d", "e", "f"]
