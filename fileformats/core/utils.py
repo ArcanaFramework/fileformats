@@ -167,6 +167,7 @@ def from_paths(
     *candidates: ty.Tuple[ty.Type[fileformats.core.FileSet]],
     common_ok: bool = False,
     ignore: ty.Optional[str] = None,
+    **kwargs,
 ) -> ty.List[fileformats.core.FileSet]:
     """Given a list of candidate classes (defaults to all installed in alphabetical order),
     instantiates all possible file-set instances from a collection of file-system paths.
@@ -187,6 +188,8 @@ def from_paths(
         regular expression pattern for file/directory names to ignore if they aren't
         used in any of the returned file-sets. Any remaining file-paths that are not
         matched by this pattern will cause an error to be raised.
+    **kwargs: dict[str, Any]
+        keyword arguments passed on to the underlying call to FileSet.from_paths
 
     Returns
     -------
@@ -219,7 +222,9 @@ def from_paths(
     remaining = fspaths
     filesets = []
     for candidate in candidates:
-        fsets, remaining = candidate.from_paths(remaining, common_ok=common_ok)
+        fsets, remaining = candidate.from_paths(
+            remaining, common_ok=common_ok, **kwargs
+        )
         filesets.extend(fsets)
     if ignore:
         ignore_re = re.compile(ignore)
@@ -450,7 +455,9 @@ def import_extras_module(klass: type) -> ExtrasModule:
         extras_pypi = f"fileformats-{sub_pkg.replace('_', '-')}-extras"
     try:
         importlib.import_module(extras_pkg)
-    except ImportError:
+    except ModuleNotFoundError as e:
+        if str(e) != f"No module named '{extras_pkg}'":
+            raise
         extras_imported = False
     else:
         extras_imported = True
