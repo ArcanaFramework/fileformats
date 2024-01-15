@@ -5,7 +5,6 @@ import importlib
 import itertools
 from .converter import SubtypeVar
 from .exceptions import (
-    FileFormatsError,
     FormatMismatchError,
     FormatConversionError,
     FormatRecognitionError,
@@ -13,6 +12,7 @@ from .exceptions import (
 from .utils import (
     classproperty,
     subpackages,
+    add_exc_note,
     to_mime_format_name,
     from_mime_format_name,
     IANA_MIME_TYPE_REGISTRIES,
@@ -50,18 +50,6 @@ class DataType(Classifier, metaclass=ABCMeta):
             return False
         else:
             return True
-
-    @classproperty
-    def namespace(cls):
-        """The "namespace" the format belongs to under the "fileformats" umbrella
-        namespace"""
-        module_parts = cls.__module__.split(".")
-        if module_parts[0] != "fileformats":
-            raise FileFormatsError(
-                f"Cannot create reversible MIME type for {cls} as it is not in the "
-                "fileformats namespace"
-            )
-        return module_parts[1].replace("_", "-")
 
     @classproperty
     def all_types(self):
@@ -195,34 +183,52 @@ class DataType(Classifier, metaclass=ABCMeta):
                 klass = getattr(module, class_name)
             except AttributeError:
                 if "+" in format_name:
-                    qualifier_names, classified_name = format_name.split("+")
-                    try:
-                        classifiers = [
-                            getattr(module, from_mime_format_name(q))
-                            for q in qualifier_names.split(".")
-                        ]
-                    except AttributeError:
-                        raise FormatRecognitionError(
-                            f"Could not load classifiers [{qualifier_names}] from "
-                            f"fileformats.{namespace}, corresponding to MIME, "
-                            f"or MIME-like, type {mime_string}"
-                        ) from None
-                    try:
-                        classified = getattr(
-                            module, from_mime_format_name(classified_name)
+                    if "_" in namespace:
+                        parent_namespace = namespace.split("_")[0]
+                        parent_module = importlib.import_module(
+                            "fileformats." + parent_namespace
                         )
-                    except AttributeError:
+                    else:
+                        parent_namespace = parent_module = None
+
+                    def get_format(mime_name):
+                        name = from_mime_format_name(mime_name)
+                        try:
+                            return getattr(module, name)
+                        except AttributeError:
+                            if parent_module:
+                                try:
+                                    return getattr(parent_module, name)
+                                except AttributeError:
+                                    pass
+                                err_msg_part = f" or fileformats.{parent_namespace}"
+                            else:
+                                err_msg_part = ""
+                            raise FormatRecognitionError(
+                                f"Could not load format class {name} (from "
+                                f"'{mime_name}') fileformats.{namespace}"
+                                f"{err_msg_part} corresponding "
+                                f"to MIME, or MIME-like, type {mime_string}"
+                            ) from None
+
+                    classifiers_str, classified_name = format_name.split("+")
+                    classifiers = [get_format(c) for c in classifiers_str.split(".")]
+                    try:
+                        classified = get_format(classified_name)
+                    except FormatRecognitionError as e:
                         try:
                             classified = cls.generically_classifies_by_name[
                                 classified_name
                             ]
                         except KeyError:
-                            raise FormatRecognitionError(
-                                f"Could not load classified class '{classified_name}' from "
-                                f"fileformats.{namespace} or list of generic types "
-                                f"({list(cls.generically_classifies_by_name)}), "
-                                f"corresponding to MIME, or MIME-like, type {mime_string}"
-                            ) from None
+                            add_exc_note(
+                                e,
+                                (
+                                    "neither list of generic types "
+                                    f"({list(cls.generically_classifies_by_name)})"
+                                ),
+                            )
+                            raise e
                     klass = classified[classifiers]
                 else:
                     raise FormatRecognitionError(
