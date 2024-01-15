@@ -627,11 +627,18 @@ class WithClassifiers:
             if len(namespaces) == 1:
                 return next(iter(namespaces))
             else:
+                # Handle subpackage namespaces and parent, e.g. medimage & medimage-fsl
+                namespaces = sorted(namespaces)
+                if (
+                    len(namespaces) == 2
+                    and namespaces[1].split("-")[0] == namespaces[0]
+                ):
+                    return namespaces[1]
                 msg = (
                     "Cannot create reversible MIME type for because did not find a "
                     f"common namespace between all classifiers {list(cls.classifiers)}"
                 )
-                if cls.generically_classifies:
+                if not cls.generically_classifies:
                     msg += (
                         f" and (non genericly classified) base class {cls.unclassified}"
                     )
