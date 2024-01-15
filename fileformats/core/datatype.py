@@ -213,14 +213,14 @@ class DataType(Classifier, metaclass=ABCMeta):
                         )
                     except AttributeError:
                         try:
-                            classified = cls.generically_qualifies_by_name[
+                            classified = cls.generically_classifies_by_name[
                                 classified_name
                             ]
                         except KeyError:
                             raise FormatRecognitionError(
                                 f"Could not load classified class '{classified_name}' from "
                                 f"fileformats.{namespace} or list of generic types "
-                                f"({list(cls.generically_qualifies_by_name)}), "
+                                f"({list(cls.generically_classifies_by_name)}), "
                                 f"corresponding to MIME, or MIME-like, type {mime_string}"
                             ) from None
                     klass = classified[classifiers]
@@ -232,16 +232,16 @@ class DataType(Classifier, metaclass=ABCMeta):
         return klass
 
     @classproperty
-    def generically_qualifies_by_name(cls):
-        if cls._generically_qualifies_by_name is None:
-            cls._generically_qualifies_by_name = {
+    def generically_classifies_by_name(cls):
+        if cls._generically_classifies_by_name is None:
+            cls._generically_classifies_by_name = {
                 to_mime_format_name(f.__name__): f
                 for f in FileSet.all_formats
-                if getattr(f, "generically_qualifies", False)
+                if getattr(f, "generically_classifies", False)
             }
-        return cls._generically_qualifies_by_name
+        return cls._generically_classifies_by_name
 
-    _generically_qualifies_by_name = None  # Register all generically classified types
+    _generically_classifies_by_name = None  # Register all generically classified types
 
     REQUIRED_ANNOTATION = "__fileformats_required__"
     CHECK_ANNOTATION = "__fileformats_check__"

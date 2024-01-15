@@ -1,7 +1,6 @@
 from pathlib import Path
 import re
 import typing as ty
-from collections import defaultdict
 from . import hook
 from .fileset import FileSet
 from .utils import classproperty, describe_task, to_mime_format_name
@@ -278,8 +277,9 @@ class WithClassifiers:
     # Default values for class attrs
     multiple_classifiers = True
     allowed_classifiers: ty.Optional[ty.Tuple[ty.Type[ty.Any]]] = None
+    exclusive_classifiers: ty.Tuple[ty.Type[ty.Any]] = ()
     ordered_classifiers = False
-    generically_qualifies = False
+    generically_classifies = False
 
     def __attrs_pre_init__(self):
         if self.wildcard_classifiers():
@@ -329,30 +329,30 @@ class WithClassifiers:
         # Sort content types if order isn't important
         if cls.multiple_classifiers:
             if not cls.ordered_classifiers:
-                # Sort the classifiers into categories and ensure that there aren't more
-                # than one type for each category. Otherwise, if the classifier doesn't
-                # belong to a category, check to see that there aren't multiple sub-classes
-                # in the classifier set
-                repetitions = defaultdict(list)
-                for classifier in classifiers:
-                    category = getattr(classifier, "classifier_category", None)
-                    if category:
-                        repetitions[category].append(classifier)
-                    else:
-                        repetitions[classifier] = [
-                            c for c in classifiers if issubclass(c, classifier)
-                        ]
-                repetitions = [t for t in repetitions.items() if len(t[1]) > 1]
-                if repetitions:
-                    raise FileFormatsError(
-                        "Cannot have more than one occurrence of a classifier category "
-                        f"or subclasses for {cls} class when "
-                        f"{cls.__name__}.ordered_classifiers is false:\n"
-                        + "\n".join(
-                            f"{k!r}: " + ", ".join(repr(x) for x in v)
-                            for k, v in repetitions
+                # Check for duplicate classifiers in the multiple list
+                if len(classifiers) > 1:
+                    # Sort the classifiers into categories and ensure that there aren't more
+                    # than one type for each category. Otherwise, if the classifier doesn't
+                    # belong to a category, check to see that there aren't multiple sub-classes
+                    # in the classifier set
+                    repetitions = {
+                        c: [] for c in cls.exclusive_classifiers + classifiers
+                    }
+                    for classifier in classifiers:
+                        for exc_classifier in repetitions:
+                            if issubclass(classifier, exc_classifier):
+                                repetitions[exc_classifier].append(classifier)
+                    repeated = [t for t in repetitions.items() if len(t[1]) > 1]
+                    if repeated:
+                        raise FileFormatsError(
+                            "Cannot have more than one occurrence of a classifier "
+                            f"or subclasses for {cls} class when "
+                            f"{cls.__name__}.ordered_classifiers is false:\n"
+                            + "\n".join(
+                                f"{k!r}: " + ", ".join(repr(x) for x in v)
+                                for k, v in repeated
+                            )
                         )
-                    )
                 classifiers = frozenset(classifiers)
         else:
             if len(classifiers) > 1:
@@ -622,7 +622,7 @@ class WithClassifiers:
         namespace"""
         if cls.is_classified:
             namespaces = set(t.namespace for t in cls.classifiers)
-            if not cls.generically_qualifies:
+            if not cls.generically_classifies:
                 namespaces.add(cls.unclassified.namespace)
             if len(namespaces) == 1:
                 return next(iter(namespaces))
@@ -631,7 +631,7 @@ class WithClassifiers:
                     "Cannot create reversible MIME type for because did not find a "
                     f"common namespace between all classifiers {list(cls.classifiers)}"
                 )
-                if cls.generically_qualifies:
+                if cls.generically_classifies:
                     msg += (
                         f" and (non genericly classified) base class {cls.unclassified}"
                     )

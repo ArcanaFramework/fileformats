@@ -163,12 +163,12 @@ jobs:
       with:
         name: built-docs
         path: docs-build
-    - name: Check for PyPI token on tag
+    - name: Check for GHPAGES_DEPLOY_KEY token
       id: deployable
       if: github.event_name == 'release'
       env:
-        PYPI_API_TOKEN: "${{ secrets.PYPI_API_TOKEN }}"
-      run: if [ -n "$PYPI_API_TOKEN" ]; then echo "DEPLOY=true" >> $GITHUB_OUTPUT; fi
+        GHPAGES_DEPLOY_KEY: "${{ secrets.GHPAGES_DEPLOY_KEY }}"
+      run: if [ -n "$GHPAGES_DEPLOY_KEY" ]; then echo "DEPLOY=true" >> $GITHUB_OUTPUT; fi
     - name: Deploy Docs to GitHub Pages
       if: steps.deployable.outputs.DEPLOY
       uses: peaceiris/actions-gh-pages@v3

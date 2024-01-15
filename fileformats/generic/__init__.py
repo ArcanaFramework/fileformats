@@ -262,14 +262,14 @@ class DirectoryContaining(WithClassifiers, Directory):
     # WithClassifiers-required class attrs
     classifiers_attr_name = "content_types"
     allowed_classifiers = (FileSet,)
-    generically_qualifies = True
+    generically_classifies = True
 
 
 class SetOf(WithClassifiers, TypedSet):
     # WithClassifiers-required class attrs
     classifiers_attr_name = "content_types"
     allowed_classifiers = (FileSet,)
-    generically_qualifies = True
+    generically_classifies = True
 
 
 # Methods to generate sample files, typically used in testing
