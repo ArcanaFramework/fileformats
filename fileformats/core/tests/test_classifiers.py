@@ -155,7 +155,7 @@ def test_file_classifiers3():
 
 def test_file_classifiers4():
     with pytest.raises(
-        FileFormatsError, match="Cannot have more than one occurrence of a classifier"
+        FileFormatsError, match="Cannot have more than one occurrence of a classifier "
     ):
         H[A, B, A]
 
@@ -418,5 +418,7 @@ def test_classifier_categories5():
 
 
 def test_classifier_categories6():
-    with pytest.raises(FileFormatsError, match="Cannot have more than one occurrence"):
+    with pytest.raises(
+        FileFormatsError, match="Cannot have more than one occurrence of a classifier "
+    ):
         Classified[C, E]

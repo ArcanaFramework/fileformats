@@ -277,7 +277,7 @@ class WithClassifiers:
     # Default values for class attrs
     multiple_classifiers = True
     allowed_classifiers: ty.Optional[ty.Tuple[ty.Type[ty.Any]]] = None
-    exclusive_classifiers: ty.Optional[ty.Tuple[ty.Type[ty.Any]]] = None
+    exclusive_classifiers: ty.Tuple[ty.Type[ty.Any]] = ()
     ordered_classifiers = False
     generically_classifies = False
 
@@ -328,39 +328,31 @@ class WithClassifiers:
                 )
         # Sort content types if order isn't important
         if cls.multiple_classifiers:
-            if cls.exclusive_classifiers:
-                # Sort the classifiers into categories and ensure that there aren't more
-                # than one type for each category. Otherwise, if the classifier doesn't
-                # belong to a category, check to see that there aren't multiple sub-classes
-                # in the classifier set
-                repetitions = {c: [] for c in cls.exclusive_classifiers}
-                for classifier in classifiers:
-                    subclass_of = [
-                        c
-                        for c in cls.exclusive_classifiers
-                        if issubclass(classifier, c)
-                    ]
-                    if subclass_of:
-                        if len(subclass_of) > 1:
-                            raise FileFormatsError(
-                                f"{classifier} is a subclass of both {subclass_of}, "
-                                "check to see if it inherits from directly from multiple "
-                                f"classifiers of whether the exclusive classifiers "
-                                f"{cls.exclusive_classifiers}are subclasses of each "
-                                "other"
+            if not cls.ordered_classifiers:
+                # Check for duplicate classifiers in the multiple list
+                if len(classifiers) > 1:
+                    # Sort the classifiers into categories and ensure that there aren't more
+                    # than one type for each category. Otherwise, if the classifier doesn't
+                    # belong to a category, check to see that there aren't multiple sub-classes
+                    # in the classifier set
+                    repetitions = {
+                        c: [] for c in cls.exclusive_classifiers + classifiers
+                    }
+                    for classifier in classifiers:
+                        for exc_classifier in repetitions:
+                            if issubclass(classifier, exc_classifier):
+                                repetitions[exc_classifier].append(classifier)
+                    repeated = [t for t in repetitions.items() if len(t[1]) > 1]
+                    if repeated:
+                        raise FileFormatsError(
+                            "Cannot have more than one occurrence of a classifier "
+                            f"or subclasses for {cls} class when "
+                            f"{cls.__name__}.ordered_classifiers is false:\n"
+                            + "\n".join(
+                                f"{k!r}: " + ", ".join(repr(x) for x in v)
+                                for k, v in repeated
                             )
-                        repetitions[subclass_of[0]].append(classifier)
-                repeated = [t for t in repetitions.items() if len(t[1]) > 1]
-                if repeated:
-                    raise FileFormatsError(
-                        "Cannot have more than one occurrence of a classifier "
-                        f"or subclasses for {cls} class when "
-                        f"{cls.__name__}.ordered_classifiers is false:\n"
-                        + "\n".join(
-                            f"{k!r}: " + ", ".join(repr(x) for x in v)
-                            for k, v in repeated
                         )
-                    )
                 classifiers = frozenset(classifiers)
         else:
             if len(classifiers) > 1:
