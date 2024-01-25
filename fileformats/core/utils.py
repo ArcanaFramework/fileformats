@@ -142,6 +142,18 @@ def to_mime(datatype: type, official: bool = True):
         return item_mime
     if origin is ty.Union:
         return ",".join(to_mime(t, official=official) for t in ty.get_args(datatype))
+    # Handle case
+    if isinstance(datatype, ty.ForwardRef):
+        datatype = datatype.__forward_arg__
+    if (
+        isinstance(datatype, str)
+        and datatype.startswith("fileformats.")
+        and not official
+    ):
+        ns, class_name = datatype.split(".")[1:]
+        ns = ns.replace("_", "-")
+        class_name = to_mime_format_name(class_name)
+        return ns + "/" + class_name
     mime = datatype.mime_type if official else datatype.mime_like
     if official:
         mime = datatype.mime_type
