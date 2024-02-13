@@ -491,13 +491,14 @@ class FileSet(DataType):
                     for a in available_converters[1:]
                 ):
                     available_converters = [available_converters[0]]
-                available_str = "\n".join(
-                    describe_task(a[0]) for a in available_converters
-                )
-                raise FormatConversionError(
-                    f"Ambiguous converters found between '{cls.mime_like}' and "
-                    f"'{source_format.mime_like}':\n{available_str}"
-                ) from None
+                else:
+                    available_str = "\n".join(
+                        describe_task(a[0]) for a in available_converters
+                    )
+                    raise FormatConversionError(
+                        f"Ambiguous converters found between '{cls.mime_like}' and "
+                        f"'{source_format.mime_like}':\n{available_str}"
+                    ) from None
             if not available_converters:
                 msg = (
                     f"Could not find converter between '{source_format.mime_like}' and "
