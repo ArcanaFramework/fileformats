@@ -1198,6 +1198,12 @@ class FileSet(DataType):
         """Copies the file-set to a new directory, optionally renaming the files
         to have consistent name-stems.
 
+        Based on the range of options provided, copy determines the "laziest" mode to use,
+        i.e. if we can leave the files where they are and satisfy both the explicit mode
+        requested by the user and the "collation" requirements (see FileSet.CopyCollation),
+        we prefer to do so, otherwise we prefer to symlink, then hardlink,
+        then as a last resort a full copy.
+
         Parameters
         ----------
         dest_dir : str
@@ -1229,10 +1235,8 @@ class FileSet(DataType):
             FileSet isn't explicitly defined by the FileSet class. Only relevant when
             collation mode is set to "adjacent". By default True
         """
+        # Logic to determine the laziest mode to use
         mode = self.CopyMode[mode] if isinstance(mode, str) else mode
-        if new_stem:
-            supported_modes -= self.CopyMode.leave
-        selected_mode = mode & supported_modes
         if len(self.fspaths) == 1:
             # If there is only one path to copy, then collation isn't meaningful
             collation = self.CopyCollation.any
@@ -1242,18 +1246,12 @@ class FileSet(DataType):
                 if isinstance(collation, str)
                 else collation
             )
+        if new_stem:
+            supported_modes -= self.CopyMode.leave
+        selected_mode = mode & supported_modes
         if collation >= self.CopyCollation.siblings:
             if not all(p.parent == self.parent for p in self.fspaths):
                 selected_mode -= self.CopyMode.leave
-            duplicate_names = [
-                n for n, c in Counter(p.name for p in self.fspaths).items() if c > 1
-            ]
-            if duplicate_names:
-                raise FileFormatsError(
-                    f"Cannot copy {self} to {dest_dir} with collation mode "
-                    f'"{collation}", as there are duplicate filenames, {duplicate_names}, '
-                    f"in file paths: " + "\n".join(str(p) for p in self.fspaths)
-                )
         if not selected_mode:
             raise FileFormatsError(
                 f"Cannot copy {self} using {mode} mode as it is not supported by "
@@ -1261,21 +1259,7 @@ class FileSet(DataType):
             )
         if selected_mode & self.CopyMode.leave:
             return self  # Don't need to do anything
-        if collation == self.CopyCollation.adjacent or new_stem:
-            decomposed_fspaths = self.decomposed_fspaths(
-                required_only=trim, decomposition_mode=extension_decomposition
-            )
-            exts = [d[-1] for d in decomposed_fspaths]
-            duplicate_exts = [n for n, c in Counter(exts).items() if c > 1]
-            if duplicate_exts:
-                raise FileFormatsError(
-                    f"Cannot copy {self} to {dest_dir} with collation mode "
-                    f'"{collation}", as there are duplicate extensions, {duplicate_exts}, '
-                    f"in file paths: " + "\n".join(str(p) for p in self.fspaths)
-                )
-        dest_dir = Path(dest_dir)  # ensure a Path not a string
-        if make_dirs:
-            dest_dir.mkdir(parents=True, exist_ok=True)
+
         if selected_mode & self.CopyMode.symlink:
             copy_dir = copy_file = os.symlink
         elif selected_mode & self.CopyMode.hardlink:
@@ -1294,36 +1278,25 @@ class FileSet(DataType):
             assert selected_mode & self.CopyMode.copy
             copy_dir = shutil.copytree
             copy_file = shutil.copyfile
-        new_paths = []
-        if trim and self.required_paths():
-            fspaths_to_copy = self.required_paths()
-        else:
-            fspaths_to_copy = self.fspaths
-        if not fspaths_to_copy:
-            raise FileFormatsError(
-                f"Cannot copy {self} because none of the fspaths in the file-set are "
-                "required. Set trim=False to copy all file-paths"
-            )
-        # Set default for new_stem if not provided and collating file-set to be adjacent
-        if collation == self.CopyCollation.adjacent:
-            if new_stem is None:
-                new_stem = sorted(decomposed_fspaths)[0][1]
-        # WARNING we redefine fspaths_to_copy as list of tuples not Paths
-        if new_stem:
-            fspaths_to_copy = decomposed_fspaths
 
+        # Get the paths that need to be copied, checking that it is possible to achieve
+        # the requested collation mode
+        fspaths_to_copy, new_stem = self._fspaths_to_copy(
+            new_stem=new_stem,
+            trim=trim,
+            collation=collation,
+            extension_decomposition=extension_decomposition,
+        )
+
+        dest_dir = Path(dest_dir)  # ensure a Path not a string
+        if make_dirs:
+            dest_dir.mkdir(parents=True, exist_ok=True)
+
+        new_paths = []
         for fspath in fspaths_to_copy:
-            if new_stem:
-                # fspath is a path decomposed into parent, stem, ext instead of a Path
-                parent_dir, old_stem, ext = fspath
-                fspath = parent_dir / (old_stem + ext)  # reconstruct into a Path
-                new_path = dest_dir / (new_stem + ext)
-            elif collation == self.CopyCollation.siblings:
-                new_path = dest_dir / fspath.name
-            else:
-                assert collation == self.CopyCollation.any
-                new_path = dest_dir / fspath.relative_to(self.parent)
-                new_path.parent.mkdir(parents=True, exist_ok=True)
+            new_path, fspath = self._new_copy_path(
+                dest_dir=dest_dir, fspath=fspath, new_stem=new_stem, collation=collation
+            )
             if new_path.exists():
                 if overwrite:
                     if fspath.is_dir():
@@ -1341,6 +1314,203 @@ class FileSet(DataType):
                 copy_file(fspath, new_path)
             new_paths.append(new_path)
         return type(self)(new_paths)
+
+    def move(
+        self,
+        dest_dir: Path,
+        collation: ty.Union[CopyCollation, str] = CopyCollation.any,
+        new_stem: ty.Optional[str] = None,
+        trim: bool = True,
+        make_dirs: bool = False,
+        overwrite: bool = False,
+        extension_decomposition: ExtensionDecomposition = ExtensionDecomposition.single,
+    ):
+        """Moves the file-set to a new directory, optionally renaming the files
+        to have consistent name-stems.
+
+        Parameters
+        ----------
+        dest_dir : str
+            Path to the parent directory to save the file-set
+        collation : FileSet.CopyCollation or str, optional
+            how to treat relative paths within the fileset, i.e. whether to move them
+            to a single directory, rename them to the same file-stem or maintain
+            relative directory structure. See FileSet.CopyCollation for details
+        new_stem: str, optional
+            the file name excluding file extensions, to give the files/dirs in the parent
+            directory, by default the original file name is used
+        trim : bool, optional
+            Only copy the paths in the file-set that are "required" by the format,
+            true by default
+        make_dirs : bool, optional
+            Make the parent destination and all missing ancestors if they are missing,
+            false by default
+        overwrite : bool, optional
+            whether to overwrite existing files/directories if present
+        extension_decomposition : FileSet.ExtensionDecomposition, optional
+            whether to consider file extensions to start from the first '.' (multiple) or the
+            last (single) or be empty (none), when the extension of a fspath in the
+            FileSet isn't explicitly defined by the FileSet class. Only relevant when
+            collation mode is set to "adjacent". By default True
+        """
+        if len(self.fspaths) == 1:
+            # If there is only one path to copy, then collation isn't meaningful
+            collation = self.CopyCollation.any
+        else:
+            collation = (
+                self.CopyCollation[collation]
+                if isinstance(collation, str)
+                else collation
+            )
+        fspaths_to_move, new_stem = self._fspaths_to_copy(
+            new_stem=new_stem,
+            trim=trim,
+            collation=collation,
+            extension_decomposition=extension_decomposition,
+        )
+        dest_dir = Path(dest_dir)  # ensure a Path not a string
+        if make_dirs:
+            dest_dir.mkdir(parents=True, exist_ok=True)
+
+        new_paths = []
+        for fspath in fspaths_to_move:
+            new_path, fspath = self._new_copy_path(
+                dest_dir=dest_dir, fspath=fspath, new_stem=new_stem, collation=collation
+            )
+            if new_path.exists():
+                if overwrite:
+                    if fspath.is_dir():
+                        shutil.rmtree(new_path)
+                    else:
+                        os.unlink(new_path)
+                else:
+                    raise FileFormatsError(
+                        f"Destination path '{str(new_path)}' exists, set "
+                        "'overwrite' to overwrite it"
+                    )
+            shutil.move(fspath, new_path)
+            new_paths.append(new_path)
+        return type(self)(new_paths)
+
+    def _fspaths_to_copy(
+        self,
+        new_stem: ty.Optional[str],
+        trim: bool,
+        collation: CopyCollation,
+        extension_decomposition: ExtensionDecomposition,
+    ) -> ty.Iterable[ty.Union[Path, ty.Tuple[Path, str, str]]]:
+        """Returns the file-paths to be copied/moved based on the collation mode and
+        new_stem
+
+        Parameters
+        ----------
+        new_stem : str
+            the file name excluding file extensions, to give the files/dirs in the parent
+            directory, by default the original file name is used
+        trim : bool
+            Only copy the paths in the file-set that are "required" by the format, true
+            by default"
+        collation : FileSet.CopyCollation or str
+            how to treat relative paths within the fileset, i.e. whether to move them to a
+            single directory, rename them to the same file-stem or maintain relative
+            directory structure. See FileSet.CopyCollation for details
+        extension_decomposition : FileSet.ExtensionDecomposition
+            whether to consider file extensions to start from the first '.' (multiple) or
+            the last (single) or be empty (none), when the extension of a fspath in the
+            FileSet isn't explicitly defined by the FileSet class. Only relevant when
+            collation mode is set to "adjacent". By default True
+
+        Returns
+        -------
+        fspaths_to_copy : Iterable[Path | tuple[Path, str, str]]:
+            the file-paths to be copied/moved
+        new_stem : str
+            the new stem to use for the file-paths, which is the determined if not
+            provided explicitly and collation mode is "adjacent"
+        """
+        if collation >= self.CopyCollation.siblings:
+            duplicate_names = [
+                n for n, c in Counter(p.name for p in self.fspaths).items() if c > 1
+            ]
+            if duplicate_names:
+                raise FileFormatsError(
+                    f"Cannot copy/move {self} with collation mode "
+                    f'"{collation}", as there are duplicate filenames, {duplicate_names}, '
+                    f"in file paths: " + "\n".join(str(p) for p in self.fspaths)
+                )
+        if collation == self.CopyCollation.adjacent or new_stem:
+            decomposed_fspaths = self.decomposed_fspaths(
+                required_only=trim, decomposition_mode=extension_decomposition
+            )
+            exts = [d[-1] for d in decomposed_fspaths]
+            duplicate_exts = [n for n, c in Counter(exts).items() if c > 1]
+            if duplicate_exts:
+                raise FileFormatsError(
+                    f"Cannot copy/move {self} with collation mode "
+                    f'"{collation}", as there are duplicate extensions, {duplicate_exts}, '
+                    f"in file paths: " + "\n".join(str(p) for p in self.fspaths)
+                )
+        if trim and self.required_paths():
+            fspaths_to_copy = self.required_paths()
+        else:
+            fspaths_to_copy = self.fspaths
+        if not fspaths_to_copy:
+            raise FileFormatsError(
+                f"Cannot copy {self} because none of the fspaths in the file-set are "
+                "required. Set trim=False to copy all file-paths"
+            )
+        # Set default for new_stem if not provided and collating file-set to be adjacent
+        if collation == self.CopyCollation.adjacent:
+            if new_stem is None:
+                new_stem = sorted(decomposed_fspaths)[0][1]
+        # WARNING we redefine fspaths_to_copy as list of tuples not Paths
+        if new_stem:
+            fspaths_to_copy = decomposed_fspaths
+        return fspaths_to_copy, new_stem
+
+    def _new_copy_path(
+        self,
+        dest_dir: Path,
+        fspath: ty.Union[Path, ty.Tuple[Path, str, str]],
+        new_stem: str,
+        collation: CopyCollation,
+    ) -> ty.Tuple[Path, Path]:
+        """Returns the new path for a file to be copied/moved based on the collation mode
+        and new_stem
+
+        Parameters
+        ----------
+        dest_dir : Path
+            the destination directory
+        fspath : Path | tuple[Path, str, str]
+            the file-path to be copied/moved
+        new_stem : str
+            the file name excluding file extensions, to give the files/dirs in the parent
+            directory, by default the original file name is used
+        collation : FileSet.CopyCollation
+            how to treat relative paths within the fileset, i.e. whether to move them to a
+            single directory, rename them to the same file-stem or maintain relative
+            directory structure. See FileSet.CopyCollation for details
+
+        Returns
+        -------
+        new_path : Path
+            the new path for the file to be copied/moved
+        fspath : Path
+            the original file-path, reconstructed from its decomposition if necessary
+        """
+        if new_stem:
+            # fspath is a path decomposed into parent, stem, ext instead of a Path
+            parent_dir, old_stem, ext = fspath
+            fspath = parent_dir / (old_stem + ext)  # reconstruct into a Path
+            new_path = dest_dir / (new_stem + ext)
+        elif collation == self.CopyCollation.siblings:
+            new_path = dest_dir / fspath.name
+        else:
+            assert collation == self.CopyCollation.any
+            new_path = dest_dir / fspath.relative_to(self.parent)
+            new_path.parent.mkdir(parents=True, exist_ok=True)
+        return new_path, fspath
 
     def copy_to(self, *args, **kwargs):
         """For b/w compatibility (temporary message)"""

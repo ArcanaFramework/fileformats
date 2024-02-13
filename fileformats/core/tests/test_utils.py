@@ -255,6 +255,15 @@ def test_copy_ext(work_dir):
     )
 
 
+def test_move(fsobject: FsObject, dest_dir: Path):
+    orig_names = set(p.name for p in fsobject.fspaths)
+    orig_hash = fsobject.hash()
+    moved = fsobject.move(dest_dir)
+    assert all(p.parent == dest_dir for p in moved.fspaths)
+    assert set(p.name for p in moved.fspaths) == orig_names
+    assert moved.hash() == orig_hash
+
+
 def test_decompose_fspaths(work_dir):
     class LuigiMario(File):
         ext = ".luigi.mario"
