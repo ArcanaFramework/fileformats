@@ -482,6 +482,15 @@ class FileSet(DataType):
             # matches
             available_converters = cls.get_converter_tuples(source_format)
             if len(available_converters) > 1:
+                # FIXME: Hack to avoid situation where multiple converters get added but are identical
+                if all(
+                    matching_source(a[0], available_converters[0][0])
+                    for a in available_converters[1:]
+                ) and all(
+                    a[1:] == available_converters[0][1:]
+                    for a in available_converters[1:]
+                ):
+                    available_converters = [available_converters[0]]
                 available_str = "\n".join(
                     describe_task(a[0]) for a in available_converters
                 )
@@ -489,7 +498,7 @@ class FileSet(DataType):
                     f"Ambiguous converters found between '{cls.mime_like}' and "
                     f"'{source_format.mime_like}':\n{available_str}"
                 ) from None
-            elif not available_converters:
+            if not available_converters:
                 msg = (
                     f"Could not find converter between '{source_format.mime_like}' and "
                     f"'{cls.mime_like}' formats"
