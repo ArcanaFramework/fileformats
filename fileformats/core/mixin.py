@@ -605,14 +605,13 @@ class WithClassifiers:
                 prev = prev_registered[0] if prev_registered else None
                 if prev:
                     prev_tuple = cls.converters[prev]
-                    if prev_tuple == converter_tuple + (cls.classifiers,):
-                        return  # workaround in case the same task gets imported twice in two different files
+                    task = converter_tuple[0]
                     prev_task = prev_tuple[0]
                     raise FileFormatsError(
-                        f"There is already a converter registered from {prev.unclassified} "
+                        f"Cannot register converter from {prev.unclassified} "
                         f"to {cls.unclassified} with non-wildcard classifiers "
-                        f"{list(prev.non_wildcard_classifiers())}: "
-                        + describe_task(prev_task)
+                        f"{list(prev.non_wildcard_classifiers())}, {describe_task(task)}, "
+                        f"because there is already one registered, {describe_task(prev_task)}"
                     )
             converters_dict = cls.unclassified.get_converters_dict()
             converters_dict[source_format] = converter_tuple + (cls.classifiers,)
