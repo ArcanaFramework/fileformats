@@ -1,11 +1,15 @@
 from pathlib import Path
 import re
 import typing as ty
+import logging
 from . import hook
 from .fileset import FileSet
 from .utils import classproperty, describe_task, to_mime_format_name, matching_source
 from .converter import SubtypeVar
 from .exceptions import FileFormatsError, FormatMismatchError, FormatRecognitionError
+
+
+logger = logging.getLogger("fileformats")
 
 
 class WithMagicNumber:
@@ -612,6 +616,10 @@ class WithClassifiers:
                         and task_kwargs == prev_kwargs
                         and cls.classifiers == prev_classifiers
                     ):
+                        logger.warning(
+                            "Ignoring duplicate registrations of the same converter %s",
+                            describe_task(task),
+                        )
                         return  # actually the same task but just imported twice for some reason
                     raise FileFormatsError(
                         f"Cannot register converter from {prev.unclassified} "

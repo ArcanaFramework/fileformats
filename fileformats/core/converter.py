@@ -1,11 +1,14 @@
 from abc import ABCMeta
 import typing as ty
+import logging
 import attrs
 from .utils import describe_task, matching_source
 from .exceptions import FileFormatsError
 
 if ty.TYPE_CHECKING:
     from .datatype import DataType
+
+logger = logging.getLogger("fileformats")
 
 
 @attrs.define
@@ -137,6 +140,10 @@ class SubtypeVar:
             task, task_kwargs = converter_tuple
             prev_task, prev_kwargs = prev_tuple
             if matching_source(task, prev_task) and task_kwargs == prev_kwargs:
+                logger.warning(
+                    "Ignoring duplicate registrations of the same converter %s",
+                    describe_task(task),
+                )
                 return  # actually the same task but just imported twice for some reason
             raise FileFormatsError(
                 f"Cannot register converter from {source_format} to the generic type "
