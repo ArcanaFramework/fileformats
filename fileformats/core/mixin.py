@@ -562,11 +562,10 @@ class WithClassifiers:
         ----------
         source_format : type
             the source format to register a converter from
-        task_spec : ty.Callable
-            a callable that resolves to a Pydra task
-        converter_kwargs : dict
-            additional keyword arguments to be passed to the task spec at initialisation
-            time
+        converter_tuple
+            a tuple consisting of a `task_spec` callable that resolves to a Pydra task
+            and a dictionary of keyword arguments to be passed to the task spec at
+            initialisation time
 
         Raises
         ------
@@ -605,6 +604,13 @@ class WithClassifiers:
                 assert len(prev_registered) <= 1
                 prev = prev_registered[0] if prev_registered else None
                 if prev:
+                    prev_task, prev_kwargs = cls.converters[prev][0]
+                    if (
+                        prev_task == converter_tuple[0]
+                        and prev_kwargs == converter_tuple[1]
+                        and converter_tuple[2] == cls.classifiers
+                    ):
+                        return  # workaround in case the same task gets imported twice in two different files
                     raise FileFormatsError(
                         f"There is already a converter registered from {prev.unclassified} "
                         f"to {cls.unclassified} with non-wildcard classifiers "

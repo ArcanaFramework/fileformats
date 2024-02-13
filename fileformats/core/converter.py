@@ -106,11 +106,10 @@ class SubtypeVar:
         ----------
         source_format : type
             the source format to register a converter from
-        task_spec : ty.Callable
-            a callable that resolves to a Pydra task
-        converter_kwargs : dict
-            additional keyword arguments to be passed to the task spec at initialisation
-            time
+        converter_tuple
+            a tuple consisting of a `task_spec` callable that resolves to a Pydra task
+            and a dictionary of keyword arguments to be passed to the task spec at
+            initialisation time
 
         Raises
         ------
@@ -135,7 +134,9 @@ class SubtypeVar:
         assert len(prev_registered) <= 1
         if prev_registered:
             prev = prev_registered[0]
-            prev_task = cls.converters[prev][0]
+            prev_task, prev_kwargs = cls.converters[prev][0]
+            if prev_task == converter_tuple[0] and prev_kwargs == converter_tuple[1]:
+                return  # workaround in case the same task gets imported twice in two different files
             raise FileFormatsError(
                 f"There is already a converter registered from {prev} "
                 f"to the generic type '{tuple(prev.wildcard_classifiers())[0]}':"

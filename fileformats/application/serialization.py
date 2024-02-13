@@ -2,11 +2,11 @@ import json
 import typing as ty
 from random import Random
 from pathlib import Path
-from ..core import hook, DataType, FileSet
-from ..core.mixin import WithClassifiers
+from fileformats.core import hook, DataType, FileSet
+from fileformats.core.mixin import WithClassifiers
 from ..generic import File
-from ..core.exceptions import FormatMismatchError
-from ..core.utils import gen_filename
+from fileformats.core.exceptions import FormatMismatchError
+from fileformats.core.utils import gen_filename
 
 
 class Schema(DataType):

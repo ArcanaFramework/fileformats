@@ -584,6 +584,9 @@ class FileSet(DataType):
         # If no converters are loaded, attempt to load from the standard location
         if source_format in converters_dict:
             prev = cls.converters[source_format][0]
+            prev_task, prev_kwargs = cls.converters[prev][0]
+            if prev_task == converter_tuple[0] and prev_kwargs == converter_tuple[1]:
+                return  # workaround in case the same task gets imported twice in two different files
             raise FormatConversionError(
                 f"There is already a converter registered between {source_format.__name__} "
                 f"and {cls.__name__}: {describe_task(prev)}"

@@ -1,4 +1,4 @@
-from ..core import __version__
+from fileformats.core import __version__
 from .basic import Foo, Bar, Baz, Qux
 from .headers import (
     YFile,
