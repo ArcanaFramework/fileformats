@@ -41,7 +41,11 @@ jobs:
     - name: Update build tools
       run: python3 -m pip install --upgrade pip
     - name: Install Package
-      run: python3 -m pip install -e .[test] -e ./extras[test]
+      run: python3 -m pip install -e .[test]
+    - name: Install Extras Package
+      run: python3 -m pip install -e ./extras[test]
+    - name: Change out of root directory
+      run: cd docs
     - name: Pytest
       run: pytest -vvs --cov fileformats --cov-config .coveragerc --cov-report xml .
     - name: Upload coverage to Codecov

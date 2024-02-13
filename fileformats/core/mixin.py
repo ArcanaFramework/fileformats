@@ -1,11 +1,15 @@
 from pathlib import Path
 import re
 import typing as ty
+import logging
 from . import hook
 from .fileset import FileSet
-from .utils import classproperty, describe_task, to_mime_format_name
+from .utils import classproperty, describe_task, to_mime_format_name, matching_source
 from .converter import SubtypeVar
 from .exceptions import FileFormatsError, FormatMismatchError, FormatRecognitionError
+
+
+logger = logging.getLogger("fileformats")
 
 
 class WithMagicNumber:
@@ -562,11 +566,10 @@ class WithClassifiers:
         ----------
         source_format : type
             the source format to register a converter from
-        task_spec : ty.Callable
-            a callable that resolves to a Pydra task
-        converter_kwargs : dict
-            additional keyword arguments to be passed to the task spec at initialisation
-            time
+        converter_tuple
+            a tuple consisting of a `task_spec` callable that resolves to a Pydra task
+            and a dictionary of keyword arguments to be passed to the task spec at
+            initialisation time
 
         Raises
         ------
@@ -605,11 +608,24 @@ class WithClassifiers:
                 assert len(prev_registered) <= 1
                 prev = prev_registered[0] if prev_registered else None
                 if prev:
+                    prev_tuple = cls.converters[prev]
+                    task, task_kwargs = converter_tuple
+                    prev_task, prev_kwargs, prev_classifiers = prev_tuple
+                    if (
+                        matching_source(task, prev_task)
+                        and task_kwargs == prev_kwargs
+                        and cls.classifiers == prev_classifiers
+                    ):
+                        logger.warning(
+                            "Ignoring duplicate registrations of the same converter %s",
+                            describe_task(task),
+                        )
+                        return  # actually the same task but just imported twice for some reason
                     raise FileFormatsError(
-                        f"There is already a converter registered from {prev.unclassified} "
+                        f"Cannot register converter from {prev.unclassified} "
                         f"to {cls.unclassified} with non-wildcard classifiers "
-                        f"{list(prev.non_wildcard_classifiers())}: "
-                        + describe_task(cls.converters[prev][0])
+                        f"{list(prev.non_wildcard_classifiers())}, {describe_task(task)}, "
+                        f"because there is already one registered, {describe_task(prev_task)}"
                     )
             converters_dict = cls.unclassified.get_converters_dict()
             converters_dict[source_format] = converter_tuple + (cls.classifiers,)
