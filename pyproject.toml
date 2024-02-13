@@ -57,7 +57,6 @@ test = [
     "pytest-env>=0.6.2",
     "pytest-cov>=2.12.1",
     "pydra >=0.23.0a0",
-    "fileformats-extras",
 ]
 docs = [
     "packaging",
