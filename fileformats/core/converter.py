@@ -133,13 +133,13 @@ class SubtypeVar:
         ]
         assert len(prev_registered) <= 1
         if prev_registered:
-            prev = prev_registered[0]
-            prev_task, prev_kwargs = cls.converters[prev][0]
-            if prev_task == converter_tuple[0] and prev_kwargs == converter_tuple[1]:
+            prev_tuple = prev_registered[0]
+            if prev_tuple == converter_tuple:
                 return  # workaround in case the same task gets imported twice in two different files
+            prev_task = prev_tuple[0]
             raise FileFormatsError(
-                f"There is already a converter registered from {prev} "
-                f"to the generic type '{tuple(prev.wildcard_classifiers())[0]}':"
+                f"There is already a converter registered from {prev_task} "
+                f"to the generic type '{tuple(prev_task.wildcard_classifiers())[0]}':"
                 f"{describe_task(prev_task)}"
             )
 

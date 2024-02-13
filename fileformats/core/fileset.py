@@ -569,11 +569,10 @@ class FileSet(DataType):
         ----------
         source_format : type
             the source format to register a converter from
-        task_spec : ty.Callable
-            a callable that resolves to a Pydra task
-        converter_kwargs : dict
-            additional keyword arguments to be passed to the task spec at initialisation
-            time
+        converter_tuple
+            a tuple consisting of a `task_spec` callable that resolves to a Pydra task
+            and a dictionary of keyword arguments to be passed to the task spec at
+            initialisation time
 
         Raises
         ------
@@ -583,13 +582,13 @@ class FileSet(DataType):
         converters_dict = cls.get_converters_dict()
         # If no converters are loaded, attempt to load from the standard location
         if source_format in converters_dict:
-            prev = cls.converters[source_format][0]
-            prev_task, prev_kwargs = cls.converters[prev][0]
-            if prev_task == converter_tuple[0] and prev_kwargs == converter_tuple[1]:
+            prev_tuple = cls.converters[source_format]
+            if prev_tuple == converter_tuple:
                 return  # workaround in case the same task gets imported twice in two different files
+            prev_task = prev_tuple[0]
             raise FormatConversionError(
                 f"There is already a converter registered between {source_format.__name__} "
-                f"and {cls.__name__}: {describe_task(prev)}"
+                f"and {cls.__name__}: {describe_task(prev_task)}"
             )
         converters_dict[source_format] = converter_tuple
 
