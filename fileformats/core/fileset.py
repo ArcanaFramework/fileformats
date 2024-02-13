@@ -21,6 +21,7 @@ from .utils import (
     to_mime_format_name,
     IANA_MIME_TYPE_REGISTRIES,
     describe_task,
+    matching_source,
     import_extras_module,
 )
 from .converter import SubtypeVar
@@ -583,8 +584,10 @@ class FileSet(DataType):
         # If no converters are loaded, attempt to load from the standard location
         if source_format in converters_dict:
             prev_tuple = cls.converters[source_format]
-            task = converter_tuple[0]
-            prev_task = prev_tuple[0]
+            task, task_kwargs = converter_tuple
+            prev_task, prev_kwargs = prev_tuple
+            if matching_source(task, prev_task) and task_kwargs == prev_kwargs:
+                return  # actually the same task but just imported twice for some reason
             raise FormatConversionError(
                 f"Cannot register converter from {source_format.__name__} "
                 f"to {cls.__name__}, {describe_task(task)}, because there is already "

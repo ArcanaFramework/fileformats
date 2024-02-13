@@ -3,7 +3,7 @@ import re
 import typing as ty
 from . import hook
 from .fileset import FileSet
-from .utils import classproperty, describe_task, to_mime_format_name
+from .utils import classproperty, describe_task, to_mime_format_name, matching_source
 from .converter import SubtypeVar
 from .exceptions import FileFormatsError, FormatMismatchError, FormatRecognitionError
 
@@ -605,8 +605,14 @@ class WithClassifiers:
                 prev = prev_registered[0] if prev_registered else None
                 if prev:
                     prev_tuple = cls.converters[prev]
-                    task = converter_tuple[0]
-                    prev_task = prev_tuple[0]
+                    task, task_kwargs = converter_tuple
+                    prev_task, prev_kwargs, prev_classifiers = prev_tuple
+                    if (
+                        matching_source(task, prev_task)
+                        and task_kwargs == prev_kwargs
+                        and cls.classifiers == prev_classifiers
+                    ):
+                        return  # actually the same task but just imported twice for some reason
                     raise FileFormatsError(
                         f"Cannot register converter from {prev.unclassified} "
                         f"to {cls.unclassified} with non-wildcard classifiers "

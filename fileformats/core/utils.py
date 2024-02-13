@@ -399,6 +399,15 @@ def describe_task(task):
     return f"{task} (defined at line {src_line} of {src_file})"
 
 
+def matching_source(task1, task2) -> bool:
+    """Checks to see if the tasks share the same source code but are just getting reimported
+    for some unknown reason"""
+    return (
+        inspect.getsourcefile(task1) == inspect.getsourcefile(task2)
+        and inspect.getsourcelines(task1)[-1] == inspect.getsourcelines(task2)[-1]
+    )
+
+
 def check_package_exists_on_pypi(package_name: str, timeout: int = 5) -> bool:
     """Check if a package exists on PyPI
 

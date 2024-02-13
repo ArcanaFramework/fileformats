@@ -1,7 +1,7 @@
 from abc import ABCMeta
 import typing as ty
 import attrs
-from .utils import describe_task
+from .utils import describe_task, matching_source
 from .exceptions import FileFormatsError
 
 if ty.TYPE_CHECKING:
@@ -134,8 +134,10 @@ class SubtypeVar:
         assert len(prev_registered) <= 1
         if prev_registered:
             prev_tuple = prev_registered[0]
-            task = converter_tuple[0]
-            prev_task = prev_tuple[0]
+            task, task_kwargs = converter_tuple
+            prev_task, prev_kwargs = prev_tuple
+            if matching_source(task, prev_task) and task_kwargs == prev_kwargs:
+                return  # actually the same task but just imported twice for some reason
             raise FileFormatsError(
                 f"Cannot register converter from {source_format} to the generic type "
                 f"'{tuple(prev_task.wildcard_classifiers())[0]}', {describe_task(task)} "
