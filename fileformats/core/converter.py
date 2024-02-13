@@ -133,7 +133,7 @@ class SubtypeVar:
         ]
         assert len(prev_registered) <= 1
         if prev_registered:
-            prev_tuple = prev_registered
+            prev_tuple = cls.converters[prev_registered]
             task, task_kwargs = converter_tuple
             prev_task, prev_kwargs = prev_tuple
             if matching_source(task, prev_task) and task_kwargs == prev_kwargs:
