@@ -3,12 +3,11 @@ import typing as ty
 import inspect
 from itertools import zip_longest
 import functools
-import attrs
 import urllib.error
 from .datatype import DataType
 from .converter import ConverterWrapper
 from .exceptions import FormatConversionError, FileFormatsExtrasError
-from .utils import import_extras_module, check_package_exists_on_pypi
+from .utils import import_extras_module, check_package_exists_on_pypi, add_exc_note
 
 
 __all__ = ["required", "check", "converter"]
@@ -78,6 +77,16 @@ def converter(
     # Note if explicit value for out_file isn't provided note it so we can also try
     # "out"
     from pydra.engine.helpers import make_klass
+
+    try:
+        import attrs
+    except ImportError as e:
+        add_exc_note(
+            e,
+            "To use the 'converter' decorator you need to have the 'attrs' package "
+            "installed, this should be installed with Pydra by default",
+        )
+        raise e
 
     def decorator(task_spec):
         out_file_local = out_file
