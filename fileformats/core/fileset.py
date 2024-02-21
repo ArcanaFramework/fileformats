@@ -137,17 +137,14 @@ class FileSet(DataType):
             getattr(self, check)()
 
     def __eq__(self, other) -> bool:
-        return (
-            isinstance(other, FileSet)
-            and self.mime_like == other.mime_like
-            and self.fspaths == other.fspaths
-        )
+        return type(self) is type(other) and self.fspaths == other.fspaths
 
     def __ne__(self, other) -> bool:
         return not self.__eq__(other)
 
     def __hash__(self) -> int:
-        return hash((self.mime_like, self.fspaths))
+        tp = type(self)
+        return hash((tp.__module__, tp.__name__, self.fspaths))
 
     def __repr__(self) -> str:
         return f"{self.type_name}('" + "', '".join(str(p) for p in self.fspaths) + "')"
