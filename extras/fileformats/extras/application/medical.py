@@ -1,10 +1,10 @@
 import typing as ty
 from pathlib import Path
-from random import Random
 import pydicom
 from fileformats.core import FileSet
 from fileformats.application import Dicom
 import medimages4tests.dummy.dicom.mri.t1w.siemens.skyra.syngo_d13c
+from fileformats.core.utils import SampleFileGenerator
 
 
 @FileSet.read_metadata.register
@@ -24,10 +24,10 @@ def dicom_read_metadata(
 @FileSet.generate_sample_data.register
 def dicom_generate_sample_data(
     dicom: Dicom,
-    dest_dir: Path,
-    seed: ty.Union[int, Random] = 0,
-    stem: ty.Optional[str] = None,
+    generator: SampleFileGenerator,
 ) -> ty.Iterable[Path]:
     return next(
-        medimages4tests.dummy.dicom.mri.t1w.siemens.skyra.syngo_d13c.get_image().iterdir()
+        medimages4tests.dummy.dicom.mri.t1w.siemens.skyra.syngo_d13c.get_image(
+            out_dir=generator.dest_dir
+        ).iterdir()
     )

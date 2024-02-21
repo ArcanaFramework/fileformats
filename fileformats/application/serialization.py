@@ -1,12 +1,11 @@
 import json
 import typing as ty
-from random import Random
 from pathlib import Path
 from fileformats.core import hook, DataType, FileSet
 from fileformats.core.mixin import WithClassifiers
 from ..generic import File
 from fileformats.core.exceptions import FormatMismatchError
-from fileformats.core.utils import gen_filename
+from fileformats.core.utils import SampleFileGenerator
 
 
 class Schema(DataType):
@@ -96,15 +95,17 @@ class Toml(DataSerialization):
 @FileSet.generate_sample_data.register
 def generate_json_sample_data(
     js: Json,
-    dest_dir: Path,
-    seed: ty.Union[int, Random] = 0,
-    stem: ty.Optional[str] = None,
+    generator: SampleFileGenerator,
 ) -> ty.Iterable[Path]:
-    js_file = dest_dir / gen_filename(seed, file_type=js, stem=stem)
-    rng = Random(seed + 1)
+    js_file = generator.generate_fspath(file_type=Json)
     with open(js_file, "w") as f:
         json.dump(
-            {"a": True, "b": "two", "c": 3, "d": [rng.randint(0, 10), rng.random(), 6]},
+            {
+                "a": True,
+                "b": "two",
+                "c": 3,
+                "d": [generator.rng.randint(0, 10), generator.rng.random(), 6],
+            },
             f,
         )
     return [js_file]
@@ -113,12 +114,9 @@ def generate_json_sample_data(
 @FileSet.generate_sample_data.register
 def generate_yaml_sample_data(
     yml: Yaml,
-    dest_dir: Path,
-    seed: ty.Union[int, Random] = 0,
-    stem: ty.Optional[str] = None,
+    generator: SampleFileGenerator,
 ) -> ty.Iterable[Path]:
-    yml_file = dest_dir / gen_filename(seed, file_type=yml, stem=stem)
-    rng = Random(seed + 1)
+    yml_file = generator.generate_fspath(file_type=Yaml)
     with open(yml_file, "w") as f:
         f.write(
             f"""# Generated sample YAML file by FileFormats
@@ -126,8 +124,8 @@ a: True
 b: two
 c: 3
 d:
-- {rng.randint(0, 10)}
-- {rng.random()}
+- {generator.rng.randint(0, 10)}
+- {generator.rng.random()}
 - 6
 """
         )

@@ -4,7 +4,6 @@ import struct
 from enum import Enum, IntEnum
 from warnings import warn
 import tempfile
-from random import Random
 from collections import Counter
 import typing as ty
 import shutil
@@ -23,6 +22,7 @@ from .utils import (
     describe_task,
     matching_source,
     import_extras_module,
+    SampleFileGenerator,
 )
 from .converter import SubtypeVar
 from .classifier import Classifier
@@ -859,9 +859,9 @@ class FileSet(DataType):
         return types
 
     @classmethod
-    def mock(cls, *fspaths: ty.Tuple[ty.Union[Path, str]]) -> Self:
+    def mock(cls, *fspaths: ty.Tuple[ty.Union[Path, str]]) -> "FileSet":
         """Return an instance of a mocked sub-class of the file format to be used in
-        test routines like doctests.
+        test routines like doctests that doesn't require to point at actual files
 
         Parameters
         ----------
@@ -909,8 +909,9 @@ class FileSet(DataType):
             dest_dir = Path(tempfile.mkdtemp())
         # Need to use mock to get an instance in order to use the singledispatch-based
         # hook.extra decorator
-        mock = cls.mock()
-        fspaths = mock.generate_sample_data(dest_dir, seed, stem)
+        fspaths = cls.sample_data(
+            SampleFileGenerator(dest_dir=dest_dir, seed=seed, fname_stem=stem)
+        )
         try:
             obj = cls(fspaths)
         except FormatMismatchError as e:
@@ -921,12 +922,28 @@ class FileSet(DataType):
             )
         return obj
 
+    @classmethod
+    def sample_data(cls, generator: SampleFileGenerator) -> ty.Iterable[Path]:
+        """Converts the `generate_sample_data` method into a class method by mocking up
+        a class instance and calling the method on it
+
+        Parameters
+        ----------
+        generator : SampleFileGenerator
+            the generator to use to create the sample data
+
+        Returns
+        -------
+        ty.Iterable[Path]
+            the generated file-system paths
+        """
+        mock: FileSet = cls.mock()
+        return mock.generate_sample_data(generator)
+
     @hook.extra
     def generate_sample_data(
         self,
-        dest_dir: Path,
-        seed: ty.Union[int, Random] = 0,
-        stem: ty.Optional[str] = None,
+        generator: SampleFileGenerator,
     ) -> ty.Iterable[Path]:
         """Generate test data at the fspaths of the file-set
 
