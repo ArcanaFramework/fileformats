@@ -1,7 +1,6 @@
 from abc import ABCMeta
 import typing as ty
 import logging
-import attrs
 from .utils import describe_task, matching_source
 from .exceptions import FileFormatsError
 
@@ -11,15 +10,22 @@ if ty.TYPE_CHECKING:
 logger = logging.getLogger("fileformats")
 
 
-@attrs.define
 class ConverterWrapper:
     """Wraps a converter task in a workflow so that the in_file and out_file names can
     be mapped onto their standardised names, "in_file" and "out_file" if necessary
     """
 
     task_spec: ty.Callable
-    in_file: ty.Optional[str] = None
-    out_file: ty.Optional[str] = None
+    in_file: ty.Optional[str]
+    out_file: ty.Optional[str]
+
+    def __init__(self, task_spec, in_file, out_file):
+        self.task_spec = task_spec
+        self.in_file = in_file
+        self.out_file = out_file
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self.task_spec}, {self.in_file}, {self.out_file})"
 
     def __call__(self, name=None, **kwargs):
         from pydra.engine import Workflow

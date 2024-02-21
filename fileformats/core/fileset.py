@@ -13,7 +13,6 @@ import functools
 from pathlib import Path
 import hashlib
 import logging
-import attrs
 from .utils import (
     classproperty,
     fspaths_converter,
@@ -50,7 +49,6 @@ FILE_CHUNK_LEN_DEFAULT = 8192
 logger = logging.getLogger("fileformats")
 
 
-@attrs.define(repr=False)
 class FileSet(DataType):
     """
     The base class for all format types within the fileformats package. A generic
@@ -67,55 +65,45 @@ class FileSet(DataType):
         extras hook
     """
 
-    fspaths: ty.FrozenSet[Path] = attrs.field(default=None, converter=fspaths_converter)
-    _metadata: ty.Optional[ty.Dict[str, ty.Any]] = attrs.field(
-        default=False,
-        eq=False,
-        order=False,
-    )
-
-    @_metadata.validator
-    def metadata_validator(self, _, val):
-        if val and not isinstance(val, dict):
-            raise TypeError(
-                f"Fileset metadata value needs to be None or dict, not {val} ({self.fspaths})"
-            )
-
-    # Explicitly set the Internet Assigned Numbers Authority (https://iana_mime.org) MIME
-    # type to None for any base classes that should not correspond to a MIME or MIME-like
-    # type.
-    iana_mime = None
-    ext = None
-    alternate_exts = ()
+    # Class attributes
 
     # Store converters registered by @converter decorator that convert to FileSet
     # NB: each class will have its own version of this dictionary
     converters = {}
 
+    # differentiate between Field and other DataType classes
     is_fileset = True
 
-    def __hash__(self):
-        return hash(self.fspaths)
+    # File extensions associated with file format
+    ext = None
+    alternate_exts = ()
 
-    def __repr__(self):
-        return f"{self.type_name}('" + "', '".join(str(p) for p in self.fspaths) + "')"
+    # to be overridden in subclasses
+    # Explicitly set the Internet Assigned Numbers Authority (https://iana_mime.org) MIME
+    # type to None for any base classes that should not correspond to a MIME or MIME-like
+    # type.
+    iana_mime = None
 
-    def __getitem__(self, name):
-        return self.metadata[name]
+    # Member attributes
+    fspaths: ty.FrozenSet[Path]
+    _metadata: ty.Union[ty.Dict[str, ty.Any], bool, None]
 
-    def __attrs_post_init__(self):
-        # Check required properties don't raise errors
-        for prop_name in self.required_properties():
-            getattr(self, prop_name)
-        # Loop through all attributes and find methods marked by CHECK_ANNOTATION
-        for check in self.checks():
-            getattr(self, check)()
+    def __init__(self, fspaths, metadata=False):
+        self._validate_class()
+        self.fspaths = fspaths_converter(fspaths)
+        self._validate_fspaths()
+        self._additional_fspaths()
+        if metadata and not isinstance(metadata, dict):
+            raise TypeError(
+                f"Fileset metadata value needs to be None or dict, not {metadata} ({self})"
+            )
+        self._metadata = metadata
+        self._validate_properties()
 
-    @fspaths.validator
-    def validate_fspaths(self, _, fspaths):
-        if not fspaths:
+    def _validate_fspaths(self):
+        if not self.fspaths:
             raise FileFormatsError(f"No file-system paths provided to {self}")
-        missing = [p for p in fspaths if not p or not p.exists()]
+        missing = [p for p in self.fspaths if not p or not p.exists()]
         if missing:
             missing_str = "\n".join(str(p) for p in missing)
             msg = (
@@ -133,6 +121,36 @@ class FileSet(DataType):
                 )
                 msg += "\n".join(str(p) for p in parent.iterdir())
             raise FileNotFoundError(msg)
+
+    def _validate_class(self):
+        """Check that the class has been correctly defined"""
+
+    def _additional_fspaths(self):
+        """Additional checks to be performed on the file-system paths provided to the"""
+
+    def _validate_properties(self):
+        # Check required properties don't raise errors
+        for prop_name in self.required_properties():
+            getattr(self, prop_name)
+        # Loop through all attributes and find methods marked by CHECK_ANNOTATION
+        for check in self.checks():
+            getattr(self, check)()
+
+    def __eq__(self, other) -> bool:
+        return (
+            isinstance(other, FileSet)
+            and self.mime_like == other.mime_like
+            and self.fspaths == other.fspaths
+        )
+
+    def __ne__(self, other) -> bool:
+        return not self.__eq__(other)
+
+    def __hash__(self) -> int:
+        return hash((self.mime_like, self.fspaths))
+
+    def __repr__(self) -> str:
+        return f"{self.type_name}('" + "', '".join(str(p) for p in self.fspaths) + "')"
 
     @property
     def parent(self) -> Path:
@@ -1558,20 +1576,21 @@ class FileSet(DataType):
     _formats_by_name = None
 
 
-@attrs.define(slots=False, repr=False)
 class MockMixin:
     """Strips out validation methods of a class, allowing it to be mocked in a way that
     still satisfies type-checking"""
 
     # Mirror fspaths here so we can unset its validator
-    fspaths: ty.FrozenSet[Path] = attrs.field(default=None, converter=fspaths_converter)
+    fspaths: ty.FrozenSet[Path]
 
-    def __attrs_post_init__(self):
-        pass
+    def _additional_fspaths(self):
+        pass  # disable implicit addition of related fspaths
 
-    @fspaths.validator
-    def validate_fspaths(self, _, fspaths):
-        pass
+    def _validate_fspaths(self):
+        pass  # disable validation of fspaths
+
+    def _validate_properties(self):
+        pass  # disable validation of properties
 
     @classproperty
     def type_name(cls):

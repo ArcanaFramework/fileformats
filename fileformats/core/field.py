@@ -1,6 +1,5 @@
 from __future__ import annotations
 import typing as ty
-import attrs
 from .utils import (
     classproperty,
 )
@@ -10,24 +9,35 @@ from .exceptions import (
 from .datatype import DataType
 
 
-@attrs.define(repr=False)
 class Field(DataType):
-    value = attrs.field()
+    """Base class for all field formats"""
 
     type = None
     is_field = True
     primitive = None
+    metadata = None  # Empty metadata dict for duck-typing with file-sets
 
-    def __str__(self):
+    def __init__(self, value):
+        self.value = value
+
+    def __eq__(self, field) -> bool:
+        return (
+            isinstance(field, Field)
+            and self.mime_like == field.mime_like
+            and self.value == field.value
+        )
+
+    def __ne__(self, other) -> bool:
+        return not self == other
+
+    def __hash__(self) -> int:
+        return hash((self.mime_like, self.value))
+
+    def __str__(self) -> str:
         return str(self.value)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"{self.type_name}({str(self)})"
-
-    @property
-    def metadata(self):
-        """Empty metadata dict for duck-typing with file-sets"""
-        return {}
 
     @classproperty
     def all_fields(cls) -> ty.List[ty.Type[Field]]:  # pylint: disable=no-self-argument

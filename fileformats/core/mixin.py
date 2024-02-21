@@ -110,31 +110,21 @@ class WithAdjacentFiles:
     different extensions
 
     Note that WithAdjacentFiles must come before the primary type in the method-resolution
-    order of the class so it can override the '__attrs_post_init__' method in
-    post_init_super class (typically FileSet), e.g.
+    order of the class so it can override the '_additional_paths' method in
 
         class MyFileFormatWithSeparateHeader(WithSeparateHeader, MyFileFormat):
 
             header_type = MyHeaderType
-
-    Class Attrs
-    -----------
-    post_init_super : type
-        the format class the WithAdjacentFiles mixin is mixed with that defines the
-        __attrs_post_init__ method that should be called once the adjacent files
-        are added to the self.fspaths attribute to run checks.
     """
 
-    post_init_super = FileSet
     fspaths: ty.FrozenSet[Path]
 
-    def __attrs_post_init__(self):
+    def _additional_fspaths(self):
         if len(self.fspaths) == 1:
             self.fspaths |= self.get_adjacent_files()
             trim = True
         else:
             trim = False
-        self.post_init_super.__attrs_post_init__(self)
         if trim:
             self.trim_paths()
 
@@ -285,7 +275,7 @@ class WithClassifiers:
     ordered_classifiers = False
     generically_classifies = False
 
-    def __attrs_pre_init__(self):
+    def _validate_class(self):
         if self.wildcard_classifiers():
             raise FileFormatsError(
                 f"Can instantiate {type(self)} class as it has wildcard classifiers "
