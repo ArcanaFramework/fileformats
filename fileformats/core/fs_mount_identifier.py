@@ -7,7 +7,7 @@ import subprocess as sp
 from .utils import logger
 
 
-class FileSystemMountIndentifier:
+class FsMountIdentifier:
     """Used to check the mount type that given file paths reside on in order to determine
     features that can be used (e.g. symlinks)"""
 

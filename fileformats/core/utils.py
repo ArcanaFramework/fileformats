@@ -79,7 +79,7 @@ def fspaths_converter(
         str,
         os.PathLike,
         bytes,
-        fileformats.core.FileSet,
+        "fileformats.core.FileSet",
     ]
 ):
     """Ensures fs-paths are a set of pathlib.Path"""

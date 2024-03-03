@@ -16,12 +16,14 @@ import logging
 from .utils import (
     classproperty,
     fspaths_converter,
-    to_mime_format_name,
-    IANA_MIME_TYPE_REGISTRIES,
     describe_task,
     matching_source,
     import_extras_module,
-    SampleFileGenerator,
+)
+from .sampling import SampleFileGenerator
+from .identification import (
+    to_mime_format_name,
+    IANA_MIME_TYPE_REGISTRIES,
 )
 from .converter import SubtypeVar
 from .classifier import Classifier
@@ -36,6 +38,8 @@ from .exceptions import (
 )
 from .datatype import DataType
 from . import hook
+from .fs_mount_identifier import FsMountIdentifier
+
 
 try:
     from typing import Self
@@ -1181,6 +1185,7 @@ class FileSet(DataType):
 
         # All other combinations (typically the result of bit-masking)
 
+        leave_or_copy = 0b1001
         leave_or_symlink = 0b0011
         leave_or_hardlink = 0b0101
         leave_or_link = 0b0111
@@ -1297,20 +1302,49 @@ class FileSet(DataType):
                 if isinstance(collation, str)
                 else collation
             )
-        if new_stem:
-            supported_modes -= self.CopyMode.leave
-        selected_mode = mode & supported_modes
-        if collation >= self.CopyCollation.siblings:
-            if not all(p.parent == self.parent for p in self.fspaths):
-                selected_mode -= self.CopyMode.leave
-        if not selected_mode:
-            raise FileFormatsError(
-                f"Cannot copy {self} using {mode} mode as it is not supported by "
-                f"the {supported_modes} given the collation specification, {collation}"
+        # Rule out any copy modes that are not supported given the collation mode
+        # and file-system mounts the paths and destination directory reside on
+        constraints = []
+        if FsMountIdentifier.on_cifs(dest_dir) and mode & self.CopyMode.symlink:
+            supported_modes -= self.CopyMode.symlink
+            constraint = (
+                f"Destination directory is on CIFS mount ({dest_dir}) "
+                "and we therefore cannot create a symlink"
             )
+            logger.debug(constraint)
+            constraints.append(constraint)
+        not_on_same_mount = [
+            p for p in self.fspaths if not FsMountIdentifier.on_same_mount(p, dest_dir)
+        ]
+        if not_on_same_mount and mode & self.CopyMode.hardlink:
+            supported_modes -= self.CopyMode.hardlink
+            constraint = (
+                f"Some paths ({', '.join(str(p) for p in not_on_same_mount)}) are on "
+                f"not on same file-system mount as the destination directory {dest_dir}"
+                "and therefore cannot be hard-linked"
+            )
+            logger.debug(constraint)
+            constraints.append(constraint)
+        if new_stem or (
+            collation >= self.CopyCollation.siblings
+            and not all(p.parent == self.parent for p in self.fspaths)
+        ):
+            supported_modes -= self.CopyMode.leave
+
+        # Get the intersection of copy modes that are supported and have been requested
+        selected_mode = mode & supported_modes
+        if not selected_mode:
+            msg = (
+                f"Cannot copy {self} using '{mode}' mode as it is not supported by "
+                f"the '{supported_modes}' given the collation specification, {collation}"
+            )
+            if constraints:
+                msg += ", and the following constraints:\n" + "\n".join(constraints)
+            raise FileFormatsError(msg)
         if selected_mode & self.CopyMode.leave:
             return self  # Don't need to do anything
 
+        # Select inner copy/link methods
         if selected_mode & self.CopyMode.symlink:
             copy_dir = copy_file = os.symlink
         elif selected_mode & self.CopyMode.hardlink:
@@ -1339,10 +1373,12 @@ class FileSet(DataType):
             extension_decomposition=extension_decomposition,
         )
 
-        dest_dir = Path(dest_dir)  # ensure a Path not a string
+        # Prepare destination directory
+        dest_dir = Path(dest_dir)
         if make_dirs:
             dest_dir.mkdir(parents=True, exist_ok=True)
 
+        # Iterate through the paths to copy, copying them to the destination directory
         new_paths = []
         for fspath in fspaths_to_copy:
             new_path, fspath = self._new_copy_path(

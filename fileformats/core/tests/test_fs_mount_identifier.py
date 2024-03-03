@@ -1,5 +1,7 @@
+import os.path
 import pytest
-from ..fs_mounts import MountIndentifier
+from fileformats.core.fs_mount_identifier import FsMountIdentifier
+from fileformats.generic import File
 
 
 MOUNT_OUTPUTS = (
@@ -158,12 +160,12 @@ devpts on /dev/ptmx type devpts (rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmo
 
 @pytest.mark.parametrize("output, exit_code, expected", MOUNT_OUTPUTS)
 def test_parse_mount_table(output, exit_code, expected):
-    assert MountIndentifier.parse_mount_table(exit_code, output) == expected
+    assert FsMountIdentifier.parse_mount_table(exit_code, output) == expected
 
 
 def test_cifs_check():
-    assert isinstance(MountIndentifier.get_mount_table(), list)
-    assert isinstance(MountIndentifier.on_cifs("/"), bool)
+    assert isinstance(FsMountIdentifier.get_mount_table(), list)
+    assert isinstance(FsMountIdentifier.on_cifs("/"), bool)
     fake_table = [("/scratch/tmp", "ext4"), ("/scratch", "cifs")]
     cifs_targets = [
         ("/scratch/tmp/x/y", False),
@@ -175,10 +177,68 @@ def test_cifs_check():
         ("/", False),
     ]
 
-    with MountIndentifier.patch_table([]):
+    with FsMountIdentifier.patch_table([]):
         for target, _ in cifs_targets:
-            assert MountIndentifier.on_cifs(target) is False
+            assert FsMountIdentifier.on_cifs(target) is False
 
-    with MountIndentifier.patch_table(fake_table):
+    with FsMountIdentifier.patch_table(fake_table):
         for target, expected in cifs_targets:
-            assert MountIndentifier.on_cifs(target) is expected
+            assert FsMountIdentifier.on_cifs(target) is expected
+
+
+def test_copy_constraints(tmp_path):
+
+    ext4_mnt1 = tmp_path / "ext4_mnt1"
+    ext4_mnt2 = tmp_path / "ext4_mnt2"
+    cifs_mnt = tmp_path / "cifs_mnt"
+
+    fake_mount_table = [
+        (str(ext4_mnt1), "ext4"),
+        (str(ext4_mnt2), "ext4"),
+        (str(cifs_mnt), "cifs"),
+    ]
+
+    # Create sample files
+    ext4_file = File.sample(dest_dir=ext4_mnt1, seed=1)
+    cifs_file = File.sample(dest_dir=cifs_mnt, seed=3)
+
+    with FsMountIdentifier.patch_table(fake_mount_table):
+        # Check that symlinks work on ext4
+        copy_modes = File.CopyMode.copy | File.CopyMode.hardlink | File.CopyMode.symlink
+        new_ext4_file = ext4_file.copy(
+            ext4_mnt1 / "dest",
+            mode=copy_modes,
+        )
+
+        assert new_ext4_file.contents == ext4_file.contents
+        assert os.path.islink(new_ext4_file)
+
+        # Symlinks not supported on CIFS
+        new_cifs_file = cifs_file.copy(
+            cifs_mnt / "dest",
+            mode=copy_modes,
+        )
+        assert new_cifs_file.contents == cifs_file.contents
+        assert not os.path.islink(new_cifs_file)
+        assert os.stat(new_cifs_file).st_ino == os.stat(cifs_file).st_ino  # Hardlink
+
+        # Hardlinks not supported across logical volumes
+        new_ext4_file2 = ext4_file.copy(
+            ext4_mnt2 / "dest", mode=File.CopyMode.copy | File.CopyMode.hardlink
+        )
+        assert new_ext4_file2.contents == ext4_file.contents
+        assert not os.path.islink(new_ext4_file2)
+        assert (
+            os.stat(ext4_file).st_ino != os.stat(new_ext4_file2).st_ino
+        )  # Not hardlink
+
+        # Hardlinks not supported across logical volumes 2 (from CIFS)
+        ext4_file_on_cifs = ext4_file.copy(
+            cifs_mnt / "dest",
+            mode=copy_modes,
+        )
+        assert ext4_file_on_cifs.contents == ext4_file.contents
+        assert not os.path.islink(ext4_file_on_cifs)
+        assert (
+            os.stat(ext4_file).st_ino != os.stat(ext4_file_on_cifs).st_ino
+        )  # Not hardlink

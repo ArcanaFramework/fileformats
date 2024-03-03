@@ -13,6 +13,8 @@ from .utils import (
     classproperty,
     subpackages,
     add_exc_note,
+)
+from .identification import (
     to_mime_format_name,
     from_mime_format_name,
     IANA_MIME_TYPE_REGISTRIES,

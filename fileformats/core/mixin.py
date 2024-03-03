@@ -4,7 +4,8 @@ import typing as ty
 import logging
 from . import hook
 from .fileset import FileSet
-from .utils import classproperty, describe_task, to_mime_format_name, matching_source
+from .utils import classproperty, describe_task, matching_source
+from .identification import to_mime_format_name
 from .converter import SubtypeVar
 from .exceptions import FileFormatsError, FormatMismatchError, FormatRecognitionError
 

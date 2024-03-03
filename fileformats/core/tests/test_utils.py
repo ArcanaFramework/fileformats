@@ -205,13 +205,13 @@ def test_copy_collation_leave_diff_dir(work_dir: Path, dest_dir: Path):
 
     with pytest.raises(
         FileFormatsError,
-        match="using leave mode as it is not supported by the any given the collation specification",
+        match="given the collation specification",
     ):
         fileset.copy(dest_dir=dest_dir, mode="leave", collation="siblings")
 
     with pytest.raises(
         FileFormatsError,
-        match="using leave mode as it is not supported by the any given the collation specification",
+        match="given the collation specification",
     ):
         fileset.copy(dest_dir=dest_dir, mode="leave", collation="adjacent")
 

@@ -45,7 +45,7 @@ class SampleFileGenerator:
 
     def generate(
         self,
-        file_type: ty.Type[fileformats.core.FileSet],
+        file_type: ty.Type["fileformats.core.FileSet"],
         contents: ty.Union[str, bytes] = None,
         fill: int = 0,
         **kwargs,
@@ -99,7 +99,7 @@ class SampleFileGenerator:
 
     def generate_fspath(
         self,
-        file_type: ty.Optional[ty.Type[fileformats.core.FileSet]] = None,
+        file_type: ty.Optional[ty.Type["fileformats.core.FileSet"]] = None,
         fname_stem: ty.Optional[str] = None,
         relpath: ty.Optional[Path] = None,
     ):

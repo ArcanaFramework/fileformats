@@ -157,11 +157,11 @@ def to_mime(datatype: type, official: bool = True):
 
 def from_paths(
     fspaths: ty.Iterable[Path],
-    *candidates: ty.Tuple[ty.Type[fileformats.core.FileSet]],
+    *candidates: ty.Tuple[ty.Type["fileformats.core.FileSet"]],
     common_ok: bool = False,
     ignore: ty.Optional[str] = None,
     **kwargs,
-) -> ty.List[fileformats.core.FileSet]:
+) -> ty.List["fileformats.core.FileSet"]:
     """Given a list of candidate classes (defaults to all installed in alphabetical order),
     instantiates all possible file-set instances from a collection of file-system paths.
 
