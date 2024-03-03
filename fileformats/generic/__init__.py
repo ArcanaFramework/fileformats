@@ -1,17 +1,14 @@
 import os
-import random
 import typing as ty
-import string
 import itertools
-from random import Random
 from pathlib import Path
 from fileformats.core.fileset import FileSet
 from fileformats.core.exceptions import (
     FormatMismatchError,
     UnconstrainedExtensionException,
 )
-from fileformats.core import hook
-from fileformats.core.utils import classproperty, SampleFileGenerator
+from fileformats.core import hook, SampleFileGenerator
+from fileformats.core.utils import classproperty
 from fileformats.core.mixin import WithClassifiers
 
 

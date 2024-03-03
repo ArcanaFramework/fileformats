@@ -4,7 +4,7 @@ import pydicom
 from fileformats.core import FileSet
 from fileformats.application import Dicom
 import medimages4tests.dummy.dicom.mri.t1w.siemens.skyra.syngo_d13c
-from fileformats.core.utils import SampleFileGenerator
+from fileformats.core import SampleFileGenerator
 
 
 @FileSet.read_metadata.register
