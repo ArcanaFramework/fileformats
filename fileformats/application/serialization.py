@@ -5,7 +5,7 @@ from fileformats.core import hook, DataType, FileSet
 from fileformats.core.mixin import WithClassifiers
 from ..generic import File
 from fileformats.core.exceptions import FormatMismatchError
-from fileformats.core.utils import SampleFileGenerator
+from fileformats.core import SampleFileGenerator
 
 
 class Schema(DataType):

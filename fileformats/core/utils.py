@@ -1,23 +1,13 @@
-from __future__ import annotations
 import importlib
-import operator
 from pathlib import Path
-import random
-import string
 import inspect
-from functools import cached_property
 import typing as ty
-import re
 import urllib.request
 import urllib.error
 import os
 import logging
 import pkgutil
 from contextlib import contextmanager
-from fileformats.core.exceptions import (
-    FileFormatsError,
-    FormatRecognitionError,
-)
 import fileformats.core
 
 
@@ -42,213 +32,6 @@ def include_testing_package(flag: bool = True):
         _excluded_subpackages.remove("testing")
     else:
         _excluded_subpackages.add("testing")
-
-
-def find_matching(
-    fspaths: ty.List[Path],
-    candidates: ty.Sequence = None,
-    standard_only: bool = False,
-    include_generic: bool = False,
-    skip_unconstrained: bool = True,
-):
-    """Detect the corresponding file format from a set of file-system paths
-
-    Parameters
-    ----------
-    fspaths : list[Path]
-        file-system paths to detect the format of
-    candidates: sequence[DataType], optional
-        the candidates to select from, by default all file formats
-    standard_only : bool, optional
-        If you only want to return matches from the "standard" IANA types. Only relevant
-        if candidates is None, by default False
-    skip_unconstrained : bool, optional
-        skip formats that aren't constrained by extension, magic number or another check.
-        Only relevant if candidates is None
-    """
-    import fileformats.core.mixin
-
-    fspaths = fspaths_converter(fspaths)
-    matches = []
-    if candidates is None:
-        candidates = fileformats.core.FileSet.all_formats
-    for frmt in candidates:
-        if skip_unconstrained and frmt.unconstrained:
-            continue
-        namespace = frmt.namespace
-        if (
-            frmt.matches(fspaths)
-            and (not standard_only or namespace in IANA_MIME_TYPE_REGISTRIES)
-            and (include_generic or namespace != "generic")
-        ):
-            matches.append(frmt)
-    return matches
-
-
-def from_mime(mime_str: str):
-    """Resolves a MIME type (or MIME-like) string into the corresponding type
-
-    Parameters
-    ----------
-    mime_str : str
-        the MIME type, or MIME-like (i.e. using the fileformats namespace scheme
-        instead of putting all non-standard types into application/*), string to
-        resolve
-
-    Returns
-    -------
-    datatype : type
-        the resolved datatype
-    """
-    if mime_str.endswith(LIST_MIME):
-        item_mime = mime_str[: -len(LIST_MIME)]
-        if item_mime.startswith("[") and item_mime.endswith("]"):
-            item_mime = item_mime[1:-1]
-        return ty.List[from_mime(item_mime)]
-    if "," in mime_str:
-        return ty.Union.__getitem__(tuple(from_mime(t) for t in mime_str.split(",")))
-    return fileformats.core.DataType.from_mime(mime_str)
-
-
-def to_mime(datatype: type, official: bool = True):
-    """Returns the mime-type or mime-like (i.e. using fileformats namespaces instead
-    of putting all non-standard types in the applications/* registry) string corresponding
-    to the given datatype
-
-    Parameters
-    ----------
-    datatype : type
-        the datatype to get the mime string for
-    official : bool
-        whether to use the official mime-type instead of mime-like
-
-    Returns
-    -------
-    mime_str : str
-        the MIME type string if `iana=True`, or MIME-like (i.e. using the fileformats
-        namespace scheme instead of putting all non-standard types into application/*)
-        if not
-    """
-    origin = ty.get_origin(datatype)
-    if official and (origin or datatype.namespace == "field"):
-        raise TypeError(
-            f"Cannot convert {datatype} to official mime-type as it is not a proper "
-            'file-type, please use official=False to convert to "mime-like" string instead'
-        )
-    if origin is list:
-        item_mime = to_mime(ty.get_args(datatype)[0], official=official)
-        if "," in item_mime:
-            item_mime = "[" + item_mime + "]"
-        item_mime += LIST_MIME
-        return item_mime
-    if origin is ty.Union:
-        return ",".join(to_mime(t, official=official) for t in ty.get_args(datatype))
-    # Handle case
-    if isinstance(datatype, ty.ForwardRef):
-        datatype = datatype.__forward_arg__
-    if (
-        isinstance(datatype, str)
-        and datatype.startswith("fileformats.")
-        and not official
-    ):
-        ns, class_name = datatype.split(".")[1:]
-        ns = ns.replace("_", "-")
-        class_name = to_mime_format_name(class_name)
-        return ns + "/" + class_name
-    mime = datatype.mime_type if official else datatype.mime_like
-    if official:
-        mime = datatype.mime_type
-    else:
-        mime = datatype.mime_like
-        try:
-            from_mime(mime)
-        except FormatRecognitionError as e:
-            add_exc_note(
-                e,
-                (
-                    f"Cannot create reversible MIME type for {datatype}. Please ensure "
-                    "it is imported into a top-level fileformats namespace package "
-                    f"'{datatype.namespace}'"
-                ),
-            )
-            raise e
-    return mime
-
-
-def from_paths(
-    fspaths: ty.Iterable[Path],
-    *candidates: ty.Tuple[ty.Type[fileformats.core.FileSet]],
-    common_ok: bool = False,
-    ignore: ty.Optional[str] = None,
-    **kwargs,
-) -> ty.List[fileformats.core.FileSet]:
-    """Given a list of candidate classes (defaults to all installed in alphabetical order),
-    instantiates all possible file-set instances from a collection of file-system paths.
-
-    Note that the order in which the candidates are provided is important as the first
-    valid match for each path will be returned.
-
-    Parameters
-    ----------
-    fspaths : ty.Iterable[Path]
-        file-system paths to instantiate file-sets from
-    *candidates : tuple[fileformats.core.FileSet]
-        the file-set classes to instantiate. If none are provided, then all installed
-        filesets will be tried in alphabetical order of their "mime-like" representation.
-    common_ok : bool
-        whether file-system paths can be used as secondary files in multiple file-sets
-    ignore: str, optional
-        regular expression pattern for file/directory names to ignore if they aren't
-        used in any of the returned file-sets. Any remaining file-paths that are not
-        matched by this pattern will cause an error to be raised.
-    **kwargs: dict[str, Any]
-        keyword arguments passed on to the underlying call to FileSet.from_paths
-
-    Returns
-    -------
-    list[fileformats.core.FileSet]
-        the instantiated file-sets
-    """
-    if candidates:
-        # Unwrap any nested tuples into a flat list of file-setclasses
-        unwrapped = []
-
-        def unwrap(candidate):
-            if ty.get_origin(candidate) is ty.Union:
-                for arg in ty.get_args(candidate):
-                    unwrapped.extend(unwrap(arg))
-            else:
-                unwrapped.append(candidate)
-
-        for candidate in candidates:
-            unwrap(candidate)
-        candidates = unwrapped
-        candidates_str = ", ".join(c.mime_like for c in candidates)
-    else:
-        # Use all installed file-set classes if no candidates are provided, sorted
-        # alphabetically to ensure behaviour is consistent between runs
-        candidates = sorted(
-            fileformats.core.FileSet.subclasses(), key=operator.attrgetter("mime_like")
-        )
-        candidates_str = "all installed"
-
-    remaining = fspaths
-    filesets = []
-    for candidate in candidates:
-        fsets, remaining = candidate.from_paths(
-            remaining, common_ok=common_ok, **kwargs
-        )
-        filesets.extend(fsets)
-    if ignore:
-        ignore_re = re.compile(ignore)
-        remaining = [p for p in remaining if not ignore_re.match(p.name)]
-    if remaining:
-        raise FileFormatsError(
-            "the following file-system paths were not recognised by any of the "
-            f"candidate formats ({candidates_str}):\n"
-            + "\n".join(str(p) for p in remaining)
-        )
-    return filesets
 
 
 def subpackages(exclude: ty.Sequence[str] = _excluded_subpackages):
@@ -296,7 +79,7 @@ def fspaths_converter(
         str,
         os.PathLike,
         bytes,
-        fileformats.core.FileSet,
+        "fileformats.core.FileSet",
     ]
 ):
     """Ensures fs-paths are a set of pathlib.Path"""
@@ -315,46 +98,6 @@ class classproperty(object):
 
     def __get__(self, obj, owner):
         return self.f(owner)
-
-
-IANA_MIME_TYPE_REGISTRIES = [
-    "application",
-    "audio",
-    "font",
-    "image",
-    "message",
-    "model",
-    "multipart",
-    "text",
-    "video",
-]
-
-
-def to_mime_format_name(format_name: str):
-    if "___" in format_name:
-        raise FileFormatsError(
-            f"Cannot convert name of format class {format_name} to mime string as it "
-            "contains triple underscore"
-        )
-    if format_name.startswith("_"):
-        format_name = format_name[1:]
-    format_name = format_name[0].lower() + format_name[1:]
-    format_name = re.sub("__([A-Z])", lambda m: "+" + m.group(1).lower(), format_name)
-    format_name = re.sub("_([A-Z])", lambda m: "." + m.group(1).lower(), format_name)
-    format_name = re.sub("([A-Z])", lambda m: "-" + m.group(1).lower(), format_name)
-    return format_name
-
-
-def from_mime_format_name(format_name: str):
-    if format_name.startswith("x-"):
-        format_name = format_name[2:]
-    if re.match(r"^[0-9]", format_name):
-        format_name = "_" + format_name
-    format_name = format_name.capitalize()
-    format_name = re.sub(r"(\.)(\w)", lambda m: "_" + m.group(2).upper(), format_name)
-    format_name = re.sub(r"(\+)(\w)", lambda m: "__" + m.group(2).upper(), format_name)
-    format_name = re.sub(r"(-)(\w)", lambda m: m.group(2).upper(), format_name)
-    return format_name
 
 
 def add_exc_note(e, note):
@@ -455,6 +198,8 @@ def import_extras_module(klass: type) -> ExtrasModule:
     sub_pkg : str
         the name of the sub-package that was attempted to be loaded
     """
+    from .identification import IANA_MIME_TYPE_REGISTRIES
+
     # Check for Mock class
     try:
         klass = klass.TRUE_CLASS
@@ -484,162 +229,3 @@ def import_extras_module(klass: type) -> ExtrasModule:
     else:
         extras_imported = True
     return ExtrasModule(extras_imported, extras_pkg, extras_pypi)
-
-
-LIST_MIME = "+list-of"
-
-
-class SampleFileGenerator:
-    """Generates sample files. Designed to be used within generate_sample_data overrides
-
-    Parameters
-    ----------
-    dest_dir : Path
-        the directory to write the sample files to
-    seed : int
-        the seed for the random number generator
-    fname_stem : str
-        the stem of the file name to generate
-    """
-
-    dest_dir: Path
-    seed: int
-    fname_stem: str
-
-    FNAME_STEM_LENGTH = 24
-
-    def __init__(self, dest_dir: Path, seed: int, fname_stem: str = None):
-        self.dest_dir = dest_dir
-        self.seed = seed
-        self.fname_stem = (
-            self._generate_fname_stem() if fname_stem is None else fname_stem
-        )
-
-    def _generate_fname_stem(self):
-        return "".join(
-            self.rng.choices(
-                string.ascii_letters + string.digits, k=self.FNAME_STEM_LENGTH
-            )
-        )
-
-    @cached_property
-    def rng(self):
-        return random.Random(self.seed)
-
-    def generate(
-        self,
-        file_type: ty.Type[fileformats.core.FileSet],
-        contents: ty.Union[str, bytes] = None,
-        fill: int = 0,
-        **kwargs,
-    ):
-        """Generates a random file of length `length` and extension `ext`
-
-        Parameters
-        ----------
-        file_type : Type[FileSet]
-            type of the file to generate the filename for, used to append any extensions
-            and seed the random number generator if required
-        contents : Union[str, bytes]
-            the contents of the file to write
-        fill : int
-            length of the random string to generate for the file contents. Will be appended
-            after any explicitly provided contents
-        **kwargs : dict
-            additional keyword arguments to pass to generate_fspath
-
-        Returns
-        -------
-        fspath : Path
-            path to the randomly generated file
-        """
-        if not contents and not fill:
-            raise ValueError("Either contents or random_fill_length must be provided")
-        fspath = self.generate_fspath(file_type, **kwargs)
-        fspath.parent.mkdir(parents=True, exist_ok=True)
-        try:
-            is_binary = file_type.binary
-        except AttributeError:
-            is_binary = False
-        if not contents:
-            contents = (
-                bytes(random.choices(list(range(256)), k=fill))
-                if is_binary
-                else "".join(random.choices(string.printable, k=fill))
-            )
-        else:
-            contents_type = bytes if is_binary else str
-            if not isinstance(contents, bytes):
-                raise TypeError(
-                    f"contents must be {contents_type} for {file_type} files, "
-                    f"not {type(contents)}"
-                )
-        if is_binary:
-            fspath.write_bytes(contents)
-        else:
-            fspath.write_text(contents)
-        return fspath
-
-    def generate_fspath(
-        self,
-        file_type: ty.Optional[ty.Type[fileformats.core.FileSet]] = None,
-        fname_stem: ty.Optional[str] = None,
-        relpath: ty.Optional[Path] = None,
-    ):
-        """Generates a random file path in the destination directory of length `length`
-        and extension `ext`
-
-        Parameters
-        ----------
-        file_type : Type[FileSet]
-            type of the file to generate the filename for, used to append any extensions
-            and seed the random number generator if required
-        fname_stem : str, optional or bool
-            Use explicitly provided if it is a string
-        relpath : Path
-            the path to generate the filename at, relative to the destination directory
-
-        Returns
-        -------
-        fspath : Path
-            randomly generated file-system path
-        """
-        if file_type is None:
-            import fileformats.generic
-
-            file_type = fileformats.generic.FsObject
-        if fname_stem is not None:
-            fname = fname_stem
-        else:
-            fname = self.fname_stem
-        if file_type and file_type.ext:
-            fname += file_type.ext
-        fspath = self.dest_dir
-        if relpath:
-            fspath /= relpath
-        return fspath / fname
-
-    def child(
-        self, dest_dir: ty.Optional[Path] = None, fname_stem: str = None
-    ) -> "SampleFileGenerator":
-        """Creates a new instance of SampleFileGenerator with the same destination
-        directory and seed, but a new random filename stem
-
-        Parameters
-        ----------
-        relpath : Path, optional
-            the path to generate the filename at, relative to the destination directory
-        fname_stem : str, optional
-            the stem of the file name to generate
-
-        Returns
-        -------
-        SampleFileGenerator
-            the new instance of SampleFileGenerator
-        """
-        if dest_dir is None:
-            dest_dir = self.dest_dir
-        kwargs = {"fname_stem": fname_stem} if fname_stem else {}
-        return SampleFileGenerator(
-            dest_dir, seed=self.rng.randint(0, 2**32 - 1), **kwargs
-        )

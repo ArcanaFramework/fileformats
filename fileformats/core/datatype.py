@@ -13,6 +13,8 @@ from .utils import (
     classproperty,
     subpackages,
     add_exc_note,
+)
+from .identification import (
     to_mime_format_name,
     from_mime_format_name,
     IANA_MIME_TYPE_REGISTRIES,
@@ -125,7 +127,7 @@ class DataType(Classifier, metaclass=ABCMeta):
         except ValueError:
             raise FormatRecognitionError(
                 f"Format '{mime_string}' is not a valid MIME-like format of <namespace>/<format>"
-            )
+            ) from None
         else:
             namespace = namespace.replace("-", "_")
         # Attempt to load file type using their `iana_mime` attribute
