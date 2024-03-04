@@ -1,6 +1,7 @@
 import os
 import typing as ty
 from pathlib import Path
+import platform
 import re
 from contextlib import contextmanager
 import subprocess as sp
@@ -12,7 +13,7 @@ class FsMountIdentifier:
     features that can be used (e.g. symlinks)"""
 
     @classmethod
-    def on_cifs(cls, path: os.PathLike) -> bool:
+    def symlinks_supported(cls, path: os.PathLike) -> bool:
         """
         Check whether a file path is on a CIFS filesystem mounted in a POSIX host.
 
@@ -32,7 +33,7 @@ class FsMountIdentifier:
 
         NB: Adapted from https://github.com/nipy/nipype
         """
-        return cls.get_mount(path)[1] == "cifs"
+        return cls.get_mount(path)[1] not in ("cifs", "ntfs")
 
     @classmethod
     def on_same_mount(cls, path1: os.PathLike, path2: os.PathLike) -> bool:
@@ -54,6 +55,8 @@ class FsMountIdentifier:
             the root of the mount the path sits on
         fstype : str
             the type of the file-system (e.g. ext4 or cifs)"""
+        if platform.system() == "Windows":
+            return (str(path.absolute()).split(":", 1)[0], "ntfs")
         try:
             # Only the first match (most recent parent) counts, mount table sorted longest
             # to shortest
@@ -66,7 +69,7 @@ class FsMountIdentifier:
             return (Path("/"), "ext4")
 
     @classmethod
-    def generate_cifs_table(cls) -> ty.List[ty.Tuple[str, str]]:
+    def generate_mount_table(cls) -> ty.List[ty.Tuple[str, str]]:
         """
         Construct a reverse-length-ordered list of mount points that fall under a CIFS mount.
 
@@ -77,6 +80,10 @@ class FsMountIdentifier:
 
         """
         exit_code, output = sp.getstatusoutput("mount")
+        if exit_code != 0:
+            raise RuntimeError(
+                "Failed to get mount table (exit code {}): {}".format(exit_code, output)
+            )
         return cls.parse_mount_table(exit_code, output)
 
     @classmethod
@@ -90,10 +97,6 @@ class FsMountIdentifier:
         outputs
 
         """
-        # Not POSIX
-        if exit_code != 0:
-            return []
-
         # Linux mount example:  sysfs on /sys type sysfs (rw,nosuid,nodev,noexec)
         #                          <PATH>^^^^      ^^^^^<FSTYPE>
         # OSX mount example:    /dev/disk2 on / (hfs, local, journaled)
@@ -105,28 +108,25 @@ class FsMountIdentifier:
         matches = [(ll, pattern.match(ll)) for ll in output.strip().splitlines() if ll]
 
         # (path, fstype) tuples, sorted by path length (longest first)
-        mount_info = sorted(
+        mounts = sorted(
             (match.groups() for _, match in matches if match is not None),
             key=lambda x: len(x[0]),
             reverse=True,
         )
-        cifs_paths = [path for path, fstype in mount_info if fstype.lower() == "cifs"]
 
         # Report failures as warnings
         for line, match in matches:
             if match is None:
                 logger.debug("Cannot parse mount line: '%s'", line)
 
-        return [
-            mount
-            for mount in mount_info
-            if any(mount[0].startswith(path) for path in cifs_paths)
-        ]
+        return mounts
 
     @classmethod
     def get_mount_table(cls) -> ty.List[ty.Tuple[str, str]]:
+        if platform.system() == "Windows":
+            raise RuntimeError("On windows, no mount table")
         if cls._mount_table is None:
-            cls._mount_table = cls.generate_cifs_table()
+            cls._mount_table = cls.generate_mount_table()
         return cls._mount_table
 
     @classmethod

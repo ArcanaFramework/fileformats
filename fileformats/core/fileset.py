@@ -1305,7 +1305,10 @@ class FileSet(DataType):
         # Rule out any copy modes that are not supported given the collation mode
         # and file-system mounts the paths and destination directory reside on
         constraints = []
-        if FsMountIdentifier.on_cifs(dest_dir) and mode & self.CopyMode.symlink:
+        if (
+            not FsMountIdentifier.symlinks_supported(dest_dir)
+            and mode & self.CopyMode.symlink
+        ):
             supported_modes -= self.CopyMode.symlink
             constraint = (
                 f"Destination directory is on CIFS mount ({dest_dir}) "

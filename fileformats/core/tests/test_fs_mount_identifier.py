@@ -33,7 +33,32 @@ fusectl on /sys/fs/fuse/connections type fusectl (rw,relatime)
 gvfsd-fuse on /run/user/1002/gvfs type fuse.gvfsd-fuse (rw,nosuid,nodev,relatime,user_id=1002,group_id=1002)
 """,
         0,
-        [],
+        [
+            ("/sys/fs/cgroup/cpu,cpuacct", "cgroup"),
+            ("/sys/firmware/efi/efivars", "efivarfs"),
+            ("/proc/sys/fs/binfmt_misc", "autofs"),
+            ("/sys/fs/fuse/connections", "fusectl"),
+            ("/sys/fs/cgroup/systemd", "cgroup"),
+            ("/sys/fs/cgroup/freezer", "cgroup"),
+            ("/sys/fs/cgroup/cpuset", "cgroup"),
+            ("/sys/kernel/security", "securityfs"),
+            ("/var/lib/docker/aufs", "ext4"),
+            ("/sys/fs/cgroup/pids", "cgroup"),
+            ("/run/user/1002/gvfs", "fuse.gvfsd-fuse"),
+            ("/sys/kernel/debug", "debugfs"),
+            ("/sys/fs/cgroup", "tmpfs"),
+            ("/sys/fs/pstore", "pstore"),
+            ("/dev/hugepages", "hugetlbfs"),
+            ("/dev/mqueue", "mqueue"),
+            ("/boot/efi", "vfat"),
+            ("/dev/pts", "devpts"),
+            ("/dev/shm", "tmpfs"),
+            ("/proc", "proc"),
+            ("/sys", "sysfs"),
+            ("/dev", "devtmpfs"),
+            ("/run", "tmpfs"),
+            ("/", "ext4"),
+        ],
     ),
     # OS X, no CIFS
     (
@@ -53,7 +78,22 @@ map -static on /Volumes/raid.top (autofs, automounted, nobrowse)
 /dev/disk1s3 on /Volumes/Boot OS X (hfs, local, journaled, nobrowse)
 """,
         0,
-        [],
+        [
+            ("/Volumes/MyBookData", "hfs"),
+            ("/Volumes/AFNI_SHARE", "nfs"),
+            ("/Volumes/Boot OS X", "hfs"),
+            ("/Volumes/INCOMING", "nfs"),
+            ("/Volumes/raid.bot", "nfs"),
+            ("/Volumes/raid.top", "autofs"),
+            ("/Network/Servers", "autofs"),
+            ("/Volumes/safni", "autofs"),
+            ("/Volumes/afni", "nfs"),
+            ("/Volumes/afni", "nfs"),
+            ("/home", "autofs"),
+            ("/dev", "devfs"),
+            ("/net", "autofs"),
+            ("/", "hfs"),
+        ],
     ),
     # Non-zero exit code
     ("", 1, []),
@@ -85,7 +125,32 @@ fusectl on /sys/fs/fuse/connections type fusectl (rw,relatime)
 gvfsd-fuse on /run/user/1002/gvfs type fuse.gvfsd-fuse (rw,nosuid,nodev,relatime,user_id=1002,group_id=1002)
 """,
         0,
-        [],
+        [
+            ("/sys/fs/cgroup/cpu,cpuacct", "cgroup"),
+            ("/sys/firmware/efi/efivars", "efivarfs"),
+            ("/proc/sys/fs/binfmt_misc", "autofs"),
+            ("/sys/fs/fuse/connections", "fusectl"),
+            ("/sys/fs/cgroup/systemd", "cgroup"),
+            ("/sys/fs/cgroup/freezer", "cgroup"),
+            ("/sys/fs/cgroup/cpuset", "cgroup"),
+            ("/sys/kernel/security", "securityfs"),
+            ("/var/lib/docker/aufs", "ext4"),
+            ("/sys/fs/cgroup/pids", "cgroup"),
+            ("/run/user/1002/gvfs", "fuse.gvfsd-fuse"),
+            ("/sys/kernel/debug", "debugfs"),
+            ("/sys/fs/cgroup", "tmpfs"),
+            ("/sys/fs/pstore", "pstore"),
+            ("/dev/hugepages", "hugetlbfs"),
+            ("/dev/mqueue", "mqueue"),
+            ("/boot/efi", "vfat"),
+            ("/dev/pts", "devpts"),
+            ("/dev/shm", "tmpfs"),
+            ("/proc", "proc"),
+            ("/sys", "sysfs"),
+            ("/dev", "devtmpfs"),
+            ("/run", "tmpfs"),
+            ("/", "ext4"),
+        ],
     ),
     # Variant of OS X example with CIFS added manually
     (
@@ -98,7 +163,15 @@ boromir:/raid.bot on /Volumes/raid.bot (nfs)
 elros:/volume2/AFNI_SHARE on /Volumes/AFNI_SHARE (nfs)
 """,
         0,
-        [("/Volumes/afni/fraid", "nfs"), ("/Volumes/afni", "cifs")],
+        [
+            ("/Volumes/afni/fraid", "nfs"),
+            ("/Volumes/AFNI_SHARE", "nfs"),
+            ("/Volumes/INCOMING", "nfs"),
+            ("/Volumes/raid.bot", "nfs"),
+            ("/Volumes/afni", "cifs"),
+            ("/dev", "devfs"),
+            ("/", "hfs"),
+        ],
     ),
     # From Windows: docker run --rm -it -v C:\:/data busybox mount
     (
@@ -140,7 +213,44 @@ tmpfs on /proc/scsi type tmpfs (ro,relatime)
 tmpfs on /sys/firmware type tmpfs (ro,relatime)
 """,
         0,
-        [("/data", "cifs")],
+        [
+            ("/sys/fs/cgroup/perf_event", "cgroup"),
+            ("/sys/fs/cgroup/net_prio", "cgroup"),
+            ("/sys/fs/cgroup/cpuacct", "cgroup"),
+            ("/sys/fs/cgroup/devices", "cgroup"),
+            ("/sys/fs/cgroup/freezer", "cgroup"),
+            ("/sys/fs/cgroup/net_cls", "cgroup"),
+            ("/sys/fs/cgroup/hugetlb", "cgroup"),
+            ("/sys/fs/cgroup/systemd", "cgroup"),
+            ("/sys/fs/cgroup/cpuset", "cgroup"),
+            ("/sys/fs/cgroup/memory", "cgroup"),
+            ("/sys/fs/cgroup/blkio", "cgroup"),
+            ("/sys/fs/cgroup/pids", "cgroup"),
+            ("/proc/sysrq-trigger", "proc"),
+            ("/sys/fs/cgroup/cpu", "cgroup"),
+            ("/proc/sched_debug", "tmpfs"),
+            ("/etc/resolv.conf", "ext4"),
+            ("/proc/timer_list", "tmpfs"),
+            ("/sys/fs/cgroup", "tmpfs"),
+            ("/etc/hostname", "ext4"),
+            ("/sys/firmware", "tmpfs"),
+            ("/dev/console", "devpts"),
+            ("/dev/mqueue", "mqueue"),
+            ("/proc/kcore", "tmpfs"),
+            ("/etc/hosts", "ext4"),
+            ("/proc/scsi", "tmpfs"),
+            ("/proc/bus", "proc"),
+            ("/proc/irq", "proc"),
+            ("/proc/sys", "proc"),
+            ("/dev/pts", "devpts"),
+            ("/dev/shm", "tmpfs"),
+            ("/proc/fs", "proc"),
+            ("/proc", "proc"),
+            ("/data", "cifs"),
+            ("/dev", "tmpfs"),
+            ("/sys", "sysfs"),
+            ("/", "overlay"),
+        ],
     ),
     # From @yarikoptic - added blank lines to test for resilience
     (
@@ -153,7 +263,13 @@ devpts on /dev/ptmx type devpts (rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmo
 
 """,
         0,
-        [],
+        [
+            ("/dev/ptmx", "devpts"),
+            ("/dev/shm", "tmpfs"),
+            ("/dev/pts", "devpts"),
+            ("/proc", "proc"),
+            ("/sys", "sysfs"),
+        ],
     ),
 )
 
@@ -165,7 +281,7 @@ def test_parse_mount_table(output, exit_code, expected):
 
 def test_cifs_check():
     assert isinstance(FsMountIdentifier.get_mount_table(), list)
-    assert isinstance(FsMountIdentifier.on_cifs("/"), bool)
+    assert isinstance(FsMountIdentifier.symlinks_supported("/"), bool)
     fake_table = [("/scratch/tmp", "ext4"), ("/scratch", "cifs")]
     cifs_targets = [
         ("/scratch/tmp/x/y", False),
@@ -179,11 +295,11 @@ def test_cifs_check():
 
     with FsMountIdentifier.patch_table([]):
         for target, _ in cifs_targets:
-            assert FsMountIdentifier.on_cifs(target) is False
+            assert FsMountIdentifier.symlinks_supported(target)
 
     with FsMountIdentifier.patch_table(fake_table):
         for target, expected in cifs_targets:
-            assert FsMountIdentifier.on_cifs(target) is expected
+            assert FsMountIdentifier.symlinks_supported(target) is not expected
 
 
 def test_copy_constraints(tmp_path):
