@@ -280,6 +280,9 @@ def test_parse_mount_table(output, exit_code, expected):
     assert FsMountIdentifier.parse_mount_table(exit_code, output) == expected
 
 
+@pytest.mark.skipIf(
+    platform.system() == "Windows", reason="Windows does not have mount table"
+)
 def test_mount_check():
     fake_table = [("/", "ext4"), ("/scratch/tmp", "ext4"), ("/scratch", "cifs")]
     cifs_targets = [
