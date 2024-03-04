@@ -82,7 +82,7 @@ class FsMountIdentifier:
         """
         if platform.system() == "Windows":
             drive_names = [
-                "%s:" % d for d in string.ascii_uppercase if os.path.exists("%s:" % d)
+                c + ":" for c in string.ascii_uppercase if os.path.exists(c + ":")
             ]
             drives = []
             for drive_name in drive_names:
