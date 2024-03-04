@@ -1,5 +1,6 @@
 import os
 import typing as ty
+import string
 from pathlib import Path
 import platform
 import re
@@ -55,18 +56,18 @@ class FsMountIdentifier:
             the root of the mount the path sits on
         fstype : str
             the type of the file-system (e.g. ext4 or cifs)"""
-        if platform.system() == "Windows":
-            return (str(path.absolute()).split(":", 1)[0], "ntfs")
-        try:
-            # Only the first match (most recent parent) counts, mount table sorted longest
-            # to shortest
-            return next(
-                (Path(p), t)
-                for p, t in cls.get_mount_table()
-                if str(path).startswith(p)
+        strpath = str(Path(path).absolute())
+        mount_table = cls.get_mount_table()
+        matches = sorted(
+            ((Path(p), t) for p, t in mount_table if strpath.startswith(p)),
+            key=lambda m: len(str(m[0])),
+        )
+        if not matches:
+            raise ValueError(
+                f"Path {strpath} is not on a known mount point:\n{mount_table}"
             )
-        except StopIteration:
-            return (Path("/"), "ext4")
+        # return mount point with longest matching prefix
+        return matches[-1]
 
     @classmethod
     def generate_mount_table(cls) -> ty.List[ty.Tuple[str, str]]:
@@ -79,6 +80,20 @@ class FsMountIdentifier:
         empty list.
 
         """
+        if platform.system() == "Windows":
+            drive_names = [
+                "%s:" % d for d in string.ascii_uppercase if os.path.exists("%s:" % d)
+            ]
+            drives = []
+            for drive_name in drive_names:
+                result = sp.run(
+                    ["fsutil", "fsinfo", "fstype", drive_name],
+                    capture_output=True,
+                    text=True,
+                )
+                fstype = result.stdout.strip().split(" ")[-1]
+                drives.append((drive_name, fstype))
+            return drives
         exit_code, output = sp.getstatusoutput("mount")
         if exit_code != 0:
             raise RuntimeError(
@@ -123,8 +138,6 @@ class FsMountIdentifier:
 
     @classmethod
     def get_mount_table(cls) -> ty.List[ty.Tuple[str, str]]:
-        if platform.system() == "Windows":
-            raise RuntimeError("On windows, no mount table")
         if cls._mount_table is None:
             cls._mount_table = cls.generate_mount_table()
         return cls._mount_table

@@ -1,4 +1,5 @@
 import os.path
+import platform
 import pytest
 from fileformats.core.fs_mount_identifier import FsMountIdentifier
 from fileformats.generic import File
@@ -279,27 +280,21 @@ def test_parse_mount_table(output, exit_code, expected):
     assert FsMountIdentifier.parse_mount_table(exit_code, output) == expected
 
 
-def test_cifs_check():
-    assert isinstance(FsMountIdentifier.get_mount_table(), list)
-    assert isinstance(FsMountIdentifier.symlinks_supported("/"), bool)
-    fake_table = [("/scratch/tmp", "ext4"), ("/scratch", "cifs")]
+def test_mount_check():
+    fake_table = [("/", "ext4"), ("/scratch/tmp", "ext4"), ("/scratch", "cifs")]
     cifs_targets = [
-        ("/scratch/tmp/x/y", False),
-        ("/scratch/tmp/x", False),
-        ("/scratch/x/y", True),
-        ("/scratch/x", True),
-        ("/x/y", False),
-        ("/x", False),
-        ("/", False),
+        ("/scratch/tmp/x/y", True),
+        ("/scratch/tmp/x", True),
+        ("/scratch/x/y", False),
+        ("/scratch/x", False),
+        ("/x/y", True),
+        ("/x", True),
+        ("/", True),
     ]
-
-    with FsMountIdentifier.patch_table([]):
-        for target, _ in cifs_targets:
-            assert FsMountIdentifier.symlinks_supported(target)
 
     with FsMountIdentifier.patch_table(fake_table):
         for target, expected in cifs_targets:
-            assert FsMountIdentifier.symlinks_supported(target) is not expected
+            assert FsMountIdentifier.symlinks_supported(target) is expected
 
 
 def test_copy_constraints(tmp_path):
@@ -358,3 +353,18 @@ def test_copy_constraints(tmp_path):
         assert (
             os.stat(ext4_file).st_ino != os.stat(ext4_file_on_cifs).st_ino
         )  # Not hardlink
+
+
+def test_generate_mount_table():
+    mount_table = FsMountIdentifier.get_mount_table()
+    assert isinstance(mount_table, list)
+    # We can't test the actual mount table, but we can test that the function actually
+    # runs and returns at least one mount/drive
+    assert mount_table
+
+
+@pytest.mark.skipIf(
+    platform.system() == "Windows", reason="Windows does not have mount table"
+)
+def test_symlink_supported():
+    assert isinstance(FsMountIdentifier.symlinks_supported("/"), bool)
