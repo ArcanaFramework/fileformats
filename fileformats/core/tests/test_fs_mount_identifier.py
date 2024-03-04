@@ -280,7 +280,7 @@ def test_parse_mount_table(output, exit_code, expected):
     assert FsMountIdentifier.parse_mount_table(exit_code, output) == expected
 
 
-@pytest.mark.skipIf(
+@pytest.mark.skipif(
     platform.system() == "Windows", reason="Windows does not have mount table"
 )
 def test_mount_check():
@@ -366,7 +366,7 @@ def test_generate_mount_table():
     assert mount_table
 
 
-@pytest.mark.skipIf(
+@pytest.mark.skipif(
     platform.system() == "Windows", reason="Windows does not have mount table"
 )
 def test_symlink_supported():

@@ -29,12 +29,12 @@ class FsMountIdentifier:
 
         This check is written to support disabling symlinks on CIFS shares.
 
-        NB: This function and sub-functions are copied from the nipype.utils.filemanip module
+        NB: This function and sub-functions are modified from the nipype.utils.filemanip module
 
 
         NB: Adapted from https://github.com/nipy/nipype
         """
-        return cls.get_mount(path)[1] not in ("cifs", "ntfs")
+        return cls.get_mount(path)[1] != "cifs"
 
     @classmethod
     def on_same_mount(cls, path1: os.PathLike, path2: os.PathLike) -> bool:
@@ -91,7 +91,7 @@ class FsMountIdentifier:
                     capture_output=True,
                     text=True,
                 )
-                fstype = result.stdout.strip().split(" ")[-1]
+                fstype = result.stdout.strip().split(" ")[-1].lower()
                 drives.append((drive_name, fstype))
             return drives
         exit_code, output = sp.getstatusoutput("mount")
