@@ -1,7 +1,7 @@
 from pathlib import Path
 import re
 import json
-from fileformats.core import from_mime_format_name
+from fileformats.core.identification import from_mime_format_name
 
 
 PKG_DIR = Path(__file__).parent.parent / "fileformats"
