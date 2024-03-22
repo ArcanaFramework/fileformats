@@ -34,7 +34,7 @@ def include_testing_package(flag: bool = True):
         _excluded_subpackages.add("testing")
 
 
-def subpackages(exclude: ty.Sequence[str] = _excluded_subpackages):
+def subpackages(exclude: ty.Iterable[str] = _excluded_subpackages):
     """Iterates over all subpackages within the fileformats namespace
 
     Parameters
@@ -75,10 +75,9 @@ def set_cwd(path: Path):
 
 def fspaths_converter(
     fspaths: ty.Union[
-        ty.Iterable[ty.Union[str, os.PathLike, bytes]],
+        ty.Iterable[ty.Union[str, os.PathLike]],
         str,
         os.PathLike,
-        bytes,
         "fileformats.core.FileSet",
     ]
 ):
@@ -87,8 +86,8 @@ def fspaths_converter(
 
     if isinstance(fspaths, fileformats.core.FileSet):
         fspaths = fspaths.fspaths
-    elif isinstance(fspaths, (str, os.PathLike, bytes)):
-        fspaths = [fspaths]
+    elif isinstance(fspaths, (str, os.PathLike)):
+        fspaths = [Path(fspaths)]
     return frozenset(Path(p).absolute() for p in fspaths)
 
 
@@ -177,13 +176,13 @@ def check_package_exists_on_pypi(package_name: str, timeout: int = 5) -> bool:
 
 
 class ExtrasModule:
-    def __init__(self, imported: bool, pkg: str, pypi: str):
+    def __init__(self, imported: bool, pkg: ty.Optional[str], pypi: ty.Optional[str]):
         self.imported = imported
         self.pkg = pkg
         self.pypi = pypi
 
 
-def import_extras_module(klass: type) -> ExtrasModule:
+def import_extras_module(klass: ty.Type["fileformats.core.DataType"]) -> ExtrasModule:
     """Attempt to load extras module corresponding to the provided class's module
 
     Parameters
@@ -202,7 +201,7 @@ def import_extras_module(klass: type) -> ExtrasModule:
 
     # Check for Mock class
     try:
-        klass = klass.TRUE_CLASS
+        klass = klass.TRUE_CLASS  # type: ignore
     except AttributeError:
         pass
     pkg_parts = klass.__module__.split(".")
@@ -213,7 +212,7 @@ def import_extras_module(klass: type) -> ExtrasModule:
             klass.__name__,
             klass.__module__,
         )
-        return True, None, None
+        return ExtrasModule(True, None, None)
     sub_pkg = pkg_parts[1]
     extras_pkg = "fileformats.extras." + sub_pkg
     if sub_pkg in IANA_MIME_TYPE_REGISTRIES + ["testing"]:
