@@ -834,30 +834,6 @@ class FileSet(DataType):
             file_hashes[str(path)] = crypto_obj.hexdigest()
         return file_hashes
 
-    def __bytes_repr__(
-        self, cache: dict  # pylint: disable=unused-argument
-    ) -> ty.Iterable[bytes]:
-        """Provided for compatibility with Pydra's hashing function, return the contents
-        of all the files in the file-set in chunks
-
-        Parameters
-        ----------
-        cache : dict
-            an object passed around by Pydra's hashing function to store cached versions
-            of previously hashed objects, to allow recursive structures
-
-        Yields
-        ------
-        bytes
-            a chunk of bytes of length FILE_CHUNK_LEN_DEFAULT from the contents of all
-            files in the file-set.
-        """
-        cls = type(self)
-        yield f"{cls.__module__}.{cls.__name__}:".encode()
-        for key, chunk_iter in self.byte_chunks():
-            yield (",'" + key + "'=").encode()
-            yield from chunk_iter
-
     @classmethod
     def referenced_types(cls) -> ty.Set[Classifier]:
         """Returns a flattened list of nested types referenced within the fileset type
@@ -1633,8 +1609,23 @@ class MockMixin:
         assert cls.__name__.endswith("Mock")
         return cls.__name__[: -len("Mock")]
 
-    def __bytes_repr__(self, cache):
-        yield from (str(fspath).encode() for fspath in self.fspaths)
+    def byte_chunks(
+        self,
+        mtime: bool = False,
+        chunk_len=FILE_CHUNK_LEN_DEFAULT,
+        relative_to: ty.Optional[os.PathLike] = None,
+        ignore_hidden_files: bool = False,
+        ignore_hidden_dirs: bool = False,
+    ):
+        if relative_to is None:
+            relative_to = os.path.commonpath(self.fspaths)
+        else:
+            relative_to = str(relative_to)
+        for key, fspath in sorted(
+            ((str(p)[len(relative_to) :], p) for p in self.fspaths),
+            key=itemgetter(0),
+        ):
+            yield (key, iter([key.encode()]))  # empty iterator as files don't exist
 
     @classproperty
     def namespace(cls):
