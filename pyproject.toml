@@ -7,16 +7,10 @@ name = "fileformats"
 description = "Classes for representing different file formats in Python classes for use in type hinting in data workflows"
 readme = "README.rst"
 requires-python = ">=3.8"
-dependencies = [
-    "typing_extensions >=4.6.3; python_version < '3.11'"
-]
-license = {file = "LICENSE"}
-authors = [
-    {name = "Thomas G. Close", email = "tom.g.close@gmail.com"},
-]
-maintainers = [
-    {name = "Thomas G. Close", email = "tom.g.close@gmail.com"},
-]
+dependencies = ["typing_extensions >=4.6.3; python_version < '3.11'"]
+license = { file = "LICENSE" }
+authors = [{ name = "Thomas G. Close", email = "tom.g.close@gmail.com" }]
+maintainers = [{ name = "Thomas G. Close", email = "tom.g.close@gmail.com" }]
 keywords = [
     "file-formats",
     "data",
@@ -50,6 +44,7 @@ dev = [
     "flake8",
     "flake8-pyproject",
     "fileformats[test]",
+    "pydata-sphinx-theme >=0.13",
 ]
 test = [
     "pytest >=6.2.5",
@@ -82,15 +77,9 @@ version-file = "fileformats/core/_version.py"
 allow-direct-references = true
 
 [tool.hatch.build]
-packages = [
-    "fileformats",
-]
-exclude = [
-    "tests",
-]
-include = [
-    "./fileformats"
-]
+packages = ["fileformats"]
+exclude = ["tests"]
+include = ["./fileformats"]
 
 [tool.black]
 target-version = ['py38']
@@ -101,9 +90,7 @@ ignore-words = ".codespell-ignorewords"
 
 [tool.flake8]
 doctests = true
-per-file-ignores = [
-    "__init__.py:F401"
-]
+per-file-ignores = ["__init__.py:F401"]
 max-line-length = 88
 select = "C,E,F,W,B,B950"
 extend-ignore = ['E203', 'E501', 'E129', 'W503']
