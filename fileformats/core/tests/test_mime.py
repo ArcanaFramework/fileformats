@@ -1,4 +1,4 @@
-from fileformats.generic import FileSet
+from fileformats.core import FileSet
 from fileformats.core.identification import from_mime
 from fileformats.testing import Classified, U, V
 from fileformats.testing_subpackage import Psi, SubpackageClassified, Zeta, Theta
