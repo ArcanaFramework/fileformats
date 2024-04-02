@@ -1,3 +1,5 @@
+import typing as ty
+from pathlib import Path
 from fileformats.core.exceptions import FormatMismatchError
 from fileformats.core import hook
 from fileformats.core.utils import classproperty
@@ -81,6 +83,11 @@ class Directory(FsObject):
         if relative_to is None:
             relative_to = self.fspath
         return super().hash_files(relative_to=relative_to, **kwargs)
+
+    # Duck-type Path methods
+
+    def __div__(self, other: ty.Union[str, Path]) -> Path:
+        return self.fspath / other
 
     def glob(self, pattern):
         return self.fspath.glob(pattern)
