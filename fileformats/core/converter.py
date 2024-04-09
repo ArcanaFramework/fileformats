@@ -2,7 +2,7 @@ from abc import ABCMeta
 import typing as ty
 import logging
 from .utils import describe_task, matching_source
-from .exceptions import FileFormatsError
+from .exceptions import FormatDefinitionError
 
 if ty.TYPE_CHECKING:
     from .datatype import DataType
@@ -127,7 +127,7 @@ class SubtypeVar:
         """
         # Ensure "converters" dict is defined in the target class and not in a superclass
         if len(source_format.wildcard_classifiers()) > 1:
-            raise FileFormatsError(
+            raise FormatDefinitionError(
                 "Cannot register a conversion to a generic type from a type with more "
                 f"than one wildcard {source_format} ({list(source_format.wildcard_classifiers())})"
             )
@@ -151,7 +151,7 @@ class SubtypeVar:
                     describe_task(task),
                 )
                 return  # actually the same task but just imported twice for some reason
-            raise FileFormatsError(
+            raise FormatDefinitionError(
                 f"Cannot register converter from {source_format} to the generic type "
                 f"'{tuple(prev_task.wildcard_classifiers())[0]}', {describe_task(task)} "
                 f"because there is already one registered, {describe_task(prev_task)}"

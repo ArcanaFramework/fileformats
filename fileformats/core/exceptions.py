@@ -1,9 +1,17 @@
-class FileFormatsError(RuntimeError):
+class FileFormatsError(Exception):
     "Base exception class"
 
 
-class FormatMismatchError(FileFormatsError):
-    "File formats don't match"
+class FormatDefinitionError(FileFormatsError):
+    "When the file-formats class hasn't been properly defined"
+
+
+class FormatMismatchError(TypeError, FileFormatsError):
+    "Provided paths/values do not match the specified file format"
+
+
+class UnsatisfiableCopyModeError(FileFormatsError):
+    "Error copying files"
 
 
 class FormatConversionError(FileFormatsError):

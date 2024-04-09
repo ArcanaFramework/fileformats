@@ -8,7 +8,7 @@ from fileformats.application import Zip
 from fileformats.generic import DirectoryContaining
 from fileformats.field import Array, Integer, Decimal, Text, Boolean
 from fileformats.core.exceptions import (
-    FileFormatsError,
+    FormatDefinitionError,
     FormatConversionError,
     FormatRecognitionError,
     FormatMismatchError,
@@ -149,13 +149,16 @@ def test_file_classifiers2():
 
 
 def test_file_classifiers3():
-    with pytest.raises(FileFormatsError, match="Invalid content types provided to"):
+    with pytest.raises(
+        FormatDefinitionError, match="Invalid content types provided to"
+    ):
         H[D]
 
 
 def test_file_classifiers4():
     with pytest.raises(
-        FileFormatsError, match="Cannot have more than one occurrence of a classifier "
+        FormatDefinitionError,
+        match="Cannot have more than one occurrence of a classifier ",
     ):
         H[A, B, A]
 
@@ -166,7 +169,7 @@ def test_file_classifiers5():
 
 def test_file_classifiers6():
     with pytest.raises(
-        FileFormatsError,
+        FormatDefinitionError,
         match="Default value for classifiers attribute 'new_classifiers_attr' needs to be set",
     ):
         Q[A]
@@ -174,7 +177,7 @@ def test_file_classifiers6():
 
 def test_file_classifiers7():
     with pytest.raises(
-        FileFormatsError, match="Multiple classifiers not permitted for "
+        FormatDefinitionError, match="Multiple classifiers not permitted for "
     ):
         M[A, B]
 
@@ -404,12 +407,16 @@ def test_classifier_categories2():
 
 
 def test_classifier_categories3():
-    with pytest.raises(FileFormatsError, match="Cannot have more than one occurrence"):
+    with pytest.raises(
+        FormatDefinitionError, match="Cannot have more than one occurrence"
+    ):
         Classified[U, V]
 
 
 def test_classifier_categories4():
-    with pytest.raises(FileFormatsError, match="Cannot have more than one occurrence"):
+    with pytest.raises(
+        FormatDefinitionError, match="Cannot have more than one occurrence"
+    ):
         Classified[U, W]
 
 
@@ -419,6 +426,7 @@ def test_classifier_categories5():
 
 def test_classifier_categories6():
     with pytest.raises(
-        FileFormatsError, match="Cannot have more than one occurrence of a classifier "
+        FormatDefinitionError,
+        match="Cannot have more than one occurrence of a classifier ",
     ):
         Classified[C, E]

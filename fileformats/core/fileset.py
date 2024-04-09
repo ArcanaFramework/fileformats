@@ -28,10 +28,11 @@ from .identification import (
 from .converter import SubtypeVar
 from .classifier import Classifier
 from .exceptions import (
-    FileFormatsError,
     FormatMismatchError,
     UnconstrainedExtensionException,
     FormatConversionError,
+    UnsatisfiableCopyModeError,
+    FormatDefinitionError,
     FileFormatsExtrasError,
     FileFormatsExtrasPkgUninstalledError,
     FileFormatsExtrasPkgNotCheckedError,
@@ -106,7 +107,7 @@ class FileSet(DataType):
 
     def _validate_fspaths(self):
         if not self.fspaths:
-            raise FileFormatsError(f"No file-system paths provided to {self}")
+            raise ValueError(f"No file-system paths provided to {self}")
         missing = [p for p in self.fspaths if not p or not p.exists()]
         if missing:
             missing_str = "\n".join(str(p) for p in missing)
@@ -1343,7 +1344,7 @@ class FileSet(DataType):
             )
             if constraints:
                 msg += ", and the following constraints:\n" + "\n".join(constraints)
-            raise FileFormatsError(msg)
+            raise UnsatisfiableCopyModeError(msg)
         if selected_mode & self.CopyMode.leave:
             return self  # Don't need to do anything
 
@@ -1394,7 +1395,7 @@ class FileSet(DataType):
                     else:
                         os.unlink(new_path)
                 else:
-                    raise FileFormatsError(
+                    raise FileExistsError(
                         f"Destination path '{str(new_path)}' exists, set "
                         "'overwrite' to overwrite it"
                     )
@@ -1474,7 +1475,7 @@ class FileSet(DataType):
                     else:
                         os.unlink(new_path)
                 else:
-                    raise FileFormatsError(
+                    raise FileExistsError(
                         f"Destination path '{str(new_path)}' exists, set "
                         "'overwrite' to overwrite it"
                     )
@@ -1523,7 +1524,7 @@ class FileSet(DataType):
                 n for n, c in Counter(p.name for p in self.fspaths).items() if c > 1
             ]
             if duplicate_names:
-                raise FileFormatsError(
+                raise UnsatisfiableCopyModeError(
                     f"Cannot copy/move {self} with collation mode "
                     f'"{collation}", as there are duplicate filenames, {duplicate_names}, '
                     f"in file paths: " + "\n".join(str(p) for p in self.fspaths)
@@ -1535,7 +1536,7 @@ class FileSet(DataType):
             exts = [d[-1] for d in decomposed_fspaths]
             duplicate_exts = [n for n, c in Counter(exts).items() if c > 1]
             if duplicate_exts:
-                raise FileFormatsError(
+                raise UnsatisfiableCopyModeError(
                     f"Cannot copy/move {self} with collation mode "
                     f'"{collation}", as there are duplicate extensions, {duplicate_exts}, '
                     f"in file paths: " + "\n".join(str(p) for p in self.fspaths)
@@ -1545,7 +1546,7 @@ class FileSet(DataType):
         else:
             fspaths_to_copy = self.fspaths
         if not fspaths_to_copy:
-            raise FileFormatsError(
+            raise UnsatisfiableCopyModeError(
                 f"Cannot copy {self} because none of the fspaths in the file-set are "
                 "required. Set trim=False to copy all file-paths"
             )
@@ -1645,8 +1646,8 @@ class MockMixin:
                 continue
             try:
                 return base.namespace
-            except FileFormatsError:
+            except FormatDefinitionError:
                 pass
-        raise FileFormatsError(
+        raise FormatDefinitionError(
             f"None of of the bases classes of {cls} ({cls.__mro__}) have a valid namespace"
         )

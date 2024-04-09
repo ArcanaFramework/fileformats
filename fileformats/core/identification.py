@@ -3,7 +3,7 @@ from pathlib import Path
 import typing as ty
 import re
 from fileformats.core.exceptions import (
-    FileFormatsError,
+    FormatDefinitionError,
     FormatRecognitionError,
 )
 import fileformats.core
@@ -223,7 +223,7 @@ def from_paths(
         ignore_re = re.compile(ignore)
         remaining = [p for p in remaining if not ignore_re.match(p.name)]
     if remaining:
-        raise FileFormatsError(
+        raise FormatRecognitionError(
             "the following file-system paths were not recognised by any of the "
             f"candidate formats ({candidates_str}):\n"
             + "\n".join(str(p) for p in remaining)
@@ -233,7 +233,7 @@ def from_paths(
 
 def to_mime_format_name(format_name: str):
     if "___" in format_name:
-        raise FileFormatsError(
+        raise FormatDefinitionError(
             f"Cannot convert name of format class {format_name} to mime string as it "
             "contains triple underscore"
         )

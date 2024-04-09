@@ -4,7 +4,7 @@ import pytest
 from fileformats.generic import File
 from fileformats.field import Integer, Boolean, Decimal, Array, Text
 from fileformats.testing import Foo
-from fileformats.core.exceptions import FileFormatsError, FormatMismatchError
+from fileformats.core.exceptions import FormatMismatchError
 from fileformats.core import hook
 from conftest import write_test_file
 
@@ -157,7 +157,7 @@ def test_header_overwrite(work_dir):
         binary=True,
     )
     file = ImageWithInlineHeader(fspath, metadata={"x": "100"})
-    with pytest.raises(FileFormatsError):
+    with pytest.raises(FormatMismatchError):
         file.metadata["y"]
 
 

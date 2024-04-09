@@ -3,10 +3,8 @@ import typing as ty
 from .utils import (
     classproperty,
 )
-from .exceptions import (
-    FileFormatsError,
-)
 from .datatype import DataType
+from .exceptions import FormatMismatchError
 
 
 class Field(DataType):
@@ -52,7 +50,7 @@ class Field(DataType):
             datatype = next(iter(f for f in cls.all_fields if f.primitive is dtype))
         except StopIteration as e:
             field_types_str = ", ".join(t.__name__ for t in cls.all_fields)
-            raise FileFormatsError(
+            raise FormatMismatchError(
                 f"{dtype} doesn't not correspond to a valid fileformats field type "
                 f"({field_types_str})"
             ) from e
