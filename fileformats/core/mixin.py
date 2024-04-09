@@ -7,7 +7,11 @@ from .fileset import FileSet
 from .utils import classproperty, describe_task, matching_source
 from .identification import to_mime_format_name
 from .converter import SubtypeVar
-from .exceptions import FileFormatsError, FormatMismatchError, FormatRecognitionError
+from .exceptions import (
+    FormatMismatchError,
+    FormatRecognitionError,
+    FormatDefinitionError,
+)
 
 
 logger = logging.getLogger("fileformats")
@@ -95,7 +99,7 @@ class WithMagicVersion:
             )
         version = tuple(b.decode("utf-8") for b in match.groups())
         if not version:
-            raise FileFormatsError(
+            raise FormatDefinitionError(
                 f"No version patterns found in magic pattern of {type(self).__name__} "
                 f"class, {self.magic_pattern}"
             )
@@ -278,7 +282,7 @@ class WithClassifiers:
 
     def _validate_class(self):
         if self.wildcard_classifiers():
-            raise FileFormatsError(
+            raise FormatDefinitionError(
                 f"Can instantiate {type(self)} class as it has wildcard classifiers "
                 "and therefore should only be used for converter specifications"
             )
@@ -317,7 +321,7 @@ class WithClassifiers:
                 if not any(issubclass(q, t) for t in cls.allowed_classifiers)
             ]
             if not_allowed:
-                raise FileFormatsError(
+                raise FormatDefinitionError(
                     f"Invalid content types provided to {cls} (must be subclasses of "
                     f"{cls.allowed_classifiers}): {not_allowed}"
                 )
@@ -339,7 +343,7 @@ class WithClassifiers:
                                 repetitions[exc_classifier].append(classifier)
                     repeated = [t for t in repetitions.items() if len(t[1]) > 1]
                     if repeated:
-                        raise FileFormatsError(
+                        raise FormatDefinitionError(
                             "Cannot have more than one occurrence of a classifier "
                             f"or subclasses for {cls} class when "
                             f"{cls.__name__}.ordered_classifiers is false:\n"
@@ -351,8 +355,9 @@ class WithClassifiers:
                 classifiers = frozenset(classifiers)
         else:
             if len(classifiers) > 1:
-                raise FileFormatsError(
-                    f"Multiple classifiers not permitted for {cls} types, provided: ({classifiers})"
+                raise FormatDefinitionError(
+                    f"Multiple classifiers not permitted for {cls} types, provided: "
+                    f"({classifiers})"
                 )
         # Make sure that the "classified" dictionary is present in this class not super
         # classes
@@ -363,26 +368,26 @@ class WithClassifiers:
             classified = cls._classified_subtypes[classifiers]
         except KeyError:
             if not hasattr(cls, "classifiers_attr_name"):
-                raise FileFormatsError(
+                raise FormatDefinitionError(
                     f"{cls} needs to define the 'classifiers_attr_name' class attribute "
                     "with the name of the (different) class attribute to hold the "
                     "classified types"
                 )
             if cls.classifiers_attr_name is None:
-                raise FileFormatsError(
+                raise FormatDefinitionError(
                     f"Inherited classifiers have been disabled in {cls} (by setting "
                     f'"classifiers_attr_name)" to None)'
                 )
             try:
                 classifiers_attr = getattr(cls, cls.classifiers_attr_name)
             except AttributeError:
-                raise FileFormatsError(
+                raise FormatDefinitionError(
                     f"Default value for classifiers attribute "
                     f"'{cls.classifiers_attr_name}' needs to be set in {cls}"
                 )
             else:
                 if classifiers_attr:
-                    raise FileFormatsError(
+                    raise FormatDefinitionError(
                         f"Default value for classifiers attribute "
                         f"'{cls.classifiers_attr_name}' needs to be set in {cls}"
                     )
@@ -571,18 +576,18 @@ class WithClassifiers:
         if cls.wildcard_classifiers():
             if issubclass(source_format, SubtypeVar):
                 if len(cls.wildcard_classifiers()) > 1:
-                    raise FileFormatsError(
+                    raise FormatDefinitionError(
                         "Can only have one wildcard qualifier when registering a converter "
                         f"to {cls} from a generic type, found {cls.wildcard_classifiers()}"
                     )
             elif not source_format.is_classified:
-                raise FileFormatsError(
+                raise FormatDefinitionError(
                     "Can only use wildcard classifiers when registering a converter "
                     f"from a generic type or similarly classified type, not {source_format}"
                 )
             else:
                 if cls.wildcard_classifiers() != source_format.wildcard_classifiers():
-                    raise FileFormatsError(
+                    raise FormatDefinitionError(
                         f"Mismatching wildcards between source format, {source_format} "
                         f"({list(source_format.wildcard_classifiers())}), and target "
                         f"{cls} ({cls.wildcard_classifiers()})"
@@ -612,7 +617,7 @@ class WithClassifiers:
                             describe_task(task),
                         )
                         return  # actually the same task but just imported twice for some reason
-                    raise FileFormatsError(
+                    raise FormatDefinitionError(
                         f"Cannot register converter from {prev.unclassified} "
                         f"to {cls.unclassified} with non-wildcard classifiers "
                         f"{list(prev.non_wildcard_classifiers())}, {describe_task(task)}, "

@@ -1,5 +1,5 @@
 from .utils import classproperty
-from .exceptions import FileFormatsError
+from .exceptions import FormatDefinitionError
 
 
 class Classifier:
@@ -17,7 +17,7 @@ class Classifier:
         namespace"""
         module_parts = cls.__module__.split(".")
         if module_parts[0] != "fileformats":
-            raise FileFormatsError(
+            raise FormatDefinitionError(
                 f"Cannot create reversible MIME type for {cls} as it is not in the "
                 "fileformats namespace"
             )

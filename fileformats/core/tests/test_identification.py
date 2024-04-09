@@ -8,7 +8,7 @@ from fileformats.core.identification import (
     from_mime,
     from_paths,
 )
-from fileformats.core.exceptions import FileFormatsError
+from fileformats.core.exceptions import FormatRecognitionError
 from fileformats.testing import Foo, Bar
 from fileformats.application import Json, Yaml, Zip
 from fileformats.text import Plain, TextFile
@@ -95,7 +95,7 @@ def test_from_paths(tmp_path):
     assert count[Plain] == 1
 
     with pytest.raises(
-        FileFormatsError, match="were not recognised by any of the candidate"
+        FormatRecognitionError, match="were not recognised by any of the candidate"
     ):
         from_paths(fspaths, Json, Yaml, Zip, Foo, Bar)
 

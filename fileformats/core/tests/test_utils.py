@@ -7,7 +7,7 @@ import pytest
 from fileformats.core import FileSet, hook
 from fileformats.generic import File, Directory, FsObject
 from fileformats.core.mixin import WithSeparateHeader
-from fileformats.core.exceptions import FileFormatsError
+from fileformats.core.exceptions import UnsatisfiableCopyModeError
 from conftest import write_test_file
 
 
@@ -124,7 +124,7 @@ def test_copy_collation_same_name(work_dir: Path, dest_dir: Path):
     fileset = FileSet(fspaths)
 
     with pytest.raises(
-        FileFormatsError,
+        UnsatisfiableCopyModeError,
         match="as there are duplicate filenames",
     ):
         fileset.copy(dest_dir=dest_dir, collation="siblings")
@@ -146,7 +146,7 @@ def test_copy_collation_same_ext(work_dir: Path, dest_dir: Path):
     fileset = FileSet(fspaths)
 
     with pytest.raises(
-        FileFormatsError,
+        UnsatisfiableCopyModeError,
         match="as there are duplicate extensions",
     ):
         fileset.copy(dest_dir=dest_dir, collation="adjacent")
@@ -204,13 +204,13 @@ def test_copy_collation_leave_diff_dir(work_dir: Path, dest_dir: Path):
     fileset = FileSet(fspaths)
 
     with pytest.raises(
-        FileFormatsError,
+        UnsatisfiableCopyModeError,
         match="given the collation specification",
     ):
         fileset.copy(dest_dir=dest_dir, mode="leave", collation="siblings")
 
     with pytest.raises(
-        FileFormatsError,
+        UnsatisfiableCopyModeError,
         match="given the collation specification",
     ):
         fileset.copy(dest_dir=dest_dir, mode="leave", collation="adjacent")
