@@ -3,7 +3,7 @@ import re
 import shutil
 import json
 import yaml
-from fileformats.core import from_mime_format_name
+from fileformats.core.identification import from_mime_format_name
 
 
 def generated_classes(scraped_json_file: str, editable_yaml_file: str, output_dir: str):
