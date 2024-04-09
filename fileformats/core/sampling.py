@@ -25,7 +25,7 @@ class SampleFileGenerator:
 
     FNAME_STEM_LENGTH = 24
 
-    def __init__(self, dest_dir: Path, seed: int, fname_stem: str = None):
+    def __init__(self, dest_dir: Path, seed: int, fname_stem: ty.Optional[str] = None):
         self.dest_dir = dest_dir
         self.seed = seed
         self.fname_stem = (
@@ -45,8 +45,10 @@ class SampleFileGenerator:
 
     def generate(
         self,
-        file_type: ty.Type["fileformats.core.FileSet"],
-        contents: ty.Union[str, bytes] = None,
+        file_type: ty.Union[
+            "fileformats.core.FileSet", ty.Type["fileformats.core.FileSet"]
+        ],
+        contents: ty.Union[str, bytes, None] = None,
         fill: int = 0,
         **kwargs,
     ):
@@ -75,7 +77,7 @@ class SampleFileGenerator:
         fspath = self.generate_fspath(file_type, **kwargs)
         fspath.parent.mkdir(parents=True, exist_ok=True)
         try:
-            is_binary = file_type.binary
+            is_binary = file_type.binary  # type: ignore
         except AttributeError:
             is_binary = False
         if not contents:
@@ -137,7 +139,7 @@ class SampleFileGenerator:
         return fspath / fname
 
     def child(
-        self, dest_dir: ty.Optional[Path] = None, fname_stem: str = None
+        self, dest_dir: ty.Optional[Path] = None, fname_stem: ty.Optional[str] = None
     ) -> "SampleFileGenerator":
         """Creates a new instance of SampleFileGenerator with the same destination
         directory and seed, but a new random filename stem
