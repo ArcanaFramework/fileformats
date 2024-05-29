@@ -139,7 +139,10 @@ def describe_task(task):
     if inspect.isfunction(task):
         import cloudpickle
 
-        task = cloudpickle.loads(task().inputs._func)
+        try:
+            task = cloudpickle.loads(task().inputs._func)
+        except Exception as e:
+            return f"{task} (Failed to load task function: {e})"
     src_file = inspect.getsourcefile(task)
     src_line = inspect.getsourcelines(task)[-1]
     return f"{task} (defined at line {src_line} of {src_file})"
@@ -148,9 +151,8 @@ def describe_task(task):
 def matching_source(task1, task2) -> bool:
     """Checks to see if the tasks share the same source code but are just getting reimported
     for some unknown reason"""
-    return (
-        inspect.getsourcefile(task1) == inspect.getsourcefile(task2)
-        and inspect.getsourcelines(task1)[-1] == inspect.getsourcelines(task2)[-1]
+    return inspect.getsource(inspect.getmodule(task1)) == inspect.getsource(
+        inspect.getmodule(task2)
     )
 
 
