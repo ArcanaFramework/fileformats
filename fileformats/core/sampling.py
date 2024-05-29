@@ -20,7 +20,7 @@ class SampleFileGenerator:
     """
 
     dest_dir: Path
-    seed: int
+    seed: ty.Union[int, str]
     fname_stem: str
 
     FNAME_STEM_LENGTH = 24
