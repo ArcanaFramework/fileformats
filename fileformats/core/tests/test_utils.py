@@ -4,8 +4,9 @@ import random
 import shutil
 import time
 import pytest
-from fileformats.core import FileSet, hook
-from fileformats.generic import File, Directory, FsObject
+from fileformats.core import FileSet, MockMixin, hook
+from fileformats.generic import File, Directory, FsObject, SetOf
+from fileformats.text import TextFile
 from fileformats.core.mixin import WithSeparateHeader
 from fileformats.core.exceptions import UnsatisfiableCopyModeError
 from conftest import write_test_file
@@ -51,6 +52,11 @@ def fsobject(luigi_file, bowser_dir, request):
         return bowser_dir
     else:
         assert False
+
+
+@pytest.fixture
+def mock_fileset():
+    return SetOf[TextFile].mock("/path/to/a/mock", "/path/to/another/mock")
 
 
 @pytest.fixture
@@ -367,3 +373,10 @@ def test_hash_files(fsobject: FsObject, work_dir: Path, dest_dir: Path):
     )
     cpy = fsobject.copy(dest_dir)
     assert cpy.hash_files() == fsobject.hash_files()
+
+
+def test_hash_mock_files(mock_fileset: MockMixin, work_dir: Path, dest_dir: Path):
+    file_hashes = mock_fileset.hash_files(relative_to="")
+    assert sorted(Path(p) for p in file_hashes) == sorted(
+        p for p in mock_fileset.fspaths
+    )
