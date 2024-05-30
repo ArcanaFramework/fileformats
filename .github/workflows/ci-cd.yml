@@ -39,11 +39,11 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Update build tools
-      run: python3 -m pip install --upgrade pip
+      run: python3 -m pip install --break-system-packages --upgrade pip
     - name: Install Package
-      run: python3 -m pip install -e .[test]
+      run: python3 -m pip install --break-system-packages -e .[test]
     - name: Install Extras Package
-      run: python3 -m pip install -e ./extras[test]
+      run: python3 -m pip install --break-system-packages -e ./extras[test]
     - name: Change out of root directory
       run: cd docs
     - name: Pytest
@@ -76,7 +76,7 @@ jobs:
       with:
         python-version: '3.12'
     - name: Install build tools
-      run: python3 -m pip install build twine
+      run: python3 -m pip install --break-system-packages build twine
     - name: Build source and wheel distributions
       run: python3 -m build ${{ matrix.pkg[1] }}
     - name: Check distributions
@@ -102,7 +102,7 @@ jobs:
         python-version: 3.x
     - name: Install dependencies
       run: |
-        python3 -m pip install --upgrade pip
+        python3 -m pip install --break-system-packages --upgrade pip
         pip install .[docs]
     - name: Build documentation
       run: |
