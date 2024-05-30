@@ -141,7 +141,7 @@ class DataType(Classifier, metaclass=ABCMeta):
             # treats it). Therefore, we loop through all subclasses across the different
             # namespaces to find one that matches the name.
             format_name = format_name[2:]  # remove "x-" prefix
-            matching_name = FileSet.formats_by_name[format_name]
+            matching_name = FileSet.formats_by_name.get(format_name, ())
             matching_name = [
                 m
                 for m in matching_name

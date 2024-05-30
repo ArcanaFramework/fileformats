@@ -3,6 +3,7 @@ from copy import copy
 import struct
 from enum import Enum, IntEnum
 from warnings import warn
+import inspect
 import tempfile
 from collections import Counter
 import typing as ty
@@ -625,7 +626,8 @@ class FileSet(DataType):
             raise FormatConversionError(
                 f"Cannot register converter from {source_format.__name__} "
                 f"to {cls.__name__}, {describe_task(task)}, because there is already "
-                f"one registered from {describe_task(prev_task)}"
+                f"one registered from {describe_task(prev_task)}:"
+                f"\n\n{inspect.getsource(task)}\n\nand{inspect.getsource(prev_task)}\n\n"
             )
         converters_dict[source_format] = converter_tuple
 
@@ -905,7 +907,10 @@ class FileSet(DataType):
 
     @classmethod
     def sample(
-        cls, dest_dir: ty.Optional[Path] = None, seed: int = 0, stem: str = None
+        cls,
+        dest_dir: ty.Optional[Path] = None,
+        seed: ty.Union[int, str] = 0,
+        stem: str = None,
     ) -> Self:
         """Return an sample instance of the file-set type for classes where the
         `test_data` extra has been implemented

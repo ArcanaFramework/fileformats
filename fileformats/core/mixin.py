@@ -659,13 +659,13 @@ class WithClassifiers:
             namespace = super().namespace
         return namespace
 
-    @property
-    def type_name(self):
+    @classproperty
+    def type_name(cls):
         """Name of type including classifiers to be used in __repr__"""
-        if self.is_classified:
-            unclassified = self.unclassified.__name__
+        if cls.is_classified:
+            unclassified = cls.unclassified.__name__
         else:
-            unclassified = type(self).__name__
+            unclassified = type(cls).__name__
         return (
-            unclassified + "[" + ", ".join(t.type_name for t in self.classifiers) + "]"
+            unclassified + "[" + ", ".join(t.type_name for t in cls.classifiers) + "]"
         )
