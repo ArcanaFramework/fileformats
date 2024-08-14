@@ -16,24 +16,27 @@ FileFormats
 
 
 *Fileformats* provides a library of file-format types implemented as Python classes.
-The file-format types are designed to be used in type validation during the construction
-of data workflows (e.g. Pydra_, Fastr_), and also provide some basic data handling methods
-(e.g. loading data to dictionaries) and conversions between some equivalent types When
-the "extended" install option is provided.
+The file-format types were designed to be used in type validation and data movement
+during the construction and execution of data workflows. However, they can can also be
+used some basic data handling methods (e.g. loading data to dictionaries) and format
+conversions between some equivalent types via methods defined in the associated `fileformats-extras <https://pypi.org/project/fileformats-extras/>`__
+package.
 
 File-format types are typically identified by a combination of file extension
-and "magic numbers" where applicable, however, unlike many other file-type Python packages,
+and "magic numbers" where applicable. However, unlike many other file-type Python packages,
 *FileFormats*, supports multi-file data formats ("file sets") often found in scientific
 workflows, e.g. with separate header/data files. *FileFormats* also provides a flexible
 framework to add custom identification routines for exotic file formats, e.g.
 formats that require inspection of headers to locate data files, directories containing
 certain file types, or to peek at metadata fields to define specific sub-types
-(e.g. functional MRI DICOM file set).
+(e.g. functional MRI DICOM file set). It is in the handling of multi-file formats that
+fileformats comes into its own, as it keeps track of auxiliary files when moving/copying
+to different file-system locations or calculating hashes.
 
 See the `extension template <https://github.com/ArcanaFramework/fileformats-extension-template>`__
 for instructions on how to design *FileFormats* extensions modules to augment the
 standard file-types implemented in the main repository with custom domain/vendor-specific
-file-format types.
+file-format types (e.g. `fileformats-medimage <https://pypi.org/project/fileformats-medimage/>`__).
 
 Notes on MIME-type coverage
 ---------------------------
@@ -44,9 +47,7 @@ extensions and magic numbers. As such, many of the formats in the library have n
 tested on real data and so should be treated with some caution. If you encounter any issues with an implemented file
 type, please raise an issue in the `GitHub tracker <https://github.com/ArcanaFramework/fileformats/issues>`__.
 
-Adding support for vendor formats will be relatively straightforward, it just requires someone to do the job
-of manually curating the scraped data (a days work or so). Please get in touch if you are interested in helping out
-with this.
+Adding support for vendor formats will be relatively straightforward and is planned for v1.0.
 
 
 Installation
@@ -60,11 +61,11 @@ Installation
 
 
 Support for converter methods between a few select formats can be installed by
-passing the 'extended' install extra, e.g
+passing the 'extras' package, e.g
 
 .. code-block:: bash
 
-    $ python3 -m pip install fileformats[extended]
+    $ python3 -m pip install fileformats-extras
 
 
 Examples
