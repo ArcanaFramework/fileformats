@@ -99,6 +99,26 @@ for a boolean method that checks the validation use ``matches``
     if Png.matches(a_path_to_a_file):
         ... handle case ...
 
+Format Identification
+---------------------
+
+There are 2 main functions that can be used for format identification
+
+* ``fileformats.core.from_mime``
+* ``fileformats.core.find_matching``
+
+``from_mime``
+~~~~~~~~~~~~~
+
+As the name suggests, this function is used to return the FileFormats class corresponding to a given `MIME <https://www.iana.org/assignments/media-types/media-types.xhtml>`__ string. All non-vendor official MIME-types are supported. Non-official types can be loaded using the `application/x-name-of-type`
+form as long as the name of the type is unique amongst all installed format types. To avoid name clashes between different extension types, the "MIME-like" string can be used instead, where informal registries corresponding to the fileformats extension namespace are used instead, e.g. `medimage/nifti-gz` or `datascience/hdf5`.
+
+``find_matching``
+~~~~~~~~~~~~~~~~~
+
+Given a set of file-system paths, by default, ``find_matching`` will iterate through all installed fileformats classes and return all that validate successfully (formats without any specific constraints are excluded by default). The potential candidate classes can be restricted by using the `candidates` keyword argument.
+
+
 Format Conversion
 -----------------
 
