@@ -30,8 +30,8 @@ framework to add custom identification routines for exotic file formats, e.g.
 formats that require inspection of headers to locate data files, directories containing
 certain file types, or to peek at metadata fields to define specific sub-types
 (e.g. functional MRI DICOM file set). It is in the handling of multi-file formats that
-fileformats comes into its own, as it keeps track of auxiliary files when moving/copying
-to different file-system locations or calculating hashes.
+fileformats comes into its own, since it keeps track of auxiliary files when moving/copying
+to different file-system locations and calculating hashes.
 
 See the `extension template <https://github.com/ArcanaFramework/fileformats-extension-template>`__
 for instructions on how to design *FileFormats* extensions modules to augment the
