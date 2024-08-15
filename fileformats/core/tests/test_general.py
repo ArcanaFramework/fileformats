@@ -24,7 +24,7 @@ class TestFile(File):
 
 def test_file_repr():
     if platform.system() == "Windows":
-        expected = f"Foo('{Path().cwd().drive}\\mock\\foo.foo')"
+        expected = "Foo('\\mock\\foo.foo')"
     else:
         expected = "Foo('/mock/foo.foo')"
     assert repr(Foo.mock()) == expected

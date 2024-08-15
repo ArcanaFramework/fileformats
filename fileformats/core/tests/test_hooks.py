@@ -15,7 +15,7 @@ def test_sample():
 def test_mock():
     mock = Foo.mock()
     if platform.system() == "Windows":
-        expected = Path(f"{Path().cwd().drive}\\mock\\foo.foo")
+        expected = Path("\\mock\\foo.foo")
     else:
         expected = Path("/mock/foo.foo")
     assert mock.fspath == expected
