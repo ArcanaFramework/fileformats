@@ -106,8 +106,8 @@ def to_mime(datatype: type, official: bool = True):
     -------
     mime_str : str
         the MIME type string if `iana=True`, or MIME-like (i.e. using the fileformats
-        namespace scheme instead of putting all non-standard types into application/*)
-        if not
+        namespace scheme instead of putting all non-standard types into the 'application'
+        registry if not
     """
     origin = ty.get_origin(datatype)
     if official and (origin or datatype.namespace == "field"):

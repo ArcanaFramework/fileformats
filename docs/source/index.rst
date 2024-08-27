@@ -96,7 +96,7 @@ This work is licensed under a
     :hidden:
 
     quick_start
-    validation
+    detection
     mime
     file_handling
     classifiers
