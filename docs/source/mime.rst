@@ -1,35 +1,14 @@
-Format Identification
-=====================
+MIME Types
+==========
 
 In addition to simply importing and using a format class in your Python code, format classes
-can be loaded from their `MIME type`_ or detected from
-file-system objects.
+can be loaded from their `MIME type`_ or `MIME-like` type strings. This can be useful for
+dynamically loading formats based on user input, or for identifying the format of a file
+based on its MIME type.
 
 
-Detecting formats
------------------
-
-While not a primary design goal of the *FileFormats* library, it is
-possible to detect the formats that match a given set of files using the ``find_matching``
-function. Note that it isn't always possible to uniquely identify a single format, since
-there may be several matching formats for, non-descript binary file formats that use the
-".dat" extension for example.
-
-.. code-block::
-
-    >>> from fileformats.core import find_matching
-    >>> find_matching("/path/to/word.doc")
-    [<class 'fileformats.application.Msword'>]
-
-Note that the installation of additional sub-packages may cause detection code to
-break if your code doesn't the potential of new formats being added with overlapping
-cases where they will both match a given file set. If you are only interested in
-formats covered in the main fileformats package then you should use the ``standard_only``
-flag
-
-
-MIME Types
-----------
+Official IANA
+-------------
 
 Namespaces in the ``fileformats`` package are largely named after MIME type registries
 as defined by the `Internet Assigned Numbering Authority (IANA) <https://www.iana_mime.org/assignments/media-types/media-types.xhtml>`__.
@@ -77,8 +56,8 @@ error will be raised when they are loaded from a MIME type.
     unless IANA compliance is required.
 
 
-MIME-like types
----------------
+MIME-like
+---------
 
 To avoid the issue with format classes in separate namespaces mapping onto the same
 IANA-style MIME type, as well as improving readability of the MIME string (i.e. not

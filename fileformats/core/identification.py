@@ -72,7 +72,7 @@ def from_mime(mime_str: str):
     ----------
     mime_str : str
         the MIME type, or MIME-like (i.e. using the fileformats namespace scheme
-        instead of putting all non-standard types into application/*), string to
+        instead of putting all non-standard types into the 'application' registry), string to
         resolve
 
     Returns
@@ -92,7 +92,7 @@ def from_mime(mime_str: str):
 
 def to_mime(datatype: type, official: bool = True):
     """Returns the mime-type or mime-like (i.e. using fileformats namespaces instead
-    of putting all non-standard types in the applications/* registry) string corresponding
+    of putting all non-standard types in the 'application' registry) string corresponding
     to the given datatype
 
     Parameters

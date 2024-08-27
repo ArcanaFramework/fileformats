@@ -33,57 +33,51 @@ and "magic numbers", where applicable. In addition to these generic methods,
 routines for exotic file formats, e.g. formats that require inspection of headers to
 locate other members of the "file set".
 
+Base features are available for all types within *FileFormats* and its extension
+packages using the base install. They are designed to be broadly available for a large
+range of types and very light-weight in terms of external dependencies. Additional
+features requiring dependencies are implemented in *extras* packages that can be
+installed if required.
+
+
 Installation
 ------------
 
 *FileFormats* can be installed for Python >=3.7 using *pip*
 
-.. code-block:: bash
+.. code-block:: console
 
     $ python3 -m pip install fileformats
 
 This will perform a basic install with minimal dependencies, which can be used for
 type validation and detection. To also install the dependencies required to read data
-from, and converters between, select file formats, you can install the package with
-the ``extended`` option.
+from, and converters between, select file formats, you can install the ``extras`` package.
+
+.. code-block:: console
+
+    $ python3 -m pip install fileformats-extras
+
+The main fileformats package covers all formats specified in the IANA MIME type standard.
+However, it has been designed to be able to be extended to file formats used in specialised
+domains. These formats are implemented in extension packages such as
+`fileformats-medimage <https://github.com/ArcanaFramework/fileformats-medimage>`__ and
+`fileformats-datascience <https://github.com/ArcanaFramework/fileformats-datascience>`__,
+which can be installed with
 
 .. code-block:: bash
 
-    $ python3 -m pip install fileformats[extended]
+    $ python3 -m pip install fileformats-medimage fileformats-datascience
 
+As with the main package, some extra functionality is available within "extras" packages
+for these extensions, which can be installed with
 
-.. toctree::
-    :maxdepth: 2
-    :hidden:
+.. code-block:: bash
 
-    workflows
-    identification
-    developer
+    $ python3 -m pip install fileformats-medimage-extras fileformats-datascience-extras
 
-
-Quick Example
--------------
-
-Validate an mp4 audio file's extension and magic number simply by instantiating the class.
-
-
-.. code-block:: python
-
-   >>> from fileformats.audio import Mp4
-   >>> mp4_file = Mp4("/path/to/audio.mp4")  # checks it exists, its extension and magic number
-   >>> str(mp4_file)
-   "/path/to/audio.mp4"
-
-The created ``FileSet`` object implements ``os.PathLike`` so can used in place of ``str``
-or ``pathlib.Path`` in most cases, e.g. when opening files
-
-   >>> fp = open(mp4_file, "rb")
-   >>> contents = fp.read()
-
-or in string templates, e.g.
-
-   >>> import subprocess
-   >>> subprocess.run(f"cp {mp4_file} new-dest.mp4", shell=True)
+.. note::
+   See the :ref:`Developer Guide` for instructions on how to implement your own extensions
+   and extras.
 
 
 License
@@ -95,6 +89,26 @@ This work is licensed under a
 .. image:: https://i.creativecommons.org/l/by/4.0/88x31.png
   :target: http://creativecommons.org/licenses/by/4.0/
   :alt: Creative Commons Attribution 4.0 International License
+
+
+.. toctree::
+    :maxdepth: 2
+    :hidden:
+
+    quick_start
+    validation
+    mime
+    file_handling
+    classifiers
+    extras
+    developer
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Reference
+   :hidden:
+
+   api.rst
 
 
 .. _Pydra: https://pydra.readthedocs.io

@@ -201,6 +201,7 @@ class FileSet(DataType):
 
     @classproperty
     def possible_exts(cls):
+        """All possible extensions of the file format"""
         possible = [cls.ext]
         try:
             possible.extend(cls.alternate_exts)
