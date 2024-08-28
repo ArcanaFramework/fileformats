@@ -82,9 +82,20 @@ To copy all files/directories in a format you can use the ``FileSet.copy()`` met
 
 .. code-block:: python
 
-    >>> analyze_file_copy = analyze_file.copy(dest_dir="/path/to/destination", stem="new-stem")
-    >>> analyze_file_copy.fspaths
-    {"/path/to/destination/new-stem.hdr", "/path/to/destination/new-stem.img"}
+    >>> new_analyze = analyze_file.copy(dest_dir="/path/to/destination")
+    >>> new_analyze.fspaths
+    {"/path/to/destination/t1w.hdr", "/path/to/destination/t1w.img"}
+
+
+to move the files/directories use the ``FileSet.move()`` method
+
+
+.. code-block:: python
+
+    >>> new_analyze = analyze_file.move(dest_dir="/path/to/destination")
+    >>> new_analyze.fspaths
+    {"/path/to/destination/t1w.hdr", "/path/to/destination/t1w.img"}
+
 
 
 Hashing

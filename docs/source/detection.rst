@@ -2,6 +2,10 @@
 Detection
 =========
 
+*FileFormats* has been designed to detect whether a set of files matches a given
+format specification. This can be used either be in the form of validating file types
+in workflows or identifying the format in which user input files have been provided.
+
 Validation
 ----------
 

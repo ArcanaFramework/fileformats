@@ -54,7 +54,7 @@ light-weight.
 Installation
 ------------
 
-*FileFormats* can be installed for Python >=3.7 using *pip*
+*FileFormats* can be installed for Python >=3.8 using *pip*
 
 .. code-block:: console
 
@@ -105,6 +105,7 @@ This work is licensed under a
     detection
     file_handling
     mime
+    converters
     extras
     classifiers
     fields

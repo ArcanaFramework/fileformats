@@ -10,15 +10,8 @@ based on its MIME type.
 Official
 --------
 
-Namespaces in the ``fileformats`` package are largely named after MIME type registries
+Namespaces in the main ``fileformats`` package are named after MIME type registries
 as defined by the `Internet Assigned Numbering Authority (IANA) <https://www.iana_mime.org/assignments/media-types/media-types.xhtml>`__.
-The difference is that there is no "application" registry, which acts as a
-bit of a catch-all in the MIME-type specification. Instead, types that
-fall under the "application" registry are grouped by the types of data that they
-store, e.g. ``fileformats.application`` for (typically compressed) archives such as
-zip, bzip, gzip, etc..., ``fileformats.application`` for PDFs, word docs,
-``fileformats.application`` for JSON, YAML and XML, etc...
-
 Format class can be converted to and from MIME type strings using the ``to_mime`` and
 ``from_mime`` functions. If the the ``iana_mime`` attribute
 is present in the type class, it should correspond to a formally recognised MIME type
@@ -33,12 +26,12 @@ by the , e.g.
     assert Loaded is MswordX
     assert Loaded.mime_type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 
-If the format class doesn't define an ``iana_mime`` attribute (i.e. in the actual class,
-not including ``iana_mime`` attributes defined in base classes), it will be assigned an informal
+Extension formats (see :ref:`Extensions and Extras`) that don't define an
+``iana_mime`` attribute in their class dictionary will be assigned a
 MIME-type of "application/x-<transformed-class-name>", where *transformed-class-name*
-is the name of the format class converted from "PascalCase" to "kebab-case", with the
-single underscores converterd to "." and a double underscores converted to "+" (there
-should be only one), e.g.
+is the name of the format class converted from "PascalCase" to "kebab-case", with
+single underscores in the class name converted to "." and a double underscores
+converted to "+" (there should be only one), e.g.
 
 .. code-block::
 
@@ -59,12 +52,12 @@ error will be raised when they are loaded from a MIME type.
 Informal ("MIME-like")
 ----------------------
 
-To avoid the issue with format classes in separate namespaces mapping onto the same
-IANA-style MIME type, as well as improving readability of the MIME string (i.e. not
-drowning in a sea of "application/x-\*" types), it can be preferable in some use cases
-not to worry with closely matching the MIME-type specification for non-standard formats
-and just use the *FileFormats* namespace inplace of the generic "application/x-" prefix.
-This is accessed via the ``mime_like`` class-property.
+To avoid the issue of name clashes between formats in different extension packages
+mapping onto the same MIME type it can be preferable when strict MIME-types are not
+required to just use the *FileFormats* namespace inplace for the "registry" of the
+file-type instead of the generic "application/x-" prefix (it also helps to improve
+readability). This is dubbed the "MIME-like" string, and is accessed via the
+``mime_like`` class-property.
 
 .. code-block::
 
@@ -75,8 +68,8 @@ This is accessed via the ``mime_like`` class-property.
     >>> Nifti1.mime_like
     "medimage/nifti1"
 
-The ``from_mime`` function will resolve both official-style MIME types and the MIME-like
-types, so it is possible to roundtrip from both.
+The ``from_mime`` function will resolve both official MIME-type and MIME-like
+strings, so it is possible to roundtrip from both.
 
 .. code-block:: python
 
