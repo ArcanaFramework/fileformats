@@ -1,6 +1,6 @@
 
-Format detection
-================
+Detection
+=========
 
 Validation
 ----------
@@ -93,9 +93,9 @@ The ``find_matching`` function can be used to list the formats that match a give
     >>> find_matching("/path/to/word.doc")
     [<class 'fileformats.application.Msword'>]
 
-.. note::
-   The installation of additional sub-packages may cause detection code to
-   break if one of the newly added formats also matches the file.
+.. warning::
+   The installation of extension packages may cause detection code to break if one of
+   the newly added formats also matches the file and your code doesn't handle this case.
    If you are only interested in formats covered in the main fileformats package then
    you should use the ``standard_only`` flag
 

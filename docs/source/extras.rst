@@ -4,13 +4,15 @@ Extras
 
 In addition to the basic features of validation and path handling, it is possible to
 implement methods to interact with the data of file format objects via "extras hooks".
-Such features are added to selected
-format classes on a needs basis (pull requests welcome 😊, see :ref:`Developer Guide`),
-so are by no means comprehensive, and **are very much provided "as-is"**.
+Such features are added to selected format classes on a needs basis (pull requests
+welcome 😊, see :ref:`Developer Guide`), so are by no means comprehensive, and
+are provided "as-is".
 
-Since these features, typically rely on a range of external libraries, the dependencies
-are kept separate and only installed if the ``[extended]`` install option is used
-(i.e. ``python3 -m pip install filformats[extended]``).
+Since these features typically rely on a range of external libraries, they are kept in
+separate *extras* packages (e.g.
+`fileformats-extras <https://pypi.org/project/fileformats-extras/>`__,
+`fileformats-medimage-extras <https://pypi.org/project/fileformats-medimage-extras/>`__),
+which need to be installed separately.
 
 
 Metadata
@@ -25,6 +27,10 @@ e.g.
     >>> dicom.metadata["SeriesDescription"]
     "localizer"
 
+Formats the ``WithSeparateHeader`` and ``WithSideCars`` mixin classes will attempt the
+side car if a metadata reader is implemented (e.g. JSON) and merge that with any header
+information read from the primary file.
+
 
 Load/saving data
 ----------------
@@ -37,12 +43,10 @@ them can then be duck-typed in calling functions/methods. For example, both ``Ya
 
 .. code-block:: python
 
-    from fileformats.application import DataSerialization
+    from fileformats.application import DataSerialization  # i.e. JSON or YAML
 
-    def read_json_or_yaml_to_dict(serialized: DataSerialization):
+    def read_serialisation(serialized: DataSerialization) -> dict:
         return serialized.load()
-
-Also, when providing the the ``WithSeparateHeader`` and ``WithSideCars`` mixin classes will
 
 Conversion
 ----------
@@ -56,9 +60,9 @@ file/directories using the ``convert`` classmethod of the target format to conve
     from fileformats.application import Zip
     from fileformats.generic import Directory
 
+    # Example round trip from directory to zip file
     zip_file = Zip.convert(Directory("/path/to/a/directory"))
     extracted = Directory.convert(zip_file)
-    copied = extracted.copy_to("/path/to/output")
 
 The converters are implemented in the Pydra_ dataflow framework, and can be linked into
 wider Pydra_ workflows by accessing the underlying converter task with the ``get_converter``

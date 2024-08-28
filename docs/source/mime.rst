@@ -1,4 +1,4 @@
-MIME Types
+MIME types
 ==========
 
 In addition to simply importing and using a format class in your Python code, format classes
@@ -7,8 +7,8 @@ dynamically loading formats based on user input, or for identifying the format o
 based on its MIME type.
 
 
-Official IANA
--------------
+Official
+--------
 
 Namespaces in the ``fileformats`` package are largely named after MIME type registries
 as defined by the `Internet Assigned Numbering Authority (IANA) <https://www.iana_mime.org/assignments/media-types/media-types.xhtml>`__.
@@ -51,13 +51,13 @@ error will be raised when they are loaded from a MIME type.
 
 .. warning::
     Note that the installation of additional sub-packages may cause detection code to
-    break if your code doesn't the potential of new formats being added with the same
+    break if your code doesn't handle the potential of new formats being added with the same
     class name. Therefore, you may prefer to use "MIME-like" type strings (see below)
     unless IANA compliance is required.
 
 
-MIME-like
----------
+Informal ("MIME-like")
+----------------------
 
 To avoid the issue with format classes in separate namespaces mapping onto the same
 IANA-style MIME type, as well as improving readability of the MIME string (i.e. not

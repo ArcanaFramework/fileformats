@@ -20,7 +20,7 @@ Core
     :members: mime_type, mime_like, from_mime, strext, unconstrained, possible_exts, metadata, select_metadata, select_by_ext, matching_exts, convert, get_converter, register_converter, all_formats, standard_formats, hash, hash_files, mock, sample, decomposed_fspaths, from_paths, copy, move
 
 .. autoclass:: fileformats.core.Field
-    :members: mime_like, from_mime, from_primitive
+    :members: mime_like, from_mime, to_primitive, from_primitive
 
 
 Generic

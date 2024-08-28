@@ -15,6 +15,8 @@ FileFormats
    :alt: Documentation Status
 
 
+<img src="./docs/source/_static/images/logo_small.png" alt="Logo Small" style="float: right;">
+
 *Fileformats* provides a library of file-format types implemented as Python classes.
 The file-format types were designed to be used in type validation and data movement
 during the construction and execution of data workflows. However, they can can also be

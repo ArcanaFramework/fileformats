@@ -44,6 +44,9 @@ class Field(DataType):
 
         return [f for f in Field.subclasses() if f.primitive is not None]
 
+    def to_primitive(self):
+        return self.primitive(self)
+
     @classmethod
     def from_primitive(cls, dtype: type):
         try:
