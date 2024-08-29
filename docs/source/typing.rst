@@ -1,52 +1,51 @@
 Typing
 ======
 
-As formats are represented by classes, *FileFormats* provides a way to specify finer-grain
-type annotations for Python functions and workflows. To these ends, FileFormats also provides a
-number of special datatype classes that can be used interchangeably with file formats,
-and the ability to augment fileformat types to classify the data contained within them.
+As formats are represented by classes, *FileFormats* provides a way to specify fine-grain
+type annotations for Python functions and workflows that operate on files. To augment this
+functionality, FileFormats also provides a number of special datatype classes that can
+be used interchangeably with file formats, and the ability to "classify" fileformat types
+to specify the data expected to be contained within them. In some cases, classifiers are
+used as part of the validation process, in others they are just annotations.
 
 Classifiers
 -----------
 
-Some FileFormats classes use the ``[]`` class operator to classify the type of data
-contained within the file, referred to as "classifiers". For example, a zip file
-containing a PNG image, the type can be specified as
+Classifiable FileFormats classes (i.e. those that inherit the :class:`.WithClassifiers`
+mixin), can be classified using the ``[]`` class operator. For example, a zip file can
+be classified as containing a PNG image
 
 .. code-block:: python
 
     >>> from fileformats.application import Zip
     >>> from fileformats.image import Png, Jpeg
 
-    >>> zip_file = Zip.convert(Png("/path/to/an-image.png"))
-    >>> fspath = str(zip_file)
-    >>> fspath
-    "/path/to/an-image.zip"
-    >>> Zip[Png].matches(fspath)
+    >>> zipped_png_fspath = str(Zip.convert(Png("/path/to/an-image.png")))
+    >>> Zip[Png].matches(zipped_png_fspath)
     True
-    >>> Zip[Jpeg].matches(fspath)
+    >>> Zip[Jpeg].matches(zipped_png_fspath)
     False
 
 The types of classes that can be used to classify varies from type to type. For archive
 types like :class:`.Zip`, :class:`.Gzip`, take another file format type, others specific
 classifier types. Some classifiable types can take multiple classifiers, whereas others can
 take one, and the the multiple classifiers can either be ordered or not. In the case of
-:class:`.MedicalImage` subclasses, unordered, multiple classifiers based on the
-`radlex radiology lexicon <https://radlex.org/>`__ are used to specify the contents of
-images
+:class:`.MedicalImage` subclasses, multiple unordered classifiers based on the
+`Radlex radiology lexicon <https://radlex.org/>`__ can be used to annotate the contents of
+the images
 
 .. code-block:: python
 
     from fileformats.medimage import NiftiGz, T1Weighted, Brain
 
-    def brain_extraction(image: NiftiGz[T1Weighted, Brain]) -> NiftiGz[Brain, Mask]:
+    def brain_mask(image: NiftiGz[Brain, T1Weighted]) -> NiftiGz[Brain, Mask]:
         ...
 
 .. note::
     At the time of writing, only a subset of the RadLex lexicon has been implemented.
     It is being expanded as needed.
 
-When classified types are converted into MIME-like strings, the classifiers are prepended to
+When classifiable types are converted into MIME-like strings, the classifiers are prepended to
 the type name with a '+' separator, e.g.
 
 
@@ -62,12 +61,12 @@ they are ordered) and separated by a '.' preceding the '+' separator
 
     to_mime(NiftiGz[T1Weighted, Brain]) == "medimage/brain.t1-weighted+nifti-gz"
 
-Typically the classifier types need to belong to the same registry as the main type, except
-in special cases such as :class:`.application.Zip` and :class:`.application.Gzip`, which can be classified by any
-file format type. Other special classified types are the :class:`.generic.DirectoryOf`
-and :class:`.generic.SetOf` collection types. These can be used to specify that a
-"file format" contains a collection of file formats within a directory or independent
-files, respectively.
+Typically the classifier types need to belong to the same subpackage/registry as the
+main type, but special classes such as :class:`.application.Zip` and :class:`.application.Gzip`,
+can be classified by any file format type. Other special classifiable types are the
+:class:`.generic.DirectoryOf` and :class:`.generic.SetOf` collection types. These can
+be used to specify that a "file format" contains a collection of file formats within a
+directory or independent files, respectively.
 
 .. code-block:: python
 
@@ -146,7 +145,7 @@ Subclass hooks
 Classified types implement the :meth:`.WithClassifiers.__subclasshook__` method, to control
 the behaviour of the :func:`isinstance` and :func:`issubclass` functions when they are
 passed as arguments. Classified types are considered to be subclasses of the
-unclassified type.
+classifiable type.
 
 .. code-block:: python
 
@@ -175,7 +174,7 @@ classifiers in the subset
     assert issubclass(T1Weighted, Mri)
     assert issubclass(NiftiGz[T1Weighted, Brain], NiftiGz[Mri])
 
-or if the classified type itself is a subclass
+or if the classifiable type itself is a subclass
 
 .. code-block:: python
 
