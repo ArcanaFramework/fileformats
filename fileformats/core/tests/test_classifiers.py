@@ -5,7 +5,7 @@ import pydra.mark
 from fileformats.core import from_mime, DataType, FileSet
 from fileformats.core.hook import converter
 from fileformats.application import Zip
-from fileformats.generic import DirectoryContaining
+from fileformats.generic import DirectoryOf
 from fileformats.field import Array, Integer, Decimal, Text, Boolean
 from fileformats.core.exceptions import (
     FormatDefinitionError,
@@ -230,12 +230,12 @@ def test_ordered_qualifier_converters():
 
 
 def test_mime_roundtrips():
-    assert DirectoryContaining[F].mime_like == "testing/f+directory-containing"
-    assert from_mime("testing/f+directory-containing") is DirectoryContaining[F]
+    assert DirectoryOf[F].mime_like == "testing/f+directory-of"
+    assert from_mime("testing/f+directory-of") is DirectoryOf[F]
 
     # Directory is unordered so sort classifiers to create unique mime
-    assert DirectoryContaining[H, F].mime_like == "testing/f.h+directory-containing"
-    assert from_mime("testing/f.h+directory-containing") is DirectoryContaining[F, H]
+    assert DirectoryOf[H, F].mime_like == "testing/f.h+directory-of"
+    assert from_mime("testing/f.h+directory-of") is DirectoryOf[F, H]
 
     # K is ordered
     assert K[B, A].mime_like == "testing/b.a+k"

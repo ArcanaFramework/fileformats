@@ -260,8 +260,8 @@ files and another one for little endian files. Therefore we can't just use the
 ``fileformats.core.mark.check``.
 
 
-Converters
-----------
+Implementing converters
+-----------------------
 
 Converters between two equivalent formats are defined using Pydra_ dataflow engine
 `tasks <https://pydra.readthedocs.io/en/latest/components.html>`_. There are two types
@@ -409,7 +409,7 @@ a warning if the import fails, when get_converter is called on a format in that
 namespace.
 
 
-.. note::
+.. warning::
     If the converters aren't imported successfully, then you will receive a
     ``FormatConversionError`` error saying there are no converters between FormatA and
     FormatB.

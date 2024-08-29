@@ -223,7 +223,7 @@ class WithSideCars(WithAdjacentFiles):
 
 class WithClassifiers:
     """Mixin class for adding the ability to qualify the format class to designate the
-    type of information stored within the format, e.g. ``DirectoryContaining[Png, Gif]`` for a
+    type of information stored within the format, e.g. ``DirectoryOf[Png, Gif]`` for a
     directory containing PNG and GIF files, ``Zip[DataFile]`` for a zipped data file,
     ``Array[Integer]`` for an array containing integers, or DicomDir[T1w, Brain] for a
     T1-weighted MRI scan of the brain in DICOM format.

@@ -1,5 +1,5 @@
 import pytest
-from fileformats.generic import File, Directory, DirectoryContaining
+from fileformats.generic import File, Directory, DirectoryOf
 from fileformats.core.exceptions import FormatMismatchError
 from fileformats.core.mixin import WithSideCars
 from conftest import write_test_file
@@ -43,14 +43,14 @@ def test_dynamic_dir(work_dir):
 
     fspath = work_dir / "test-dir"
     write_test_file(fspath / "test.foo")
-    assert DirectoryContaining[TestFile].matches(fspath)
+    assert DirectoryOf[TestFile].matches(fspath)
 
 
 def test_dynamic_dir_fail(work_dir):
 
     fspath = work_dir / "test-dir"
     write_test_file(fspath / "test.bad")
-    assert not DirectoryContaining[TestFile].matches(fspath)
+    assert not DirectoryOf[TestFile].matches(fspath)
 
 
 class TestFile(File):

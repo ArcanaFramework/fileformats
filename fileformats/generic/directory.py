@@ -102,7 +102,7 @@ class Directory(FsObject):
         return self.fspath.iterdir()
 
 
-class DirectoryContaining(WithClassifiers, Directory):
+class DirectoryOf(WithClassifiers, Directory):
     """Generic directory classified by the formats of its contents"""
 
     # WithClassifiers-required class attrs
