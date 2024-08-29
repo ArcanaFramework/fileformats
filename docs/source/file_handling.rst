@@ -88,6 +88,15 @@ To copy all files/directories in a format you can use the ``FileSet.copy()`` met
 
     >>> new_analyze = analyze_file.copy(dest_dir="/path/to/destination")
     >>> new_analyze.fspaths
+    {"/path/to/destination/mprage.hdr", "/path/to/destination/mprage.img"}
+
+The same filenames will be used by default in the destination directory. To specify the
+file stem, pass the ``new_stem`` argument
+
+.. code-block:: python
+
+    >>> new_analyze = analyze_file.copy(dest_dir="/path/to/destination", new_stem="t1w")
+    >>> new_analyze.fspaths
     {"/path/to/destination/t1w.hdr", "/path/to/destination/t1w.img"}
 
 
@@ -116,9 +125,7 @@ combination of link and copy modes,
 
 .. code-block:: python
 
-    new_analyze = analyze_file.copy(
-        dest_dir="/path/to/destination", mode=FileSet.CopyMode.link_or_copy
-    )
+    new_analyze = analyze_file.copy(dest_dir="/path/to/destination", mode="link_or_copy")
 
 in which case the copy method will attempt to create a symlink, then if that fails, a
 hardlink, and failing that fallback to a copy. The supported modes can also be specified
@@ -138,17 +145,17 @@ unsupported modes will be masked out of the ``supported_modes`` before it is app
 Collation
 ~~~~~~~~~
 
-When working with file formats with multiple files, there is not requirement that the
-filepaths are adjacent to each other in the same , for example
+There is not requirement that file formats consisting of multiple files (e.g. with a separate
+header) are "adjacent" to each other, i.e. in the same directory with the same file-stem
 
 .. code-block:: python
 
     >>> from fileformats.medimage import NiftiX
     >>> niftix = NiftiX(["/a/path/to/a/t1w.nii", "/an/unrelated/path/t1-weighted.json"])
 
-However, some commands expect auxiliary files to be "adjacent" to the primary file, i.e.
-in the same directory as the primary with the same file stem. To support this use case,
-the :meth:`.FileSet.copy()` can be passed a ``collation`` argument, which takes a
+However, some commands expect side-car and header files to be "adjacent" to the primary
+file, i.e. in the same directory as the primary with the same file stem. To support this
+use case, the :meth:`.FileSet.copy()` can be passed a ``collation`` argument, which takes a
 :class:`.FileSet.Collation` enum value.
 
 .. code-block:: python
@@ -182,14 +189,11 @@ If the files just need to be in the same directory, but not necessarily adjacent
 
 .. code-block:: python
 
-    >>> new_niftix = niftix.copy(
-    ...    dest_dir="/path/to/destination", collation=FileSet.Collation.siblings
-    ... )
+    >>> new_niftix = niftix.copy(dest_dir="/path/to/destination", collation="siblings")
     >>> new_niftix.fspaths
     {"/path/to/destination/t1w.nii", "/path/to/destination/t1-weighted.json"}
 
-
-The collation setting can also be used to decide whether files need to be copied or linked
+The collation setting will also be used to decide whether files need to be copied or linked
 to a new location. For example, if the files are already adjacent, then they can be simply
 left where they are by setting the mode to ``FileSet.CopyMode.any`` flag, which encompasses the
 ``FileSet.CopyMode.leave`` mode.
@@ -202,13 +206,13 @@ left where they are by setting the mode to ``FileSet.CopyMode.any`` flag, which 
     ...    mode=FileSet.CopyMode.any
     ... )
 
-The behaviour of this copy becomes a little complex and will be determined by the
+The behaviour of this call is a little complex and will be determined by the
 file paths in the ``niftix`` FileSet and the location of the source and destination
 directories. For example, if the file paths are already adjacent in the source directory
 they will be left where they are. However, if the files are not adjacent, they will be
-symlinked to the destination directory, unless the mount that directory is on doesn't
+symlinked to the destination directory, unless the mount/drive that directory is on doesn't
 support symlinks, in which case they will be hardlinked, unless the destination directory
-is on a different physical drive, in which case they will be copied.
+is on a different physical drive, in which case the copy method will fallback to a full copy.
 
 
 Moving
