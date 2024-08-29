@@ -101,8 +101,8 @@ file by passing a value from the :class:`.FileSet.CopyMode` enum to the ``mode``
 
     >>> from fileformats.core import FileSet
     >>> new_analyze = analyze_file.copy(
-        dest_dir="/path/to/destination", mode=FileSet.CopyMode.hardlink
-    )
+    ...    dest_dir="/path/to/destination", mode=FileSet.CopyMode.hardlink
+    ... )
     >>> new_analyze.fspaths
     {"/path/to/destination/t1w.hdr", "/path/to/destination/t1w.img"}
 
@@ -154,8 +154,8 @@ the :meth:`.FileSet.copy()` can be passed a ``collation`` argument, which takes 
 .. code-block:: python
 
     >>> new_niftix = niftix.copy(
-        dest_dir="/path/to/destination", collation=FileSet.Collation.adjacent
-    )
+    ...    dest_dir="/path/to/destination", collation=FileSet.Collation.adjacent
+    ... )
     >>> new_niftix.fspaths
     {"/path/to/destination/t1w.nii", "/path/to/destination/t1w.json"}
 
@@ -165,8 +165,8 @@ the ``copy()`` method.
 .. code-block:: python
 
     >>> new_niftix = niftix.copy(
-        dest_dir="/path/to/destination", new_stem="t1-weighted"
-    )
+    ...    dest_dir="/path/to/destination", new_stem="t1-weighted"
+    ... )
     >>> new_niftix.fspaths
     {"/path/to/destination/t1-weighted.nii", "/path/to/destination/t1-weighted.json"}
 
@@ -183,8 +183,8 @@ If the files just need to be in the same directory, but not necessarily adjacent
 .. code-block:: python
 
     >>> new_niftix = niftix.copy(
-        dest_dir="/path/to/destination", collation=FileSet.Collation.siblings
-    )
+    ...    dest_dir="/path/to/destination", collation=FileSet.Collation.siblings
+    ... )
     >>> new_niftix.fspaths
     {"/path/to/destination/t1w.nii", "/path/to/destination/t1-weighted.json"}
 
@@ -197,10 +197,10 @@ left where they are by setting the mode to ``FileSet.CopyMode.any`` flag, which 
 .. code-block:: python
 
     >>> new_niftix = niftix.copy(
-        dest_dir="/path/to/destination",
-        collation=FileSet.Collation.adjacent,
-        mode=FileSet.CopyMode.any
-    )
+    ...    dest_dir="/path/to/destination",
+    ...    collation=FileSet.Collation.adjacent,
+    ...    mode=FileSet.CopyMode.any
+    ... )
 
 The behaviour of this copy becomes a little complex and will be determined by the
 file paths in the ``niftix`` FileSet and the location of the source and destination
@@ -221,8 +221,8 @@ arguments, which are not relevant for moving files.
 .. code-block:: python
 
     >>> new_analyze = analyze_file.move(
-        dest_dir="/path/to/destination", new_stem="t1-weighted"
-    )
+    ...    dest_dir="/path/to/destination", new_stem="t1-weighted"
+    ...)
     >>> new_analyze.fspaths
     {"/path/to/destination/t1-weighted.hdr", "/path/to/destination/t1-weighted.img"}
 

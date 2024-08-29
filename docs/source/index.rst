@@ -106,7 +106,7 @@ This work is licensed under a
     file_handling
     mime
     extras
-    datatypes
+    typing
     developer
 
 .. toctree::

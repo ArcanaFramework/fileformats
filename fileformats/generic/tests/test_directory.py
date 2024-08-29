@@ -1,4 +1,4 @@
-from fileformats.generic import Directory, DirectoryContaining, SetOf
+from fileformats.generic import Directory, DirectoryOf, SetOf
 from fileformats.testing import MyFormatGz
 
 
@@ -7,8 +7,8 @@ def test_sample_directory():
 
 
 def test_sample_directory_containing():
-    sample = DirectoryContaining[MyFormatGz].sample()
-    assert isinstance(sample, DirectoryContaining[MyFormatGz])
+    sample = DirectoryOf[MyFormatGz].sample()
+    assert isinstance(sample, DirectoryOf[MyFormatGz])
     assert all(isinstance(c, MyFormatGz) for c in sample.contents)
 
 

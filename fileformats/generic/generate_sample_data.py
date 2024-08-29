@@ -7,7 +7,7 @@ from fileformats.core import SampleFileGenerator
 from .fsobject import FsObject
 from .file import File
 from .set import SetOf
-from .directory import Directory, DirectoryContaining
+from .directory import Directory, DirectoryOf
 
 
 # Methods to generate sample files, typically used in testing
@@ -64,7 +64,7 @@ def directory_generate_sample_data(
 
 @FileSet.generate_sample_data.register
 def directory_containing_generate_sample_data(
-    directory: DirectoryContaining,
+    directory: DirectoryOf,
     generator: SampleFileGenerator,
 ) -> ty.Iterable[Path]:
     a_dir = generator.generate_fspath(Directory)

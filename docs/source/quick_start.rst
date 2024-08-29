@@ -10,6 +10,13 @@ Validate an JPEG image file's extension and magic number simply by instantiating
    >>> str(jpeg_file)  # returns the file path
    "/path/to/an-image.jpeg
 
+For conditional checks instead of raising an error, use the ``matches`` method.
+
+.. code-block:: python
+
+   >>> if Jpeg.matches("/path/to/an-image.jpeg"):
+   ...     print("File is a JPEG image")
+
 The created ``FileSet`` object implements ``os.PathLike`` so can used in place of ``str``
 or ``pathlib.Path``, e.g. when opening files
 
@@ -59,10 +66,10 @@ file (see :ref:`Mode`).
 .. code-block:: python
 
    >>> new_jpeg = jpeg_file.copy(
-       dest_dir="/path/on/same/mount", mode="hardlink_or_copy"
+   ...    dest_dir="/path/on/same/mount", mode="hardlink_or_copy"
    )  # will perform a hardlink
    >>> new_jpeg2 = jpeg_file.copy(
-       dest_dir="/path/to/different/mount", mode="hardlink_or_copy"
+   ...    dest_dir="/path/to/different/mount", mode="hardlink_or_copy"
    )  # will fallback to a copy
 
 To quickly generate a hash of the file set use the :meth:`.FileSet.hash()` method.

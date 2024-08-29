@@ -70,7 +70,7 @@ despite the presence of the ``.DS_Store`` directory and the ``catalog.xml`` file
 
 In addition to statically defining `Directory` formats such as the Dicom example above,
 dynamic directory types can be created on the fly by providing the content types as
-arguments to the `DirectoryContaining[]` method,
+arguments to the `DirectoryOf[]` method,
 e.g.
 
 .. code-block:: python
@@ -79,7 +79,7 @@ e.g.
     from fileformats.image import Png
     from fileformats.text import Csv
 
-    def my_task(image_dir: DirectoryContaining[Png]) -> Csv:
+    def my_task(image_dir: DirectoryOf[Png]) -> Csv:
         ... task implementation ...
 
 .. _Pydra: https://pydra.readthedocs.io

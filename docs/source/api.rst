@@ -32,7 +32,7 @@ Generic
 
 .. autoclass:: fileformats.generic.Directory
 
-.. autoclass:: fileformats.generic.DirectoryContaining
+.. autoclass:: fileformats.generic.DirectoryOf
 
 .. autoclass:: fileformats.generic.SetOf
 
