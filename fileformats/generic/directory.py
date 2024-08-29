@@ -108,4 +108,4 @@ class DirectoryOf(WithClassifiers, Directory):
     # WithClassifiers-required class attrs
     classifiers_attr_name = "content_types"
     allowed_classifiers = (FileSet,)
-    generically_classifies = True
+    generically_classifiable = True

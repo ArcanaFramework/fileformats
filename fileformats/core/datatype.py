@@ -219,7 +219,7 @@ class DataType(Classifier, metaclass=ABCMeta):
                         classified = get_format(classified_name)
                     except FormatRecognitionError as e:
                         try:
-                            classified = cls.generically_classifies_by_name[
+                            classified = cls.generically_classifiable_by_name[
                                 classified_name
                             ]
                         except KeyError:
@@ -227,7 +227,7 @@ class DataType(Classifier, metaclass=ABCMeta):
                                 e,
                                 (
                                     "neither list of generic types "
-                                    f"({list(cls.generically_classifies_by_name)})"
+                                    f"({list(cls.generically_classifiable_by_name)})"
                                 ),
                             )
                             raise e
@@ -240,16 +240,18 @@ class DataType(Classifier, metaclass=ABCMeta):
         return klass
 
     @classproperty
-    def generically_classifies_by_name(cls):
-        if cls._generically_classifies_by_name is None:
-            cls._generically_classifies_by_name = {
+    def generically_classifiable_by_name(cls):
+        if cls._generically_classifiable_by_name is None:
+            cls._generically_classifiable_by_name = {
                 to_mime_format_name(f.__name__): f
                 for f in FileSet.all_formats
-                if getattr(f, "generically_classifies", False)
+                if getattr(f, "generically_classifiable", False)
             }
-        return cls._generically_classifies_by_name
+        return cls._generically_classifiable_by_name
 
-    _generically_classifies_by_name = None  # Register all generically classified types
+    _generically_classifiable_by_name = (
+        None  # Register all generically classified types
+    )
 
     REQUIRED_ANNOTATION = "__fileformats_required__"
     CHECK_ANNOTATION = "__fileformats_check__"

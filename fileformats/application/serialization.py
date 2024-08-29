@@ -35,7 +35,7 @@ class DataSerialization(WithClassifiers, File):
     schema = None
     multiple_classifiers = False
     allowed_classifiers = (Schema,)
-    generically_classifies = True
+    generically_classifiable = True
     binary = False
 
     iana_mime = None

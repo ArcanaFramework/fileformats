@@ -278,7 +278,7 @@ class WithClassifiers:
     allowed_classifiers: ty.Optional[ty.Tuple[ty.Type[ty.Any]]] = None
     exclusive_classifiers: ty.Tuple[ty.Type[ty.Any]] = ()
     ordered_classifiers = False
-    generically_classifies = False
+    generically_classifiable = False
 
     def _validate_class(self):
         if self.wildcard_classifiers():
@@ -634,7 +634,7 @@ class WithClassifiers:
         namespace"""
         if cls.is_classified:
             namespaces = set(t.namespace for t in cls.classifiers)
-            if not cls.generically_classifies:
+            if not cls.generically_classifiable:
                 namespaces.add(cls.unclassified.namespace)
             if len(namespaces) == 1:
                 return next(iter(namespaces))
@@ -650,7 +650,7 @@ class WithClassifiers:
                     "Cannot create reversible MIME type for because did not find a "
                     f"common namespace between all classifiers {list(cls.classifiers)}"
                 )
-                if not cls.generically_classifies:
+                if not cls.generically_classifiable:
                     msg += (
                         f" and (non genericly classified) base class {cls.unclassified}"
                     )

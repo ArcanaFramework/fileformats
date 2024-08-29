@@ -11,7 +11,7 @@ class Archive(WithClassifiers, File):
     archived_type = None
     multiple_classifiers = False
     allowed_classifiers = (FileSet,)
-    generically_classifies = True
+    generically_classifiable = True
 
     binary = True
     iana_mime = None
