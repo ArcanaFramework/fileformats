@@ -105,10 +105,8 @@ This work is licensed under a
     detection
     file_handling
     mime
-    converters
     extras
-    classifiers
-    fields
+    datatypes
     developer
 
 .. toctree::

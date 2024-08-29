@@ -1220,9 +1220,9 @@ class FileSet(DataType):
     class CopyCollation(IntEnum):
         """Designates the desired "collation" behaviour of the FileSet.copy() method
 
-        Bases
-        -----
-        separated
+        Values
+        ------
+        any
             If mode == leave, paths can exist in separate directories in the
             file-system. For other copy modes, the relative directory structure between
             the "copied" paths (incl. links) in the set will be maintained within the

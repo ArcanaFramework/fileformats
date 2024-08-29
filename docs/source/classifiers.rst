@@ -1,4 +1,0 @@
-Classifiers
-===========
-
-To do
