@@ -1,28 +1,19 @@
-FileFormats
-===========
-.. image:: https://github.com/arcanaframework/fileformats/actions/workflows/ci-cd.yml/badge.svg
-   :target: https://github.com/arcanaframework/fileformats/actions/workflows/ci-cd.yml
-.. image:: https://codecov.io/gh/arcanaframework/fileformats/branch/main/graph/badge.svg?token=UIS0OGPST7
-   :target: https://codecov.io/gh/arcanaframework/fileformats
-.. image:: https://img.shields.io/pypi/pyversions/fileformats.svg
-   :target: https://pypi.python.org/pypi/fileformats/
-   :alt: Supported Python versions
-.. image:: https://img.shields.io/pypi/v/fileformats.svg
-   :target: https://pypi.python.org/pypi/fileformats/
-   :alt: Latest Version
-.. image:: https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat
-   :target: https://arcanaframework.github.io/fileformats/
-   :alt: Documentation Status
+# FileFormats
 
-.. image:: ./docs/source/_static/images/logo_small.png
-    :alt: Logo
+[![CI/CD](https://github.com/arcanaframework/fileformats/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/arcanaframework/fileformats/actions/workflows/ci-cd.yml)
+[![Codecov](https://codecov.io/gh/arcanaframework/fileformats/branch/main/graph/badge.svg?token=UIS0OGPST7)](https://codecov.io/gh/arcanaframework/fileformats)
+[![Python Versions](https://img.shields.io/pypi/pyversions/fileformats.svg)](https://pypi.python.org/pypi/fileformats/)
+[![Latest Version](https://img.shields.io/pypi/v/fileformats.svg)](https://pypi.python.org/pypi/fileformats/)
+[![Documentation Status](https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat)](https://arcanaframework.github.io/fileformats/)
+
+<img src="./docs/source/_static/images/logo_small.png" alt="Logo Small" style="float: right; width: 100mm">
 
 *Fileformats* provides a library of file-format types implemented as Python classes.
 The file-format types were designed to be used in type validation and data movement
 during the construction and execution of data workflows. However, they can can also be
 used some basic data handling methods (e.g. loading data to dictionaries) and format
-conversions between some equivalent types via methods defined in the associated `fileformats-extras <https://pypi.org/project/fileformats-extras/>`__
-package.
+conversions between some equivalent types via methods defined in the associated
+[fileformats-extras](https://pypi.org/project/fileformats-extras/) package.
 
 File-format types are typically identified by a combination of file extension
 and "magic numbers" where applicable. However, unlike many other file-type Python packages,
@@ -35,48 +26,44 @@ certain file types, or to peek at metadata fields to define specific sub-types
 fileformats comes into its own, since it keeps track of auxiliary files when moving/copying
 to different file-system locations and calculating hashes.
 
-See the `extension template <https://github.com/ArcanaFramework/fileformats-extension-template>`__
+See the [extension template](https://github.com/ArcanaFramework/fileformats-extension-template)
 for instructions on how to design *FileFormats* extensions modules to augment the
 standard file-types implemented in the main repository with custom domain/vendor-specific
-file-format types (e.g. `fileformats-medimage <https://pypi.org/project/fileformats-medimage/>`__).
+file-format types (e.g. [fileformats-medimage](https://pypi.org/project/fileformats-medimage/)).
 
-Notes on MIME-type coverage
----------------------------
 
-Support for all non-vendor standard MIME types (i.e. ones not matching ``*/vnd.*`` or ``*/x-*``) has been
-added to *FileFormats* by semi-automatically scraping the `IANA MIME types`_ website for file
+## Notes on MIME-type coverage
+
+Support for all non-vendor standard MIME types (i.e. ones not matching `*/vnd.*` or `*/x-*`) has been
+added to *FileFormats* by semi-automatically scraping the
+[IANA MIME types](https://www.iana_mime.org/assignments/media-types/media-types.xhtml) website for file
 extensions and magic numbers. As such, many of the formats in the library have not been properly
 tested on real data and so should be treated with some caution. If you encounter any issues with an implemented file
-type, please raise an issue in the `GitHub tracker <https://github.com/ArcanaFramework/fileformats/issues>`__.
+type, please raise an issue in the [GitHub tracker](https://github.com/ArcanaFramework/fileformats/issues).
 
 Adding support for vendor formats will be relatively straightforward and is planned for v1.0.
 
 
-Installation
-------------
+## Installation
 
 *FileFormats* can be installed for Python >= 3.7 from PyPI with
 
-.. code-block:: bash
-
+```console
     $ python3 -m pip fileformats
-
+```
 
 Support for converter methods between a few select formats can be installed by
 passing the 'extras' package, e.g
 
-.. code-block:: bash
-
+```console
     $ python3 -m pip install fileformats-extras
+```
 
+## Examples
 
-Examples
---------
+Using the `WithMagicNumber` mixin class, the `Png` format can be defined concisely as
 
-Using the ``WithMagicNumber`` mixin class, the ``Png`` format can be defined concisely as
-
-.. code-block:: python
-
+```python
     from fileformats.generic import File
     from fileformats.core.mixin import WithMagicNumber
 
@@ -85,32 +72,30 @@ Using the ``WithMagicNumber`` mixin class, the ``Png`` format can be defined con
         ext = ".png"
         iana_mime = "image/png"
         magic_number = b".PNG"
-
+```
 
 Files can then be checked to see whether they are of PNG format by
 
-.. code-block:: python
-
+```python
     png = Png("/path/to/image/file.png")  # Checks the extension and magic number
+```
 
-which will raise a ``FormatMismatchError`` if initialisation or validation fails, or
-for a boolean method that checks the validation use ``matches``
+which will raise a `FormatMismatchError` if initialisation or validation fails, or
+for a boolean method that checks the validation use `matches`
 
-.. code-block:: python
-
+```python
     if Png.matches(a_path_to_a_file):
         ... handle case ...
+```
 
-Format Identification
----------------------
+## Format Identification
 
 There are 2 main functions that can be used for format identification
 
-* ``fileformats.core.from_mime``
-* ``fileformats.core.find_matching``
+* `fileformats.core.from_mime`
+* `fileformats.core.find_matching`
 
-``from_mime``
-~~~~~~~~~~~~~
+### `from_mime`
 
 As the name suggests, this function is used to return the FileFormats class corresponding
 to a given `MIME <https://www.iana.org/assignments/media-types/media-types.xhtml>`__ string.
@@ -120,17 +105,15 @@ all installed format types. To avoid name clashes between different extension ty
 "MIME-like" string can be used instead, where informal registries corresponding to the
 fileformats extension namespace are used instead, e.g. `medimage/nifti-gz` or `datascience/hdf5`.
 
-``find_matching``
-~~~~~~~~~~~~~~~~~
+### `find_matching`
 
-Given a set of file-system paths, by default, ``find_matching`` will iterate through all
+Given a set of file-system paths, by default, `find_matching` will iterate through all
 installed fileformats classes and return all that validate successfully (formats without
 any specific constraints are excluded by default). The potential candidate classes can be
 restricted by using the `candidates` keyword argument.
 
 
-Format Conversion
------------------
+## Format Conversion
 
 While not implemented in the main File-formats itself, file-formats provides hooks for
 other packages to implement extra behaviour such as format conversion.
@@ -138,20 +121,19 @@ The `fileformats-extras <https://github.com/ArcanaFramework/fileformats-extras>`
 implements a number of converters between standard file-format types, e.g. archive types
 to/from generic file/directories, which if installed can be called using the `convert()` method.
 
-.. code-block:: python
-
+```python
     from fileformats.application import Zip
     from fileformats.generic import Directory
 
     zip_file = Zip.convert(Directory("/path/to/a/directory"))
     extracted = Directory.convert(zip_file)
     copied = extracted.copy_to("/path/to/output")
+```
 
-The converters are implemented in the Pydra_ dataflow framework, and can be linked into
-wider Pydra_ workflows by creating a converter task
+The converters are implemented in the [Pydra](https://pydra.readthedocs.io) dataflow framework, and can be linked into
+wider [Pydra](https://pydra.readthedocs.io) workflows by creating a converter task
 
-.. code-block:: python
-
+```python
     import pydra
     from pydra.tasks.mypackage import MyTask
     from fileformats.application import Json, Yaml
@@ -167,26 +149,19 @@ wider Pydra_ workflows by creating a converter task
         )
     )
     ...
+```
 
-Alternatively, the conversion can be executed outside of a Pydra_ workflow with
+Alternatively, the conversion can be executed outside of a [Pydra](https://pydra.readthedocs.io) workflow with
 
-.. code-block:: python
-
+```python
     json_file = Json("/path/to/file.json")
     yaml_file = Yaml.convert(json_file)
+```
 
 
-
-License
--------
+## License
 
 This work is licensed under a
-`Creative Commons Attribution 4.0 International License <http://creativecommons.org/licenses/by/4.0/>`_
+[Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/)
 
-.. image:: https://i.creativecommons.org/l/by/4.0/88x31.png
-  :target: http://creativecommons.org/licenses/by/4.0/
-  :alt: Creative Commons Attribution 4.0 International License
-
-.. _Pydra: https://pydra.readthedocs.io
-.. _Fastr: https://gitlab.com/radiology/infrastructure/fastr
-.. _`IANA MIME types`: https://www.iana_mime.org/assignments/media-types/media-types.xhtml
+[![CC0](https://i.creativecommons.org/l/by/4.0/88x31.png)](http://creativecommons.org/licenses/by/4.0/)
