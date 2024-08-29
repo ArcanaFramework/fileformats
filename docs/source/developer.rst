@@ -409,7 +409,7 @@ a warning if the import fails, when get_converter is called on a format in that
 namespace.
 
 
-.. note::
+.. warning::
     If the converters aren't imported successfully, then you will receive a
     ``FormatConversionError`` error saying there are no converters between FormatA and
     FormatB.
