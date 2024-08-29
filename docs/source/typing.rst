@@ -145,8 +145,8 @@ Subclass hooks
 
 Classified types implement the :meth:`.WithClassifiers.__subclasshook__` method, to control
 the behaviour of the :func:`isinstance` and :func:`issubclass` functions when they are
-passed as arguments. The unclassified type is always considered to be the superclass of
-its classified types
+passed as arguments. Classified types are considered to be subclasses of the
+unclassified type.
 
 .. code-block:: python
 
@@ -156,8 +156,8 @@ its classified types
     assert issubclass(Zip[Png], Zip)
     assert isinstance(Zip[Png]("/path/to/zip.zip"), Zip)
 
-Similarly, for types with multiple unordered classifiers, a type with a subset of the
-classifiers of another type is considered to be its superclass
+Similarly, for types with multiple unordered classifiers, a type with a superset of the
+classifiers of another type is a subclass
 
 .. code-block:: python
 
@@ -165,8 +165,8 @@ classifiers of another type is considered to be its superclass
 
     assert issubclass(NiftiGz[T1Weighted, Brain], NiftiGz[T1Weighted])
 
-This is also the case if the classifiers of the  are subclasses of the classifiers
-in the subset
+This is also the case if the classifiers of the superset type are subclasses of the
+classifiers in the subset
 
 .. code-block:: python
 

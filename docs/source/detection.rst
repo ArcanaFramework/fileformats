@@ -10,28 +10,31 @@ Validation
 ----------
 
 In the basic case, *FileFormats* can be used for checking the format of files and
-directories against known types. Typically, there are two layers of checks, ones
-performed on the file-system paths alone,
+directories against known types. Typically this will involve checking the file extension
+and magic number if applicable
 
 .. code-block:: python
 
     from fileformats.image import Jpeg
 
     jpeg_file = Jpeg("/path/to/image.jpg")  # PASSES
-    jpeg_file = Jpeg("/path/to/image.png")  # FAILS!
+    Jpeg("/path/to/image.png")  # FAILS!
 
+    fake_fspath = "/path/to/fake-image.jpg"
 
-The second layer of checks, which typically require reading the file and peeking at its
-contents for magic numbers and the like
+    with open(fake_fspath, "w") as f:
+        f.write("this is not a valid JPEG file")
+
+    Jpeg(fake_fspath)  # FAILS!
+
+To check whether a format matches without attempting to initialise the object use the
+:meth:`FileSet.matches()` method
+
 
 .. code-block:: python
 
-    fspath = "/path/to/fake-image.jpg"
-
-    with open(fspath, "w") as f:
-        f.write("this is not a valid JPEG file")
-
-    jpeg_file = Jpeg(fspath)  # FAILS!
+    if Jpeg.matches("/path/to/image.jpg"):
+        ...
 
 
 Directories are classified by the contents of the files within them, via the
@@ -70,7 +73,7 @@ despite the presence of the ``.DS_Store`` directory and the ``catalog.xml`` file
 
 In addition to statically defining `Directory` formats such as the Dicom example above,
 dynamic directory types can be created on the fly by providing the content types as
-arguments to the `DirectoryOf[]` method,
+"classifier" arguments to the `DirectoryOf[]` class (see :ref:`Classifiers`),
 e.g.
 
 .. code-block:: python
@@ -82,9 +85,6 @@ e.g.
     def my_task(image_dir: DirectoryOf[Png]) -> Csv:
         ... task implementation ...
 
-.. _Pydra: https://pydra.readthedocs.io
-.. _Fastr: https://gitlab.com/radiology/infrastructure/fastr
-
 
 Identification
 --------------
@@ -94,7 +94,7 @@ The ``find_matching`` function can be used to list the formats that match a give
 .. code-block::
 
     >>> from fileformats.core import find_matching
-    >>> find_matching("/path/to/word.doc")
+    >>> find_matching(["/path/to/word.doc"])
     [<class 'fileformats.application.Msword'>]
 
 .. warning::
@@ -103,4 +103,26 @@ The ``find_matching`` function can be used to list the formats that match a give
    If you are only interested in formats covered in the main fileformats package then
    you should use the ``standard_only`` flag
 
-Alter
+For loosely formats without many constraints, ``find_matching`` may return multiple
+formats that are not plausible for the given use case, in which case the ``candidates``
+argument can be passed to restrict the possible formats that can be returned
+
+.. code-block::
+
+    >>> from fileformats.datascience import MatFile, RData, Hdf5
+    >>> find_matching(["/path/to/text/matrix/file.mat"])
+    [fileformats.datascience.data.TextMatrix]
+    >>> find_matching(["/path/to/matlab/file.mat"])
+    [fileformats.datascience.data.TextMatrix, fileformats.datascience.data.MatFile]
+    >>> find_matching(["/path/to/matlab/file.mat"], candidates=[MatFile, RData, Hdf5])
+    [fileformats.datascience.data.MatFile]
+
+``from_paths`` can be used to return an initialised object instead of a list of matching
+files, however, since you need to be confident that there is only than one possible format
+it is advisable to also provide a list of candidate formats
+
+.. code-block::
+
+    >>> from fileformats.core import from_paths
+    >>> repr(from_paths(["/path/to/matlab/file.mat"], candidates=[MatFile, RData, Hdf5]))
+    fileformats.datascience.data.MatFile({"/path/to/matlab/file.mat"})
