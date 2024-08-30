@@ -25,7 +25,12 @@ class SampleFileGenerator:
 
     FNAME_STEM_LENGTH = 24
 
-    def __init__(self, dest_dir: Path, seed: int, fname_stem: ty.Optional[str] = None):
+    def __init__(
+        self,
+        dest_dir: Path,
+        seed: ty.Union[int, str],
+        fname_stem: ty.Optional[str] = None,
+    ):
         self.dest_dir = dest_dir
         self.seed = seed
         self.fname_stem = (

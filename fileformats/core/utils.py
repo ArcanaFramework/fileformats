@@ -10,6 +10,8 @@ import pkgutil
 from contextlib import contextmanager
 import fileformats.core
 
+if ty.TYPE_CHECKING:
+    from pydra.engine.core import TaskBase
 
 logger = logging.getLogger("fileformats")
 
@@ -101,7 +103,7 @@ class classproperty(object):
         return self.f(owner)
 
 
-def add_exc_note(e, note):
+def add_exc_note(e: Exception, note: str) -> Exception:
     """Adds a note to an exception in a Python <3.11 compatible way
 
     Parameters
@@ -123,7 +125,7 @@ def add_exc_note(e, note):
     return e
 
 
-def describe_task(task):
+def describe_task(task: TaskBase) -> str:
     """Returns the name of a Pydra task and where it was defined for debugging purposes
 
     Parameters

@@ -14,7 +14,7 @@ import functools
 from pathlib import Path
 import hashlib
 import logging
-from typing_extensions import Self
+from typing_extensions import Self, TypeAlias
 from .utils import (
     classproperty,
     fspaths_converter,
@@ -52,6 +52,10 @@ FILE_CHUNK_LEN_DEFAULT = 8192
 
 logger = logging.getLogger("fileformats")
 
+ConverterTuple: TypeAlias = ty.Tuple[
+    ty.Callable[[ty.Any], TaskBase], ty.Dict[str, ty.Any]
+]
+
 
 class FileSet(DataType):
     """
@@ -74,7 +78,8 @@ class FileSet(DataType):
     # Store converters registered by @converter decorator that convert to FileSet
     # NB: each class will have its own version of this dictionary
     converters: ty.Dict[
-        str, ty.Tuple[ty.Callable[[ty.Any], TaskBase], ty.Dict[str, ty.Any]]
+        ty.Type["FileSet"],
+        ty.Tuple[ty.Callable[[ty.Any], TaskBase], ty.Dict[str, ty.Any]],
     ] = {}
 
     # differentiate between Field and other DataType classes
@@ -367,31 +372,9 @@ class FileSet(DataType):
         self.fspaths = fspaths_converter(self.required_paths())
         return self
 
-    @classmethod
-    def checks(cls):
-        """Find all methods used to check the validity of the file format
-
-        Returns
-        -------
-        iter(str)
-            an iterator over all method names marked as a "check"
-        """
-        # Loop through all attributes and find methods marked by CHECK_ANNOTATION
-        fileset_props = dir(FileSet)
-        for attr_name in dir(cls):
-            if attr_name in fileset_props:
-                continue
-            klass_attr = getattr(cls, attr_name)
-            try:
-                klass_attr.__annotations__[cls.CHECK_ANNOTATION]
-            except (AttributeError, KeyError):
-                pass
-            else:
-                yield attr_name
-
     def select_by_ext(
-        self, fileformat: ty.Optional[type] = None, allow_none: bool = False
-    ) -> Path:
+        self, fileformat: ty.Optional[ty.Type[Self]] = None, allow_none: bool = False
+    ) -> ty.Optional[Path]:
         """Selects a single path from a set of file-system paths based on the file
         extension
 
@@ -439,7 +422,9 @@ class FileSet(DataType):
 
     @classmethod
     def matching_exts(
-        cls, fspaths: ty.Set[Path], exts: ty.Optional[ty.List[str]] = None
+        cls,
+        fspaths: ty.Collection[Path],
+        exts: ty.Optional[ty.List[ty.Optional[str]]] = None,
     ) -> ty.List[Path]:
         """Returns the paths out of the candidates provided that matches the
         given extension (by default the extension of the class)
@@ -465,14 +450,20 @@ class FileSet(DataType):
             fspaths = [fspaths]
         if exts is None:
             if cls.ext is None:
-                return True
+                return list(fspaths)
             exts = cls.possible_exts
         return [
             p for p in fspaths if any(e is None or str(p).endswith(e) for e in exts)
         ]
 
     @classmethod
-    def convert(cls, fileset, plugin="serial", task_name=None, **kwargs):
+    def convert(
+        cls,
+        fileset: "FileSet",
+        plugin: str = "serial",
+        task_name: ty.Optional[str] = None,
+        **kwargs: ty.Dict[str, ty.Any],
+    ) -> Self:
         """Convert a given file-set into the format specified by the class
 
         Parameters
@@ -499,10 +490,15 @@ class FileSet(DataType):
         out_file = result.output.out_file
         if not isinstance(out_file, cls):
             out_file = cls(out_file)
-        return out_file
+        return out_file  # type: ignore
 
     @classmethod
-    def get_converter(cls, source_format: type, name: str = "converter", **kwargs):
+    def get_converter(
+        cls,
+        source_format: ty.Type["FileSet"],
+        name: str = "converter",
+        **kwargs: ty.Dict[str, ty.Any],
+    ) -> TaskBase:
         """Get a converter that converts from the source format type
         into the format specified by the class
 
@@ -530,11 +526,10 @@ class FileSet(DataType):
         """
         if issubclass(source_format, cls):
             return None
-        converters = (
-            cls.get_converters_dict()
-        )  # triggers loading of standard converters for target format
+        # trigger loading of standard converters for target format
+        converters = cls.get_converters_dict()
         try:
-            unclassified = source_format.unclassified
+            unclassified = source_format.unclassified  # type: ignore
         except AttributeError:
             import_extras_module(source_format)
         else:
@@ -584,10 +579,12 @@ class FileSet(DataType):
             # Merge kwargs provided to get_conveter with stored kwargs
             conv_kwargs = copy(conv_kwargs)
             conv_kwargs.update(kwargs)
-        return converter(name=name, **conv_kwargs)
+        return converter(name=name, **conv_kwargs)  # type: ignore
 
     @classmethod
-    def get_converters_dict(cls, klass=None):
+    def get_converters_dict(
+        cls, klass: ty.Optional[ty.Type["FileSet"]] = None
+    ) -> ty.Dict[ty.Type["FileSet"], ConverterTuple]:
         # Only access converters to the specific class, not superclasses (which may not
         # be able to convert to the specific type)
         if klass is None:
@@ -595,16 +592,16 @@ class FileSet(DataType):
         # import related extras module for the target class
         import_extras_module(klass)
         try:
-            converters_dict = klass.__dict__["converters"]
+            converters_dict: ty.Dict[
+                ty.Type["FileSet"], ConverterTuple
+            ] = klass.__dict__["converters"]
         except KeyError:
             converters_dict = {}
             klass.converters = converters_dict
         return converters_dict
 
     @classmethod
-    def get_converter_tuples(
-        cls, source_format: type
-    ) -> ty.List[ty.Tuple[ty.Callable[[ty.Any], TaskBase], ty.Dict[str, ty.Any]]]:
+    def get_converter_tuples(cls, source_format: type) -> ty.List[ConverterTuple]:
         """Search the registered converters to find any matches and return list of
         task and associated key-word args to perform the conversion between source and
         target formats
@@ -634,9 +631,9 @@ class FileSet(DataType):
     @classmethod
     def register_converter(
         cls,
-        source_format: type,
-        converter_tuple: ty.Tuple[ty.Callable, ty.Dict[str, ty.Any]],
-    ):
+        source_format: ty.Type["FileSet"],
+        converter_tuple: ConverterTuple,
+    ) -> None:
         """Registers a converter task within a class attribute. Called by the
         @fileformats.core.converter decorator.
 
@@ -675,7 +672,7 @@ class FileSet(DataType):
         converters_dict[source_format] = converter_tuple
 
     @classproperty
-    def all_formats(cls) -> set:
+    def all_formats(cls) -> ty.Set[ty.Type["FileSet"]]:
         """Iterate over all FileSet formats in fileformats.* namespaces"""
         if cls._all_formats is None:
             cls._all_formats = set(
@@ -684,12 +681,12 @@ class FileSet(DataType):
         return cls._all_formats
 
     @classproperty
-    def standard_formats(cls):
+    def standard_formats(cls) -> ty.Iterable[ty.Type["FileSet"]]:
         """Iterate over all formats in the standard fileformats.* namespaces"""
         return (f for f in cls.all_formats if f.namespace in IANA_MIME_TYPE_REGISTRIES)
 
     @classproperty
-    def formats_by_iana_mime(cls):
+    def formats_by_iana_mime(cls) -> ty.Dict[str, ty.Type["FileSet"]]:
         """a dictionary containing all formats by their IANA MIME type (if applicable)"""
         if cls._formats_by_iana_mime is None:
             cls._formats_by_iana_mime = {
@@ -700,7 +697,7 @@ class FileSet(DataType):
         return cls._formats_by_iana_mime
 
     @classproperty
-    def formats_by_name(cls) -> ty.Dict[str, type]:
+    def formats_by_name(cls) -> ty.Dict[str, ty.Set[ty.Type["FileSet"]]]:
         """a dictionary containing lists of formats by their translated class names,
         i.e. their can be more than one format with the same translated name"""
         if cls._formats_by_name is None:
@@ -734,11 +731,11 @@ class FileSet(DataType):
     def byte_chunks(
         self,
         mtime: bool = False,
-        chunk_len=FILE_CHUNK_LEN_DEFAULT,
-        relative_to: ty.Optional[os.PathLike] = None,
+        chunk_len: int = FILE_CHUNK_LEN_DEFAULT,
+        relative_to: ty.Optional[Path] = None,
         ignore_hidden_files: bool = False,
         ignore_hidden_dirs: bool = False,
-    ) -> ty.Generator[ty.Tuple[str, bytes], None, None]:
+    ) -> ty.Generator[ty.Tuple[str, ty.Iterator[bytes]], None, None]:
         """Yields relative paths for all files within the file-set along with iterators
         over their byte-contents. To be used when generating hashes for the file set.
 
@@ -770,7 +767,7 @@ class FileSet(DataType):
         """
         # If "relative_to" is not provided, get the common path between
         if relative_to is None:
-            relative_to = Path(os.path.commonpath(self.fspaths))
+            relative_to = Path(os.path.commonpath(list(self.fspaths)))
             if all(p.is_file() and p.parent == relative_to for p in self.fspaths):
                 relative_to /= os.path.commonprefix(
                     [p.name for p in self.fspaths]
@@ -778,20 +775,19 @@ class FileSet(DataType):
         # yield the absolute base path if using mtimes instead of contents
         if mtime:
             yield ("<base-path>", iter([str(relative_to.absolute()).encode()]))
-
-        relative_to = str(relative_to)
-        if Path(relative_to).is_dir() and not relative_to.endswith(os.path.sep):
-            relative_to += os.path.sep
+        relative_to_str = str(relative_to)
+        if relative_to.is_dir() and not relative_to_str.endswith(os.path.sep):
+            relative_to_str += os.path.sep
 
         if mtime:
 
-            def chunk_file(fspath: Path):
+            def chunk_file(fspath: Path) -> ty.Iterator[bytes]:
                 """Yields a byte representation of the last modified time for the file"""
                 yield bytes(struct.pack("<d", os.stat(fspath).st_mtime))
 
         else:
 
-            def chunk_file(fspath: Path):
+            def chunk_file(fspath: Path) -> ty.Iterator[bytes]:
                 """Yields the contents of the file in byte chunks"""
                 if not fspath.is_file():
                     assert fspath.is_symlink()  # broken symlink
@@ -801,11 +797,11 @@ class FileSet(DataType):
                         for chunk in iter(functools.partial(fp.read, chunk_len), b""):
                             yield chunk
 
-        def chunk_dir(fspath):
-            for dpath, _, filenames in sorted(os.walk(fspath)):
+        def chunk_dir(fspath: Path) -> ty.Iterator[ty.Tuple[str, ty.Iterator[bytes]]]:
+            for dpath_str, _, filenames in sorted(os.walk(fspath)):
                 # Sort in-place to guarantee order.
                 filenames.sort()
-                dpath = Path(dpath)
+                dpath = Path(dpath_str)
                 if (
                     ignore_hidden_dirs
                     and dpath.name.startswith(".")
@@ -816,12 +812,12 @@ class FileSet(DataType):
                     if ignore_hidden_files and filename.startswith("."):
                         continue
                     yield (
-                        str((dpath / filename).relative_to(relative_to)),
+                        str((dpath / filename).relative_to(relative_to_str)),
                         chunk_file(dpath / filename),
                     )
 
         for key, fspath in sorted(
-            ((str(p)[len(relative_to) :], p) for p in self.fspaths),
+            ((str(p)[len(relative_to_str) :], p) for p in self.fspaths),
             key=itemgetter(0),
         ):
             if fspath.is_dir():
@@ -829,7 +825,11 @@ class FileSet(DataType):
             else:
                 yield (key, chunk_file(fspath))
 
-    def hash(self, crypto=None, **kwargs) -> bytes:
+    def hash(
+        self,
+        crypto: ty.Optional[ty.Callable[[], hashlib._Hash]] = None,
+        **kwargs: ty.Dict[str, ty.Any],
+    ) -> str:
         """Calculate a unique hash for the file-set based on the relative paths and
         contents of its constituent files
 
@@ -848,13 +848,17 @@ class FileSet(DataType):
         if crypto is None:
             crypto = hashlib.sha256
         crytpo_obj = crypto()
-        for path, bytes_iter in self.byte_chunks(**kwargs):
+        for path, bytes_iter in self.byte_chunks(**kwargs):  # type: ignore
             crytpo_obj.update(path.encode())
             for bytes_str in bytes_iter:
                 crytpo_obj.update(bytes_str)
         return crytpo_obj.hexdigest()
 
-    def hash_files(self, crypto=None, **kwargs) -> ty.Dict[str, bytes]:
+    def hash_files(
+        self,
+        crypto: ty.Optional[ty.Callable[[], hashlib._Hash]] = None,
+        **kwargs: ty.Dict[str, ty.Any],
+    ) -> ty.Dict[str, str]:
         """Calculate hashes for all files in the file-set based on the relative paths and
         contents of its constituent files
 
@@ -873,7 +877,7 @@ class FileSet(DataType):
         if crypto is None:
             crypto = hashlib.sha256
         file_hashes = {}
-        for path, bytes_iter in self.byte_chunks(**kwargs):
+        for path, bytes_iter in self.byte_chunks(**kwargs):  # type: ignore
             crypto_obj = crypto()
             for bytes_str in bytes_iter:
                 crypto_obj.update(bytes_str)
@@ -881,7 +885,7 @@ class FileSet(DataType):
         return file_hashes
 
     def __bytes_repr__(
-        self, cache: dict  # pylint: disable=unused-argument
+        self, cache: ty.Dict  # pylint: disable=unused-argument
     ) -> ty.Iterable[bytes]:
         """Provided for compatibility with Pydra's hashing function, return the contents
         of all the files in the file-set in chunks
@@ -905,7 +909,7 @@ class FileSet(DataType):
             yield from chunk_iter
 
     @classmethod
-    def referenced_types(cls) -> ty.Set[Classifier]:
+    def referenced_types(cls) -> ty.Set[ty.Type[Classifier]]:
         """Returns a flattened list of nested types referenced within the fileset type
 
         Returns
@@ -930,7 +934,7 @@ class FileSet(DataType):
 
         Parameters
         ----------
-        *fspaths: tuple[Path]
+        *fspaths: sequence[Path | str]
             the paths to be provided to the mocked class, by default will be ["mock/<class-name-lower>"]
 
         Returns
@@ -1651,17 +1655,12 @@ class FileSet(DataType):
             new_path.parent.mkdir(parents=True, exist_ok=True)
         return new_path, fspath
 
-    def copy_to(self, *args, **kwargs):
-        """For b/w compatibility (temporary message)"""
-        warn("'FileSet.copy_to()' has been deprecated, please use copy() instead")
-        return self.copy(*args, **kwargs)
-
     # Class attributes, used to cache the results of the class methods
-    _all_formats = None
-    _formats_by_iana_mime = None
-    _formats_by_name = None
-    _required_props = None
-    _valid_class = None
+    _all_formats: ty.Optional[ty.Set[ty.Type["FileSet"]]] = None
+    _formats_by_iana_mime: ty.Optional[ty.Dict[str, ty.Type["FileSet"]]] = None
+    _formats_by_name: ty.Optional[ty.Dict[str, ty.Set[ty.Type["FileSet"]]]] = None
+    _required_props: ty.Optional[ty.Tuple[str, ...]] = None
+    _valid_class: ty.Optional[bool] = None
 
 
 class MockMixin:
