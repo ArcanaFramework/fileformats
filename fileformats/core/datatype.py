@@ -1,5 +1,7 @@
 from __future__ import annotations
 from inspect import isclass
+import typing as ty
+from typing_extensions import Self
 from abc import ABCMeta
 import importlib
 import itertools
@@ -28,11 +30,11 @@ class DataType(Classifier, metaclass=ABCMeta):
     nested_types = ()
 
     @classmethod
-    def type_var(cls, name):
+    def type_var(cls, name: str) -> SubtypeVar:
         return SubtypeVar.new(name, cls)
 
     @classmethod
-    def matches(cls, values) -> bool:
+    def matches(cls, values: ty.Any) -> bool:
         """Checks whether the given value (fspaths for file-sets) match the datatype
         specified by the class
 
@@ -47,18 +49,18 @@ class DataType(Classifier, metaclass=ABCMeta):
             whether the datatype matches the provided values
         """
         try:
-            cls(values)
+            cls(values)  # type: ignore
         except FormatMismatchError:
             return False
         else:
             return True
 
     @classproperty
-    def all_types(self):
+    def all_types(self) -> ty.Iterator[DataType]:
         return itertools.chain(FileSet.all_formats, Field.all_fields)
 
     @classmethod
-    def subclasses(cls):
+    def subclasses(cls) -> ty.Generator[ty.Type[Self], None, None]:
         """Iterate over all installed subclasses"""
         for subpkg in subpackages():
             for attr_name in dir(subpkg):
@@ -67,7 +69,12 @@ class DataType(Classifier, metaclass=ABCMeta):
                     yield attr
 
     @classmethod
-    def get_converter(cls, source_format: type, name: str = "converter", **kwargs):
+    def get_converter(
+        cls,
+        source_format: type,
+        name: str = "converter",
+        **kwargs: ty.Dict[str, ty.Any],
+    ) -> ty.Union[None]:
         if issubclass(source_format, cls):
             return None
         else:

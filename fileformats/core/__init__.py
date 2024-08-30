@@ -11,3 +11,19 @@ from .identification import (
 )
 from .sampling import SampleFileGenerator
 from .extras import extra, converter
+
+__all__ = [
+    "__version__",
+    "Classifier",
+    "DataType",
+    "FileSet",
+    "MockMixin",
+    "Field",
+    "to_mime",
+    "from_mime",
+    "find_matching",
+    "from_paths",
+    "SampleFileGenerator",
+    "extra",
+    "converter",
+]

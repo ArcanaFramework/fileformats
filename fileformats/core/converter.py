@@ -6,6 +6,7 @@ from .exceptions import FormatDefinitionError
 
 if ty.TYPE_CHECKING:
     from .datatype import DataType
+    from pydra.engine.task import TaskBase
 
 logger = logging.getLogger("fileformats")
 
@@ -106,7 +107,7 @@ class SubtypeVar:
     def register_converter(
         cls,
         source_format: type,
-        converter_tuple: ty.Tuple[ty.Callable, ty.Dict[str, ty.Any]],
+        converter_tuple: ty.Tuple[ty.Callable[..., TaskBase], ty.Dict[str, ty.Any]],
     ):
         """Registers a converter task within a class attribute. Called by the
         @fileformats.core.converter decorator.

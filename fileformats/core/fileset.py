@@ -14,6 +14,7 @@ import functools
 from pathlib import Path
 import hashlib
 import logging
+from typing_extensions import Self
 from .utils import (
     classproperty,
     fspaths_converter,
@@ -42,11 +43,8 @@ from .datatype import DataType
 from .extras import extra
 from .fs_mount_identifier import FsMountIdentifier
 
-
-try:
-    from typing import Self
-except ImportError:
-    from typing_extensions import Self
+if ty.TYPE_CHECKING:
+    from pydra.engine.task import TaskBase
 
 
 FILE_CHUNK_LEN_DEFAULT = 8192
@@ -75,26 +73,32 @@ class FileSet(DataType):
 
     # Store converters registered by @converter decorator that convert to FileSet
     # NB: each class will have its own version of this dictionary
-    converters = {}
+    converters: ty.Dict[
+        str, ty.Tuple[ty.Callable[[ty.Any], TaskBase], ty.Dict[str, ty.Any]]
+    ] = {}
 
     # differentiate between Field and other DataType classes
     is_fileset = True
 
     # File extensions associated with file format
-    ext = None
-    alternate_exts = ()
+    ext: ty.Union[str, None] = None
+    alternate_exts: ty.Tuple[str, ...] = ()
 
     # to be overridden in subclasses
     # Explicitly set the Internet Assigned Numbers Authority (https://iana_mime.org) MIME
     # type to None for any base classes that should not correspond to a MIME or MIME-like
     # type.
-    iana_mime = None
+    iana_mime: ty.Union[str, None] = None
 
     # Member attributes
     fspaths: ty.FrozenSet[Path]
     _metadata: ty.Union[ty.Dict[str, ty.Any], bool, None]
 
-    def __init__(self, fspaths, metadata=False):
+    def __init__(
+        self,
+        fspaths: ty.Union[str, ty.Sequence[str]],
+        metadata: ty.Union[ty.Dict[str, ty.Any], bool, None] = False,
+    ):
         self._metadata = metadata
         self._validate_class()
         self.fspaths = fspaths_converter(fspaths)
@@ -106,7 +110,7 @@ class FileSet(DataType):
             )
         self._validate_properties()
 
-    def _validate_fspaths(self):
+    def _validate_fspaths(self) -> None:
         if not self.fspaths:
             raise ValueError(f"No file-system paths provided to {self}")
         missing = [p for p in self.fspaths if not p or not p.exists()]
@@ -128,7 +132,7 @@ class FileSet(DataType):
                 msg += "\n".join(str(p) for p in parent.iterdir())
             raise FileNotFoundError(msg)
 
-    def _validate_class(self):
+    def _validate_class(self) -> ty.Union[bool, None]:
         """Check that the class has been correctly defined"""
         if self._valid_class:
             return True
@@ -145,18 +149,22 @@ class FileSet(DataType):
             )
         return None  # Continue with subclass validation
 
-    def _additional_fspaths(self):
+    def _additional_fspaths(self) -> None:
         """Additional checks to be performed on the file-system paths provided to the"""
 
-    def _validate_properties(self):
+    def _validate_properties(self) -> None:
         # Check required properties don't raise errors
         for prop_name in self.required_properties():
             getattr(self, prop_name)
 
-    def __eq__(self, other) -> bool:
-        return type(self) is type(other) and self.fspaths == other.fspaths
+    def __eq__(self, other: object) -> bool:
+        return (
+            isinstance(other, FileSet)
+            and type(self) is type(other)
+            and self.fspaths == other.fspaths
+        )
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
 
     def __hash__(self) -> int:
@@ -169,7 +177,7 @@ class FileSet(DataType):
     @property
     def parent(self) -> Path:
         "A common parent directory for all the top-level paths in the file-set"
-        return Path(os.path.commonpath(p.parent for p in self.fspaths))
+        return Path(os.path.commonpath([p.parent for p in self.fspaths]))
 
     @property
     def relative_fspaths(self) -> ty.Iterator[Path]:
@@ -177,7 +185,7 @@ class FileSet(DataType):
         return (p.relative_to(self.parent) for p in self.fspaths)
 
     @classproperty
-    def mime_type(cls):
+    def mime_type(cls) -> str:
         """Generates a MIME type (IANA) identifier from a format class. If an official
         IANA MIME type doesn't exist it will create one in the in the MIME style, e.g.
 
@@ -193,8 +201,11 @@ class FileSet(DataType):
             the MIME type corresponding to the class
         """
         try:
-            return cls.__dict__["iana_mime"]
+            mime_type = cls.__dict__["iana_mime"]
+            assert isinstance(mime_type, str)
+            return mime_type
         except KeyError:
+            assert isinstance(cls, type)
             format_name = to_mime_format_name(cls.__name__)
             return f"application/x-{format_name}"
 
@@ -210,7 +221,7 @@ class FileSet(DataType):
         return not list(cls.required_properties())
 
     @classproperty
-    def possible_exts(cls):
+    def possible_exts(cls) -> ty.List[ty.Optional[str]]:
         """All possible extensions of the file format"""
         possible = [cls.ext]
         try:
@@ -220,7 +231,7 @@ class FileSet(DataType):
         return possible
 
     @property
-    def metadata(self) -> ty.Dict[str, ty.Any]:
+    def metadata(self) -> ty.Union[ty.Dict[str, ty.Any], bool, None]:
         """Lazily load metadata from `read_metadata` extra if implemented, returning an
         empty metadata array if not"""
         if self._metadata is not False:
@@ -236,7 +247,9 @@ class FileSet(DataType):
             self._metadata = None
         return self._metadata
 
-    def select_metadata(self, selected_keys: ty.Union[ty.Sequence[str], None]):
+    def select_metadata(
+        self, selected_keys: ty.Union[ty.Sequence[str], None] = None
+    ) -> None:
         """Selects a subset of the metadata to be read and stored instead all available
         (i.e for performance reasons).
 
@@ -245,13 +258,12 @@ class FileSet(DataType):
         selected_keys : Union[Sequence[str], None]
             the keys of the values to load. If None, all values are loaded
         """
-        if (
-            self._metadata
+        if not (
+            isinstance(self._metadata, dict)
             and selected_keys is not None
             and set(selected_keys).issubset(self._metadata)
         ):
-            return
-        self._metadata = self.read_metadata(selected_keys)
+            self._metadata = self.read_metadata(selected_keys)
 
     @extra
     def read_metadata(
@@ -272,18 +284,21 @@ class FileSet(DataType):
         raise NotImplementedError
 
     @classmethod
-    def required_properties(cls) -> ty.Tuple[str]:
+    def required_properties(cls) -> ty.Tuple[str, ...]:
         """Find all properties required to treat file-set as being in the format specified
         by the class
 
         Returns
         -------
-        tuple[str]
+        tuple[str, ...]
             a tuple containing all the properties names defined outside of core and
             generic classes
         """
         required_props = cls.__dict__.get("_required_props")
         if required_props is not None:
+            assert isinstance(required_props, tuple) and all(
+                isinstance(p, str) for p in required_props
+            )
             return required_props  # return cached value
         required_props = set()
         for base in cls.__mro__:
@@ -346,7 +361,7 @@ class FileSet(DataType):
                 nested.extend(prop.nested_filesets())
         return nested
 
-    def trim_paths(self):
+    def trim_paths(self) -> Self:
         """Trims paths in fspaths to only those that are "required" by the format class
         i.e. returned by a required property"""
         self.fspaths = fspaths_converter(self.required_paths())
@@ -589,7 +604,7 @@ class FileSet(DataType):
     @classmethod
     def get_converter_tuples(
         cls, source_format: type
-    ) -> ty.List[ty.Tuple[ty.Callable, ty.Dict[str, ty.Any]]]:
+    ) -> ty.List[ty.Tuple[ty.Callable[[ty.Any], TaskBase], ty.Dict[str, ty.Any]]]:
         """Search the registered converters to find any matches and return list of
         task and associated key-word args to perform the conversion between source and
         target formats

@@ -12,6 +12,7 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 from __future__ import print_function
+import typing as ty
 from pathlib import Path
 import re
 import datetime
@@ -19,11 +20,11 @@ import datetime
 from fileformats.core import __version__  # noqa
 
 with open(Path(__file__).parent / ".." / ".." / "AUTHORS") as f:
-    authors = [
-        re.match(r"([a-zA-Z\-\. ]+) <([a-zA-Z\-\._@]+)>", ln).groups()
-        for ln in f.read().split("\n")
-        if ln
-    ]
+    authors = []
+    for ln in f.read().splitlines():
+        match = re.match(r"([a-zA-Z\-\. ]+) <([a-zA-Z\-\._@]+)>", ln)
+        assert match
+        authors.append(match.groups())
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -97,7 +98,7 @@ language = None
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = []
+exclude_patterns: ty.List[str] = []
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
