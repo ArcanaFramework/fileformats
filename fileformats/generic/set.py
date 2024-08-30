@@ -21,7 +21,7 @@ class TypedSet(FileSet):
                     continue
 
     @property
-    def validate_contents(self):
+    def _validate_contents(self):
         if not self.content_types:
             return
         not_found = set(self.content_types)

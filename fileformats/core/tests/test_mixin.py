@@ -48,7 +48,7 @@ class FileWithSeparateHeader(WithSeparateHeader, File):
     binary = False
 
     @property
-    def check_image_type(self):
+    def _check_image_type(self):
         if self.metadata[self.image_type_key] != self.image_type:
             raise FormatMismatchError(
                 f"Mismatch in '{self.image_type_key}', expected {self.image_type}, "
@@ -121,7 +121,7 @@ class FileWithSideCars(WithSideCars, ImageWithInlineHeader):
     experiment_type = "sample-experiment-type"
 
     @property
-    def check_image_type(self):
+    def _check_image_type(self):
         """Loaded from inline-header"""
         if self.metadata[self.image_type_key] != self.image_type:
             raise FormatMismatchError(
@@ -130,7 +130,7 @@ class FileWithSideCars(WithSideCars, ImageWithInlineHeader):
             )
 
     @property
-    def check_experiment_type(self):
+    def _check_experiment_type(self):
         """Loaded from side-car"""
         if self.metadata["header"][self.experiment_type_key] != self.experiment_type:
             raise FormatMismatchError(

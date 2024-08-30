@@ -95,6 +95,7 @@ class FileSet(DataType):
     _metadata: ty.Union[ty.Dict[str, ty.Any], bool, None]
 
     def __init__(self, fspaths, metadata=False):
+        self._metadata = metadata
         self._validate_class()
         self.fspaths = fspaths_converter(fspaths)
         self._validate_fspaths()
@@ -103,7 +104,6 @@ class FileSet(DataType):
             raise TypeError(
                 f"Fileset metadata value needs to be None or dict, not {metadata} ({self})"
             )
-        self._metadata = metadata
         self._validate_properties()
 
     def _validate_fspaths(self):
@@ -130,6 +130,20 @@ class FileSet(DataType):
 
     def _validate_class(self):
         """Check that the class has been correctly defined"""
+        if self.__valid_class:
+            return True
+        type(self).__valid_class = True
+        module_name = type(self).__module__
+        if (
+            not module_name.startswith("fileformats")
+            and not isinstance(self, MockMixin)
+            and not module_name.split(".")[-1].startswith("test_")
+        ):
+            raise FormatDefinitionError(
+                f"FileSet class {type(self).__name__} should be defined in the "
+                f"fileformats namespace not {module_name} unless it is in a test module"
+            )
+        return None  # Continue with subclass validation
 
     def _additional_fspaths(self):
         """Additional checks to be performed on the file-system paths provided to the"""
@@ -138,9 +152,6 @@ class FileSet(DataType):
         # Check required properties don't raise errors
         for prop_name in self.required_properties():
             getattr(self, prop_name)
-        # Loop through all attributes and find methods marked by CHECK_ANNOTATION
-        for check in self.checks():
-            getattr(self, check)()
 
     def __eq__(self, other) -> bool:
         return type(self) is type(other) and self.fspaths == other.fspaths
@@ -262,27 +273,44 @@ class FileSet(DataType):
         raise NotImplementedError
 
     @classmethod
-    def required_properties(cls) -> ty.Generator[str, None, None]:
+    def required_properties(cls) -> ty.Tuple[str]:
         """Find all properties required to treat file-set as being in the format specified
         by the class
 
         Returns
         -------
-        Generator[str, None, None]
-            an iterator over all properties names marked as "required"
+        tuple[str]
+            a tuple containing all the properties names defined outside of core and
+            generic classes
         """
-        fileset_props = dir(FileSet)
-        for attr_name in dir(cls):
-            if attr_name in fileset_props:
+        required_props = cls.__dict__.get("__required_props")
+        if required_props is not None:
+            return required_props  # return cached value
+        required_props = set()
+        for base in cls.__mro__:
+            mod_name = base.__module__
+            mod_parts = mod_name.split(".")
+            if mod_name.startswith("fileformats"):
+                subpkg = mod_parts[1]
+            elif mod_name.split(".")[-1].startswith("test_"):
+                subpkg = None
+            else:
                 continue
-            klass_attr = getattr(cls, attr_name)
-            if isinstance(klass_attr, property):
-                try:
-                    klass_attr.fget.__annotations__[cls.REQUIRED_ANNOTATION]
-                except KeyError:
-                    pass
-                else:
-                    yield attr_name
+            if subpkg in ("core", "generic") and mod_parts[-1] != "mixin":
+                base_name = base.__name__
+                if base_name == "FsObject":
+                    required_props.add("fspath")
+                elif base_name in ("Directory", "TypedSet"):
+                    required_props.add("_validate_contents")
+            else:
+                required_props.update(
+                    name
+                    for name, attr in base.__dict__.items()
+                    if (not name.startswith("__") and isinstance(attr, property))
+                )
+        required_props = tuple(required_props)
+        cls.__required_props = required_props
+        return required_props
 
     def required_paths(self) -> ty.Set[Path]:
         """Returns all fspaths that are required for the format"""
@@ -635,11 +663,11 @@ class FileSet(DataType):
     @classproperty
     def all_formats(cls) -> set:
         """Iterate over all FileSet formats in fileformats.* namespaces"""
-        if cls._all_formats is None:
-            cls._all_formats = set(
+        if cls.__all_formats is None:
+            cls.__all_formats = set(
                 f for f in FileSet.subclasses() if f.__dict__.get("iana_mime", True)
             )
-        return cls._all_formats
+        return cls.__all_formats
 
     @classproperty
     def standard_formats(cls):
@@ -649,20 +677,20 @@ class FileSet(DataType):
     @classproperty
     def formats_by_iana_mime(cls):
         """a dictionary containing all formats by their IANA MIME type (if applicable)"""
-        if cls._formats_by_iana_mime is None:
-            cls._formats_by_iana_mime = {
+        if cls.__formats_by_iana_mime is None:
+            cls.__formats_by_iana_mime = {
                 f.iana_mime: f
                 for f in FileSet.all_formats
                 if f.__dict__.get("iana_mime") is not None
             }
-        return cls._formats_by_iana_mime
+        return cls.__formats_by_iana_mime
 
     @classproperty
     def formats_by_name(cls):
         """a dictionary containing lists of formats by their translated class names,
         i.e. their can be more than one format with the same translated name"""
-        if cls._formats_by_name is None:
-            cls._formats_by_name = {
+        if cls.__formats_by_name is None:
+            cls.__formats_by_name = {
                 k: set(v for _, v in g)
                 for k, g in itertools.groupby(
                     sorted(
@@ -676,7 +704,7 @@ class FileSet(DataType):
                     key=itemgetter(0),
                 )
             }
-        return cls._formats_by_name
+        return cls.__formats_by_name
 
     @property
     def all_file_paths(self) -> ty.Iterable[Path]:
@@ -1614,9 +1642,11 @@ class FileSet(DataType):
         warn("'FileSet.copy_to()' has been deprecated, please use copy() instead")
         return self.copy(*args, **kwargs)
 
-    _all_formats = None
-    _formats_by_iana_mime = None
-    _formats_by_name = None
+    __all_formats = None
+    __formats_by_iana_mime = None
+    __formats_by_name = None
+    __required_props = None
+    __valid_class = None
 
 
 class MockMixin:

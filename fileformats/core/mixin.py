@@ -38,9 +38,14 @@ class WithMagicNumber:
     magic_number: ty.Union[str, bytes]
 
     @property
-    def check_magic_number(self):
+    def _check_magic_number(self):
         if self.binary and isinstance(self.magic_number, str):
-            magic_bytes = bytes.fromhex(self.magic_number)
+            try:
+                magic_bytes = bytes.fromhex(self.magic_number)
+            except ValueError:
+                raise FormatDefinitionError(
+                    f"Magic number of file {type(self)} is not a valid hex string"
+                )
         else:
             magic_bytes = self.magic_number
         read_magic_number = self.read_contents(
@@ -85,7 +90,7 @@ class WithMagicVersion:
     def version(self) -> ty.Union[str, ty.Tuple[str]]:
         read_length = (
             self.magic_pattern_length
-            if self.magic_pattern_length
+            if self.magic_pattern_maxlength
             else len(self.magic_pattern)
         )
         read_bytes = self.read_contents(read_length, offset=self.magic_pattern_offset)
@@ -277,11 +282,12 @@ class WithClassifiers:
     generically_classifiable = False
 
     def _validate_class(self):
-        if self.wildcard_classifiers():
-            raise FormatDefinitionError(
-                f"Can instantiate {type(self)} class as it has wildcard classifiers "
-                "and therefore should only be used for converter specifications"
-            )
+        if super()._validate_class() is None:
+            if self.wildcard_classifiers():
+                raise FormatDefinitionError(
+                    f"Can instantiate {type(self)} class as it has wildcard classifiers "
+                    "and therefore should only be used for converter specifications"
+                )
 
     @classproperty
     def is_classified(cls):  # pylint: disable=no-self-argument
@@ -652,7 +658,10 @@ class WithClassifiers:
                     )
                 raise FormatRecognitionError(msg + f", found:\n{list(namespaces)}")
         else:
-            namespace = super().namespace
+            try:
+                namespace = super().namespace
+            except AttributeError:
+                namespace = None
         return namespace
 
     @classproperty

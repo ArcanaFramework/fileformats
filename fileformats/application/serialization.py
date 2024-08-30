@@ -67,7 +67,6 @@ class Json(DataSerialization):
     ext = ".json"
     allowed_classifiers = (JsonSchema, InformalSchema)
 
-    @property
     def load(self):
         try:
             with open(self.fspath) as f:
