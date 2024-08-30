@@ -4,7 +4,6 @@ from fileformats.core.exceptions import (
     FormatMismatchError,
     UnconstrainedExtensionException,
 )
-from fileformats.core import hook
 from fileformats.core.utils import classproperty
 from .fsobject import FsObject
 
@@ -15,7 +14,6 @@ class File(FsObject):
     binary = True
     is_dir = False
 
-    @hook.required
     @property
     def fspath(self):
         fspath = self.select_by_ext()

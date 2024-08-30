@@ -2,7 +2,7 @@ from pathlib import Path
 import platform
 import typing as ty
 import pytest
-from fileformats.core import hook, MockMixin, FileSet
+from fileformats.core import extra, MockMixin, FileSet
 from fileformats.testing import Foo
 
 
@@ -24,50 +24,50 @@ def test_mock():
 
 
 class Woo(FileSet):
-    @hook.extra
-    def test_hook(self, a: int, b: float, c: ty.Optional[str] = None) -> float:
+    @extra
+    def test_extra(self, a: int, b: float, c: ty.Optional[str] = None) -> float:
         raise NotImplementedError
 
 
-def test_hook_signature_no_default():
-    @Woo.test_hook.register
-    def woo_test_hook(woo: Woo, a: int, b: float) -> float:
+def test_extra_signature_no_default():
+    @Woo.test_extra.register
+    def woo_test_extra(woo: Woo, a: int, b: float) -> float:
         pass
 
 
-def test_hook_signature1():
+def test_extra_signature1():
 
     with pytest.raises(TypeError, match="missing required argument"):
 
-        @Woo.test_hook.register
-        def woo_test_hook(woo: Woo, a: int) -> float:
+        @Woo.test_extra.register
+        def woo_test_extra(woo: Woo, a: int) -> float:
             pass
 
 
-def test_hook_signature2():
+def test_extra_signature2():
 
     with pytest.raises(TypeError, match="name of parameter"):
 
-        @Woo.test_hook.register
-        def woo_test_hook(woo: Woo, a: int, d: str) -> float:
+        @Woo.test_extra.register
+        def woo_test_extra(woo: Woo, a: int, d: str) -> float:
             pass
 
 
-def test_hook_signature3():
+def test_extra_signature3():
 
     with pytest.raises(TypeError, match="found additional argument"):
 
-        @Woo.test_hook.register
-        def woo_test_hook(
+        @Woo.test_extra.register
+        def woo_test_extra(
             woo: Woo, a: int, b: float, c: ty.Optional[str], d: int
         ) -> float:
             pass
 
 
-def test_hook_signature4():
+def test_extra_signature4():
 
     with pytest.raises(TypeError, match="return type"):
 
-        @Woo.test_hook.register
-        def woo_test_hook(woo: Woo, a: int, b: str) -> int:
+        @Woo.test_extra.register
+        def woo_test_extra(woo: Woo, a: int, b: str) -> int:
             pass

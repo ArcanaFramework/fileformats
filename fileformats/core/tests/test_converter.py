@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 from pydra.engine.specs import File
 from fileformats.testing import Foo, Bar, Baz, Qux
-from fileformats.core import hook
+from fileformats.core import converter
 from fileformats.core.exceptions import FormatConversionError
 from conftest import write_test_file
 
@@ -18,7 +18,7 @@ except ImportError:
 def foo_bar_converter():
     work_dir = Path(tempfile.mkdtemp())
 
-    @hook.converter
+    @converter
     @pydra.mark.task
     @pydra.mark.annotate({"return": {"out_file": Bar}})
     def foo_bar_converter_(in_file: Foo):
@@ -31,7 +31,7 @@ def foo_bar_converter():
 def baz_bar_converter():
     work_dir = Path(tempfile.mkdtemp())
 
-    @hook.converter(out_file="out")
+    @converter(out_file="out")
     @pydra.mark.task
     @pydra.mark.annotate({"return": {"out": Bar}})
     def baz_bar_converter_(in_file: Baz):
@@ -84,7 +84,7 @@ def FooQuxConverter():
         name="Output", fields=output_fields, bases=(specs.ShellOutSpec,)
     )
 
-    @hook.converter(source_format=Foo, target_format=Qux)
+    @converter(source_format=Foo, target_format=Qux)
     class FooQuxConverter_(ShellCommandTask):
 
         input_spec = FooQux_input_spec

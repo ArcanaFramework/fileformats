@@ -1,7 +1,7 @@
 import json
 import typing as ty
 from pathlib import Path
-from fileformats.core import hook, DataType, FileSet
+from fileformats.core import extra, DataType, FileSet
 from fileformats.core.mixin import WithClassifiers
 from ..generic import File
 from fileformats.core.exceptions import FormatMismatchError
@@ -40,12 +40,12 @@ class DataSerialization(WithClassifiers, File):
 
     iana_mime = None
 
-    @hook.extra
+    @extra
     def load(self) -> dict:
         """Load the contents of the file into a dictionary"""
         raise NotImplementedError
 
-    @hook.extra
+    @extra
     def save(self, data: dict):
         """Serialise a dictionary to a new file"""
         raise NotImplementedError
@@ -67,7 +67,7 @@ class Json(DataSerialization):
     ext = ".json"
     allowed_classifiers = (JsonSchema, InformalSchema)
 
-    @hook.check
+    @property
     def load(self):
         try:
             with open(self.fspath) as f:

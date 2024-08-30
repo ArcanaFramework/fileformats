@@ -8,23 +8,18 @@
 
 <img src="./docs/source/_static/images/logo_small.png" alt="Logo Small" style="float: right; width: 100mm">
 
-*Fileformats* provides a library of file-format types implemented as Python classes.
-The file-format types were designed to be used in type validation and data movement
-during the construction and execution of data workflows. However, they can can also be
-used some basic data handling methods (e.g. loading data to dictionaries) and format
-conversions between some equivalent types via methods defined in the associated
-[fileformats-extras](https://pypi.org/project/fileformats-extras/) package.
+*Fileformats* provides a library of file-format types implemented as Python classes for
+validation, detection, typing and provide hooks for extra functionality and format
+conversions. Formats are typically validated/identified by a combination of file extension
+and "magic numbers" where applicable. Unlike other file-type packages, *FileFormats*,
+supports multi-file data formats ("file sets"), which are often found in scientific
+workflows, e.g. with separate header/data files.
 
-File-format types are typically identified by a combination of file extension
-and "magic numbers" where applicable. However, unlike many other file-type Python packages,
-*FileFormats*, supports multi-file data formats ("file sets") often found in scientific
-workflows, e.g. with separate header/data files. *FileFormats* also provides a flexible
-framework to add custom identification routines for exotic file formats, e.g.
-formats that require inspection of headers to locate data files, directories containing
-certain file types, or to peek at metadata fields to define specific sub-types
-(e.g. functional MRI DICOM file set). It is in the handling of multi-file formats that
-fileformats comes into its own, since it keeps track of auxiliary files when moving/copying
-to different file-system locations and calculating hashes.
+*FileFormats* provides a flexible extension framework to add custom identification
+routines for exotic file formats, e.g. formats that require inspection of headers to
+locate data files, directories containing certain file types, or to peek at metadata
+fields to define specific sub-types (e.g. functional MRI DICOM file set). These file-sets
+with auxiliary files can be moved, copied and hashed like they are a single file object.
 
 See the [extension template](https://github.com/ArcanaFramework/fileformats-extension-template)
 for instructions on how to design *FileFormats* extensions modules to augment the
@@ -41,12 +36,12 @@ extensions and magic numbers. As such, many of the formats in the library have n
 tested on real data and so should be treated with some caution. If you encounter any issues with an implemented file
 type, please raise an issue in the [GitHub tracker](https://github.com/ArcanaFramework/fileformats/issues).
 
-Adding support for vendor formats will be relatively straightforward and is planned for v1.0.
+Adding support for vendor formats is planned for v1.0.
 
 
 ## Installation
 
-*FileFormats* can be installed for Python >= 3.7 from PyPI with
+*FileFormats* can be installed for Python >= 3.8 from PyPI with
 
 ```console
     $ python3 -m pip fileformats

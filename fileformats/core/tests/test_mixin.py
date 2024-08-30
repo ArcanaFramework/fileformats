@@ -1,6 +1,5 @@
 from conftest import write_test_file
 from fileformats.generic import File
-from fileformats.core import hook
 from fileformats.core.mixin import WithMagicNumber, WithSeparateHeader, WithSideCars
 from fileformats.core.exceptions import FormatMismatchError
 
@@ -48,7 +47,7 @@ class FileWithSeparateHeader(WithSeparateHeader, File):
     image_type = "sample-image-type"
     binary = False
 
-    @hook.check
+    @property
     def check_image_type(self):
         if self.metadata[self.image_type_key] != self.image_type:
             raise FormatMismatchError(
@@ -121,7 +120,7 @@ class FileWithSideCars(WithSideCars, ImageWithInlineHeader):
     experiment_type_key = "experiment-type"
     experiment_type = "sample-experiment-type"
 
-    @hook.check
+    @property
     def check_image_type(self):
         """Loaded from inline-header"""
         if self.metadata[self.image_type_key] != self.image_type:
@@ -130,7 +129,7 @@ class FileWithSideCars(WithSideCars, ImageWithInlineHeader):
                 f"found {self.metadata[self.image_type_key]}"
             )
 
-    @hook.check
+    @property
     def check_experiment_type(self):
         """Loaded from side-car"""
         if self.metadata["header"][self.experiment_type_key] != self.experiment_type:

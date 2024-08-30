@@ -52,9 +52,8 @@ to the file-set
 .. code-block:: python
 
     >>> from fileformats.medimage import Analyze
-    >>> analyze_file = Analyze("/path/to/neuroimage.img")
-    >>> analyze_file.fspaths
-    {"/path/to/neuroimage.hdr", "/path/to/neuroimage.img"}
+    >>> analyze_file = repr(Analyze("/path/to/neuroimage.img"))
+    Analyze("/path/to/neuroimage.hdr", "/path/to/neuroimage.img")
 
 This is very useful when reading the output path of a workflow where only primary path
 is returned and associated files also need to be saved to an output directory.
@@ -86,22 +85,81 @@ To copy all files/directories in a format you can use the ``FileSet.copy()`` met
 
 .. code-block:: python
 
-    >>> new_analyze = analyze_file.copy(dest_dir="/path/to/destination")
-    >>> new_analyze.fspaths
-    {"/path/to/destination/mprage.hdr", "/path/to/destination/mprage.img"}
+    >>> repr(analyze_file.copy(dest_dir="/path/to/destination"))
+    Analyze("/path/to/destination/mprage.hdr", "/path/to/destination/mprage.img")
 
-The same filenames will be used by default in the destination directory. To specify the
-file stem, pass the ``new_stem`` argument
+By default, the source filenames will be used in the destination directory. To specify a
+new file stem, pass the ``new_stem`` argument
 
 .. code-block:: python
 
-    >>> new_analyze = analyze_file.copy(dest_dir="/path/to/destination", new_stem="t1w")
-    >>> new_analyze.fspaths
-    {"/path/to/destination/t1w.hdr", "/path/to/destination/t1w.img"}
+    >>> repr(analyze_file.copy(dest_dir="/path/to/destination", new_stem="t1w"))
+    Analyze("/path/to/destination/t1w.hdr", "/path/to/destination/t1w.img")
+
+For formats that define a file extension, this will be used to determine which part of
+the filename is considered stem, and which is extension. This is useful when dealing
+with double-barrel extensions such as ".nii.gz"
+
+.. code-block:: python
+
+    >>> from fileformats.medimage import NiftiGz
+    >>> niftigz = NiftiGzX(["/path/to/image.nii.gz"])
+    >>> repr(niftigzx.copy(dest_dir="/path/to/destination", new_stem="t1w"))
+    NiftiGz("/path/to/destination/t1w.nii.gz")
+
+However, if you are working with generic base classes such as :class:`.FileSet`,
+:class:`.FsObject` and :class:`.File`, what is extension and what is stem is not defined
+and needs to be specified by a :class:`.FileSet.ExtensionDecomposition` enum passed to
+the ``extension_decomposition`` argument
 
 
-Mode
-~~~~
+.. code-block:: python
+
+    >>> from fileformats.generic import File
+    >>> a_file = File(["/path/to/image.nii.gz"])
+    >>> repr(a_file.copy(
+    ...     dest_dir="/path/to/destination",
+    ...     new_stem="t1w",
+    ...     extension_decomposition=FileSet.ExtensionDecomposition.single)
+    ... )
+    File("/path/to/destination/t1w.gz")
+    >>> repr(a_file.copy(
+    ...     dest_dir="/path/to/destination",
+    ...     new_stem="t1w",
+    ...     extension_decomposition="multiple")
+    ... )
+    File("/path/to/destination/t1w.nii.gz")
+    >>> repr(a_file.copy(
+    ...     dest_dir="/path/to/destination",
+    ...     new_stem="t1w",
+    ...     extension_decomposition=FileSet.ExtensionDecomposition.none)
+    ... )
+    File("/path/to/destination/t1w")
+
+.. warning::
+
+    If ``extension_decomposition == "multiple"`` and there are '.' in the filename they
+    will be treated as if they are part of the filename even if they aren't intended to
+    be.
+
+
+Additional files within a fileset that aren't required for the format can be trimmed
+using the ``trim`` argument
+
+.. code-block:: python
+
+    >>> niftigz = NiftiGz(["/path/to/t1w.nii.gz", "/path/to/t1w.json"])
+    >>> repr(niftigz)
+    NiftiGz("/path/to/t1w.nii.gz", "/path/to/t1w.json")
+    >>> trimmed_niftigz = niftigz.copy("/new/destination", trim=True)
+    >>> repr(trimmed_niftigz)
+    NiftiGz("/new/destination/t1w.nii.gz")
+
+The other (self-explanatory) arguments that can be provided to copy are ``make_dirs`` and
+``overwrite``.
+
+Copy-mode
+~~~~~~~~~
 
 The copy method also supports creating links (both soft and hard) instead of copying the
 file by passing a value from the :class:`.FileSet.CopyMode` enum to the ``mode`` argument.
@@ -142,8 +200,8 @@ unsupported modes will be masked out of the ``supported_modes`` before it is app
     )
 
 
-Collation
-~~~~~~~~~
+Copy-collation
+~~~~~~~~~~~~~~
 
 There is not requirement that file formats consisting of multiple files (e.g. with a separate
 header) are "adjacent" to each other, i.e. in the same directory with the same file-stem

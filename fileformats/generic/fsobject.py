@@ -5,14 +5,12 @@ from fileformats.core.fileset import FileSet
 from fileformats.core.exceptions import (
     FormatMismatchError,
 )
-from fileformats.core import hook
 from fileformats.core.utils import classproperty
 
 
 class FsObject(FileSet, os.PathLike):
     "Generic file-system object, can be either a file or a directory"
 
-    @hook.required
     @property
     def fspath(self):
         if len(self.fspaths) > 1:

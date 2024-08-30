@@ -39,7 +39,7 @@ from .exceptions import (
     FileFormatsExtrasPkgNotCheckedError,
 )
 from .datatype import DataType
-from . import hook
+from .extras import extra
 from .fs_mount_identifier import FsMountIdentifier
 
 
@@ -68,7 +68,7 @@ class FileSet(DataType):
         a set of file-system paths pointing to all the resources in the file-set
     metadata : dict[str, Any]
         metadata associated with the file-set, typically lazily loaded via `read_metadata`
-        extras hook
+        extra hook
     """
 
     # Class attributes
@@ -243,7 +243,7 @@ class FileSet(DataType):
             return
         self._metadata = self.read_metadata(selected_keys)
 
-    @hook.extra
+    @extra
     def read_metadata(
         self, selected_keys: ty.Optional[ty.Sequence[str]] = None
     ) -> ty.Mapping[str, ty.Any]:
@@ -596,7 +596,7 @@ class FileSet(DataType):
         converter_tuple: ty.Tuple[ty.Callable, ty.Dict[str, ty.Any]],
     ):
         """Registers a converter task within a class attribute. Called by the
-        @fileformats.hook.converter decorator.
+        @fileformats.core.converter decorator.
 
         Parameters
         ----------
@@ -934,7 +934,7 @@ class FileSet(DataType):
         if not dest_dir:
             dest_dir = Path(tempfile.mkdtemp())
         # Need to use mock to get an instance in order to use the singledispatch-based
-        # hook.extra decorator
+        # extra decorator
         fspaths = cls.sample_data(
             SampleFileGenerator(dest_dir=dest_dir, seed=seed, fname_stem=stem)
         )
@@ -966,7 +966,7 @@ class FileSet(DataType):
         mock: FileSet = cls.mock()
         return mock.generate_sample_data(generator)
 
-    @hook.extra
+    @extra
     def generate_sample_data(
         self,
         generator: SampleFileGenerator,

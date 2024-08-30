@@ -3,7 +3,7 @@ import decimal
 import pytest
 import pydra.mark
 from fileformats.core import from_mime, DataType, FileSet
-from fileformats.core.hook import converter
+from fileformats.core import converter
 from fileformats.application import Zip
 from fileformats.generic import DirectoryOf
 from fileformats.field import Array, Integer, Decimal, Text, Boolean

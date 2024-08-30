@@ -1,5 +1,5 @@
 from fileformats.core.mixin import WithMagicNumber
-from fileformats.core import hook
+from fileformats.core import extra
 from fileformats.core.exceptions import FormatMismatchError
 from .base import Image
 
@@ -8,11 +8,11 @@ class RasterImage(Image):
     iana_mime = None
     binary = True
 
-    @hook.extra
+    @extra
     def read_data(self):
         raise NotImplementedError
 
-    @hook.extra
+    @extra
     def write_data(self, data_array):
         raise NotImplementedError
 
@@ -58,7 +58,7 @@ class Tiff(RasterImage):
     magic_number_le = "49492A00"
     magic_number_be = "4D4D002A"
 
-    @hook.check
+    @property
     def endianness(self):
         read_magic = self.read_contents(len(self.magic_number_le) // 2)
         if read_magic == bytes.fromhex(self.magic_number_le):

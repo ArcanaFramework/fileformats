@@ -5,7 +5,6 @@ from fileformats.generic import File
 from fileformats.field import Integer, Boolean, Decimal, Array, Text
 from fileformats.testing import Foo
 from fileformats.core.exceptions import FormatMismatchError
-from fileformats.core import hook
 from conftest import write_test_file
 
 
@@ -162,12 +161,11 @@ def test_header_overwrite(work_dir):
 
 
 class YFile(ImageWithInlineHeader):
-    @hook.required
     @property
     def y(self):
         return self.metadata["y"]
 
-    @hook.check
+    @property
     def y_value(self):
         if self.y <= 10:
             raise FormatMismatchError(f"'y' property is not > 10 ({self.y})")

@@ -1,7 +1,6 @@
 import typing as ty
 from pathlib import Path
 from fileformats.core.exceptions import FormatMismatchError
-from fileformats.core import hook
 from fileformats.core.utils import classproperty
 from .fsobject import FsObject
 from fileformats.core.fileset import FileSet
@@ -16,7 +15,6 @@ class Directory(FsObject):
 
     content_types = ()
 
-    @hook.required
     @property
     def fspath(self):
         # fspaths are checked for existence with the exception of mock classes
@@ -62,7 +60,7 @@ class Directory(FsObject):
         constraint"""
         return super().unconstrained and not cls.content_types
 
-    @hook.check
+    @property
     def validate_contents(self):
         if not self.content_types:
             return

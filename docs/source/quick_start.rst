@@ -10,7 +10,7 @@ Validate an JPEG image file's extension and magic number simply by instantiating
    >>> str(jpeg_file)  # returns the file path
    "/path/to/an-image.jpeg
 
-For conditional checks instead of raising an error, use the ``matches`` method.
+For conditional checks instead of validation, use the ``matches`` method.
 
 .. code-block:: python
 
@@ -61,7 +61,7 @@ To copy or move the files in a :class:`.FileSet` to a new directory, use the
    {"/path/to/destination/an-image.jpeg"}
 
 The ``copy`` method also supports creating links (both soft and hard) instead of copying the
-file (see :ref:`Mode`).
+file (see :ref:`Copy-mode`).
 
 .. code-block:: python
 
@@ -89,8 +89,8 @@ convert between equivalent formats, e.g. to convert a JPEG image to a PNG format
    >>> repr(png_file)
    Png("/path/to/an-image.png")
 
-Again for some select formats methods to read metadata have been implemented, in which case
-the medata can be accessed as a dictionary.
+For some select formats there are also methods to read metadata, in which case
+the metadata can be accessed as a dictionary attribute.
 
 .. code-block:: python
 
@@ -101,5 +101,5 @@ the medata can be accessed as a dictionary.
 
 .. note::
    Only a small fraction of formats have extra functionality added in the main package.
-   They are only intended to implemented as they are needed. See the :ref:`Developer guide`
-   for information on how to implement new file formats, converters and extras functionality.
+   Extra functionality is only planned to be implemented as required. See the :ref:`Developer guide`
+   for information on how to implement new file formats, converters and extra functionality.

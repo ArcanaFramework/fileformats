@@ -2,7 +2,6 @@ from fileformats.core.fileset import FileSet
 from fileformats.core.exceptions import (
     FormatMismatchError,
 )
-from fileformats.core import hook
 from fileformats.core.mixin import WithClassifiers
 
 
@@ -21,7 +20,7 @@ class TypedSet(FileSet):
                 except FormatMismatchError:
                     continue
 
-    @hook.check
+    @property
     def validate_contents(self):
         if not self.content_types:
             return

@@ -2,7 +2,6 @@ from pathlib import Path
 import re
 import typing as ty
 import logging
-from . import hook
 from .fileset import FileSet
 from .utils import classproperty, describe_task, matching_source
 from .identification import to_mime_format_name
@@ -38,7 +37,7 @@ class WithMagicNumber:
     binary: bool
     magic_number: ty.Union[str, bytes]
 
-    @hook.check
+    @property
     def check_magic_number(self):
         if self.binary and isinstance(self.magic_number, str):
             magic_bytes = bytes.fromhex(self.magic_number)
@@ -82,7 +81,6 @@ class WithMagicVersion:
     magic_pattern_offset = 0
     magic_pattern_maxlength = None
 
-    @hook.required
     @property
     def version(self) -> ty.Union[str, ty.Tuple[str]]:
         read_length = (
@@ -167,7 +165,6 @@ class WithSeparateHeader(WithAdjacentFiles):
     def nested_types(cls):
         return (cls.header_type,)
 
-    @hook.required
     @property
     def header(self):
         return self.header_type(self.select_by_ext(self.header_type))
@@ -198,7 +195,6 @@ class WithSideCars(WithAdjacentFiles):
         the file-formats of the expected side-car files
     """
 
-    @hook.required
     @property
     def side_cars(self):
         return [tp(self.select_by_ext(tp)) for tp in self.side_car_types]
@@ -555,7 +551,7 @@ class WithClassifiers:
         source_format: type,
         converter_tuple: ty.Tuple[ty.Callable, ty.Dict[str, ty.Any]],
     ):
-        """Registers a converter task within a class attribute. Called by the @fileformats.hook.converter
+        """Registers a converter task within a class attribute. Called by the @fileformats.converter
         decorator.
 
         Parameters
