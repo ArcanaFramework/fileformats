@@ -938,7 +938,7 @@ class FileSet(DataType):
         cls,
         dest_dir: ty.Optional[Path] = None,
         seed: ty.Union[int, str] = 0,
-        stem: str = None,
+        stem: ty.Optional[str] = None,
     ) -> Self:
         """Return an sample instance of the file-set type for classes where the
         `test_data` extra has been implemented

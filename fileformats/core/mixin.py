@@ -2,6 +2,7 @@ from pathlib import Path
 import re
 import typing as ty
 import logging
+from .datatype import DataType
 from .fileset import FileSet
 from .utils import classproperty, describe_task, matching_source
 from .identification import to_mime_format_name
@@ -166,6 +167,8 @@ class WithSeparateHeader(WithAdjacentFiles):
         the file-format of the header file
     """
 
+    header_type: ty.Type[FileSet]
+
     @classproperty
     def nested_types(cls):
         return (cls.header_type,)
@@ -200,6 +203,9 @@ class WithSideCars(WithAdjacentFiles):
         the file-formats of the expected side-car files
     """
 
+    primary_type: ty.Type[FileSet]
+    side_car_types: ty.Tuple[ty.Type[FileSet], ...]
+
     @property
     def side_cars(self):
         return [tp(self.select_by_ext(tp)) for tp in self.side_car_types]
@@ -212,9 +218,9 @@ class WithSideCars(WithAdjacentFiles):
             except AttributeError:
                 continue
             else:
-                metadata[
-                    to_mime_format_name(type(side_car).__name__)
-                ] = side_car_metadata
+                metadata[to_mime_format_name(type(side_car).__name__)] = (
+                    side_car_metadata
+                )
         return metadata
 
     @classproperty
@@ -268,8 +274,10 @@ class WithClassifiers:
         "gzip", "json", "yaml", etc...
     """
 
-    classifiers = ()  # classifiers set in the current class
-    _classified_subtypes = {}
+    classifiers: ty.Tuple[
+        ty.Tuple[DataType], ...
+    ] = ()  # classifiers set in the current class
+    _classified_subtypes: ty.Dict[str, ty.Tuple[DataType, ...]] = {}
     # dict of previously created classified subtypes. If an existing class with matching
     # classifiers has been created it is returned instead of creating a new type. This
     # ensures that ``assert MyFormat[Qualifier] is MyFormat[Qualifier]``
@@ -298,13 +306,17 @@ class WithClassifiers:
         return cls.classifiers
 
     @classmethod
-    def wildcard_classifiers(cls, classifiers=None):
+    def wildcard_classifiers(
+        cls, classifiers=None
+    ) -> ty.FrozenSet[ty.Type[SubtypeVar]]:
         if classifiers is None:
             classifiers = cls.classifiers if cls.is_classified else ()
         return frozenset(t for t in classifiers if issubclass(t, SubtypeVar))
 
     @classmethod
-    def non_wildcard_classifiers(cls, classifiers=None):
+    def non_wildcard_classifiers(
+        cls, classifiers=None
+    ) -> ty.FrozenSet[ty.Type[DataType]]:
         if classifiers is None:
             classifiers = cls.classifiers if cls.is_classified else ()
         return frozenset(q for q in classifiers if not issubclass(q, SubtypeVar))
@@ -554,7 +566,7 @@ class WithClassifiers:
     @classmethod
     def register_converter(
         cls,
-        source_format: type,
+        source_format: ty.Type[FileSet],
         converter_tuple: ty.Tuple[ty.Callable, ty.Dict[str, ty.Any]],
     ):
         """Registers a converter task within a class attribute. Called by the @fileformats.converter

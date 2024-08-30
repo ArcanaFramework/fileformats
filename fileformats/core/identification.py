@@ -31,7 +31,7 @@ ALL_STANDARD_TYPE_REGISTRIES = IANA_MIME_TYPE_REGISTRIES + [
 
 def find_matching(
     fspaths: ty.List[Path],
-    candidates: ty.Sequence = None,
+    candidates: ty.Optional[ty.Sequence] = None,
     standard_only: bool = False,
     include_generic: bool = False,
     skip_unconstrained: bool = True,
@@ -70,7 +70,9 @@ def find_matching(
     return matches
 
 
-def from_mime(mime_str: str):
+def from_mime(
+    mime_str: str,
+) -> ty.Union[ty.Type["fileformats.core.DataType"], ty._GenericAlias]:
     """Resolves a MIME type (or MIME-like) string into the corresponding type
 
     Parameters
@@ -89,13 +91,13 @@ def from_mime(mime_str: str):
         item_mime = mime_str[: -len(LIST_MIME)]
         if item_mime.startswith("[") and item_mime.endswith("]"):
             item_mime = item_mime[1:-1]
-        return ty.List[from_mime(item_mime)]
+        return ty.List[from_mime(item_mime)]  # type: ignore
     if "," in mime_str:
-        return ty.Union.__getitem__(tuple(from_mime(t) for t in mime_str.split(",")))
+        return ty.Union.__getitem__(tuple(from_mime(t) for t in mime_str.split(",")))  # type: ignore
     return fileformats.core.DataType.from_mime(mime_str)
 
 
-def to_mime(datatype: type, official: bool = True):
+def to_mime(datatype: ty.Type["fileformats.core.DataType"], official: bool = True):
     """Returns the mime-type or mime-like (i.e. using fileformats namespaces instead
     of putting all non-standard types in the 'application' registry) string corresponding
     to the given datatype
@@ -162,7 +164,7 @@ def to_mime(datatype: type, official: bool = True):
 
 def from_paths(
     fspaths: ty.Iterable[Path],
-    *candidates: ty.Tuple[ty.Type["fileformats.core.FileSet"]],
+    *candidates: ty.Type["fileformats.core.FileSet"],
     common_ok: bool = False,
     ignore: ty.Optional[str] = None,
     **kwargs,
