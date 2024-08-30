@@ -1653,17 +1653,11 @@ class MockMixin:
     """Strips out validation methods of a class, allowing it to be mocked in a way that
     still satisfies type-checking"""
 
-    # Mirror fspaths here so we can unset its validator
-    fspaths: ty.FrozenSet[Path]
-
-    def _additional_fspaths(self):
-        pass  # disable implicit addition of related fspaths
-
-    def _validate_fspaths(self):
-        pass  # disable validation of fspaths
-
-    def _validate_properties(self):
-        pass  # disable validation of properties
+    def __init__(self, fspaths, metadata=False):
+        if isinstance(fspaths, FileSet):
+            fspaths = fspaths.fspaths
+        self.fspaths = frozenset(Path(p) for p in fspaths)
+        self._metadata = metadata
 
     @classproperty
     def type_name(cls):
