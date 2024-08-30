@@ -130,9 +130,9 @@ class FileSet(DataType):
 
     def _validate_class(self):
         """Check that the class has been correctly defined"""
-        if self.__valid_class:
+        if self._valid_class:
             return True
-        type(self).__valid_class = True
+        type(self)._valid_class = True
         module_name = type(self).__module__
         if (
             not module_name.startswith("fileformats")
@@ -192,12 +192,11 @@ class FileSet(DataType):
         str
             the MIME type corresponding to the class
         """
-        if getattr(cls, "iana_mime", None) is not None:
-            mime_type = cls.iana_mime
-        else:
+        try:
+            return cls.__dict__["iana_mime"]
+        except KeyError:
             format_name = to_mime_format_name(cls.__name__)
-            mime_type = f"application/x-{format_name}"
-        return mime_type
+            return f"application/x-{format_name}"
 
     @classproperty
     def strext(cls) -> str:
@@ -283,7 +282,7 @@ class FileSet(DataType):
             a tuple containing all the properties names defined outside of core and
             generic classes
         """
-        required_props = cls.__dict__.get("__required_props")
+        required_props = cls.__dict__.get("_required_props")
         if required_props is not None:
             return required_props  # return cached value
         required_props = set()
@@ -309,7 +308,7 @@ class FileSet(DataType):
                     if (not name.startswith("__") and isinstance(attr, property))
                 )
         required_props = tuple(required_props)
-        cls.__required_props = required_props
+        cls._required_props = required_props
         return required_props
 
     def required_paths(self) -> ty.Set[Path]:
@@ -663,11 +662,11 @@ class FileSet(DataType):
     @classproperty
     def all_formats(cls) -> set:
         """Iterate over all FileSet formats in fileformats.* namespaces"""
-        if cls.__all_formats is None:
-            cls.__all_formats = set(
+        if cls._all_formats is None:
+            cls._all_formats = set(
                 f for f in FileSet.subclasses() if f.__dict__.get("iana_mime", True)
             )
-        return cls.__all_formats
+        return cls._all_formats
 
     @classproperty
     def standard_formats(cls):
@@ -677,34 +676,34 @@ class FileSet(DataType):
     @classproperty
     def formats_by_iana_mime(cls):
         """a dictionary containing all formats by their IANA MIME type (if applicable)"""
-        if cls.__formats_by_iana_mime is None:
-            cls.__formats_by_iana_mime = {
+        if cls._formats_by_iana_mime is None:
+            cls._formats_by_iana_mime = {
                 f.iana_mime: f
                 for f in FileSet.all_formats
                 if f.__dict__.get("iana_mime") is not None
             }
-        return cls.__formats_by_iana_mime
+        return cls._formats_by_iana_mime
 
     @classproperty
-    def formats_by_name(cls):
+    def formats_by_name(cls) -> ty.Dict[str, type]:
         """a dictionary containing lists of formats by their translated class names,
         i.e. their can be more than one format with the same translated name"""
-        if cls.__formats_by_name is None:
-            cls.__formats_by_name = {
+        if cls._formats_by_name is None:
+            cls._formats_by_name = {
                 k: set(v for _, v in g)
                 for k, g in itertools.groupby(
                     sorted(
                         (
                             (to_mime_format_name(f.__name__), f)
                             for f in FileSet.all_formats
-                            if getattr(f, "iana_mime", None) is None
+                            if f.__dict__.get("iana_mime") is None
                         ),
                         key=itemgetter(0),
                     ),
                     key=itemgetter(0),
                 )
             }
-        return cls.__formats_by_name
+        return cls._formats_by_name
 
     @property
     def all_file_paths(self) -> ty.Iterable[Path]:
@@ -1642,11 +1641,12 @@ class FileSet(DataType):
         warn("'FileSet.copy_to()' has been deprecated, please use copy() instead")
         return self.copy(*args, **kwargs)
 
-    __all_formats = None
-    __formats_by_iana_mime = None
-    __formats_by_name = None
-    __required_props = None
-    __valid_class = None
+    # Class attributes, used to cache the results of the class methods
+    _all_formats = None
+    _formats_by_iana_mime = None
+    _formats_by_name = None
+    _required_props = None
+    _valid_class = None
 
 
 class MockMixin:

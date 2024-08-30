@@ -22,6 +22,11 @@ IANA_MIME_TYPE_REGISTRIES = [
     "text",
     "video",
 ]
+ALL_STANDARD_TYPE_REGISTRIES = IANA_MIME_TYPE_REGISTRIES + [
+    "field",
+    "testing",
+    "testing_subpackage",
+]
 
 
 def find_matching(

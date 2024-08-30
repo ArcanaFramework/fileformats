@@ -151,7 +151,7 @@ class DataType(Classifier, metaclass=ABCMeta):
                 namespace_names = [
                     p.__name__
                     for p in subpackages()
-                    if p.__name__ not in IANA_MIME_TYPE_REGISTRIES
+                    if p.__name__.split(".")[-1] not in IANA_MIME_TYPE_REGISTRIES
                 ]
                 class_name = from_mime_format_name(format_name)
                 raise FormatRecognitionError(
