@@ -22,3 +22,9 @@ class Classifier:
                 "fileformats namespace"
             )
         return module_parts[1].replace("_", "-")
+
+    def dummy(self) -> float:
+
+        i: int = 0
+
+        return i

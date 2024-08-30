@@ -85,6 +85,13 @@ include = ["./fileformats"]
 target-version = ['py38']
 exclude = "fileformats/core/_version.py"
 
+
+[tool.mypy]
+python_version = "3.8"
+ignore_missing_imports = true
+strict = true
+namespace_packages = true
+
 [tool.codespell]
 ignore-words = ".codespell-ignorewords"
 
