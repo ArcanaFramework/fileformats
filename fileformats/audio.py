@@ -1,4 +1,5 @@
 from .core import __version__  # noqa
+import typing as ty
 from fileformats.generic import File
 from fileformats.core.mixin import WithMagicNumber
 
@@ -6,7 +7,7 @@ from fileformats.core.mixin import WithMagicNumber
 class Audio(File):
     "Base class for audio file formats"
     binary = True
-    iana_mime = None
+    iana_mime: ty.Optional[str] = None
 
 
 # Compressed formats
@@ -612,7 +613,8 @@ class Melp2400(Audio):
 class Mhas(Audio):
     """
 
-    TODO: Receivers can search for the following syncword within the binary data stream: mpeghAudioStreamPacket() 0xC001A5 (24bit sequence)."""
+    TODO: Receivers can search for the following syncword within the binary data stream: mpeghAudioStreamPacket() 0xC001A5 (24bit sequence).
+    """
 
     iana_mime = "audio/mhas"
     ext = ".mhas"

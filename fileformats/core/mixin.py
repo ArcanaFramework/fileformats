@@ -218,9 +218,9 @@ class WithSideCars(WithAdjacentFiles):
             except AttributeError:
                 continue
             else:
-                metadata[to_mime_format_name(type(side_car).__name__)] = (
-                    side_car_metadata
-                )
+                metadata[
+                    to_mime_format_name(type(side_car).__name__)
+                ] = side_car_metadata
         return metadata
 
     @classproperty
@@ -274,9 +274,8 @@ class WithClassifiers:
         "gzip", "json", "yaml", etc...
     """
 
-    classifiers: ty.Tuple[
-        ty.Tuple[DataType], ...
-    ] = ()  # classifiers set in the current class
+    # classifiers set in the current class
+    classifiers: ty.Tuple[ty.Type[DataType], ...] = ()
     _classified_subtypes: ty.Dict[str, ty.Tuple[DataType, ...]] = {}
     # dict of previously created classified subtypes. If an existing class with matching
     # classifiers has been created it is returned instead of creating a new type. This
@@ -285,29 +284,31 @@ class WithClassifiers:
     # Default values for class attrs
     multiple_classifiers = True
     allowed_classifiers: ty.Optional[ty.Tuple[ty.Type[ty.Any]]] = None
-    exclusive_classifiers: ty.Tuple[ty.Type[ty.Any]] = ()
+    exclusive_classifiers: ty.Tuple[ty.Type[ty.Any], ...] = ()
     ordered_classifiers = False
     generically_classifiable = False
 
-    def _validate_class(self):
-        if super()._validate_class() is None:
+    def _validate_class(self) -> ty.Union[bool, None]:
+        validated: ty.Union[bool, None] = super()._validate_class()  # type: ignore
+        if validated is None:
             if self.wildcard_classifiers():
                 raise FormatDefinitionError(
                     f"Can instantiate {type(self)} class as it has wildcard classifiers "
                     "and therefore should only be used for converter specifications"
                 )
+        return validated
 
     @classproperty
-    def is_classified(cls):  # pylint: disable=no-self-argument
+    def is_classified(cls) -> bool:
         return "unclassified" in cls.__dict__
 
     @classproperty
-    def nested_types(cls):
+    def nested_types(cls) -> ty.Tuple[ty.Type[DataType], ...]:
         return cls.classifiers
 
     @classmethod
     def wildcard_classifiers(
-        cls, classifiers=None
+        cls, classifiers: ty.Optional[ty.Sequence[ty.Type[DataType]]] = None
     ) -> ty.FrozenSet[ty.Type[SubtypeVar]]:
         if classifiers is None:
             classifiers = cls.classifiers if cls.is_classified else ()

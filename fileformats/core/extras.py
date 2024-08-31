@@ -5,19 +5,23 @@ from itertools import zip_longest
 import functools
 import urllib.error
 from .datatype import DataType
+from .fileset import FileSet
 from .converter import ConverterWrapper
 from .exceptions import FormatConversionError, FileFormatsExtrasError
 from .utils import import_extras_module, check_package_exists_on_pypi, add_exc_note
 
+if ty.TYPE_CHECKING:
+    from pydra.engine.core import TaskBase
+
 
 def converter(
-    task_spec=None,
-    source_format=None,
-    target_format=None,
-    in_file="in_file",
-    out_file="out_file",
-    **converter_kwargs,
-):
+    task_spec: TaskBase = None,
+    source_format: ty.Optional[ty.Type[FileSet]] = None,
+    target_format: ty.Optional[ty.Type[FileSet]] = None,
+    in_file: str = "in_file",
+    out_file: str = "out_file",
+    **converter_kwargs: ty.Dict[str, ty.Any],
+) -> ty.Union[ty.Callable[[TaskBase], TaskBase], TaskBase]:
     """Decorator that registers a task as a converter between a source and target format
     pair
 
@@ -52,7 +56,7 @@ def converter(
         )
         raise e
 
-    def decorator(task_spec):
+    def decorator(task_spec: ty.Type[TaskBase]) -> ty.Type[TaskBase]:
         out_file_local = out_file
         if source_format is None or target_format is None:
             task = task_spec()
@@ -82,6 +86,7 @@ def converter(
                 source = eval(source, module_dict)
             if isinstance(target, str):
                 target = eval(target, module_dict)
+        assert inspect.isclass(source) and inspect.isclass(target)
         if not issubclass(target, DataType):
             raise FormatConversionError(
                 f"Target file format '{target.__name__}' is not of subtype of "
@@ -101,14 +106,20 @@ def converter(
     return decorator if task_spec is None else decorator(task_spec)
 
 
-def extra(method: ty.Callable):
+A = ty.TypeVar("A")
+R = ty.TypeVar("R")
+
+F = ty.TypeVar("F", bound=ty.Callable[[A], R])
+
+
+def extra(method):
     """A decorator which uses singledispatch to facilitate the registering of
     "extra" functionality in external packages (e.g. "fileformats-extras")"""
 
     dispatch_method = functools.singledispatch(method)
 
     @functools.wraps(method)
-    def decorated(obj, *args, **kwargs):
+    def decorated(obj: object, *args, **kwargs) -> R:
         cls = type(obj)
         extras = []
         for tp in cls.referenced_types():
@@ -138,15 +149,15 @@ def extra(method: ty.Callable):
 
 
 class ExtraRegisterer:
-    def __init__(self, dispatch):
+    def __init__(self, dispatch: F) -> None:
         self.dispatch = dispatch
 
-    def __call__(self, function: ty.Callable):
+    def __call__(self, function: F) -> None:
         method = self.dispatch.__wrapped__
         msig = inspect.signature(method)
         fsig = inspect.signature(function)
 
-        def type_match(a, b) -> bool:
+        def type_match(a: ty.Union[str, type], b: ty.Union[str, type]) -> bool:
             return isinstance(a, str) or isinstance(b, str) or a == b
 
         differences = []

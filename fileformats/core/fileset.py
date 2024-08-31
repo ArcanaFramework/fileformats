@@ -93,7 +93,7 @@ class FileSet(DataType):
     # Explicitly set the Internet Assigned Numbers Authority (https://iana_mime.org) MIME
     # type to None for any base classes that should not correspond to a MIME or MIME-like
     # type.
-    iana_mime: ty.Union[str, None] = None
+    iana_mime: ty.Optional[str] = None
 
     # Member attributes
     fspaths: ty.FrozenSet[Path]
@@ -101,7 +101,12 @@ class FileSet(DataType):
 
     def __init__(
         self,
-        fspaths: ty.Union[str, ty.Sequence[str]],
+        fspaths: ty.Union[
+            ty.Iterable[ty.Union[str, Path]],
+            str,
+            Path,
+            "FileSet",
+        ],
         metadata: ty.Union[ty.Dict[str, ty.Any], bool, None] = False,
     ):
         self._metadata = metadata
@@ -884,29 +889,29 @@ class FileSet(DataType):
             file_hashes[str(path)] = crypto_obj.hexdigest()
         return file_hashes
 
-    def __bytes_repr__(
-        self, cache: ty.Dict  # pylint: disable=unused-argument
-    ) -> ty.Iterable[bytes]:
-        """Provided for compatibility with Pydra's hashing function, return the contents
-        of all the files in the file-set in chunks
+    # def __bytes_repr__(
+    #     self, cache: ty.Dict  # pylint: disable=unused-argument
+    # ) -> ty.Iterable[bytes]:
+    #     """Provided for compatibility with Pydra's hashing function, return the contents
+    #     of all the files in the file-set in chunks
 
-        Parameters
-        ----------
-        cache : dict
-            an object passed around by Pydra's hashing function to store cached versions
-            of previously hashed objects, to allow recursive structures
+    #     Parameters
+    #     ----------
+    #     cache : dict
+    #         an object passed around by Pydra's hashing function to store cached versions
+    #         of previously hashed objects, to allow recursive structures
 
-        Yields
-        ------
-        bytes
-            a chunk of bytes of length FILE_CHUNK_LEN_DEFAULT from the contents of all
-            files in the file-set.
-        """
-        cls = type(self)
-        yield f"{cls.__module__}.{cls.__name__}:".encode()
-        for key, chunk_iter in self.byte_chunks():
-            yield (",'" + key + "'=").encode()
-            yield from chunk_iter
+    #     Yields
+    #     ------
+    #     bytes
+    #         a chunk of bytes of length FILE_CHUNK_LEN_DEFAULT from the contents of all
+    #         files in the file-set.
+    #     """
+    #     cls = type(self)
+    #     yield f"{cls.__module__}.{cls.__name__}:".encode()
+    #     for key, chunk_iter in self.byte_chunks():
+    #         yield (",'" + key + "'=").encode()
+    #         yield from chunk_iter
 
     @classmethod
     def referenced_types(cls) -> ty.Set[ty.Type[Classifier]]:
@@ -917,10 +922,10 @@ class FileSet(DataType):
         types : set[Classifier]
             all the types that are referenced in shape or form within the class
         """
-        types = set([cls])
+        types: ty.Set[ty.Type[Classifier]] = set([cls])
         for b in cls.__mro__:
             try:
-                nested = b.nested_types
+                nested = b.nested_types  # type: ignore
             except AttributeError:
                 continue
             for t in nested:
@@ -928,7 +933,7 @@ class FileSet(DataType):
         return types
 
     @classmethod
-    def mock(cls, *fspaths: ty.Tuple[ty.Union[Path, str]]) -> "FileSet":
+    def mock(cls, *fspaths: ty.Union[Path, str]) -> "FileSet":
         """Return an instance of a mocked sub-class of the file format to be used in
         test routines like doctests that doesn't require to point at actual files
 
@@ -943,14 +948,17 @@ class FileSet(DataType):
             a file-set that will pass type-checking as an instance of the given
             fileset class but which doesn't actually point to any FS objects.
         """
-        mock_cls = type(cls.__name__ + "Mock", (MockMixin, cls), {"TRUE_CLASS": cls})
+        mock_cls: ty.Type[FileSet] = type(
+            cls.__name__ + "Mock", (MockMixin, cls), {"TRUE_CLASS": cls}
+        )
+        fspaths_lst = list(fspaths)
         if not fspaths:
-            fspaths = []
+            fspaths_lst = []
             fspath = f"/mock/{cls.__name__.lower()}"
             if cls.ext:
                 fspath += cls.ext
-            fspaths.append(fspath)
-        return mock_cls(fspaths=fspaths)
+            fspaths_lst.append(fspath)
+        return mock_cls(fspaths=fspaths_lst)
 
     @classmethod
     def sample(
@@ -1056,7 +1064,7 @@ class FileSet(DataType):
         single = 1
         multiple = 2
 
-        def __str__(self):
+        def __str__(self) -> str:
             return self.name
 
     def decomposed_fspaths(
@@ -1104,7 +1112,9 @@ class FileSet(DataType):
                     implicit.remove(fileset.fspath)
                 elif decomposed not in decomposed_fspaths:
                     previous_fileset = next(
-                        f for f in nested if f.fspath == fileset.fspath
+                        f
+                        for f in nested
+                        if isinstance(f, File) and f.fspath == fileset.fspath
                     )
                     previous = (
                         previous_fileset.fspath.parent,
@@ -1125,7 +1135,9 @@ class FileSet(DataType):
 
     @classmethod
     def decompose_fspath(
-        cls, fspath: Path, mode: ExtensionDecomposition = ExtensionDecomposition.single
+        cls,
+        fspath: ty.Union[Path, str],
+        mode: ExtensionDecomposition = ExtensionDecomposition.single,
     ) -> ty.Tuple[Path, str, str]:
         if isinstance(fspath, str):
             fspath = Path(fspath)
@@ -1139,7 +1151,7 @@ class FileSet(DataType):
             ext = fspath.suffix
         else:
             assert mode == cls.ExtensionDecomposition.none
-            stem = fspath
+            stem = str(fspath)
             ext = ""
         return fspath.parent, stem, ext
 
@@ -1245,22 +1257,22 @@ class FileSet(DataType):
         leave_or_symlink_or_copy = 0b1011
         leave_or_hardlink_or_copy = 0b1101
 
-        def __xor__(self, other):
+        def __xor__(self, other: "FileSet.CopyMode") -> "FileSet.CopyMode":
             return type(self)(self.value ^ other.value)
 
-        def __and__(self, other):
+        def __and__(self, other: "FileSet.CopyMode") -> "FileSet.CopyMode":
             return type(self)(self.value & other.value)
 
-        def __or__(self, other):
+        def __or__(self, other: "FileSet.CopyMode") -> "FileSet.CopyMode":
             return type(self)(self.value | other.value)
 
-        def __sub__(self, other):
+        def __sub__(self, other: "FileSet.CopyMode") -> "FileSet.CopyMode":
             return type(self)((self.value & (self.value ^ other.value)))
 
-        def __bool__(self):
+        def __bool__(self) -> bool:
             return bool(self.value)
 
-        def __str__(self):
+        def __str__(self) -> str:
             return self.name
 
     class CopyCollation(IntEnum):
@@ -1289,7 +1301,7 @@ class FileSet(DataType):
         siblings = 1
         adjacent = 2
 
-        def __str__(self):
+        def __str__(self) -> str:
             return self.name
 
     def copy(
@@ -1303,7 +1315,7 @@ class FileSet(DataType):
         overwrite: bool = False,
         supported_modes: CopyMode = CopyMode.any,
         extension_decomposition: ExtensionDecomposition = ExtensionDecomposition.single,
-    ):
+    ) -> Self:
         """Copies the file-set to a new directory, optionally renaming the files
         to have consistent name-stems.
 
@@ -1400,15 +1412,18 @@ class FileSet(DataType):
         if selected_mode & self.CopyMode.leave:
             return self  # Don't need to do anything
 
+        copy_file: ty.Callable[[Path, Path], None]
+        copy_dir: ty.Callable[[Path, Path], None]
+
         # Select inner copy/link methods
         if selected_mode & self.CopyMode.symlink:
             copy_dir = copy_file = os.symlink
         elif selected_mode & self.CopyMode.hardlink:
             copy_file = os.link
 
-            def hardlink_dir(src: Path, dest: Path):
-                for dpath, _, fpaths in os.walk(src):
-                    dpath = Path(dpath)
+            def hardlink_dir(src: Path, dest: Path) -> None:
+                for dpath_str, _, fpaths in os.walk(src):
+                    dpath = Path(dpath_str)
                     relpath = dpath.relative_to(src)
                     (dest / relpath).mkdir()
                     for fpath in fpaths:
@@ -1418,7 +1433,7 @@ class FileSet(DataType):
         else:
             assert selected_mode & self.CopyMode.copy
             copy_dir = shutil.copytree
-            copy_file = shutil.copyfile
+            copy_file = shutil.copyfile  # type: ignore
 
         # Get the paths that need to be copied, checking that it is possible to achieve
         # the requested collation mode
@@ -1467,7 +1482,7 @@ class FileSet(DataType):
         make_dirs: bool = False,
         overwrite: bool = False,
         extension_decomposition: ExtensionDecomposition = ExtensionDecomposition.single,
-    ):
+    ) -> Self:
         """Moves the file-set to a new directory, optionally renaming the files
         to have consistent name-stems.
 
@@ -1541,7 +1556,7 @@ class FileSet(DataType):
         trim: bool,
         collation: CopyCollation,
         extension_decomposition: ExtensionDecomposition,
-    ) -> ty.Iterable[ty.Union[Path, ty.Tuple[Path, str, str]]]:
+    ) -> ty.Tuple[ty.Iterable[ty.Union[Path, ty.Tuple[Path, str, str]]], str]:
         """Returns the file-paths to be copied/moved based on the collation mode and
         new_stem
 

@@ -31,14 +31,14 @@ class DataSerialization(WithClassifiers, File):
     "Base class for text-based hierarchical data-serialization formats, e.g. JSON, YAML"
 
     # Classifiers class attrs
-    classifiers_attr_name = "schema"
-    schema = None
-    multiple_classifiers = False
-    allowed_classifiers = (Schema,)
-    generically_classifiable = True
-    binary = False
+    classifiers_attr_name: str = "schema"
+    schema: bool = None
+    multiple_classifiers: bool = False
+    allowed_classifiers: ty.Tuple[ty.Type[Schema], ...] = (Schema,)
+    generically_classifiable: bool = True
+    binary: bool = False
 
-    iana_mime = None
+    iana_mime: ty.Optional[str] = None
 
     @extra
     def load(self) -> dict:
@@ -46,12 +46,12 @@ class DataSerialization(WithClassifiers, File):
         raise NotImplementedError
 
     @extra
-    def save(self, data: dict):
+    def save(self, data: dict) -> None:
         """Serialise a dictionary to a new file"""
         raise NotImplementedError
 
     @classmethod
-    def save_new(cls, fspath, data):
+    def save_new(cls, fspath, data) -> None:
         # We have to use a mock object as the data file hasn't been written yet
         mock = cls.mock(fspath)
         mock.save(data)
@@ -59,7 +59,7 @@ class DataSerialization(WithClassifiers, File):
 
 
 class Xml(DataSerialization):
-    ext = ".xml"
+    ext: ty.Optional[str] = ".xml"
     allowed_classifiers = (XmlSchema, InformalSchema)
 
 
@@ -67,17 +67,17 @@ class Json(DataSerialization):
     ext = ".json"
     allowed_classifiers = (JsonSchema, InformalSchema)
 
-    def load(self):
+    def load(self) -> ty.Dict[str, ty.Any]:
         try:
             with open(self.fspath) as f:
-                dct = json.load(f)
+                dct: ty.Dict[str, ty.Any] = json.load(f)  # type: ignore
         except json.JSONDecodeError as e:
             raise FormatMismatchError(
                 f"'{self.fspath}' is not a valid JSON file"
             ) from e
         return dct
 
-    def save(self, data):
+    def save(self, data: ty.Dict[str, ty.Any]) -> None:
         with open(self.fspath, "w") as f:
             json.dump(data, f)
 
