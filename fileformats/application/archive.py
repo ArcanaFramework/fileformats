@@ -14,7 +14,8 @@ class Archive(WithClassifiers, File):
     generically_classifiable = True
 
     binary = True
-    iana_mime = None
+    # iana_mime = None
+    pass
 
 
 # Compressed formats

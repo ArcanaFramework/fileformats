@@ -7,12 +7,12 @@ class Classifier:
     types"""
 
     @classproperty
-    def type_name(cls):
+    def type_name(cls) -> str:
         """Name of type to be used in __repr__. Defined here so it can be overridden"""
-        return cls.__name__
+        return cls.__name__  # type: ignore
 
     @classproperty
-    def namespace(cls):
+    def namespace(cls) -> str:
         """The "namespace" the format belongs to under the "fileformats" umbrella
         namespace"""
         module_parts = cls.__module__.split(".")

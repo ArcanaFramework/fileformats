@@ -6,7 +6,8 @@ from fileformats.generic import File
 class Video(File):
     "Base class for audio file formats"
     binary = True
-    iana_mime = None
+    # iana_mime = None
+    pass
 
 
 class Mp4(Video):

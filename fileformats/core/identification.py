@@ -31,11 +31,11 @@ ALL_STANDARD_TYPE_REGISTRIES = IANA_MIME_TYPE_REGISTRIES + [
 
 def find_matching(
     fspaths: ty.List[Path],
-    candidates: ty.Optional[ty.Sequence] = None,
+    candidates: ty.Optional[ty.Sequence[ty.Type["fileformats.core.DataType"]]] = None,
     standard_only: bool = False,
     include_generic: bool = False,
     skip_unconstrained: bool = True,
-):
+) -> ty.List["fileformats.core.DataType"]:
     """Detect the corresponding file format from a set of file-system paths
 
     Parameters
@@ -97,7 +97,9 @@ def from_mime(
     return fileformats.core.DataType.from_mime(mime_str)
 
 
-def to_mime(datatype: ty.Type["fileformats.core.DataType"], official: bool = True):
+def to_mime(
+    datatype: ty.Type["fileformats.core.DataType"], official: bool = True
+) -> str:
     """Returns the mime-type or mime-like (i.e. using fileformats namespaces instead
     of putting all non-standard types in the 'application' registry) string corresponding
     to the given datatype
@@ -238,7 +240,7 @@ def from_paths(
     return filesets
 
 
-def to_mime_format_name(format_name: str):
+def to_mime_format_name(format_name: str) -> str:
     if "___" in format_name:
         raise FormatDefinitionError(
             f"Cannot convert name of format class {format_name} to mime string as it "
@@ -253,7 +255,7 @@ def to_mime_format_name(format_name: str):
     return format_name
 
 
-def from_mime_format_name(format_name: str):
+def from_mime_format_name(format_name: str) -> str:
     if format_name.startswith("x-"):
         format_name = format_name[2:]
     if re.match(r"^[0-9]", format_name):

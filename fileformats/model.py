@@ -5,7 +5,8 @@ from fileformats.generic import File
 
 class Model(File):
 
-    iana_mime = None
+    # iana_mime = None
+    pass
 
 
 class _3mf(Model):

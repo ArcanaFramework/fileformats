@@ -5,7 +5,8 @@ from fileformats.core.mixin import WithMagicNumber
 
 # Document formats
 class Document(File):
-    iana_mime = None
+    # iana_mime = None
+    pass
 
 
 class Pdf(WithMagicNumber, Document):

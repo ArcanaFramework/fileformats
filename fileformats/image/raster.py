@@ -5,7 +5,8 @@ from .base import Image
 
 
 class RasterImage(Image):
-    iana_mime = None
+    # iana_mime = None
+    pass
     binary = True
 
     @extra

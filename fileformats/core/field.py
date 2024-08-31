@@ -7,25 +7,29 @@ from .datatype import DataType
 from .exceptions import FormatMismatchError
 
 
-class Field(DataType):
+ValueType = ty.TypeVar("ValueType")
+PrimitiveType = ty.TypeVar("PrimitiveType")
+
+
+class Field(ty.Generic[ValueType, PrimitiveType], DataType):
     """Base class for all field formats"""
 
-    type = None
+    value: ValueType
+    primitive: ty.Type[PrimitiveType]
     is_field = True
-    primitive = None
-    metadata = None  # Empty metadata dict for duck-typing with file-sets
+    metadata: None = None  # for duck-typing with FileSet
 
-    def __init__(self, value):
+    def __init__(self, value: ValueType):
         self.value = value
 
-    def __eq__(self, field) -> bool:
+    def __eq__(self, field: object) -> bool:
         return (
             isinstance(field, Field)
             and self.mime_like == field.mime_like
             and self.value == field.value
         )
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: object) -> bool:
         return not self == other
 
     def __hash__(self) -> int:
@@ -38,17 +42,21 @@ class Field(DataType):
         return f"{self.type_name}({str(self)})"
 
     @classproperty
-    def all_fields(cls) -> ty.List[ty.Type[Field]]:  # pylint: disable=no-self-argument
+    def all_fields(
+        cls,
+    ) -> ty.List[ty.Type["Field[ty.Any, ty.Any]"]]:
         """Iterate over all field formats in fileformats.* namespaces"""
         import fileformats.field  # noqa
 
-        return [f for f in Field.subclasses() if f.primitive is not None]
+        if cls._all_fields is None:
+            cls._all_fields = [f for f in Field.subclasses() if f.primitive is not None]  # type: ignore
+        return cls._all_fields
 
-    def to_primitive(self):
-        return self.primitive(self)
+    def to_primitive(self) -> PrimitiveType:
+        return self.primitive(self)  # type: ignore
 
     @classmethod
-    def from_primitive(cls, dtype: type):
+    def from_primitive(cls, dtype: type) -> ty.Type[Field[ty.Any, ty.Any]]:
         try:
             datatype = next(iter(f for f in cls.all_fields if f.primitive is dtype))
         except StopIteration as e:
@@ -59,4 +67,5 @@ class Field(DataType):
             ) from e
         return datatype
 
-    _all_fields = None
+    _all_fields: ty.Optional[ty.List[ty.Type["Field[ty.Any, ty.Any]"]]] = None
+    type: type  # Put this at the bottom to avoid name clash with built-in type

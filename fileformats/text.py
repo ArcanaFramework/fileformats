@@ -4,7 +4,8 @@ from fileformats.generic import File
 
 
 class Text(File):
-    iana_mime = None
+    # iana_mime = None
+    pass
     binary = False
 
 
@@ -225,7 +226,8 @@ class Parityfec(Text):
 class ProvenanceNotation(Text):
     """
 
-    TODO: PROV-N documents may have the strings 'document' near the beginning of the document."""
+    TODO: PROV-N documents may have the strings 'document' near the beginning of the document.
+    """
 
     iana_mime = "text/provenance-notation"
     ext = ".provn"
@@ -242,7 +244,8 @@ class Prs_Fallenstein_Rst(Text):
 class Prs_Lines_Tag(Text):
     """
 
-    TODO: All tag data streams start Tag-xxx-version - where xxx is the particular tag type."""
+    TODO: All tag data streams start Tag-xxx-version - where xxx is the particular tag type.
+    """
 
     iana_mime = "text/prs.lines.tag"
     ext = ".tag"
@@ -406,7 +409,8 @@ class Vtt(Text):
 
     TODO: WebVTT files all begin with one of the following byte sequences (where "EOF" means the end of the file):
     EF BB BF 57 45 42 56 54 54 0A EF BB BF 57 45 42 56 54 54 0D EF BB BF 57 45 42 56 54 54 20 EF BB BF 57 45 42 56 54 54 09 EF BB BF 57 45 42 56 54 54 EOF 57 45 42 56 54 54 0A 57 45 42 56 54 54 0D 57 45 42 56 54 54 20 57 45 42 56 54 54 09 57 45 42 56 54 54 EOF
-    (An optional UTF-8 BOM, the ASCII string "WEBVTT", and finally a space, tab, line break, or the end of the file.)"""
+    (An optional UTF-8 BOM, the ASCII string "WEBVTT", and finally a space, tab, line break, or the end of the file.)
+    """
 
     iana_mime = "text/vtt"
     ext = ".vtt"
