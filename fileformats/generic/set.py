@@ -1,3 +1,4 @@
+import typing as ty
 from fileformats.core.fileset import FileSet
 from fileformats.core.exceptions import (
     FormatMismatchError,
@@ -9,10 +10,10 @@ class TypedSet(FileSet):
     """List of specific file types (similar to the contents of a directory but not
     enclosed in one)"""
 
-    content_types = ()
+    content_types: ty.Tuple[ty.Type[FileSet], ...] = ()
 
     @property
-    def contents(self):
+    def contents(self) -> ty.Iterable[FileSet]:
         for content_type in self.content_types:
             for p in self.fspaths:
                 try:
@@ -21,7 +22,7 @@ class TypedSet(FileSet):
                     continue
 
     @property
-    def _validate_contents(self):
+    def _validate_contents(self) -> None:
         if not self.content_types:
             return
         not_found = set(self.content_types)

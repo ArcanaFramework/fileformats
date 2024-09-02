@@ -30,19 +30,19 @@ ALL_STANDARD_TYPE_REGISTRIES = IANA_MIME_TYPE_REGISTRIES + [
 
 
 def find_matching(
-    fspaths: ty.List[Path],
-    candidates: ty.Optional[ty.Sequence[ty.Type["fileformats.core.DataType"]]] = None,
+    fspaths: ty.Collection[Path],
+    candidates: ty.Optional[ty.Collection[ty.Type["fileformats.core.FileSet"]]] = None,
     standard_only: bool = False,
     include_generic: bool = False,
     skip_unconstrained: bool = True,
-) -> ty.List["fileformats.core.DataType"]:
+) -> ty.List[ty.Type["fileformats.core.FileSet"]]:
     """Detect the corresponding file format from a set of file-system paths
 
     Parameters
     ----------
     fspaths : list[Path]
         file-system paths to detect the format of
-    candidates: sequence[DataType], optional
+    candidates: sequence[FileSet], optional
         the candidates to select from, by default all file formats
     standard_only : bool, optional
         If you only want to return matches from the "standard" IANA types. Only relevant
@@ -50,11 +50,16 @@ def find_matching(
     skip_unconstrained : bool, optional
         skip formats that aren't constrained by extension, magic number or another check.
         Only relevant if candidates is None
+
+    Returns
+    -------
+    list[FileSet]
+        the file formats that match the given file-system paths
     """
     import fileformats.core.mixin
 
     fspaths = fspaths_converter(fspaths)
-    matches = []
+    matches: ty.List[ty.Type["fileformats.core.FileSet"]] = []
     if candidates is None:
         candidates = fileformats.core.FileSet.all_formats
     for frmt in candidates:
@@ -72,7 +77,7 @@ def find_matching(
 
 def from_mime(
     mime_str: str,
-) -> ty.Union[ty.Type["fileformats.core.DataType"], ty._GenericAlias]:
+) -> ty.Union[ty.Type["fileformats.core.DataType"], ty.Type[ty.Union]]:
     """Resolves a MIME type (or MIME-like) string into the corresponding type
 
     Parameters
@@ -144,7 +149,7 @@ def to_mime(
         ns = ns.replace("_", "-")
         class_name = to_mime_format_name(class_name)
         return ns + "/" + class_name
-    mime = datatype.mime_type if official else datatype.mime_like
+    mime: str = datatype.mime_type if official else datatype.mime_like
     if official:
         mime = datatype.mime_type
     else:
@@ -169,7 +174,7 @@ def from_paths(
     *candidates: ty.Type["fileformats.core.FileSet"],
     common_ok: bool = False,
     ignore: ty.Optional[str] = None,
-    **kwargs,
+    **kwargs: ty.Dict[str, ty.Any],
 ) -> ty.List["fileformats.core.FileSet"]:
     """Given a list of candidate classes (defaults to all installed in alphabetical order),
     instantiates all possible file-set instances from a collection of file-system paths.
@@ -202,27 +207,31 @@ def from_paths(
         # Unwrap any nested tuples into a flat list of file-setclasses
         unwrapped = []
 
-        def unwrap(candidate):
+        def unwrap(candidate: ty.Type["fileformats.core.FileSet"]) -> None:
             if ty.get_origin(candidate) is ty.Union:
+                arg: ty.Type["fileformats.core.FileSet"]
                 for arg in ty.get_args(candidate):
-                    unwrapped.extend(unwrap(arg))
+                    unwrap(arg)
             else:
                 unwrapped.append(candidate)
 
         for candidate in candidates:
             unwrap(candidate)
-        candidates = unwrapped
+        candidates = tuple(unwrapped)
         candidates_str = ", ".join(c.mime_like for c in candidates)
     else:
         # Use all installed file-set classes if no candidates are provided, sorted
         # alphabetically to ensure behaviour is consistent between runs
-        candidates = sorted(
-            fileformats.core.FileSet.subclasses(), key=operator.attrgetter("mime_like")
+        candidates = tuple(
+            sorted(
+                fileformats.core.FileSet.subclasses(),
+                key=operator.attrgetter("mime_like"),
+            )
         )
         candidates_str = "all installed"
 
     remaining = fspaths
-    filesets = []
+    filesets: ty.List["fileformats.core.FileSet"] = []
     for candidate in candidates:
         fsets, remaining = candidate.from_paths(
             remaining, common_ok=common_ok, **kwargs

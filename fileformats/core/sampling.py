@@ -37,7 +37,7 @@ class SampleFileGenerator:
             self._generate_fname_stem() if fname_stem is None else fname_stem
         )
 
-    def _generate_fname_stem(self):
+    def _generate_fname_stem(self) -> str:
         return "".join(
             self.rng.choices(
                 string.ascii_letters + string.digits, k=self.FNAME_STEM_LENGTH
@@ -45,7 +45,7 @@ class SampleFileGenerator:
         )
 
     @cached_property
-    def rng(self):
+    def rng(self) -> random.Random:
         return random.Random(self.seed)
 
     def generate(
@@ -55,8 +55,9 @@ class SampleFileGenerator:
         ],
         contents: ty.Union[str, bytes, None] = None,
         fill: int = 0,
-        **kwargs,
-    ):
+        fname_stem: ty.Optional[str] = None,
+        relpath: ty.Optional[Path] = None,
+    ) -> Path:
         """Generates a random file of length `length` and extension `ext`
 
         Parameters
@@ -69,8 +70,10 @@ class SampleFileGenerator:
         fill : int
             length of the random string to generate for the file contents. Will be appended
             after any explicitly provided contents
-        **kwargs : dict
-            additional keyword arguments to pass to generate_fspath
+        fname_stem : str, optional or bool
+            Use explicitly provided if it is a string
+        relpath : Path
+            the path to generate the filename at, relative to the destination directory
 
         Returns
         -------
@@ -79,7 +82,9 @@ class SampleFileGenerator:
         """
         if not contents and not fill:
             raise ValueError("Either contents or random_fill_length must be provided")
-        fspath = self.generate_fspath(file_type, **kwargs)
+        if isinstance(file_type, fileformats.core.FileSet):
+            file_type = type(file_type)
+        fspath = self.generate_fspath(file_type, fname_stem=fname_stem, relpath=relpath)
         fspath.parent.mkdir(parents=True, exist_ok=True)
         try:
             is_binary = file_type.binary  # type: ignore
@@ -99,8 +104,10 @@ class SampleFileGenerator:
                     f"not {type(contents)}"
                 )
         if is_binary:
+            assert isinstance(contents, bytes)
             fspath.write_bytes(contents)
         else:
+            assert isinstance(contents, str)
             fspath.write_text(contents)
         return fspath
 
@@ -109,7 +116,7 @@ class SampleFileGenerator:
         file_type: ty.Optional[ty.Type["fileformats.core.FileSet"]] = None,
         fname_stem: ty.Optional[str] = None,
         relpath: ty.Optional[Path] = None,
-    ):
+    ) -> Path:
         """Generates a random file path in the destination directory of length `length`
         and extension `ext`
 

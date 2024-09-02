@@ -56,7 +56,9 @@ def converter(
         )
         raise e
 
-    def decorator(task_spec: ty.Type[TaskBase]) -> ty.Type[TaskBase]:
+    def decorator(
+        task_spec: ty.Type[TaskBase],
+    ) -> ty.Union[ty.Type[TaskBase], ConverterWrapper]:
         out_file_local = out_file
         if source_format is None or target_format is None:
             task = task_spec()
@@ -93,15 +95,18 @@ def converter(
                 "fileformats.core.DataType"
             )
         if in_file != "in_file" or out_file_local != "out_file":
-            task_spec = ConverterWrapper(
+            wrapped_task_spec = ConverterWrapper(
                 task_spec,
                 in_file=in_file,
                 out_file=out_file_local,
             )
+        else:
+            wrapped_task_spec = task_spec
         target.register_converter(
-            source_format=source, converter_tuple=(task_spec, converter_kwargs)
+            source_format=source,
+            converter_spec=(wrapped_task_spec, converter_kwargs, ()),
         )
-        return task_spec
+        return wrapped_task_spec
 
     return decorator if task_spec is None else decorator(task_spec)
 

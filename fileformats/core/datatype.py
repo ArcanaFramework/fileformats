@@ -5,8 +5,9 @@ from typing_extensions import Self
 from abc import ABCMeta
 import importlib
 import itertools
-from .converter import SubtypeVar
+from .converter import SubtypeVar, ConverterSpec
 from .exceptions import (
+    FileFormatsError,
     FormatMismatchError,
     FormatConversionError,
     FormatRecognitionError,
@@ -23,9 +24,6 @@ from .identification import (
 )
 from .classifier import Classifier
 
-if ty.TYPE_CHECKING:
-    from pydra.engine.task import TaskBase
-
 
 class DataType(Classifier, metaclass=ABCMeta):
     is_fileset = False
@@ -33,10 +31,7 @@ class DataType(Classifier, metaclass=ABCMeta):
     nested_types: ty.Tuple[ty.Type["DataType"], ...] = ()
     # Store converters registered by @converter decorator that convert to FileSet
     # NB: each class will have its own version of this dictionary
-    converters: ty.Dict[
-        ty.Type["DataType"],
-        ty.Tuple[ty.Callable[[ty.Any], TaskBase], ty.Dict[str, ty.Any]],
-    ] = {}
+    converters: ty.Dict[ty.Type["DataType"], ConverterSpec] = {}
 
     @classmethod
     def type_var(cls, name: str) -> SubtypeVar:
@@ -90,6 +85,12 @@ class DataType(Classifier, metaclass=ABCMeta):
             raise FormatConversionError(
                 f"Cannot converter between '{cls.mime_like}' and '{source_format.mime_like}'"
             )
+
+    @classproperty
+    def mime_type(cls) -> str:
+        """Generates a MIME type identifier from a format class (i.e. an identifier
+        for a non-MIME class in the MIME"""
+        raise FileFormatsError(f"MIME type not defined for {cls} class")
 
     @classproperty
     def mime_like(cls) -> str:

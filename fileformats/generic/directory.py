@@ -1,9 +1,10 @@
 import typing as ty
+import hashlib
 from pathlib import Path
 from fileformats.core.exceptions import FormatMismatchError
 from fileformats.core.utils import classproperty
 from .fsobject import FsObject
-from fileformats.core.fileset import FileSet
+from fileformats.core.fileset import FileSet, FILE_CHUNK_LEN_DEFAULT
 from fileformats.core.mixin import WithClassifiers
 
 
@@ -11,12 +12,10 @@ class Directory(FsObject):
     """Base directory to be overridden by subtypes that represent directories but don't
     want to inherit content type "qualifers" (i.e. most of them)"""
 
-    is_dir = True
-
-    content_types = ()
+    content_types: ty.Tuple[ty.Type[FileSet], ...] = ()
 
     @property
-    def fspath(self):
+    def fspath(self) -> Path:
         # fspaths are checked for existence with the exception of mock classes
         dirs = [p for p in self.fspaths if not p.is_file()]
         if not dirs:
@@ -46,8 +45,9 @@ class Directory(FsObject):
         return fspath
 
     @property
-    def contents(self):
+    def contents(self) -> ty.Iterable[FileSet]:
         for content_type in self.content_types:
+            assert content_type
             for p in self.fspath.iterdir():
                 try:
                     yield content_type([p])
@@ -60,8 +60,14 @@ class Directory(FsObject):
         constraint"""
         return super().unconstrained and not cls.content_types
 
+    def is_dir(self) -> bool:
+        return True
+
+    def is_file(self) -> bool:
+        return False
+
     @property
-    def _validate_contents(self):
+    def _validate_contents(self) -> None:
         if not self.content_types:
             return
         not_found = set(self.content_types)
@@ -77,26 +83,41 @@ class Directory(FsObject):
             f"directory {self.fspath} of {self}"
         )
 
-    def hash_files(self, relative_to=None, **kwargs):
+    def hash_files(
+        self,
+        crypto: ty.Optional[ty.Callable[[], hashlib._Hash]] = None,
+        mtime: bool = False,
+        chunk_len: int = FILE_CHUNK_LEN_DEFAULT,
+        relative_to: ty.Optional[Path] = None,
+        ignore_hidden_files: bool = False,
+        ignore_hidden_dirs: bool = False,
+    ) -> ty.Dict[str, str]:
         if relative_to is None:
             relative_to = self.fspath
-        return super().hash_files(relative_to=relative_to, **kwargs)
+        return super().hash_files(
+            crypto=crypto,
+            mtime=mtime,
+            chunk_len=chunk_len,
+            relative_to=relative_to,
+            ignore_hidden_files=ignore_hidden_files,
+            ignore_hidden_dirs=ignore_hidden_dirs,
+        )
 
     # Duck-type Path methods
 
     def __div__(self, other: ty.Union[str, Path]) -> Path:
         return self.fspath / other
 
-    def glob(self, pattern):
+    def glob(self, pattern: str) -> ty.Iterator[Path]:
         return self.fspath.glob(pattern)
 
-    def rglob(self, pattern):
+    def rglob(self, pattern: str) -> ty.Iterator[Path]:
         return self.fspath.rglob(pattern)
 
-    def joinpath(self, *args, **kwargs):
-        return self.fspath.joinpath(*args, **kwargs)
+    def joinpath(self, other: ty.Union[str, Path]) -> Path:
+        return self.fspath.joinpath(other)
 
-    def iterdir(self):
+    def iterdir(self) -> ty.Iterator[Path]:
         return self.fspath.iterdir()
 
 

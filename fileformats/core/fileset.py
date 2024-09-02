@@ -14,7 +14,7 @@ import functools
 from pathlib import Path
 import hashlib
 import logging
-from typing_extensions import Self, TypeAlias
+from typing_extensions import Self
 from .utils import (
     classproperty,
     fspaths_converter,
@@ -46,16 +46,13 @@ from .fs_mount_identifier import FsMountIdentifier
 
 if ty.TYPE_CHECKING:
     from pydra.engine.task import TaskBase
+    from .converter import ConverterSpec
 
 
 FILE_CHUNK_LEN_DEFAULT = 8192
 
 
 logger = logging.getLogger("fileformats")
-
-ConverterTuple: TypeAlias = ty.Tuple[
-    ty.Callable[[ty.Any], TaskBase], ty.Dict[str, ty.Any]
-]
 
 
 class FileSet(DataType):
@@ -529,24 +526,18 @@ class FileSet(DataType):
         else:
             import_extras_module(unclassified)
         try:
-            converter_tuple = converters[source_format]
+            converter_spec = converters[source_format]
         except KeyError:
             # If no direct mapping check for mapping from source super types and wildcard
             # matches
-            available_converters = cls.get_converter_tuples(source_format)
+            available_converters = cls.get_converter_specs(source_format)
             if len(available_converters) > 1:
                 # FIXME: Hack to avoid situation where multiple converters get added but are identical
-                if all(
-                    matching_source(a[0], available_converters[0][0])
-                    for a in available_converters[1:]
-                ) and all(
-                    a[1:] == available_converters[0][1:]
-                    for a in available_converters[1:]
-                ):
+                if all(a == available_converters[0] for a in available_converters[1:]):
                     available_converters = [available_converters[0]]
                 else:
                     available_str = "\n".join(
-                        describe_task(a[0]) for a in available_converters
+                        describe_task(a.task) for a in available_converters
                     )
                     raise FormatConversionError(
                         f"Ambiguous converters found between '{cls.mime_like}' and "
@@ -565,37 +556,36 @@ class FileSet(DataType):
                         f"from PyPI (e.g. pip install {extras_mod.pypi}) or check it isn't broken"
                     )
                 raise FormatConversionError(msg) from None
-            converter_tuple = available_converters[0]
+            converter_spec = available_converters[0]
             # Store mapping for future reference
-            converters[source_format] = converter_tuple
-        converter, conv_kwargs = converter_tuple
+            converters[source_format] = converter_spec
         if kwargs:
             # Merge kwargs provided to get_conveter with stored kwargs
-            conv_kwargs = copy(conv_kwargs)
+            conv_kwargs = copy(converter_spec.args)
             conv_kwargs.update(kwargs)
-        return converter(name=name, **conv_kwargs)  # type: ignore
+        else:
+            conv_kwargs = converter_spec.args
+        return converter_spec.task(name=name, **conv_kwargs)  # type: ignore
 
     @classmethod
     def get_converters_dict(
         cls, klass: ty.Optional[ty.Type[DataType]] = None
-    ) -> ty.Dict[ty.Type[DataType], ConverterTuple]:
+    ) -> ty.Dict[ty.Type[DataType], ConverterSpec]:
         # Only access converters to the specific class, not superclasses (which may not
         # be able to convert to the specific type)
         if klass is None:
             klass = cls
         # import related extras module for the target class
         import_extras_module(klass)
+        converters_dict: ty.Dict[ty.Type[DataType], ConverterSpec]
         try:
-            converters_dict: ty.Dict[
-                ty.Type[DataType], ConverterTuple
-            ] = klass.__dict__["converters"]
+            converters_dict = klass.__dict__["converters"]
         except KeyError:
-            converters_dict = {}
-            klass.converters = converters_dict
+            converters_dict = klass.converters = {}
         return converters_dict
 
     @classmethod
-    def get_converter_tuples(cls, source_format: type) -> ty.List[ConverterTuple]:
+    def get_converter_specs(cls, source_format: type) -> ty.List[ConverterSpec]:
         """Search the registered converters to find any matches and return list of
         task and associated key-word args to perform the conversion between source and
         target formats
@@ -613,20 +603,19 @@ class FileSet(DataType):
         converters_dict = cls.get_converters_dict()
         available = []
         for src_frmt, converter in converters_dict.items():
-            if len(converter) == 2:  # Ignore converters with wildcards at this point
+            # Ignore converters with wildcards at this point
+            if not converter.classifiers:
                 if issubclass(source_format, src_frmt):
                     available.append(converter)
         if not available and hasattr(source_format, "unclassified"):
-            available = SubtypeVar.get_converter_tuples(
-                source_format, target_format=cls
-            )
+            available = SubtypeVar.get_converter_specs(source_format, target_format=cls)
         return available
 
     @classmethod
     def register_converter(
         cls,
         source_format: ty.Type["FileSet"],
-        converter_tuple: ConverterTuple,
+        converter_spec: ConverterSpec,
     ) -> None:
         """Registers a converter task within a class attribute. Called by the
         @fileformats.core.converter decorator.
@@ -635,7 +624,7 @@ class FileSet(DataType):
         ----------
         source_format : type
             the source format to register a converter from
-        converter_tuple
+        converter_spec
             a tuple consisting of a `task_spec` callable that resolves to a Pydra task
             and a dictionary of keyword arguments to be passed to the task spec at
             initialisation time
@@ -648,22 +637,26 @@ class FileSet(DataType):
         converters_dict = cls.get_converters_dict()
         # If no converters are loaded, attempt to load from the standard location
         if source_format in converters_dict:
-            prev_tuple = cls.converters[source_format]
-            task, task_kwargs = converter_tuple
-            prev_task, prev_kwargs = prev_tuple
-            if matching_source(task, prev_task) and task_kwargs == prev_kwargs:
+            prev_spec = cls.converters[source_format]
+            # task, task_kwargs = converter_spec
+            # prev_task, prev_kwargs = prev_tuple
+            if (
+                matching_source(converter_spec.task, prev_spec.task)
+                and converter_spec.args == prev_spec.args
+            ):
                 logger.warning(
                     "Ignoring duplicate registrations of the same converter %s",
-                    describe_task(task),
+                    describe_task(converter_spec.task),
                 )
                 return  # actually the same task but just imported twice for some reason
             raise FormatConversionError(
                 f"Cannot register converter from {source_format.__name__} "
-                f"to {cls.__name__}, {describe_task(task)}, because there is already "
-                f"one registered from {describe_task(prev_task)}:"
-                f"\n\n{inspect.getsource(task)}\n\nand{inspect.getsource(prev_task)}\n\n"
+                f"to {cls.__name__}, {describe_task(converter_spec.task)}, because there is already "
+                f"one registered from {describe_task(prev_spec.task)}:"
+                f"\n\n{inspect.getsource(converter_spec.task)}\n\n"
+                f"and{inspect.getsource(prev_spec.task)}\n\n"
             )
-        converters_dict[source_format] = converter_tuple
+        converters_dict[source_format] = converter_spec
 
     @classproperty
     def all_formats(cls) -> ty.Set[ty.Type["FileSet"]]:
@@ -822,7 +815,11 @@ class FileSet(DataType):
     def hash(
         self,
         crypto: ty.Optional[ty.Callable[[], hashlib._Hash]] = None,
-        **kwargs: ty.Dict[str, ty.Any],
+        mtime: bool = False,
+        chunk_len: int = FILE_CHUNK_LEN_DEFAULT,
+        relative_to: ty.Optional[Path] = None,
+        ignore_hidden_files: bool = False,
+        ignore_hidden_dirs: bool = False,
     ) -> str:
         """Calculate a unique hash for the file-set based on the relative paths and
         contents of its constituent files
@@ -842,7 +839,13 @@ class FileSet(DataType):
         if crypto is None:
             crypto = hashlib.sha256
         crytpo_obj = crypto()
-        for path, bytes_iter in self.byte_chunks(**kwargs):  # type: ignore
+        for path, bytes_iter in self.byte_chunks(
+            mtime=mtime,
+            chunk_len=chunk_len,
+            relative_to=relative_to,
+            ignore_hidden_files=ignore_hidden_files,
+            ignore_hidden_dirs=ignore_hidden_dirs,
+        ):
             crytpo_obj.update(path.encode())
             for bytes_str in bytes_iter:
                 crytpo_obj.update(bytes_str)
@@ -851,7 +854,11 @@ class FileSet(DataType):
     def hash_files(
         self,
         crypto: ty.Optional[ty.Callable[[], hashlib._Hash]] = None,
-        **kwargs: ty.Dict[str, ty.Any],
+        mtime: bool = False,
+        chunk_len: int = FILE_CHUNK_LEN_DEFAULT,
+        relative_to: ty.Optional[Path] = None,
+        ignore_hidden_files: bool = False,
+        ignore_hidden_dirs: bool = False,
     ) -> ty.Dict[str, str]:
         """Calculate hashes for all files in the file-set based on the relative paths and
         contents of its constituent files
@@ -871,36 +878,18 @@ class FileSet(DataType):
         if crypto is None:
             crypto = hashlib.sha256
         file_hashes = {}
-        for path, bytes_iter in self.byte_chunks(**kwargs):  # type: ignore
+        for path, bytes_iter in self.byte_chunks(
+            mtime=mtime,
+            chunk_len=chunk_len,
+            relative_to=relative_to,
+            ignore_hidden_files=ignore_hidden_files,
+            ignore_hidden_dirs=ignore_hidden_dirs,
+        ):
             crypto_obj = crypto()
             for bytes_str in bytes_iter:
                 crypto_obj.update(bytes_str)
             file_hashes[str(path)] = crypto_obj.hexdigest()
         return file_hashes
-
-    # def __bytes_repr__(
-    #     self, cache: ty.Dict  # pylint: disable=unused-argument
-    # ) -> ty.Iterable[bytes]:
-    #     """Provided for compatibility with Pydra's hashing function, return the contents
-    #     of all the files in the file-set in chunks
-
-    #     Parameters
-    #     ----------
-    #     cache : dict
-    #         an object passed around by Pydra's hashing function to store cached versions
-    #         of previously hashed objects, to allow recursive structures
-
-    #     Yields
-    #     ------
-    #     bytes
-    #         a chunk of bytes of length FILE_CHUNK_LEN_DEFAULT from the contents of all
-    #         files in the file-set.
-    #     """
-    #     cls = type(self)
-    #     yield f"{cls.__module__}.{cls.__name__}:".encode()
-    #     for key, chunk_iter in self.byte_chunks():
-    #         yield (",'" + key + "'=").encode()
-    #         yield from chunk_iter
 
     @classmethod
     def referenced_types(cls) -> ty.Set[ty.Type[Classifier]]:

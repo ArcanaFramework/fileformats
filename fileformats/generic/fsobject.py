@@ -8,11 +8,11 @@ from fileformats.core.exceptions import (
 from fileformats.core.utils import classproperty
 
 
-class FsObject(FileSet, os.PathLike):
+class FsObject(FileSet, os.PathLike):  # type: ignore
     "Generic file-system object, can be either a file or a directory"
 
     @property
-    def fspath(self):
+    def fspath(self) -> Path:
         if len(self.fspaths) > 1:
             raise FormatMismatchError(
                 f"More than one fspath ({self.fspaths}) provided to FsObject, "
@@ -20,16 +20,16 @@ class FsObject(FileSet, os.PathLike):
             )
         return next(iter(self.fspaths))
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.fspath)
 
-    def __fspath__(self):
+    def __fspath__(self) -> str:
         """Render to string, so can be treated as any other file-system path, i.e. passed
         to functions like file 'open'"""
         return str(self)
 
     @property
-    def stem(self):
+    def stem(self) -> str:
         return self.fspath.with_suffix("").name
 
     @classproperty
@@ -47,8 +47,8 @@ class FsObject(FileSet, os.PathLike):
     def anchor(self) -> str:
         return self.fspath.anchor
 
-    def chmod(self, mode: int, *, follow_symlinks: bool = True):
-        return self.fspath.chmod(mode, follow_symlinks=follow_symlinks)
+    def chmod(self, mode: int, *, follow_symlinks: bool = True) -> None:
+        self.fspath.chmod(mode, follow_symlinks=follow_symlinks)  # type: ignore
 
     @property
     def drive(self) -> str:
@@ -70,9 +70,6 @@ class FsObject(FileSet, os.PathLike):
     def name(self) -> str:
         return self.fspath.name
 
-    def open(self, *args, **kwargs):
-        return self.fspath.open(*args, **kwargs)
-
     def owner(self) -> str:
         return self.fspath.owner()
 
@@ -81,24 +78,24 @@ class FsObject(FileSet, os.PathLike):
         return self.fspath.parent
 
     @property
-    def parents(self) -> Path:
+    def parents(self) -> ty.Sequence[Path]:
         return self.fspath.parents
 
     @property
-    def parts(self) -> ty.List[str]:
+    def parts(self) -> ty.Tuple[str, ...]:
         return self.fspath.parts
 
     @property
     def root(self) -> str:
         return self.fspath.root
 
-    def stat(self, **kwargs) -> os.stat_result:
-        return self.fspath.stat(**kwargs)
+    def stat(self, follow_symlinks: bool = True) -> os.stat_result:
+        return self.fspath.stat(follow_symlinks=follow_symlinks)  # type: ignore
 
     @property
     def suffix(self) -> str:
         return self.fspath.suffix
 
     @property
-    def suffixes(self):
+    def suffixes(self) -> ty.List[str]:
         return self.fspath.suffixes

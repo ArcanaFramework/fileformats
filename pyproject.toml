@@ -92,6 +92,8 @@ ignore_missing_imports = true
 strict = true
 namespace_packages = true
 explicit_package_bases = true
+exclude = ["tests"]
+
 
 [tool.codespell]
 ignore-words = ".codespell-ignorewords"

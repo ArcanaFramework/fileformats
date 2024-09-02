@@ -1,4 +1,5 @@
 from pathlib import Path
+import typing as ty
 from fileformats.core.fileset import FileSet
 from fileformats.core.exceptions import (
     FormatMismatchError,
@@ -12,11 +13,15 @@ class File(FsObject):
     """Generic file type"""
 
     binary = True
-    is_dir = False
 
     @property
-    def fspath(self):
+    def fspath(self) -> Path:
         fspath = self.select_by_ext()
+        if not fspath:
+            raise FormatMismatchError(
+                f"No paths in {type(self)} ({list(self.fspaths)}) "
+                f"match extension {self.ext}"
+            )
         if fspath.is_dir():
             # fspath is guaranteed to exist
             raise FormatMismatchError(
@@ -31,13 +36,19 @@ class File(FsObject):
         constraint"""
         return super().unconstrained and (cls.ext is None or None in cls.alternate_exts)
 
+    def is_dir(self) -> bool:
+        return False
+
+    def is_file(self) -> bool:
+        return True
+
     @classmethod
     def copy_ext(
         cls,
         old_path: Path,
         new_path: Path,
-        decomposition_mode=FileSet.ExtensionDecomposition.none,
-    ):
+        decomposition_mode: FileSet.ExtensionDecomposition = FileSet.ExtensionDecomposition.none,
+    ) -> Path:
         """Copy extension from the old path to the new path, ensuring that all
         of the extension is used (e.g. 'my.gz' instead of 'gz')
 
@@ -69,18 +80,39 @@ class File(FsObject):
         return Path(new_path).with_suffix(suffix)
 
     @property
-    def contents(self):
+    def contents(self) -> ty.Union[str, bytes]:
         return self.read_contents()
 
-    def read_contents(self, size=None, offset=0):
-        with open(self.fspath, "rb" if self.binary else "r") as f:
+    def open(
+        self,
+        mode: str = "r",
+        buffering: int = -1,
+        encoding: ty.Optional[str] = None,
+        errors: ty.Optional[str] = None,
+        newline: ty.Optional[str] = None,
+    ) -> ty.Union[ty.IO[str], ty.IO[bytes]]:
+        """Open a I/O stream to the file"""
+        if self.binary and "b" not in mode:
+            mode += "b"
+        return self.fspath.open(
+            mode=mode,
+            buffering=buffering,
+            encoding=encoding,
+            errors=errors,
+            newline=newline,
+        )
+
+    def read_contents(
+        self, size: ty.Optional[int] = None, offset: int = 0
+    ) -> ty.Union[str, bytes]:
+        with self.open() as f:
             if offset:
                 f.read(offset)
-            contents = f.read(size)
+            contents = f.read(size) if size else f.read()
         return contents
 
     @property
-    def actual_ext(self):
+    def actual_ext(self) -> str:
         "The actual file extension (out of the primary  and alternate extensions possible)"
         constrained_exts = [
             e for e in self.possible_exts if e is not None
@@ -96,17 +128,19 @@ class File(FsObject):
         return sorted(matching, key=len)[-1]
 
     @property
-    def stem(self):
+    def stem(self) -> str:
         if self.actual_ext:
             stem = self.fspath.name[: -len(self.actual_ext)]
         else:
-            stem = self.fspath
+            stem = self.fspath.name
         return stem
 
-    def read_bytes(self, *args, **kwargs):
-        return self.fspath.read_bytes(*args, **kwargs)
+    def read_bytes(self) -> bytes:
+        return self.fspath.read_bytes()
 
-    def read_text(self, *args, **kwargs):
+    def read_text(
+        self, encoding: ty.Optional[str] = None, errors: ty.Optional[str] = None
+    ) -> str:
         if self.binary:
             raise FormatMismatchError(f"Cannot read text from binary filetype {self}")
-        return self.fspath.read_text(*args, **kwargs)
+        return self.fspath.read_text(encoding=encoding, errors=errors)

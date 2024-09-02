@@ -28,7 +28,7 @@ FspathsInputType: TypeAlias = ty.Union[  # noqa: F821
     ty.Iterable[ty.Union[str, Path]],
     str,
     Path,
-    "fileformats.core.FileSet",  # type: ignore
+    "fileformats.core.FileSet",
 ]
 
 

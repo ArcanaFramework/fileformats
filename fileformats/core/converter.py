@@ -4,6 +4,7 @@ import logging
 from .utils import describe_task, matching_source
 from .exceptions import FormatDefinitionError
 from .mixin import WithClassifiers
+from .classifier import Classifier
 
 if ty.TYPE_CHECKING:
     from .datatype import DataType
@@ -68,9 +69,7 @@ class SubtypeVar:
         ...
     """
 
-    converters: ty.Dict[
-        ty.Type["FileSet"], ty.Tuple[TaskGenerator, ty.Dict[str, ty.Any]]
-    ] = {}
+    converters: ty.Dict[ty.Type["FileSet"], "ConverterSpec"] = {}
 
     @classmethod
     def new(cls, name: str, klass: type) -> "SubtypeVar":
@@ -97,14 +96,12 @@ class SubtypeVar:
         return type.__subclasscheck__(cls, subclass)
 
     @classmethod
-    def get_converter_tuples(
+    def get_converter_specs(
         cls, source_format: ty.Type[WithClassifiers], target_format: type
-    ) -> ty.List[ty.Tuple[ty.Callable[..., TaskBase], ty.Dict[str, ty.Any]]]:
+    ) -> ty.List["ConverterSpec"]:
         # check to see whether there are converters from a base class of the source
         # format
-        available_converters: ty.List[
-            ty.Tuple[ty.Callable[..., TaskBase], ty.Dict[str, ty.Any]]
-        ] = []
+        available_converters: ty.List[ConverterSpec] = []
         # assert isinstance(source_format, WithClassifiers)
         if source_format.is_classified:
             for template_source_format, converter in cls.converters.items():
@@ -128,7 +125,7 @@ class SubtypeVar:
     def register_converter(
         cls,
         source_format: ty.Type[WithClassifiers],
-        converter_tuple: ty.Tuple[ty.Callable[..., TaskBase], ty.Dict[str, ty.Any]],
+        converter_spec: "ConverterSpec",
     ) -> None:
         """Registers a converter task within a class attribute. Called by the
         @fileformats.core.converter decorator.
@@ -137,7 +134,7 @@ class SubtypeVar:
         ----------
         source_format : type
             the source format to register a converter from
-        converter_tuple
+        converter_spec
             a tuple consisting of a `task_spec` callable that resolves to a Pydra task
             and a dictionary of keyword arguments to be passed to the task spec at
             initialisation time
@@ -164,20 +161,50 @@ class SubtypeVar:
         ]
         assert len(prev_registered) <= 1
         if prev_registered:
-            prev_tuple = cls.converters[prev_registered[0]]
-            task, task_kwargs = converter_tuple
-            prev_task, prev_kwargs = prev_tuple
-            if matching_source(task, prev_task) and task_kwargs == prev_kwargs:
+            prev_spec = cls.converters[prev_registered[0]]
+            # task, task_kwargs, _ = converter_spec
+            # prev_task, prev_kwargs = prev_tuple
+            if (
+                matching_source(converter_spec.task, prev_spec.task)
+                and converter_spec.args == prev_spec.args
+            ):
                 logger.warning(
                     "Ignoring duplicate registrations of the same converter %s",
-                    describe_task(task),
+                    describe_task(converter_spec.task),
                 )
                 return  # actually the same task but just imported twice for some reason
-            generic_type = tuple(prev_task.wildcard_classifiers())[0]  # type: ignore
+            generic_type = tuple(prev_spec.task.wildcard_classifiers())[0]  # type: ignore
             raise FormatDefinitionError(
                 f"Cannot register converter from {source_format} to the generic type "
-                f"'{generic_type}', {describe_task(task)} "
-                f"because there is already one registered, {describe_task(prev_task)}"
+                f"'{generic_type}', {describe_task(converter_spec.task)} "
+                f"because there is already one registered, {describe_task(prev_spec.task)}"
             )
 
-        cls.converters[source_format] = converter_tuple  # type: ignore
+        cls.converters[source_format] = converter_spec  # type: ignore
+
+
+class ConverterSpec:
+    """Specification of a converter task, including the task callable, its arguments and
+    the classifiers"""
+
+    task: ty.Union[ty.Callable[..., TaskBase], ConverterWrapper]
+    args: ty.Dict[str, ty.Any]
+    classifiers: ty.Tuple[ty.Type[Classifier], ...]
+
+    def __init__(
+        self,
+        task: ty.Union[ty.Callable[..., TaskBase], ConverterWrapper],
+        args: ty.Dict[str, ty.Any],
+        classifiers: ty.Tuple[ty.Type[Classifier], ...] = (),
+    ):
+        self.task = task
+        self.args = args
+        self.classifiers = classifiers
+
+    def __eq__(self, other: object) -> bool:
+        return (
+            isinstance(other, ConverterSpec)
+            and matching_source(self.task, other.task)
+            and self.args == other.args
+            and self.classifiers == other.classifiers
+        )

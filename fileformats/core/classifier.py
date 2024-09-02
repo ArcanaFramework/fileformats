@@ -1,3 +1,4 @@
+import typing as ty
 from .utils import classproperty
 from .exceptions import FormatDefinitionError
 
@@ -12,7 +13,7 @@ class Classifier:
         return cls.__name__  # type: ignore
 
     @classproperty
-    def namespace(cls) -> str:
+    def namespace(cls) -> ty.Optional[str]:
         """The "namespace" the format belongs to under the "fileformats" umbrella
         namespace"""
         module_parts = cls.__module__.split(".")
