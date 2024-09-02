@@ -77,7 +77,7 @@ def find_matching(
 
 def from_mime(
     mime_str: str,
-) -> ty.Union[ty.Type["fileformats.core.DataType"], ty.Type[ty.Union]]:
+) -> ty.Union[ty.Type["fileformats.core.DataType"], "ty.Type[ty.Union]"]:
     """Resolves a MIME type (or MIME-like) string into the corresponding type
 
     Parameters

@@ -5,7 +5,6 @@ from typing_extensions import Self
 from abc import ABCMeta
 import importlib
 import itertools
-from .converter import SubtypeVar, ConverterSpec
 from .exceptions import (
     FileFormatsError,
     FormatMismatchError,
@@ -31,11 +30,15 @@ class DataType(Classifier, metaclass=ABCMeta):
     nested_types: ty.Tuple[ty.Type["DataType"], ...] = ()
     # Store converters registered by @converter decorator that convert to FileSet
     # NB: each class will have its own version of this dictionary
-    converters: ty.Dict[ty.Type["DataType"], ConverterSpec] = {}
+    converters: ty.Dict[
+        ty.Type["DataType"], "fileformats.core.converter.ConverterSpec"
+    ] = {}
 
     @classmethod
-    def type_var(cls, name: str) -> SubtypeVar:
-        return SubtypeVar.new(name, cls)
+    def type_var(cls, name: str) -> "fileformats.core.converter.SubtypeVar":
+        import fileformats.core.converter
+
+        return fileformats.core.converter.SubtypeVar.new(name, cls)
 
     @classmethod
     def matches(cls, values: ty.Any) -> bool:
@@ -280,3 +283,4 @@ class DataType(Classifier, metaclass=ABCMeta):
 
 from .fileset import FileSet  # noqa
 from .field import Field  # noqa
+import fileformats.core.converter  # noqa

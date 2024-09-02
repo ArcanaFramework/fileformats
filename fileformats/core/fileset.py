@@ -28,7 +28,6 @@ from .identification import (
     to_mime_format_name,
     IANA_MIME_TYPE_REGISTRIES,
 )
-from .converter import SubtypeVar
 from .classifier import Classifier
 from .exceptions import (
     FormatMismatchError,
@@ -489,7 +488,7 @@ class FileSet(DataType):
         source_format: ty.Type[DataType],
         name: str = "converter",
         **kwargs: ty.Dict[str, ty.Any],
-    ) -> TaskBase:
+    ) -> "TaskBase":
         """Get a converter that converts from the source format type
         into the format specified by the class
 
@@ -570,14 +569,14 @@ class FileSet(DataType):
     @classmethod
     def get_converters_dict(
         cls, klass: ty.Optional[ty.Type[DataType]] = None
-    ) -> ty.Dict[ty.Type[DataType], ConverterSpec]:
+    ) -> ty.Dict[ty.Type[DataType], "ConverterSpec"]:
         # Only access converters to the specific class, not superclasses (which may not
         # be able to convert to the specific type)
         if klass is None:
             klass = cls
         # import related extras module for the target class
         import_extras_module(klass)
-        converters_dict: ty.Dict[ty.Type[DataType], ConverterSpec]
+        converters_dict: ty.Dict[ty.Type[DataType], "ConverterSpec"]
         try:
             converters_dict = klass.__dict__["converters"]
         except KeyError:
@@ -585,7 +584,7 @@ class FileSet(DataType):
         return converters_dict
 
     @classmethod
-    def get_converter_specs(cls, source_format: type) -> ty.List[ConverterSpec]:
+    def get_converter_specs(cls, source_format: type) -> ty.List["ConverterSpec"]:
         """Search the registered converters to find any matches and return list of
         task and associated key-word args to perform the conversion between source and
         target formats
@@ -600,6 +599,8 @@ class FileSet(DataType):
         available : list[tuple[TaskBase, dict[str, Any]]]
             list of available converters between the source and target formats
         """
+        from .converter import SubtypeVar
+
         converters_dict = cls.get_converters_dict()
         available = []
         for src_frmt, converter in converters_dict.items():
@@ -615,7 +616,7 @@ class FileSet(DataType):
     def register_converter(
         cls,
         source_format: ty.Type["FileSet"],
-        converter_spec: ConverterSpec,
+        converter_spec: "ConverterSpec",
     ) -> None:
         """Registers a converter task within a class attribute. Called by the
         @fileformats.core.converter decorator.
@@ -814,7 +815,7 @@ class FileSet(DataType):
 
     def hash(
         self,
-        crypto: ty.Optional[ty.Callable[[], hashlib._Hash]] = None,
+        crypto: ty.Optional[ty.Callable[[], "hashlib._hashlib.HASH"]] = None,
         mtime: bool = False,
         chunk_len: int = FILE_CHUNK_LEN_DEFAULT,
         relative_to: ty.Optional[Path] = None,
@@ -853,7 +854,7 @@ class FileSet(DataType):
 
     def hash_files(
         self,
-        crypto: ty.Optional[ty.Callable[[], hashlib._Hash]] = None,
+        crypto: ty.Optional[ty.Callable[[], "hashlib._hashlib.HASH"]] = None,
         mtime: bool = False,
         chunk_len: int = FILE_CHUNK_LEN_DEFAULT,
         relative_to: ty.Optional[Path] = None,

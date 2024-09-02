@@ -13,7 +13,7 @@ from contextlib import contextmanager
 import fileformats.core
 
 if ty.TYPE_CHECKING:
-    from pydra.engine.core import TaskBase
+    import pydra.engine.core
 
 logger = logging.getLogger("fileformats")
 
@@ -140,7 +140,7 @@ def add_exc_note(e: Exception, note: str) -> Exception:
     return e
 
 
-def describe_task(task: TaskBase) -> str:
+def describe_task(task: "pydra.engine.task.TaskBase") -> str:
     """Returns the name of a Pydra task and where it was defined for debugging purposes
 
     Parameters

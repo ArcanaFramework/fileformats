@@ -5,7 +5,7 @@ from itertools import zip_longest
 import functools
 import urllib.error
 from .datatype import DataType
-from .fileset import FileSet
+import fileformats.core
 from .converter import ConverterWrapper
 from .exceptions import FormatConversionError, FileFormatsExtrasError
 from .utils import import_extras_module, check_package_exists_on_pypi, add_exc_note
@@ -15,13 +15,13 @@ if ty.TYPE_CHECKING:
 
 
 def converter(
-    task_spec: TaskBase = None,
-    source_format: ty.Optional[ty.Type[FileSet]] = None,
-    target_format: ty.Optional[ty.Type[FileSet]] = None,
+    task_spec: "TaskBase" = None,
+    source_format: ty.Optional[ty.Type["fileformats.core.FileSet"]] = None,
+    target_format: ty.Optional[ty.Type["fileformats.core.FileSet"]] = None,
     in_file: str = "in_file",
     out_file: str = "out_file",
     **converter_kwargs: ty.Dict[str, ty.Any],
-) -> ty.Union[ty.Callable[[TaskBase], TaskBase], TaskBase]:
+) -> ty.Union[ty.Callable[["TaskBase"], "TaskBase"], "TaskBase"]:
     """Decorator that registers a task as a converter between a source and target format
     pair
 
@@ -57,8 +57,8 @@ def converter(
         raise e
 
     def decorator(
-        task_spec: ty.Type[TaskBase],
-    ) -> ty.Union[ty.Type[TaskBase], ConverterWrapper]:
+        task_spec: ty.Type["TaskBase"],
+    ) -> ty.Union[ty.Type["TaskBase"], ConverterWrapper]:
         out_file_local = out_file
         if source_format is None or target_format is None:
             task = task_spec()

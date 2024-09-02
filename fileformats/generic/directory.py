@@ -85,7 +85,7 @@ class Directory(FsObject):
 
     def hash_files(
         self,
-        crypto: ty.Optional[ty.Callable[[], hashlib._Hash]] = None,
+        crypto: ty.Optional[ty.Callable[[], "hashlib._hashlib.HASH"]] = None,
         mtime: bool = False,
         chunk_len: int = FILE_CHUNK_LEN_DEFAULT,
         relative_to: ty.Optional[Path] = None,

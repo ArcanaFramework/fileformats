@@ -3,7 +3,7 @@ import re
 import typing as ty
 import logging
 from .datatype import DataType
-from .fileset import FileSet
+import fileformats.core
 from .utils import classproperty, describe_task, matching_source
 from .identification import to_mime_format_name
 from .converter import SubtypeVar, ConverterSpec
@@ -173,14 +173,14 @@ class WithSeparateHeader(WithAdjacentFiles):
         the file-format of the header file
     """
 
-    header_type: ty.Type[FileSet]
+    header_type: ty.Type["fileformats.core.FileSet"]
 
     @classproperty
-    def nested_types(cls) -> ty.Tuple[ty.Type[FileSet], ...]:
+    def nested_types(cls) -> ty.Tuple[ty.Type["fileformats.core.FileSet"], ...]:
         return (cls.header_type,)
 
     @property
-    def header(self) -> FileSet:
+    def header(self) -> "fileformats.core.FileSet":
         return self.header_type(self.select_by_ext(self.header_type))  # type: ignore[attr-defined]
 
     def read_metadata(self) -> ty.Dict[str, ty.Any]:
@@ -209,11 +209,11 @@ class WithSideCars(WithAdjacentFiles):
         the file-formats of the expected side-car files
     """
 
-    primary_type: ty.Type[FileSet]
-    side_car_types: ty.Tuple[ty.Type[FileSet], ...]
+    primary_type: ty.Type["fileformats.core.FileSet"]
+    side_car_types: ty.Tuple[ty.Type["fileformats.core.FileSet"], ...]
 
     @property
-    def side_cars(self) -> ty.Tuple[FileSet, ...]:
+    def side_cars(self) -> ty.Tuple["fileformats.core.FileSet", ...]:
         return tuple(tp(self.select_by_ext(tp)) for tp in self.side_car_types)  # type: ignore[attr-defined]
 
     def read_metadata(self) -> ty.Dict[str, ty.Any]:
@@ -230,7 +230,7 @@ class WithSideCars(WithAdjacentFiles):
         return metadata  # type: ignore[no-any-return]
 
     @classproperty
-    def nested_types(cls) -> ty.Tuple[ty.Type[FileSet], ...]:
+    def nested_types(cls) -> ty.Tuple[ty.Type["fileformats.core.FileSet"], ...]:
         return cls.side_car_types
 
 
@@ -446,6 +446,8 @@ class WithClassifiers:
         source_format : type(FileSet)
             the source format to convert from
         """
+        from fileformats.core import FileSet
+
         # Try to see if a converter has been defined to the exact type
         available_converters: ty.List[ConverterSpec] = super().get_converter_specs(  # type: ignore[misc]
             source_format
@@ -581,8 +583,8 @@ class WithClassifiers:
     @classmethod
     def register_converter(
         cls,
-        source_format: ty.Type[FileSet],
-        converter_spec: ty.Tuple[ty.Callable[..., TaskBase], ty.Dict[str, ty.Any]],
+        source_format: ty.Type["fileformats.core.FileSet"],
+        converter_spec: ty.Tuple[ty.Callable[..., "TaskBase"], ty.Dict[str, ty.Any]],
     ) -> None:
         """Registers a converter task within a class attribute. Called by the @fileformats.converter
         decorator.

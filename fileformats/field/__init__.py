@@ -12,10 +12,11 @@ from fileformats.core import Field
 from fileformats.core.mixin import WithClassifiers
 from fileformats.core.exceptions import FormatMismatchError
 
-T = ty.TypeVar("T")
+ValueType = ty.TypeVar("ValueType")
+PrimitiveType = ty.TypeVar("PrimitiveType")
 
 
-class Singular(Field[T]):
+class Singular(Field[ValueType, PrimitiveType]):
     pass
 
 
@@ -36,37 +37,37 @@ class LogicalMixin:
         return not self.value  # type: ignore
 
 
-class ScalarMixin(LogicalMixin, ty.Generic[T]):
-    value: T
+class ScalarMixin(LogicalMixin, Field[ValueType, PrimitiveType]):
+    value: ValueType
 
-    def __add__(self, other: T) -> T:
+    def __add__(self, other: PrimitiveType) -> PrimitiveType:
         return self.value + other  # type: ignore
 
-    def __sub__(self, other: T) -> T:
+    def __sub__(self, other: PrimitiveType) -> PrimitiveType:
         return self.value - other  # type: ignore
 
-    def __mul__(self, other: T) -> T:
+    def __mul__(self, other: PrimitiveType) -> PrimitiveType:
         return self.value * other  # type: ignore
 
-    def __truediv__(self, other: T) -> T:
+    def __truediv__(self, other: PrimitiveType) -> PrimitiveType:
         return self.value / other  # type: ignore
 
-    def __floordiv__(self, other: T) -> T:
+    def __floordiv__(self, other: PrimitiveType) -> PrimitiveType:
         return self.value // other  # type: ignore
 
-    def __mod__(self, other: T) -> T:
+    def __mod__(self, other: PrimitiveType) -> PrimitiveType:
         return self.value % other  # type: ignore
 
-    def __pow__(self, other: T) -> T:
+    def __pow__(self, other: PrimitiveType) -> PrimitiveType:
         return self.value**other  # type: ignore
 
-    def __neg__(self) -> T:
+    def __neg__(self) -> PrimitiveType:
         return -self.value  # type: ignore
 
-    def __pos__(self) -> T:
+    def __pos__(self) -> PrimitiveType:
         return +self.value  # type: ignore
 
-    def __abs__(self) -> T:
+    def __abs__(self) -> PrimitiveType:
         return abs(self.value)  # type: ignore
 
 
@@ -141,7 +142,7 @@ def array_converter(value: ty.Any) -> ty.Tuple[ty.Any, ...]:
 
 
 @attrs.define(repr=False)
-class Text(Singular[str]):
+class Text(Singular[str, str]):
     value: str = attrs.field(converter=text_converter)
 
     primitive = str
@@ -154,7 +155,7 @@ class Text(Singular[str]):
 
 
 @attrs.define(repr=False)
-class Integer(Singular[int], ScalarMixin[int]):
+class Integer(Singular[int, int], ScalarMixin[int, int]):
     value: int = attrs.field(converter=integer_converter)
 
     primitive = int
@@ -173,7 +174,7 @@ class Integer(Singular[int], ScalarMixin[int]):
 
 
 @attrs.define(repr=False)
-class Decimal(Singular[decimal.Decimal], ScalarMixin[decimal.Decimal]):
+class Decimal(Singular[decimal.Decimal, float], ScalarMixin[decimal.Decimal, float]):
     value: decimal.Decimal = attrs.field(converter=decimal_converter)
 
     primitive = float  # type: ignore
@@ -189,7 +190,7 @@ class Decimal(Singular[decimal.Decimal], ScalarMixin[decimal.Decimal]):
 
 
 @attrs.define(repr=False)
-class Boolean(Singular[bool], LogicalMixin):
+class Boolean(Singular[bool, bool], LogicalMixin):
     primitive = bool
 
     value: bool = attrs.field(converter=boolean_converter)
@@ -204,19 +205,28 @@ class Boolean(Singular[bool], LogicalMixin):
         return hash(self.value)
 
 
+ItemType = ty.TypeVar("ItemType", decimal.Decimal, int, float, bool)
+
+
 @attrs.define(auto_attribs=False, repr=False)
-class Array(WithClassifiers, Field[tuple], ty.Sequence):
+class Array(
+    WithClassifiers,
+    Field[ty.Tuple[ItemType, ...], ty.Tuple[ItemType, ...]],
+    ty.Sequence[ItemType],
+):
     # WithClassifiers class attrs
     classifiers_attr_name: str = "item_type"
     multiple_classifiers: bool = False
-    allowed_classifiers: ty.Tuple[ty.Type[Singular]] = (Singular,)
-    item_type: ty.Union[ty.Type[Singular], None] = None
+    allowed_classifiers: ty.Tuple[
+        ty.Type[Singular[ty.Tuple[ItemType, ...], ty.Tuple[ItemType, ...]]]
+    ] = (Singular,)
+    item_type: ty.Union[ty.Type[Singular[ty.Any, ty.Any]], None] = None
 
     primitive = tuple
 
-    value: tuple = attrs.field(converter=array_converter)
+    value: ty.Tuple[ItemType] = attrs.field(converter=array_converter)
 
-    def __attrs_post_init__(self):
+    def __attrs_post_init__(self) -> None:
         # Ensure items are of the correct type
         if self.item_type is not None:
             self.value = tuple(self.item_type(i).value for i in self.value)
@@ -242,5 +252,5 @@ class Array(WithClassifiers, Field[tuple], ty.Sequence):
     def __len__(self) -> int:
         return len(self.value)
 
-    def __getitem__(self, index) -> ty.Any:
+    def __getitem__(self, index: int) -> ItemType:
         return self.value[index]

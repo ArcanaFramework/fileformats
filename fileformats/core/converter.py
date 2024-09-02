@@ -3,14 +3,14 @@ import typing as ty
 import logging
 from .utils import describe_task, matching_source
 from .exceptions import FormatDefinitionError
-from .mixin import WithClassifiers
 from .classifier import Classifier
+from .datatype import DataType
 
 if ty.TYPE_CHECKING:
-    from .datatype import DataType
     from pydra.engine.task import TaskBase
     from pydra.engine import Workflow
-    from .fileset import FileSet
+    import fileformats.core
+    from . import mixin
 
 logger = logging.getLogger("fileformats")
 
@@ -69,7 +69,7 @@ class SubtypeVar:
         ...
     """
 
-    converters: ty.Dict[ty.Type["FileSet"], "ConverterSpec"] = {}
+    converters: ty.Dict[ty.Type["fileformats.core.FileSet"], "ConverterSpec"] = {}
 
     @classmethod
     def new(cls, name: str, klass: type) -> "SubtypeVar":
@@ -97,8 +97,10 @@ class SubtypeVar:
 
     @classmethod
     def get_converter_specs(
-        cls, source_format: ty.Type[WithClassifiers], target_format: type
+        cls, source_format: ty.Type["mixin.WithClassifiers"], target_format: type
     ) -> ty.List["ConverterSpec"]:
+        from .mixin import WithClassifiers
+
         # check to see whether there are converters from a base class of the source
         # format
         available_converters: ty.List[ConverterSpec] = []
@@ -124,7 +126,7 @@ class SubtypeVar:
     @classmethod
     def register_converter(
         cls,
-        source_format: ty.Type[WithClassifiers],
+        source_format: ty.Type["mixin.WithClassifiers"],
         converter_spec: "ConverterSpec",
     ) -> None:
         """Registers a converter task within a class attribute. Called by the
@@ -187,13 +189,13 @@ class ConverterSpec:
     """Specification of a converter task, including the task callable, its arguments and
     the classifiers"""
 
-    task: ty.Union[ty.Callable[..., TaskBase], ConverterWrapper]
+    task: ty.Union[ty.Callable[..., "TaskBase"], ConverterWrapper]
     args: ty.Dict[str, ty.Any]
     classifiers: ty.Tuple[ty.Type[Classifier], ...]
 
     def __init__(
         self,
-        task: ty.Union[ty.Callable[..., TaskBase], ConverterWrapper],
+        task: ty.Union[ty.Callable[..., "TaskBase"], ConverterWrapper],
         args: ty.Dict[str, ty.Any],
         classifiers: ty.Tuple[ty.Type[Classifier], ...] = (),
     ):
