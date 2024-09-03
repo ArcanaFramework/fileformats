@@ -894,14 +894,14 @@ class FileSet(DataType):
         return file_hashes
 
     def __bytes_repr__(
-        self, cache: dict  # pylint: disable=unused-argument
+        self, cache: ty.Dict[ty.Any, str]  # pylint: disable=unused-argument
     ) -> ty.Iterable[bytes]:
         """Provided for compatibility with Pydra's hashing function, return the contents
         of all the files in the file-set in chunks
 
         Parameters
         ----------
-        cache : dict
+        cache : dict[Any, str]
             an object passed around by Pydra's hashing function to store cached versions
             of previously hashed objects, to allow recursive structures
 
