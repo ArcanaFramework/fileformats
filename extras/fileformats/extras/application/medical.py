@@ -1,13 +1,13 @@
 import typing as ty
 from pathlib import Path
 import pydicom
-from fileformats.core import FileSet
+from fileformats.core import FileSet, extra_implementation
 from fileformats.application import Dicom
 import medimages4tests.dummy.dicom.mri.t1w.siemens.skyra.syngo_d13c
 from fileformats.core import SampleFileGenerator
 
 
-@FileSet.read_metadata.register
+@extra_implementation(FileSet.read_metadata)
 def dicom_read_metadata(
     dicom: Dicom, selected_keys: ty.Optional[ty.Sequence[str]] = None
 ) -> ty.Mapping[str, ty.Any]:
@@ -24,7 +24,7 @@ def dicom_read_metadata(
     return metadata
 
 
-@FileSet.generate_sample_data.register
+@extra_implementation(FileSet.generate_sample_data)
 def dicom_generate_sample_data(
     dicom: Dicom,
     generator: SampleFileGenerator,

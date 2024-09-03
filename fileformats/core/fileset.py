@@ -226,7 +226,7 @@ class FileSet(DataType):
         return possible
 
     @property
-    def metadata(self) -> ty.Union[ty.Dict[str, ty.Any], bool, None]:
+    def metadata(self) -> ty.Union[ty.Mapping[str, ty.Any], bool, None]:
         """Lazily load metadata from `read_metadata` extra if implemented, returning an
         empty metadata array if not"""
         if self._metadata is not False:

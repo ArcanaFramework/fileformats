@@ -1,3 +1,4 @@
+import typing as ty
 from fileformats.core import FileSet
 from fileformats.core.mixin import WithClassifiers
 from fileformats.generic import File
@@ -8,7 +9,7 @@ class Archive(WithClassifiers, File):
     "Base class for compressed archives"
 
     classifiers_attr_name = "archived_type"
-    archived_type = None
+    archived_type: ty.Optional[ty.Type[FileSet]] = None
     multiple_classifiers = False
     allowed_classifiers = (FileSet,)
     generically_classifiable = True

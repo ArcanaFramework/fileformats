@@ -1,6 +1,6 @@
 import typing as ty
 import pytest
-from fileformats.core import FileSet
+from fileformats.core import FileSet, extra_implementation
 from fileformats.generic import File
 
 
@@ -8,7 +8,7 @@ class FileWithMetadata(File):
     ext = ".mf"
 
 
-@FileSet.read_metadata.register
+@extra_implementation(FileSet.read_metadata)
 def aformat_read_metadata(
     mf: FileWithMetadata, selected_keys: ty.Optional[ty.Sequence[str]] = None
 ) -> ty.Mapping[str, ty.Any]:

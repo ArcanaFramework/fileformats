@@ -2,7 +2,7 @@ import json
 import typing as ty
 from typing_extensions import Self, TypeAlias
 from pathlib import Path
-from fileformats.core import extra, DataType, FileSet
+from fileformats.core import extra, DataType, FileSet, extra_implementation
 from fileformats.core.mixin import WithClassifiers
 from ..generic import File
 from fileformats.core.exceptions import FormatMismatchError
@@ -95,7 +95,7 @@ class Toml(DataSerialization):
     ext = ".toml"
 
 
-@FileSet.generate_sample_data.register
+@extra_implementation(FileSet.generate_sample_data)
 def generate_json_sample_data(
     js: Json,
     generator: SampleFileGenerator,
@@ -114,7 +114,7 @@ def generate_json_sample_data(
     return [js_file]
 
 
-@FileSet.generate_sample_data.register
+@extra_implementation(FileSet.generate_sample_data)
 def generate_yaml_sample_data(
     yml: Yaml,
     generator: SampleFileGenerator,

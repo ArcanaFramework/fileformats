@@ -10,7 +10,7 @@ from .identification import (
     from_paths,
 )
 from .sampling import SampleFileGenerator
-from .extras import extra, converter
+from .extras import extra, extra_implementation, converter
 
 __all__ = [
     "__version__",
@@ -25,5 +25,6 @@ __all__ = [
     "from_paths",
     "SampleFileGenerator",
     "extra",
+    "extra_implementation",
     "converter",
 ]
