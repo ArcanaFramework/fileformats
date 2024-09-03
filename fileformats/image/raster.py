@@ -1,7 +1,19 @@
+from pathlib import Path
+from typing_extensions import Self, TypeAlias
+import typing as ty
 from fileformats.core.mixin import WithMagicNumber
 from fileformats.core import extra
 from fileformats.core.exceptions import FormatMismatchError
 from .base import Image
+
+# if ty.TYPE_CHECKING:
+#     import numpy.typing
+#     import numpy as np
+
+
+DataArrayType: TypeAlias = (
+    ty.Any
+)  # "numpy.typing.NDArray[ty.Union[np.float_, np.int_]]"
 
 
 class RasterImage(Image):
@@ -10,15 +22,15 @@ class RasterImage(Image):
     binary = True
 
     @extra
-    def read_data(self):
+    def read_data(self) -> DataArrayType:
         raise NotImplementedError
 
     @extra
-    def write_data(self, data_array):
+    def write_data(self, data_array: DataArrayType) -> None:
         raise NotImplementedError
 
     @classmethod
-    def save_new(cls, fspath, data_array):
+    def save_new(cls, fspath: Path, data_array: DataArrayType) -> Self:
         # We have to use a mock object as the data file hasn't been written yet
         mock = cls.mock(fspath)
         mock.write_data(data_array)
@@ -60,8 +72,9 @@ class Tiff(RasterImage):
     magic_number_be = "4D4D002A"
 
     @property
-    def endianness(self):
+    def endianness(self) -> str:
         read_magic = self.read_contents(len(self.magic_number_le) // 2)
+        assert isinstance(read_magic, bytes)
         if read_magic == bytes.fromhex(self.magic_number_le):
             endianness = "little"
         elif read_magic == bytes.fromhex(self.magic_number_be):

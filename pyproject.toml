@@ -92,7 +92,14 @@ ignore_missing_imports = true
 strict = true
 namespace_packages = true
 explicit_package_bases = true
-exclude = ["tests"]
+exclude = [
+    "tests",
+    "scripts",
+    "docs",
+    "build",
+    "dist",
+    "fileformats/core/_version.py",
+]
 
 
 [tool.codespell]

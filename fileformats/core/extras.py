@@ -4,8 +4,8 @@ import inspect
 from itertools import zip_longest
 import functools
 import urllib.error
-from .datatype import DataType
 import fileformats.core
+from .datatype import DataType
 from .converter_helpers import ConverterWrapper, ConverterSpec
 from .exceptions import FormatConversionError, FileFormatsExtrasError
 from .utils import import_extras_module, check_package_exists_on_pypi, add_exc_note
@@ -89,11 +89,12 @@ def converter(
             if isinstance(target, str):
                 target = eval(target, module_dict)
         assert inspect.isclass(source) and inspect.isclass(target)
-        if not issubclass(target, DataType):
+        if not issubclass(target, fileformats.core.FileSet):
             raise FormatConversionError(
                 f"Target file format '{target.__name__}' is not of subtype of "
-                "fileformats.core.DataType"
+                "fileformats.core.FileSet"
             )
+        wrapped_task_spec: ty.Union[ty.Type["TaskBase"], ConverterWrapper]
         if in_file != "in_file" or out_file_local != "out_file":
             wrapped_task_spec = ConverterWrapper(
                 task_spec,
@@ -111,23 +112,35 @@ def converter(
     return decorator if task_spec is None else decorator(task_spec)
 
 
-A = ty.TypeVar("A")
-R = ty.TypeVar("R")
+ArgsType = ty.TypeVar(
+    "ArgsType",
+)
+ReturnType = ty.TypeVar("ReturnType")
 
-F = ty.TypeVar("F", bound=ty.Callable[[A], R])
+DecoratedMethod = ty.TypeVar(
+    "DecoratedMethod", bound=ty.Callable[[DataType, ty.Any], ReturnType]
+)
+
+# DispatchedFunction = ty.TypeVar(
+#     "DispatchedFunction", bound=ty.Callable[[DataType, ty.Any], ReturnType]
+# )
+
+# DispatchFunction = ty.TypeVar(
+#     "DispatchFunction", bound=ty.Callable[[DispatchedFunction], DispatchedFunction]
+# )
 
 
-def extra(method):
+def extra(method: DecoratedMethod) -> DecoratedMethod:
     """A decorator which uses singledispatch to facilitate the registering of
     "extra" functionality in external packages (e.g. "fileformats-extras")"""
 
     dispatch_method = functools.singledispatch(method)
 
     @functools.wraps(method)
-    def decorated(obj: object, *args, **kwargs) -> R:
+    def decorated(obj: DataType, *args: ty.Any, **kwargs: ty.Any) -> ty.Any:
         cls = type(obj)
         extras = []
-        for tp in cls.referenced_types():
+        for tp in cls.referenced_types():  # type: ignore[attr-defined]
             extras.append(import_extras_module(tp))
         try:
             return dispatch_method(obj, *args, **kwargs)
@@ -136,7 +149,7 @@ def extra(method):
             for extra in extras:
                 if not extra.imported:
                     try:
-                        if check_package_exists_on_pypi(extra.pypi):
+                        if check_package_exists_on_pypi(extra.pypi):  # type: ignore[attr-defined]
                             msg += (
                                 f'. An "extras" package exists on PyPI ({extra.pypi}), '
                                 "which may contain an implementation, try installing it "
@@ -153,12 +166,15 @@ def extra(method):
     return decorated
 
 
+ExtraImplementation = ty.TypeVar("ExtraImplementation", bound=ty.Callable[..., ty.Any])
+
+
 class ExtraRegisterer:
-    def __init__(self, dispatch: F) -> None:
+    def __init__(self, dispatch: ty.Callable[..., ty.Any]) -> None:
         self.dispatch = dispatch
 
-    def __call__(self, function: F) -> None:
-        method = self.dispatch.__wrapped__
+    def __call__(self, function: ExtraImplementation) -> ExtraImplementation:
+        method = self.dispatch.__wrapped__  # type: ignore[attr-defined]
         msig = inspect.signature(method)
         fsig = inspect.signature(function)
 
@@ -202,4 +218,4 @@ class ExtraRegisterer:
                 f"decorated method {method} and the registered override {function}:\n"
                 + "\n".join(differences)
             )
-        return self.dispatch.register(function)
+        return self.dispatch.register(function)  # type: ignore[attr-defined, no-any-return]

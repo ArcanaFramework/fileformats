@@ -1,6 +1,6 @@
 import typing as ty
 import attrs
-from fileformats.core import DataType
+from fileformats.core import DataType, FileSet
 from fileformats.generic import File
 from fileformats.field import Singular
 from fileformats.core.mixin import WithClassifiers
@@ -70,19 +70,21 @@ class L(WithClassifiers, File):
 
 class M(WithClassifiers, File):
     classifiers_attr_name = "content_types"
-    content_types = None  # Should be None not ()
+    content_types: ty.Optional[
+        ty.Tuple[ty.Type[FileSet], ...]
+    ] = None  # Should be None not ()
     ext = ".m"
     multiple_classifiers = False
 
 
 class N(WithClassifiers, File):
     classifiers_attr_name = "content_types"
-    content_types = ()
+    content_types: ty.Optional[ty.Tuple[ty.Type[FileSet], ...]] = ()
     ext = ".n"
 
 
 @attrs.define
-class TestField(Singular):
+class TestField(Singular[ty.Any, ty.Any]):
 
     value: ty.Any
 

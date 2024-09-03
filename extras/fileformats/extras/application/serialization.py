@@ -21,7 +21,9 @@ def convert_data_serialization(
     dct = in_file.load()
     if out_dir is None:
         out_dir = Path(tempfile.mkdtemp())
-    output_path = out_dir / (in_file.fspath.stem + output_format.ext)
+    output_path = out_dir / (
+        in_file.fspath.stem + (output_format.ext if output_format.ext else "")
+    )
     return output_format.save_new(output_path, dct)
 
 

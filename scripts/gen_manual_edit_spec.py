@@ -1,14 +1,15 @@
 import re
 import json
 import yaml
+import typing as ty
 
 
-def generate_manual_edit_spec(scraped_json: str, editable_yaml: str):
+def generate_manual_edit_spec(scraped_json: str, editable_yaml: str) -> None:
 
     with open(scraped_json) as f:
         jsn = json.load(f)
 
-    yml = {}
+    yml: ty.Dict[str, ty.Any] = {}
 
     for registry, formats in jsn.items():
         for name, mdata in formats.items():

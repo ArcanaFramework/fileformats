@@ -10,6 +10,7 @@ import pydra.mark
 import pydra.engine.specs
 from fileformats.generic import FsObject
 from fileformats.core.utils import set_cwd
+from fileformats.core.type_aliases import PathType
 from fileformats.core import converter, FileSet
 from fileformats.application import Zip, Tar, TarGzip
 
@@ -222,7 +223,7 @@ def extract_zip(in_file: Zip, extract_dir: Path) -> Path:
     return extracted[0]
 
 
-def relative_path(path, base_dir):
+def relative_path(path: PathType, base_dir: PathType) -> str:
     path = os.path.abspath(path)
     relpath = os.path.relpath(path, base_dir)
     if ".." in relpath:

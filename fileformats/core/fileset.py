@@ -77,7 +77,7 @@ class FileSet(DataType):
 
     # File extensions associated with file format
     ext: ty.Union[str, None] = None
-    alternate_exts: ty.Tuple[str, ...] = ()
+    alternate_exts: ty.Tuple[ty.Optional[str], ...] = ()
 
     # to be overridden in subclasses
     # Explicitly set the Internet Assigned Numbers Authority (https://iana_mime.org) MIME

@@ -13,3 +13,5 @@ FspathsInputType: TypeAlias = ty.Union[  # noqa: F821
     Path,
     "fileformats.core.FileSet",
 ]
+
+PathType: TypeAlias = ty.Union[str, Path]

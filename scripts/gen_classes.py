@@ -6,7 +6,9 @@ import yaml
 from fileformats.core.identification import from_mime_format_name
 
 
-def generated_classes(scraped_json_file: str, editable_yaml_file: str, output_dir: str):
+def generated_classes(
+    scraped_json_file: str, editable_yaml_file: str, output_dir: Path
+) -> None:
 
     with open(scraped_json_file) as f:
         scraped_jasn = json.load(f)
@@ -86,4 +88,4 @@ if __name__ == "__main__":
 
     scraped_json, editable_yaml, output_dir = sys.argv[1:4]
 
-    generated_classes(scraped_json, editable_yaml, output_dir)
+    generated_classes(scraped_json, editable_yaml, Path(output_dir))

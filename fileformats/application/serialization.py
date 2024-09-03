@@ -35,8 +35,8 @@ class DataSerialization(WithClassifiers, File):
     "Base class for text-based hierarchical data-serialization formats, e.g. JSON, YAML"
 
     # Classifiers class attrs
-    classifiers_attr_name: str = "schema"
-    schema: ty.Optional[bool] = None
+    classifiers_attr_name: ty.Optional[str] = "schema"
+    schema: ty.Optional[ty.Type[Schema]] = None
     multiple_classifiers: bool = False
     allowed_classifiers: ty.Tuple[ty.Type[Schema], ...] = (Schema,)
     generically_classifiable: bool = True

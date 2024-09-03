@@ -364,13 +364,13 @@ def test_wildcard_template_from_generic_conversion6():
 
 @converter
 @pydra.mark.task
-def f2generic(in_file: F[SpecificDataType]) -> SpecificDataType:
+def f2generic(in_file: F[SpecificFileSet]) -> SpecificFileSet:
     return in_file
 
 
 @converter
 @pydra.mark.task
-def n2generic(in_file: N[SpecificDataType, G]) -> SpecificDataType:
+def n2generic(in_file: N[SpecificFileSet, G]) -> SpecificFileSet:
     return in_file
 
 
@@ -388,7 +388,7 @@ def test_wildcard_generic_from_multi_template_conversion():
 
 @converter
 @pydra.mark.task
-def l2r(in_file: L[A, SpecificDataType, C]) -> R[A, SpecificDataType, C, D]:
+def l2r(in_file: L[A, SpecificFileSet, C]) -> R[A, SpecificFileSet, C, D]:
     return in_file
 
 
