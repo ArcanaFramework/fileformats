@@ -185,7 +185,7 @@ class WithSeparateHeader(WithAdjacentFiles):
     def read_metadata(
         self, selected_keys: ty.Optional[ty.Sequence[str]] = None
     ) -> ty.Mapping[str, ty.Any]:
-        header: ty.Dict[str, ty.Any] = self.header.load()  # type: ignore[attr-defined, no-any-return]
+        header: ty.Dict[str, ty.Any] = self.header.load()  # type: ignore[attr-defined]
         if selected_keys:
             header = {k: v for k, v in header.items() if k in selected_keys}
         return header
@@ -325,7 +325,7 @@ class WithClassifiers:
     ) -> ty.FrozenSet[ty.Type[SubtypeVar]]:
         if classifiers is None:
             classifiers = cls.classifiers if cls.is_classified else ()
-        return frozenset(t for t in classifiers if issubclass(t, SubtypeVar))  # type: ignore[misc]
+        return frozenset(t for t in classifiers if issubclass(t, SubtypeVar))
 
     @classmethod
     def non_wildcard_classifiers(
@@ -655,7 +655,7 @@ class WithClassifiers:
                         return  # actually the same task but just imported twice for some reason
                     raise FormatDefinitionError(
                         f"Cannot register converter from {prev.unclassified} "  # type: ignore[attr-defined]
-                        f"to {cls.unclassified} with non-wildcard classifiers "  # type: ignore[attr-defined]
+                        f"to {cls.unclassified} with non-wildcard classifiers "
                         f"{list(prev.non_wildcard_classifiers())}, {describe_task(converter_spec.task)}, "
                         f"because there is already one registered, {describe_task(prev_spec.task)}"
                     )

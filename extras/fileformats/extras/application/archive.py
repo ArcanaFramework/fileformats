@@ -50,12 +50,12 @@ Compressed = FileSet.type_var("Compressed")
 
 @converter(source_format=FsObject, target_format=Tar)
 @converter(source_format=FsObject, target_format=TarGzip, compression="gz")
-@converter(source_format=Compressed, target_format=Tar[Compressed])
+@converter(source_format=Compressed, target_format=Tar[Compressed])  # type: ignore[misc]
 @converter(
-    source_format=Compressed, target_format=TarGzip[Compressed], compression="gz"
+    source_format=Compressed, target_format=TarGzip[Compressed], compression="gz"  # type: ignore[misc]
 )
-@pydra.mark.task
-@pydra.mark.annotate(
+@pydra.mark.task  # type: ignore[misc]
+@pydra.mark.annotate(  # type: ignore[misc]
     {
         "return": {"out_file": Path},
     }
@@ -78,6 +78,7 @@ def create_tar(
             "Can only archive file-sets with single paths currently"
         )
 
+    ext: str
     if not compression:
         compression = ""
         ext = ".tar"
@@ -107,10 +108,10 @@ def create_tar(
 
 @converter(source_format=Tar, target_format=FsObject)
 @converter(source_format=TarGzip, target_format=FsObject)
-@converter(source_format=Tar[Compressed], target_format=Compressed)
-@converter(source_format=TarGzip[Compressed], target_format=Compressed)
-@pydra.mark.task
-@pydra.mark.annotate({"return": {"out_file": Path}})
+@converter(source_format=Tar[Compressed], target_format=Compressed)  # type: ignore[misc]
+@converter(source_format=TarGzip[Compressed], target_format=Compressed)  # type: ignore[misc]
+@pydra.mark.task  # type: ignore[misc]
+@pydra.mark.annotate({"return": {"out_file": Path}})  # type: ignore[misc]
 def extract_tar(
     in_file: FsObject,
     extract_dir: Path,
@@ -140,9 +141,9 @@ def extract_tar(
 
 
 @converter(source_format=FsObject, target_format=Zip)
-@converter(source_format=Compressed, target_format=Zip[Compressed])
-@pydra.mark.task
-@pydra.mark.annotate(
+@converter(source_format=Compressed, target_format=Zip[Compressed])  # type: ignore[misc]
+@pydra.mark.task  # type: ignore[misc]
+@pydra.mark.annotate(  # type: ignore[misc]
     {
         "return": {"out_file": Zip},
     }
@@ -198,13 +199,13 @@ def create_zip(
                         zfile.write(relative_path(fpath, base_dir))
             else:
                 zfile.write(relative_path(fspath, base_dir))
-    return Path(out_file)
+    return Zip(out_file)
 
 
 @converter(source_format=Zip, target_format=FsObject)
-@converter(source_format=Zip[Compressed], target_format=Compressed)
-@pydra.mark.task
-@pydra.mark.annotate({"return": {"out_file": Path}})
+@converter(source_format=Zip[Compressed], target_format=Compressed)  # type: ignore[misc]
+@pydra.mark.task  # type: ignore[misc]
+@pydra.mark.annotate({"return": {"out_file": Path}})  # type: ignore[misc]
 def extract_zip(in_file: Zip, extract_dir: Path) -> Path:
 
     if extract_dir == attrs.NOTHING:

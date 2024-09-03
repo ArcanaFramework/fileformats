@@ -177,7 +177,7 @@ class Integer(Singular[int, int], ScalarMixin[int, int]):
 class Decimal(Singular[decimal.Decimal, float], ScalarMixin[decimal.Decimal, float]):
     value: decimal.Decimal = attrs.field(converter=decimal_converter)
 
-    primitive = float  # type: ignore
+    primitive = float
 
     def __float__(self) -> float:
         return float(self.value)

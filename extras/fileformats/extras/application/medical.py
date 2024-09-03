@@ -14,9 +14,9 @@ def dicom_read_metadata(
     dcm = pydicom.dcmread(dicom.fspath, specific_tags=selected_keys)
     [getattr(dcm, a, None) for a in dir(dcm)]  # Ensure all keywords are set
     metadata = {
-        e.keyword: e.value  # type: ignore[union-attr]
+        e.keyword: e.value
         for e in dcm.elements()
-        if getattr(e, "keyword", False) and e.keyword != "PixelData"  # type: ignore[union-attr]
+        if getattr(e, "keyword", False) and e.keyword != "PixelData"
     }
     return metadata
 

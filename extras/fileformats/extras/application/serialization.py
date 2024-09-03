@@ -11,8 +11,8 @@ from fileformats.application.serialization import LoadedSerialization
 
 @converter(target_format=Json, output_format=Json)
 @converter(target_format=Yaml, output_format=Yaml)
-@pydra.mark.task
-@pydra.mark.annotate({"return": {"out_file": DataSerialization}})
+@pydra.mark.task  # type: ignore[misc]
+@pydra.mark.annotate({"return": {"out_file": DataSerialization}})  # type: ignore[misc]
 def convert_data_serialization(
     in_file: DataSerialization,
     output_format: ty.Type[DataSerialization],

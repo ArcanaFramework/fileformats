@@ -19,8 +19,8 @@ def foo_bar_converter():
     work_dir = Path(tempfile.mkdtemp())
 
     @converter
-    @pydra.mark.task
-    @pydra.mark.annotate({"return": {"out_file": Bar}})
+    @pydra.mark.task  # type: ignore[misc]
+    @pydra.mark.annotate({"return": {"out_file": Bar}})  # type: ignore[misc]
     def foo_bar_converter_(in_file: Foo):
         return Bar(write_test_file(work_dir / "bar.bar", in_file.contents))
 
@@ -32,8 +32,8 @@ def baz_bar_converter():
     work_dir = Path(tempfile.mkdtemp())
 
     @converter(out_file="out")
-    @pydra.mark.task
-    @pydra.mark.annotate({"return": {"out": Bar}})
+    @pydra.mark.task  # type: ignore[misc]
+    @pydra.mark.annotate({"return": {"out": Bar}})  # type: ignore[misc]
     def baz_bar_converter_(in_file: Baz):
         assert in_file
         return Bar(write_test_file(work_dir / "bar.bar", in_file.contents))

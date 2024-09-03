@@ -39,9 +39,7 @@ class ConverterWrapper:
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self.task_spec}, {self.in_file}, {self.out_file})"
 
-    def __call__(
-        self, name: ty.Optional[str] = None, **kwargs: ty.Dict[str, ty.Any]
-    ) -> "Workflow":
+    def __call__(self, name: ty.Optional[str] = None, **kwargs: ty.Any) -> "Workflow":
         from pydra.engine import Workflow
 
         if name is None:
@@ -64,7 +62,7 @@ class SubtypeVar:
     AnyFileFormat = FileSet.type_var("AnyFileFormat")
 
     @converter
-    @pydra.mark.task
+    @pydra.mark.task  # type: ignore[misc]
     def unzip(in_file: Zip[AnyFileFormat], out_file: AnyFileFormat):
         ...
     """

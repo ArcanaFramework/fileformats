@@ -452,7 +452,7 @@ class FileSet(DataType):
         fileset: "FileSet",
         plugin: str = "serial",
         task_name: ty.Optional[str] = None,
-        **kwargs: ty.Dict[str, ty.Any],
+        **kwargs: ty.Any,
     ) -> Self:
         """Convert a given file-set into the format specified by the class
 
@@ -487,7 +487,7 @@ class FileSet(DataType):
         cls,
         source_format: ty.Type[DataType],
         name: str = "converter",
-        **kwargs: ty.Dict[str, ty.Any],
+        **kwargs: ty.Any,
     ) -> "TaskBase":
         """Get a converter that converts from the source format type
         into the format specified by the class
@@ -564,7 +564,7 @@ class FileSet(DataType):
             conv_kwargs.update(kwargs)
         else:
             conv_kwargs = converter_spec.args
-        return converter_spec.task(name=name, **conv_kwargs)  # type: ignore
+        return converter_spec.task(name=name, **conv_kwargs)
 
     @classmethod
     def get_converters_dict(
@@ -850,7 +850,7 @@ class FileSet(DataType):
             crytpo_obj.update(path.encode())
             for bytes_str in bytes_iter:
                 crytpo_obj.update(bytes_str)
-        digest: str = crytpo_obj.hexdigest()  # type: ignore[assignment]
+        digest: str = crytpo_obj.hexdigest()
         return digest
 
     def hash_files(

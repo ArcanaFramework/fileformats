@@ -5,23 +5,28 @@ from itertools import zip_longest
 import functools
 import urllib.error
 import fileformats.core
+from typing_extensions import TypeAlias
 from .datatype import DataType
-from .converter_helpers import ConverterWrapper, ConverterSpec
+from .converter_helpers import ConverterWrapper, ConverterSpec, SubtypeVar
 from .exceptions import FormatConversionError, FileFormatsExtrasError
 from .utils import import_extras_module, check_package_exists_on_pypi, add_exc_note
 
 if ty.TYPE_CHECKING:
     from pydra.engine.core import TaskBase
 
+WrappedTask = ty.TypeVar("WrappedTask", bound=ty.Callable[..., ty.Any])
+
+FormatType: TypeAlias = ty.Union[ty.Type["fileformats.core.FileSet"], SubtypeVar, None]
+
 
 def converter(
     task_spec: "TaskBase" = None,
-    source_format: ty.Optional[ty.Type["fileformats.core.FileSet"]] = None,
-    target_format: ty.Optional[ty.Type["fileformats.core.FileSet"]] = None,
+    source_format: FormatType = None,
+    target_format: FormatType = None,
     in_file: str = "in_file",
     out_file: str = "out_file",
-    **converter_kwargs: ty.Dict[str, ty.Any],
-) -> ty.Union[ty.Callable[["TaskBase"], "TaskBase"], "TaskBase"]:
+    **converter_kwargs: ty.Any,
+) -> ty.Callable[[WrappedTask], WrappedTask]:
     """Decorator that registers a task as a converter between a source and target format
     pair
 
@@ -62,6 +67,8 @@ def converter(
         out_file_local = out_file
         if source_format is None or target_format is None:
             task = task_spec()
+        source: FormatType
+        target: FormatType
         if source_format is None:
             inputs_dict = attrs.fields_dict(type(task.inputs))
             source = inputs_dict[in_file].type
@@ -109,61 +116,8 @@ def converter(
         )
         return wrapped_task_spec
 
-    return decorator if task_spec is None else decorator(task_spec)
-
-
-ArgsType = ty.TypeVar(
-    "ArgsType",
-)
-ReturnType = ty.TypeVar("ReturnType")
-
-DecoratedMethod = ty.TypeVar(
-    "DecoratedMethod", bound=ty.Callable[[DataType, ty.Any], ReturnType]
-)
-
-# DispatchedFunction = ty.TypeVar(
-#     "DispatchedFunction", bound=ty.Callable[[DataType, ty.Any], ReturnType]
-# )
-
-# DispatchFunction = ty.TypeVar(
-#     "DispatchFunction", bound=ty.Callable[[DispatchedFunction], DispatchedFunction]
-# )
-
-
-def extra(method: DecoratedMethod) -> DecoratedMethod:
-    """A decorator which uses singledispatch to facilitate the registering of
-    "extra" functionality in external packages (e.g. "fileformats-extras")"""
-
-    dispatch_method = functools.singledispatch(method)
-
-    @functools.wraps(method)
-    def decorated(obj: DataType, *args: ty.Any, **kwargs: ty.Any) -> ty.Any:
-        cls = type(obj)
-        extras = []
-        for tp in cls.referenced_types():  # type: ignore[attr-defined]
-            extras.append(import_extras_module(tp))
-        try:
-            return dispatch_method(obj, *args, **kwargs)
-        except NotImplementedError:
-            msg = f"No implementation for '{method.__name__}' extra for {cls.__name__} types"
-            for extra in extras:
-                if not extra.imported:
-                    try:
-                        if check_package_exists_on_pypi(extra.pypi):  # type: ignore[attr-defined]
-                            msg += (
-                                f'. An "extras" package exists on PyPI ({extra.pypi}), '
-                                "which may contain an implementation, try installing it "
-                                f"(e.g. 'pip install {extra.pypi}') and check again"
-                            )
-                    except urllib.error.URLError:
-                        msg += (
-                            '. Was not able to check whether an "extras" package '
-                            f"({extra.pypi}) exists on PyPI or not"
-                        )
-            raise FileFormatsExtrasError(msg)
-
-    decorated.register = ExtraRegisterer(dispatch_method)
-    return decorated
+    # We pretend to return the original function, instead of the Pydra task or ConverterWrapper
+    return decorator if task_spec is None else decorator(task_spec)  # type: ignore[return-value]
 
 
 ExtraImplementation = ty.TypeVar("ExtraImplementation", bound=ty.Callable[..., ty.Any])
@@ -219,3 +173,48 @@ class ExtraRegisterer:
                 + "\n".join(differences)
             )
         return self.dispatch.register(function)  # type: ignore[attr-defined, no-any-return]
+
+
+ExtraHookMethod: TypeAlias = ty.Callable[..., ty.Any]
+
+
+class extra:
+    """A decorator which uses singledispatch to facilitate the registering of
+    "extra" functionality in external packages (e.g. "fileformats-extras")"""
+
+    method: ExtraHookMethod
+    dispatch_method: ty.Callable[..., ty.Any]
+    register: "ExtraRegisterer"
+
+    def __init__(self, method: ExtraHookMethod):
+        self.method = method
+        self.dispatch_method = functools.singledispatch(method)
+        self.register = ExtraRegisterer(self.dispatch_method)
+
+    def __call__(self, obj: DataType, *args: ty.Any, **kwargs: ty.Any) -> ty.Any:
+        cls = type(obj)
+        extras = []
+        for tp in cls.referenced_types():  # type: ignore[attr-defined]
+            extras.append(import_extras_module(tp))
+        try:
+            return self.dispatch_method(obj, *args, **kwargs)
+        except NotImplementedError:
+            msg = (
+                f"No implementation for '{self.method.__name__}' extra for "
+                f"{cls.__name__} types"
+            )
+            for xtra in extras:
+                if not xtra.imported:
+                    try:
+                        if xtra.pypi and check_package_exists_on_pypi(xtra.pypi):
+                            msg += (
+                                f'. An "extras" package exists on PyPI ({xtra.pypi}), '
+                                "which may contain an implementation, try installing it "
+                                f"(e.g. 'pip install {xtra.pypi}') and check again"
+                            )
+                    except urllib.error.URLError:
+                        msg += (
+                            '. Was not able to check whether an "extras" package '
+                            f"({xtra.pypi}) exists on PyPI or not"
+                        )
+            raise FileFormatsExtrasError(msg)

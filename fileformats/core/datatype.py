@@ -85,7 +85,7 @@ class DataType(Classifier, metaclass=ABCMeta):
         cls,
         source_format: ty.Type[DataType],
         name: str = "converter",
-        **kwargs: ty.Dict[str, ty.Any],
+        **kwargs: ty.Any,
     ) -> ty.Union[None]:
         if issubclass(source_format, cls):
             return None

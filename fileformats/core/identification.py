@@ -174,7 +174,7 @@ def from_paths(
     *candidates: ty.Type["fileformats.core.FileSet"],
     common_ok: bool = False,
     ignore: ty.Optional[str] = None,
-    **kwargs: ty.Dict[str, ty.Any],
+    **kwargs: ty.Any,
 ) -> ty.List["fileformats.core.FileSet"]:
     """Given a list of candidate classes (defaults to all installed in alphabetical order),
     instantiates all possible file-set instances from a collection of file-system paths.

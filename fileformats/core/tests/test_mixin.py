@@ -1,3 +1,4 @@
+import typing as ty
 from conftest import write_test_file
 from fileformats.generic import File
 from fileformats.core.mixin import WithMagicNumber, WithSeparateHeader, WithSideCars
@@ -106,7 +107,9 @@ class ImageWithInlineHeader(File):
 
     header_separator = b"---END HEADER---"
 
-    def read_metadata(self):
+    def read_metadata(
+        self, selected_keys: ty.Optional[ty.Sequence[str]] = None
+    ) -> ty.Mapping[str, ty.Any]:
         hdr = self.contents.split(self.header_separator)[0].decode("utf-8")
         return dict(ln.split(":") for ln in hdr.splitlines())
 

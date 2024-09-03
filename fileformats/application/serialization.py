@@ -68,20 +68,20 @@ class Xml(DataSerialization):
 
 
 class Json(DataSerialization):
-    ext = ".json"
+    ext: ty.Optional[str] = ".json"
     allowed_classifiers = (JsonSchema, InformalSchema)
 
-    def load(self) -> ty.Dict[str, ty.Any]:
+    def load(self) -> LoadedSerialization:
         try:
             with open(self.fspath) as f:
-                dct: ty.Dict[str, ty.Any] = json.load(f)  # type: ignore
+                dct: ty.Dict[str, ty.Any] = json.load(f)
         except json.JSONDecodeError as e:
             raise FormatMismatchError(
                 f"'{self.fspath}' is not a valid JSON file"
             ) from e
         return dct
 
-    def save(self, data: ty.Dict[str, ty.Any]) -> None:
+    def save(self, data: LoadedSerialization) -> None:
         with open(self.fspath, "w") as f:
             json.dump(data, f)
 

@@ -12,8 +12,8 @@ from fileformats.image.raster import RasterImage, Bitmap, Gif, Jpeg, Png, Tiff
 @converter(target_format=Jpeg, output_format=Jpeg)
 @converter(target_format=Png, output_format=Png)
 @converter(target_format=Tiff, output_format=Tiff)
-@pydra.mark.task
-@pydra.mark.annotate({"return": {"out_file": RasterImage}})
+@pydra.mark.task  # type: ignore[misc]
+@pydra.mark.annotate({"return": {"out_file": RasterImage}})  # type: ignore[misc]
 def convert_image(
     in_file: RasterImage,
     output_format: ty.Type[RasterImage],
