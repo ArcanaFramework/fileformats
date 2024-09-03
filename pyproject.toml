@@ -110,4 +110,4 @@ doctests = true
 per-file-ignores = ["__init__.py:F401"]
 max-line-length = 88
 select = "C,E,F,W,B,B950"
-extend-ignore = ['E203', 'E501', 'E129', 'W503']
+extend-ignore = ['E203', 'E501', 'E129', 'W503', 'E704']

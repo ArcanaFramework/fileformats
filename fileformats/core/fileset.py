@@ -87,7 +87,7 @@ class FileSet(DataType):
 
     # Member attributes
     fspaths: ty.FrozenSet[Path]
-    _metadata: ty.Union[ty.Dict[str, ty.Any], bool, None]
+    _metadata: ty.Union[ty.Mapping[str, ty.Any], bool, None]
 
     def __init__(
         self,
@@ -258,7 +258,7 @@ class FileSet(DataType):
             and selected_keys is not None
             and set(selected_keys).issubset(self._metadata)
         ):
-            self._metadata = self.read_metadata(selected_keys)
+            self._metadata = dict(self.read_metadata(selected_keys))
 
     @extra
     def read_metadata(

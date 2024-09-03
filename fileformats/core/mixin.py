@@ -175,15 +175,20 @@ class WithSeparateHeader(WithAdjacentFiles):
     header_type: ty.Type["fileformats.core.FileSet"]
 
     @classproperty
-    def nested_types(cls) -> ty.Tuple[ty.Type["fileformats.core.FileSet"], ...]:
+    def nested_types(cls) -> ty.Tuple[ty.Type["DataType"], ...]:
         return (cls.header_type,)
 
     @property
     def header(self) -> "fileformats.core.FileSet":
         return self.header_type(self.select_by_ext(self.header_type))  # type: ignore[attr-defined]
 
-    def read_metadata(self) -> ty.Dict[str, ty.Any]:
-        return self.header.load()  # type: ignore[attr-defined, no-any-return]
+    def read_metadata(
+        self, selected_keys: ty.Optional[ty.Sequence[str]] = None
+    ) -> ty.Mapping[str, ty.Any]:
+        header: ty.Dict[str, ty.Any] = self.header.load()  # type: ignore[attr-defined, no-any-return]
+        if selected_keys:
+            header = {k: v for k, v in header.items() if k in selected_keys}
+        return header
 
 
 class WithSideCars(WithAdjacentFiles):
@@ -215,21 +220,22 @@ class WithSideCars(WithAdjacentFiles):
     def side_cars(self) -> ty.Tuple["fileformats.core.FileSet", ...]:
         return tuple(tp(self.select_by_ext(tp)) for tp in self.side_car_types)  # type: ignore[attr-defined]
 
-    def read_metadata(self) -> ty.Dict[str, ty.Any]:
-        metadata = self.primary_type.read_metadata(self)
+    def read_metadata(
+        self, selected_keys: ty.Optional[ty.Sequence[str]] = None
+    ) -> ty.Mapping[str, ty.Any]:
+        metadata: ty.Dict[str, ty.Any] = dict(self.primary_type.read_metadata(self, selected_keys=selected_keys))  # type: ignore[arg-type]
         for side_car in self.side_cars:
             try:
                 side_car_metadata: ty.Dict[str, ty.Any] = side_car.load()  # type: ignore[attr-defined]
             except AttributeError:
                 continue
             else:
-                metadata[
-                    to_mime_format_name(type(side_car).__name__)
-                ] = side_car_metadata
-        return metadata  # type: ignore[no-any-return]
+                side_car_class_name: str = to_mime_format_name(type(side_car).__name__)
+                metadata[side_car_class_name] = side_car_metadata
+        return metadata
 
     @classproperty
-    def nested_types(cls) -> ty.Tuple[ty.Type["fileformats.core.FileSet"], ...]:
+    def nested_types(cls) -> ty.Tuple[ty.Type["DataType"], ...]:
         return cls.side_car_types
 
 
@@ -310,7 +316,7 @@ class WithClassifiers:
         return "unclassified" in cls.__dict__
 
     @classproperty
-    def nested_types(cls) -> ty.Tuple[ty.Type[DataType], ...]:
+    def nested_types(cls) -> ty.Tuple[ty.Type["DataType"], ...]:
         return cls.classifiers
 
     @classmethod

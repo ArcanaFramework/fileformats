@@ -64,7 +64,9 @@ def create_tar(
     in_file: FsObject,
     out_file: ty.Optional[Path] = None,
     base_dir: ty.Optional[Path] = None,
-    filter: ty.Optional[ty.Callable] = None,
+    filter: ty.Optional[
+        ty.Callable[[tarfile.TarInfo], ty.Optional[tarfile.TarInfo]]
+    ] = None,
     compression: ty.Optional[str] = None,
     format: int = tarfile.DEFAULT_FORMAT,
     ignore_zeros: bool = False,
