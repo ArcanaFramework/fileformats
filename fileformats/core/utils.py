@@ -3,13 +3,13 @@ from pathlib import Path
 import inspect
 import typing as ty
 from types import ModuleType
-from typing_extensions import TypeAlias
 import urllib.request
 import urllib.error
 import os
 import logging
 import pkgutil
 from contextlib import contextmanager
+from .type_aliases import FspathsInputType
 import fileformats.core
 
 if ty.TYPE_CHECKING:
@@ -23,13 +23,6 @@ _excluded_subpackages = set(
 )
 
 T = ty.TypeVar("T")
-
-FspathsInputType: TypeAlias = ty.Union[  # noqa: F821
-    ty.Iterable[ty.Union[str, Path]],
-    str,
-    Path,
-    "fileformats.core.FileSet",
-]
 
 
 def include_testing_package(flag: bool = True) -> None:
@@ -148,7 +141,7 @@ def describe_task(task: "pydra.engine.task.TaskBase") -> str:
     task : pydra.engine.core.TaskBase
         the task to describe
     """
-    from fileformats.core.converter import ConverterWrapper
+    from fileformats.core.converter_helpers import ConverterWrapper
 
     if isinstance(task, ConverterWrapper):
         task = task.task_spec

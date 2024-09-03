@@ -31,14 +31,14 @@ class DataType(Classifier, metaclass=ABCMeta):
     # Store converters registered by @converter decorator that convert to FileSet
     # NB: each class will have its own version of this dictionary
     converters: ty.Dict[
-        ty.Type["DataType"], "fileformats.core.converter.ConverterSpec"
+        ty.Type["DataType"], "fileformats.core.converter_helpers.ConverterSpec"
     ] = {}
 
     @classmethod
-    def type_var(cls, name: str) -> "fileformats.core.converter.SubtypeVar":
-        import fileformats.core.converter
+    def type_var(cls, name: str) -> "fileformats.core.converter_helpers.SubtypeVar":
+        import fileformats.core.converter_helpers
 
-        return fileformats.core.converter.SubtypeVar.new(name, cls)
+        return fileformats.core.converter_helpers.SubtypeVar.new(name, cls)
 
     @classmethod
     def matches(cls, values: ty.Any) -> bool:
@@ -72,7 +72,12 @@ class DataType(Classifier, metaclass=ABCMeta):
         for subpkg in subpackages():
             for attr_name in dir(subpkg):
                 attr = getattr(subpkg, attr_name)
-                if isclass(attr) and issubclass(attr, cls):
+                if (
+                    attr is not cls
+                    and isclass(attr)
+                    and issubclass(attr, cls)
+                    and ty.get_origin(attr) is None
+                ):
                     yield attr
 
     @classmethod
@@ -283,4 +288,4 @@ class DataType(Classifier, metaclass=ABCMeta):
 
 from .fileset import FileSet  # noqa
 from .field import Field  # noqa
-import fileformats.core.converter  # noqa
+import fileformats.core.converter_helpers  # noqa

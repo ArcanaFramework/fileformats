@@ -18,11 +18,11 @@ from typing_extensions import Self
 from .utils import (
     classproperty,
     fspaths_converter,
-    FspathsInputType,
     describe_task,
     matching_source,
     import_extras_module,
 )
+from .type_aliases import FspathsInputType, CryptoMethod
 from .sampling import SampleFileGenerator
 from .identification import (
     to_mime_format_name,
@@ -45,7 +45,7 @@ from .fs_mount_identifier import FsMountIdentifier
 
 if ty.TYPE_CHECKING:
     from pydra.engine.task import TaskBase
-    from .converter import ConverterSpec
+    from .converter_helpers import ConverterSpec
 
 
 FILE_CHUNK_LEN_DEFAULT = 8192
@@ -599,7 +599,7 @@ class FileSet(DataType):
         available : list[tuple[TaskBase, dict[str, Any]]]
             list of available converters between the source and target formats
         """
-        from .converter import SubtypeVar
+        from .converter_helpers import SubtypeVar
 
         converters_dict = cls.get_converters_dict()
         available = []
@@ -815,7 +815,7 @@ class FileSet(DataType):
 
     def hash(
         self,
-        crypto: ty.Optional[ty.Callable[[], "hashlib._hashlib.HASH"]] = None,
+        crypto: CryptoMethod = None,
         mtime: bool = False,
         chunk_len: int = FILE_CHUNK_LEN_DEFAULT,
         relative_to: ty.Optional[Path] = None,
@@ -850,11 +850,12 @@ class FileSet(DataType):
             crytpo_obj.update(path.encode())
             for bytes_str in bytes_iter:
                 crytpo_obj.update(bytes_str)
-        return crytpo_obj.hexdigest()
+        digest: str = crytpo_obj.hexdigest()  # type: ignore[assignment]
+        return digest
 
     def hash_files(
         self,
-        crypto: ty.Optional[ty.Callable[[], "hashlib._hashlib.HASH"]] = None,
+        crypto: CryptoMethod = None,  # s
         mtime: bool = False,
         chunk_len: int = FILE_CHUNK_LEN_DEFAULT,
         relative_to: ty.Optional[Path] = None,
@@ -912,7 +913,7 @@ class FileSet(DataType):
         return types
 
     @classmethod
-    def mock(cls, *fspaths: ty.Union[Path, str]) -> "FileSet":
+    def mock(cls, *fspaths: ty.Union[Path, str]) -> "Self":
         """Return an instance of a mocked sub-class of the file format to be used in
         test routines like doctests that doesn't require to point at actual files
 
@@ -923,11 +924,11 @@ class FileSet(DataType):
 
         Returns
         -------
-        FileSet
+        Self
             a file-set that will pass type-checking as an instance of the given
             fileset class but which doesn't actually point to any FS objects.
         """
-        mock_cls: ty.Type[FileSet] = type(
+        mock_cls: ty.Type[Self] = type(
             cls.__name__ + "Mock", (MockMixin, cls), {"TRUE_CLASS": cls}
         )
         fspaths_lst = list(fspaths)

@@ -1,11 +1,15 @@
 import json
 import typing as ty
+from typing_extensions import Self, TypeAlias
 from pathlib import Path
 from fileformats.core import extra, DataType, FileSet
 from fileformats.core.mixin import WithClassifiers
 from ..generic import File
 from fileformats.core.exceptions import FormatMismatchError
 from fileformats.core import SampleFileGenerator
+
+
+LoadedSerialization: TypeAlias = ty.Union[ty.Dict[str, ty.Any], ty.List[ty.Any]]
 
 
 class Schema(DataType):
@@ -32,7 +36,7 @@ class DataSerialization(WithClassifiers, File):
 
     # Classifiers class attrs
     classifiers_attr_name: str = "schema"
-    schema: bool = None
+    schema: ty.Optional[bool] = None
     multiple_classifiers: bool = False
     allowed_classifiers: ty.Tuple[ty.Type[Schema], ...] = (Schema,)
     generically_classifiable: bool = True
@@ -41,17 +45,17 @@ class DataSerialization(WithClassifiers, File):
     iana_mime: ty.Optional[str] = None
 
     @extra
-    def load(self) -> dict:
+    def load(self) -> LoadedSerialization:
         """Load the contents of the file into a dictionary"""
         raise NotImplementedError
 
     @extra
-    def save(self, data: dict) -> None:
+    def save(self, data: LoadedSerialization) -> None:
         """Serialise a dictionary to a new file"""
         raise NotImplementedError
 
     @classmethod
-    def save_new(cls, fspath, data) -> None:
+    def save_new(cls, fspath: ty.Union[str, Path], data: LoadedSerialization) -> Self:
         # We have to use a mock object as the data file hasn't been written yet
         mock = cls.mock(fspath)
         mock.save(data)

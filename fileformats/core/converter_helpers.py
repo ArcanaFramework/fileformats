@@ -99,21 +99,18 @@ class SubtypeVar:
     def get_converter_specs(
         cls, source_format: ty.Type["mixin.WithClassifiers"], target_format: type
     ) -> ty.List["ConverterSpec"]:
-        from .mixin import WithClassifiers
-
         # check to see whether there are converters from a base class of the source
         # format
         available_converters: ty.List[ConverterSpec] = []
         # assert isinstance(source_format, WithClassifiers)
         if source_format.is_classified:
             for template_source_format, converter in cls.converters.items():
-                assert isinstance(template_source_format, WithClassifiers)
                 if not issubclass(
-                    template_source_format.unclassified, source_format.unclassified
+                    template_source_format.unclassified, source_format.unclassified  # type: ignore
                 ):
                     continue
-                assert len(template_source_format.wildcard_classifiers()) == 1
-                non_wildcards = template_source_format.non_wildcard_classifiers()
+                assert len(template_source_format.wildcard_classifiers()) == 1  # type: ignore
+                non_wildcards = template_source_format.non_wildcard_classifiers()  # type: ignore
                 if not non_wildcards.issubset(source_format.classifiers):
                     continue
                 from_types = tuple(

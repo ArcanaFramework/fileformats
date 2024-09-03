@@ -1,11 +1,11 @@
 import typing as ty
-import hashlib
 from pathlib import Path
 from fileformats.core.exceptions import FormatMismatchError
 from fileformats.core.utils import classproperty
 from .fsobject import FsObject
 from fileformats.core.fileset import FileSet, FILE_CHUNK_LEN_DEFAULT
 from fileformats.core.mixin import WithClassifiers
+from fileformats.core.type_aliases import CryptoMethod
 
 
 class Directory(FsObject):
@@ -85,7 +85,7 @@ class Directory(FsObject):
 
     def hash_files(
         self,
-        crypto: ty.Optional[ty.Callable[[], "hashlib._hashlib.HASH"]] = None,
+        crypto: CryptoMethod = None,
         mtime: bool = False,
         chunk_len: int = FILE_CHUNK_LEN_DEFAULT,
         relative_to: ty.Optional[Path] = None,

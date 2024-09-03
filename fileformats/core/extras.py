@@ -6,7 +6,7 @@ import functools
 import urllib.error
 from .datatype import DataType
 import fileformats.core
-from .converter import ConverterWrapper
+from .converter_helpers import ConverterWrapper, ConverterSpec
 from .exceptions import FormatConversionError, FileFormatsExtrasError
 from .utils import import_extras_module, check_package_exists_on_pypi, add_exc_note
 
@@ -104,7 +104,7 @@ def converter(
             wrapped_task_spec = task_spec
         target.register_converter(
             source_format=source,
-            converter_spec=(wrapped_task_spec, converter_kwargs, ()),
+            converter_spec=ConverterSpec(wrapped_task_spec, converter_kwargs),
         )
         return wrapped_task_spec
 

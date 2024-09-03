@@ -6,16 +6,13 @@ from .datatype import DataType
 import fileformats.core
 from .utils import classproperty, describe_task, matching_source
 from .identification import to_mime_format_name
-from .converter import SubtypeVar, ConverterSpec
+from .converter_helpers import SubtypeVar, ConverterSpec
 from .classifier import Classifier
 from .exceptions import (
     FormatMismatchError,
     FormatRecognitionError,
     FormatDefinitionError,
 )
-
-if ty.TYPE_CHECKING:
-    from pydra.engine.task import TaskBase
 
 
 logger = logging.getLogger("fileformats")
@@ -58,16 +55,18 @@ class WithMagicNumber:
             len(magic_bytes), offset=self.magic_number_offset
         )
         if read_magic_number != magic_bytes:
+            read_magic: ty.Union[str, bytes]
+            ref_magic: ty.Union[str, bytes]
             if self.binary and isinstance(self.magic_number, str):
-                read_magic_str = '"' + bytes.hex(read_magic_number) + '"'
-                magic_str = '"' + self.magic_number + '"'
+                read_magic = '"' + bytes.hex(read_magic_number) + '"'
+                ref_magic = '"' + self.magic_number + '"'
             else:
-                read_magic_str = read_magic_number
-                assert isinstance(self.magic_number, str)
-                magic_str = self.magic_number
+                read_magic = read_magic_number
+                assert isinstance(self.magic_number, bytes)
+                ref_magic = self.magic_number
             raise FormatMismatchError(
-                f"Magic number of file {read_magic_str} doesn't match expected "
-                f"{magic_str}"
+                f"Magic number of file {read_magic!r} doesn't match expected "
+                f"{ref_magic!r}"
             )
 
 
@@ -291,8 +290,8 @@ class WithClassifiers:
 
     # Default values for class attrs
     multiple_classifiers = True
-    allowed_classifiers: ty.Optional[ty.Tuple[ty.Type[ty.Any]]] = None
-    exclusive_classifiers: ty.Tuple[ty.Type[ty.Any], ...] = ()
+    allowed_classifiers: ty.Optional[ty.Tuple[ty.Type[Classifier], ...]] = None
+    exclusive_classifiers: ty.Tuple[ty.Type[Classifier], ...] = ()
     ordered_classifiers = False
     generically_classifiable = False
 
@@ -361,7 +360,7 @@ class WithClassifiers:
                     # belong to a category, check to see that there aren't multiple sub-classes
                     # in the classifier set
                     repetitions: ty.Dict[
-                        ty.Type[DataType], ty.List[ty.Type[DataType]]
+                        ty.Type[Classifier], ty.List[ty.Type[Classifier]]
                     ] = {c: [] for c in cls.exclusive_classifiers + classifiers}
                     for classifier in classifiers:
                         for exc_classifier in repetitions:
@@ -570,7 +569,7 @@ class WithClassifiers:
                 )
         else:
             assert not subclass.ordered_classifiers  # type: ignore[attr-defined]
-            if subclass.classifiers.issuperset(cls.classifiers):  # type: ignore[attr-defined]
+            if set(subclass.classifiers).issuperset(cls.classifiers):  # type: ignore[attr-defined]
                 is_subclass = True
             else:
                 # Check for sub-classes of classifiers
@@ -584,7 +583,7 @@ class WithClassifiers:
     def register_converter(
         cls,
         source_format: ty.Type["fileformats.core.FileSet"],
-        converter_spec: ty.Tuple[ty.Callable[..., "TaskBase"], ty.Dict[str, ty.Any]],
+        converter_spec: ConverterSpec,
     ) -> None:
         """Registers a converter task within a class attribute. Called by the @fileformats.converter
         decorator.
@@ -635,27 +634,28 @@ class WithClassifiers:
                 assert len(prev_registered) <= 1
                 prev = prev_registered[0] if prev_registered else None
                 if prev:
-                    prev_tuple = cls.converters[prev]  # type: ignore[attr-defined]
-                    task, task_kwargs = converter_spec
-                    prev_task, prev_kwargs, prev_classifiers = prev_tuple
+                    prev_spec = cls.converters[prev]  # type: ignore[attr-defined]
+                    # task, task_kwargs = converter_spec
+                    # prev_task, prev_kwargs, prev_classifiers = prev_tuple
                     if (
-                        matching_source(task, prev_task)
-                        and task_kwargs == prev_kwargs
-                        and cls.classifiers == prev_classifiers
+                        matching_source(converter_spec.task, prev_spec.task)
+                        and converter_spec.args == prev_spec.args
+                        and cls.classifiers == prev_spec.classifiers
                     ):
                         logger.warning(
                             "Ignoring duplicate registrations of the same converter %s",
-                            describe_task(task),
+                            describe_task(converter_spec.task),
                         )
                         return  # actually the same task but just imported twice for some reason
                     raise FormatDefinitionError(
                         f"Cannot register converter from {prev.unclassified} "  # type: ignore[attr-defined]
                         f"to {cls.unclassified} with non-wildcard classifiers "  # type: ignore[attr-defined]
-                        f"{list(prev.non_wildcard_classifiers())}, {describe_task(task)}, "
-                        f"because there is already one registered, {describe_task(prev_task)}"
+                        f"{list(prev.non_wildcard_classifiers())}, {describe_task(converter_spec.task)}, "
+                        f"because there is already one registered, {describe_task(prev_spec.task)}"
                     )
             converters_dict = cls.unclassified.get_converters_dict()  # type: ignore[attr-defined]
-            converters_dict[source_format] = converter_spec + (cls.classifiers,)
+            converter_spec.classifiers = cls.classifiers
+            converters_dict[source_format] = converter_spec
         else:
             super().register_converter(source_format, converter_spec)  # type: ignore[misc]
 

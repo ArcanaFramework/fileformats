@@ -229,14 +229,14 @@ class Array(
     def __attrs_post_init__(self) -> None:
         # Ensure items are of the correct type
         if self.item_type is not None:
-            self.value = tuple(self.item_type(i).value for i in self.value)
+            self.value = tuple(self.item_type(i).value for i in self.value)  # type: ignore
 
     def __str__(self) -> str:
         return (
             "["
             + ",".join(
                 (
-                    str(self.item_type(i)) if self.item_type is not None else i
+                    str(self.item_type(i)) if self.item_type is not None else i  # type: ignore
                 )  # pylint: disable=not-callable
                 for i in self.value
             )
@@ -252,5 +252,13 @@ class Array(
     def __len__(self) -> int:
         return len(self.value)
 
+    @ty.overload
     def __getitem__(self, index: int) -> ItemType:
-        return self.value[index]
+        ...
+
+    @ty.overload
+    def __getitem__(self, slice: slice) -> ty.Sequence[ItemType]:
+        ...
+
+    def __getitem__(self, key: ty.Any) -> ty.Any:
+        return self.value[key]
