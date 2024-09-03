@@ -22,7 +22,7 @@ from .utils import (
     matching_source,
     import_extras_module,
 )
-from .type_aliases import FspathsInputType, CryptoMethod
+from .type_aliases import FspathsInputType, CryptoMethod, PathType
 from .sampling import SampleFileGenerator
 from .identification import (
     to_mime_format_name,
@@ -226,11 +226,12 @@ class FileSet(DataType):
         return possible
 
     @property
-    def metadata(self) -> ty.Union[ty.Mapping[str, ty.Any], bool, None]:
+    def metadata(self) -> ty.Mapping[str, ty.Any]:
         """Lazily load metadata from `read_metadata` extra if implemented, returning an
         empty metadata array if not"""
         if self._metadata is not False:
-            return self._metadata
+            assert self._metadata is not True
+            return self._metadata if self._metadata else {}
         try:
             self._metadata = self.read_metadata()
         except FileFormatsExtrasPkgUninstalledError:
@@ -240,7 +241,7 @@ class FileSet(DataType):
             self._metadata = None
         except FileFormatsExtrasError:
             self._metadata = None
-        return self._metadata
+        return self._metadata if self._metadata else {}
 
     def select_metadata(
         self, selected_keys: ty.Union[ty.Sequence[str], None] = None
@@ -362,9 +363,7 @@ class FileSet(DataType):
         self.fspaths = fspaths_converter(self.required_paths())
         return self
 
-    def select_by_ext(
-        self, fileformat: ty.Optional[ty.Type[Self]] = None, allow_none: bool = False
-    ) -> ty.Optional[Path]:
+    def select_by_ext(self, fileformat: ty.Optional[ty.Type["FileSet"]] = None) -> Path:
         """Selects a single path from a set of file-system paths based on the file
         extension
 
@@ -372,20 +371,15 @@ class FileSet(DataType):
         ----------
         fileformat : type
             the format class of the path to select
-        allow_none : bool
-            whether to return None instead of raising an error if the file is not found
 
         Returns
         -------
-        Path or None
-            the selected file-system path that matches the extension or None if not found
-            and `allow_none` is True
+        Path
+            the selected file-system path that matches the extension
 
         Raises
         ------
-        FileFormatError
-            if no paths match the extension and `allow_none` is False
-        FileFormatError
+        FormatMismatchError
             if more than one paths matches the extension
         """
         if fileformat is None:
@@ -397,8 +391,6 @@ class FileSet(DataType):
             pass
         matches = self.matching_exts(self.fspaths, exts)
         if not matches:
-            if allow_none:
-                return None
             paths_str = ", ".join(str(p) for p in self.fspaths)
             raise FormatMismatchError(
                 f"No matching files with extensions in {exts} in file set {paths_str}"
@@ -1310,7 +1302,7 @@ class FileSet(DataType):
 
     def copy(
         self,
-        dest_dir: Path,
+        dest_dir: PathType,
         mode: ty.Union[CopyMode, str] = CopyMode.copy,
         collation: ty.Union[CopyCollation, str] = CopyCollation.any,
         new_stem: ty.Optional[str] = None,
@@ -1360,6 +1352,7 @@ class FileSet(DataType):
             FileSet isn't explicitly defined by the FileSet class. Only relevant when
             collation mode is set to "adjacent". By default True
         """
+        dest_dir = Path(dest_dir)
         # Logic to determine the laziest mode to use
         mode = self.CopyMode[mode] if isinstance(mode, str) else mode
         if len(self.fspaths) == 1:
@@ -1479,7 +1472,7 @@ class FileSet(DataType):
 
     def move(
         self,
-        dest_dir: Path,
+        dest_dir: PathType,
         collation: ty.Union[CopyCollation, str] = CopyCollation.any,
         new_stem: ty.Optional[str] = None,
         trim: bool = True,
@@ -1515,6 +1508,7 @@ class FileSet(DataType):
             FileSet isn't explicitly defined by the FileSet class. Only relevant when
             collation mode is set to "adjacent". By default True
         """
+        dest_dir = Path(dest_dir)
         if len(self.fspaths) == 1:
             # If there is only one path to copy, then collation isn't meaningful
             collation = self.CopyCollation.any
