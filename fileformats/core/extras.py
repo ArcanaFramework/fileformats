@@ -14,8 +14,112 @@ from .utils import import_extras_module, check_package_exists_on_pypi, add_exc_n
 if ty.TYPE_CHECKING:
     from pydra.engine.core import TaskBase
 
-WrappedTask = ty.TypeVar("WrappedTask", bound=ty.Callable[..., ty.Any])
+ExtraImplementation = ty.TypeVar("ExtraImplementation", bound=ty.Callable[..., ty.Any])
+ExtraMethod = ty.TypeVar("ExtraMethod", bound=ty.Callable[..., ty.Any])
 
+
+def extra(method: ExtraMethod) -> "ExtraMethod":
+    """A decorator which uses singledispatch to facilitate the registering of
+    "extra" functionality in external packages (e.g. "fileformats-extras")"""
+
+    dispatch_method: ty.Callable[..., ty.Any] = functools.singledispatch(method)
+
+    @functools.wraps(method)
+    def decorated(obj: DataType, *args: ty.Any, **kwargs: ty.Any) -> ty.Any:
+        cls = type(obj)
+        extras = []
+        for tp in cls.referenced_types():  # type: ignore[attr-defined]
+            extras.append(import_extras_module(tp))
+        try:
+            return dispatch_method(obj, *args, **kwargs)
+        except NotImplementedError:
+            msg = f"No implementation for '{method.__name__}' extra for {cls.__name__} types"
+            for xtra in extras:
+                if not xtra.imported:
+                    try:
+                        if xtra.pypi and check_package_exists_on_pypi(xtra.pypi):
+                            msg += (
+                                f'. An "extras" package exists on PyPI ({xtra.pypi}), '
+                                "which may contain an implementation, try installing it "
+                                f"(e.g. 'pip install {xtra.pypi}') and check again"
+                            )
+                    except urllib.error.URLError:
+                        msg += (
+                            '. Was not able to check whether an "extras" package '
+                            f"({xtra.pypi}) exists on PyPI or not"
+                        )
+            raise FileFormatsExtrasError(msg)
+
+    # Store single dispatch method on the decorated function so we can register
+    # implementations to it later
+    decorated._dispatch = dispatch_method  # type: ignore[attr-defined]
+    return decorated  # type: ignore[return-value]
+
+
+def extra_implementation(
+    method: ExtraMethod,
+) -> ty.Callable[[ExtraImplementation], ExtraImplementation]:
+    """A decorator which uses singledispatch to facilitate the registering of
+    "extra" functionality in external packages (e.g. "fileformats-extras")"""
+    try:
+        dispatch_method = method._dispatch  # type: ignore[attr-defined]
+    except AttributeError:
+        raise ValueError(
+            f"{method} has not been defined as an extra method, so cannot register "
+            "an implementation"
+        )
+
+    def decorator(implementation: ExtraImplementation) -> ExtraImplementation:
+        msig = inspect.signature(method)
+        fsig = inspect.signature(implementation)
+
+        def type_match(a: ty.Union[str, type], b: ty.Union[str, type]) -> bool:
+            return isinstance(a, str) or isinstance(b, str) or a == b
+
+        differences = []
+        for i, (mparam, fparam) in enumerate(
+            zip_longest(
+                list(msig.parameters.values())[1:], list(fsig.parameters.values())[1:]
+            )
+        ):
+            if mparam is None:
+                differences.append(
+                    f"found additional argument, '{fparam.name}', at position {i}"
+                )
+                continue
+            if fparam is None:
+                if mparam.default is mparam.empty:
+                    differences.append(
+                        f"override missing required argument '{mparam.name}'"
+                    )
+                continue
+            mname = mparam.name
+            fname = fparam.name
+            mtype = mparam.annotation
+            ftype = fparam.annotation
+            if mname != fname:
+                differences.append(
+                    f"name of parameter at position {i}: {mname} vs {fname}"
+                )
+            elif not type_match(mtype, ftype):
+                differences.append(f"Type of '{mname}' arg: {mtype} vs {ftype}")
+        if not type_match(msig.return_annotation, fsig.return_annotation):
+            differences.append(
+                f"return type: {msig.return_annotation} vs {fsig.return_annotation}"
+            )
+        if differences:
+            raise TypeError(
+                f"Arguments differ between the signature of the "
+                f"decorated method {method} and the registered override {implementation}:\n"
+                + "\n".join(differences)
+            )
+        dispatch_method.register(implementation)
+        return implementation
+
+    return decorator
+
+
+WrappedTask = ty.TypeVar("WrappedTask", bound=ty.Callable[..., ty.Any])
 FormatType: TypeAlias = ty.Union[ty.Type["fileformats.core.FileSet"], SubtypeVar, None]
 
 
@@ -118,151 +222,3 @@ def converter(
 
     # We pretend to return the original function, instead of the Pydra task or ConverterWrapper
     return decorator if task_spec is None else decorator(task_spec)  # type: ignore[return-value]
-
-
-ExtraImplementation = ty.TypeVar("ExtraImplementation", bound=ty.Callable[..., ty.Any])
-
-
-# class ExtraRegisterer:
-#     def __init__(self, dispatch: ty.Callable[..., ty.Any]) -> None:
-#         self.dispatch = dispatch
-
-#     def __call__(self, function: ExtraImplementation) -> ExtraImplementation:
-
-
-ExtraMethod = ty.TypeVar("ExtraMethod", bound=ty.Callable[..., ty.Any])
-
-
-def extra(method: ExtraMethod) -> "ExtraMethod":
-    """A decorator which uses singledispatch to facilitate the registering of
-    "extra" functionality in external packages (e.g. "fileformats-extras")"""
-
-    dispatch_method: ty.Callable[..., ty.Any] = functools.singledispatch(method)
-
-    @functools.wraps(method)
-    def decorated(obj: DataType, *args: ty.Any, **kwargs: ty.Any) -> ty.Any:
-        cls = type(obj)
-        extras = []
-        for tp in cls.referenced_types():  # type: ignore[attr-defined]
-            extras.append(import_extras_module(tp))
-        try:
-            return dispatch_method(obj, *args, **kwargs)
-        except NotImplementedError:
-            msg = f"No implementation for '{method.__name__}' extra for {cls.__name__} types"
-            for xtra in extras:
-                if not xtra.imported:
-                    try:
-                        if xtra.pypi and check_package_exists_on_pypi(xtra.pypi):
-                            msg += (
-                                f'. An "extras" package exists on PyPI ({xtra.pypi}), '
-                                "which may contain an implementation, try installing it "
-                                f"(e.g. 'pip install {xtra.pypi}') and check again"
-                            )
-                    except urllib.error.URLError:
-                        msg += (
-                            '. Was not able to check whether an "extras" package '
-                            f"({xtra.pypi}) exists on PyPI or not"
-                        )
-            raise FileFormatsExtrasError(msg)
-
-    # Store single dispatch method on the decorated function so we can register
-    # implementations to it later
-    decorated._dispatch = dispatch_method  # type: ignore[attr-defined]
-    return decorated  # type: ignore[return-value]
-
-
-def extra_implementation(
-    method: ExtraMethod,
-) -> ty.Callable[[ExtraImplementation], ExtraImplementation]:
-    """A decorator which uses singledispatch to facilitate the registering of
-    "extra" functionality in external packages (e.g. "fileformats-extras")"""
-    if not hasattr(method, "register"):
-        raise TypeError(
-            f"{method} has not been defined as an extra method, so cannot register "
-            "an implementation"
-        )
-
-    def decorator(implementation: ExtraImplementation) -> ExtraImplementation:
-        msig = inspect.signature(method)
-        fsig = inspect.signature(implementation)
-
-        def type_match(a: ty.Union[str, type], b: ty.Union[str, type]) -> bool:
-            return isinstance(a, str) or isinstance(b, str) or a == b
-
-        differences = []
-        for i, (mparam, fparam) in enumerate(
-            zip_longest(
-                list(msig.parameters.values())[1:], list(fsig.parameters.values())[1:]
-            )
-        ):
-            if mparam is None:
-                differences.append(
-                    f"found additional argument, '{fparam.name}', at position {i}"
-                )
-                continue
-            if fparam is None:
-                if mparam.default is mparam.empty:
-                    differences.append(
-                        f"override missing required argument '{mparam.name}'"
-                    )
-                continue
-            mname = mparam.name
-            fname = fparam.name
-            mtype = mparam.annotation
-            ftype = fparam.annotation
-            if mname != fname:
-                differences.append(
-                    f"name of parameter at position {i}: {mname} vs {fname}"
-                )
-            elif not type_match(mtype, ftype):
-                differences.append(f"Type of '{mname}' arg: {mtype} vs {ftype}")
-        if not type_match(msig.return_annotation, fsig.return_annotation):
-            differences.append(
-                f"return type: {msig.return_annotation} vs {fsig.return_annotation}"
-            )
-        if differences:
-            raise TypeError(
-                f"Arguments differ between the signature of the "
-                f"decorated method {method} and the registered override {implementation}:\n"
-                + "\n".join(differences)
-            )
-        method._dispatch.register(implementation)  # type: ignore[attr-defined]
-        return implementation
-
-    return decorator
-
-
-# def extra(method: ExtraMethod) -> "ExtraMethod":
-#     """A decorator which uses singledispatch to facilitate the registering of
-#     "extra" functionality in external packages (e.g. "fileformats-extras")"""
-
-#     @functools.wraps(method)
-#     def wrapped(self: DataType, *args: ty.Any, **kwargs: ty.Any) -> ty.Any:
-#         cls: ty.Type[DataType] = type(self)
-#         extras = []
-#         for tp in cls.referenced_types():  # type: ignore[attr-defined]
-#             extras.append(import_extras_module(tp))
-#         try:
-#             return dispatch_method(self, *args, **kwargs)
-#         except NotImplementedError:
-#             msg = (
-#                 f"No implementation for '{method.__name__}' extra for "
-#                 f"{cls.__name__} types"
-#             )
-#             for xtra in extras:
-#                 if not xtra.imported:
-#                     try:
-#                         if xtra.pypi and check_package_exists_on_pypi(xtra.pypi):
-#                             msg += (
-#                                 f'. An "extras" package exists on PyPI ({xtra.pypi}), '
-#                                 "which may contain an implementation, try installing it "
-#                                 f"(e.g. 'pip install {xtra.pypi}') and check again"
-#                             )
-#                     except urllib.error.URLError:
-#                         msg += (
-#                             '. Was not able to check whether an "extras" package '
-#                             f"({xtra.pypi}) exists on PyPI or not"
-#                         )
-#             raise FileFormatsExtrasError(msg)
-
-#     return wrapped

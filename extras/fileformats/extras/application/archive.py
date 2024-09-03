@@ -47,6 +47,12 @@ ZIP_COMPRESSION_ANNOT = (
 
 Compressed = FileSet.type_var("Compressed")
 
+FilterMethodType = ty.Any
+# FIXME: This is a placeholder for the actual type, when pydra supports it properly
+# FilterMethodType = ty.Optional[
+#     ty.Callable[[tarfile.TarInfo], ty.Optional[tarfile.TarInfo]]
+# ]
+
 
 @converter(source_format=FsObject, target_format=Tar)
 @converter(source_format=FsObject, target_format=TarGzip, compression="gz")
@@ -64,9 +70,7 @@ def create_tar(
     in_file: FsObject,
     out_file: ty.Optional[Path] = None,
     base_dir: ty.Optional[Path] = None,
-    filter: ty.Optional[
-        ty.Callable[[tarfile.TarInfo], ty.Optional[tarfile.TarInfo]]
-    ] = None,
+    filter: FilterMethodType = None,
     compression: ty.Optional[str] = None,
     format: int = tarfile.DEFAULT_FORMAT,
     ignore_zeros: bool = False,

@@ -40,8 +40,7 @@ def test_extra_signature1():
 
     with pytest.raises(TypeError, match="missing required argument"):
 
-        extra_implementation(Woo.test_extra)
-
+        @extra_implementation(Woo.test_extra)
         def woo_test_extra(woo: Woo, a: int) -> float:
             pass
 
@@ -50,8 +49,7 @@ def test_extra_signature2():
 
     with pytest.raises(TypeError, match="name of parameter"):
 
-        extra_implementation(Woo.test_extra)
-
+        @extra_implementation(Woo.test_extra)
         def woo_test_extra(woo: Woo, a: int, d: str) -> float:
             pass
 
@@ -60,8 +58,7 @@ def test_extra_signature3():
 
     with pytest.raises(TypeError, match="found additional argument"):
 
-        extra_implementation(Woo.test_extra)
-
+        @extra_implementation(Woo.test_extra)
         def woo_test_extra(
             woo: Woo, a: int, b: float, c: ty.Optional[str], d: int
         ) -> float:
@@ -72,7 +69,6 @@ def test_extra_signature4():
 
     with pytest.raises(TypeError, match="return type"):
 
-        extra_implementation(Woo.test_extra)
-
+        @extra_implementation(Woo.test_extra)
         def woo_test_extra(woo: Woo, a: int, b: str) -> int:
             pass
