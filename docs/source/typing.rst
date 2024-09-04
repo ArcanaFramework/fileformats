@@ -26,7 +26,7 @@ be classified as containing a PNG image
     >>> Zip[Jpeg].matches(zipped_png_fspath)
     False
 
-.. note:: warning
+.. warning::
     At the time of writing currently classifiers are not supported by Mypy and other
     static type checkers (only dynamic type-checking in Pydra_) because they use a
     custom `__subclasshook__` method to implement the subclassing behaviour and overload
