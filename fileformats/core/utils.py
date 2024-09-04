@@ -300,5 +300,3 @@ class mtime_cached_property:
             value = self.func(instance)
             instance.__dict__[self._cache_name] = (instance.mtimes, value)
         return value
-
-    __class_getitem__ = classmethod(ty.GenericAlias)  # type: ignore[attr-defined, var-annotated]
