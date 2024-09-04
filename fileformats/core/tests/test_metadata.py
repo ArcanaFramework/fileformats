@@ -1,5 +1,6 @@
 import typing as ty
 import pytest
+import time
 from fileformats.core import FileSet, extra_implementation
 from fileformats.generic import File
 
@@ -21,7 +22,7 @@ def aformat_read_metadata(
 
 
 @pytest.fixture
-def file_with_metadata(tmp_path):
+def file_with_metadata_fspath(tmp_path):
     metadata = {
         "a": 1,
         "b": 2,
@@ -32,27 +33,46 @@ def file_with_metadata(tmp_path):
     fspath = tmp_path / "metadata-file.mf"
     with open(fspath, "w") as f:
         f.write("\n".join("{}:{}".format(*t) for t in metadata.items()))
-    return FileWithMetadata(fspath)
+    return fspath
 
 
-def test_metadata(file_with_metadata):
+def test_metadata(file_with_metadata_fspath):
+    file_with_metadata = FileWithMetadata(file_with_metadata_fspath)
     assert file_with_metadata.metadata["a"] == "1"
     assert sorted(file_with_metadata.metadata) == ["a", "b", "c", "d", "e"]
 
 
-def test_select_metadata(file_with_metadata):
-    file_with_metadata.select_metadata(["a", "b", "c"])
+def test_select_metadata(file_with_metadata_fspath):
+    file_with_metadata = FileWithMetadata(
+        file_with_metadata_fspath, metadata_keys=["a", "b", "c"]
+    )
     assert file_with_metadata.metadata["a"] == "1"
     assert sorted(file_with_metadata.metadata) == ["a", "b", "c"]
 
 
-def test_select_metadata_reload(file_with_metadata):
-    file_with_metadata.select_metadata(["a", "b", "c"])
+def test_explicit_metadata(file_with_metadata_fspath):
+    file_with_metadata = FileWithMetadata(
+        file_with_metadata_fspath,
+        metadata={
+            "a": 1,
+            "b": 2,
+            "c": 3,
+        },
+    )
+    # Check that we use the explicitly provided metadata and not one from the file
+    # contents
     assert sorted(file_with_metadata.metadata) == ["a", "b", "c"]
-    # add new metadata line to check that it isn't loaded
+    # add new metadata line to check and check that it isn't reloaded
     with open(file_with_metadata, "a") as f:
         f.write("\nf:6")
-    file_with_metadata.select_metadata(["a", "b"])
     assert sorted(file_with_metadata.metadata) == ["a", "b", "c"]
-    file_with_metadata.select_metadata(None)
+
+
+def test_metadata_reload(file_with_metadata_fspath):
+    file_with_metadata = FileWithMetadata(file_with_metadata_fspath)
+    assert sorted(file_with_metadata.metadata) == ["a", "b", "c", "d", "e"]
+    # add new metadata line to check and check that it is reloaded
+    time.sleep(2)
+    with open(file_with_metadata, "a") as f:
+        f.write("\nf:6")
     assert sorted(file_with_metadata.metadata) == ["a", "b", "c", "d", "e", "f"]

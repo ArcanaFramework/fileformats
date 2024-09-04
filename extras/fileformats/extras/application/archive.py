@@ -238,4 +238,4 @@ def relative_path(path: PathType, base_dir: PathType) -> str:
             f"Cannot add {path} to archive as it is not a "
             f"subdirectory of {base_dir}"
         )
-    return relpath  # type: ignore[no-any-return]
+    return relpath

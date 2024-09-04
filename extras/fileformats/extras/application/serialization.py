@@ -24,7 +24,7 @@ def convert_data_serialization(
     output_path = out_dir / (
         in_file.fspath.stem + (output_format.ext if output_format.ext else "")
     )
-    return output_format.save_new(output_path, dct)  # type: ignore[no-any-return]
+    return output_format.save_new(output_path, dct)
 
 
 @extra_implementation(DataSerialization.load)

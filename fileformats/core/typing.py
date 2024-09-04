@@ -22,4 +22,10 @@ FspathsInputType: TypeAlias = ty.Union[  # noqa: F821
 PathType: TypeAlias = ty.Union[str, Path]
 
 
-__all__ = ["CryptoMethod", "FspathsInputType", "PathType", "TypeAlias", "Self"]
+__all__ = [
+    "CryptoMethod",
+    "FspathsInputType",
+    "PathType",
+    "TypeAlias",
+    "Self",
+]

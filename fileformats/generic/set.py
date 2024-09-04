@@ -3,6 +3,7 @@ from fileformats.core.fileset import FileSet
 from fileformats.core.exceptions import (
     FormatMismatchError,
 )
+from fileformats.core.utils import mtime_cached_property
 from fileformats.core.mixin import WithClassifiers
 
 
@@ -12,7 +13,7 @@ class TypedSet(FileSet):
 
     content_types: ty.Tuple[ty.Type[FileSet], ...] = ()
 
-    @property
+    @mtime_cached_property
     def contents(self) -> ty.Iterable[FileSet]:
         for content_type in self.content_types:
             for p in self.fspaths:

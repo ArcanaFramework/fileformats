@@ -17,6 +17,7 @@ import logging
 from fileformats.core.typing import Self
 from .utils import (
     classproperty,
+    mtime_cached_property,
     fspaths_converter,
     describe_task,
     matching_source,
@@ -67,7 +68,10 @@ class FileSet(DataType):
         a set of file-system paths pointing to all the resources in the file-set
     metadata : dict[str, Any]
         metadata associated with the file-set, typically lazily loaded via `read_metadata`
-        extra hook
+        extra hook but can be provided directly at the time of instantiation
+    metadata_keys : list[str]
+        the keys of the metadata to load when the `metadata` property is called. Provided
+        to allow for selective loading of metadata fields for performance reasons.
     """
 
     # Class attributes
@@ -87,14 +91,17 @@ class FileSet(DataType):
 
     # Member attributes
     fspaths: ty.FrozenSet[Path]
-    _metadata: ty.Union[ty.Mapping[str, ty.Any], bool, None]
+    _explicit_metadata: ty.Optional[ty.Mapping[str, ty.Any]]
+    _metadata_keys: ty.Optional[ty.List[str]]
 
     def __init__(
         self,
         fspaths: FspathsInputType,
-        metadata: ty.Union[ty.Dict[str, ty.Any], bool, None] = False,
+        metadata: ty.Optional[ty.Dict[str, ty.Any]] = None,
+        metadata_keys: ty.Optional[ty.List[str]] = None,
     ):
-        self._metadata = metadata
+        self._explicit_metadata = metadata
+        self._metadata_keys = metadata_keys
         self._validate_class()
         self.fspaths = fspaths_converter(fspaths)
         self._validate_fspaths()
@@ -179,6 +186,18 @@ class FileSet(DataType):
         "Paths for all top-level paths in the file-set relative to the common parent directory"
         return (p.relative_to(self.parent) for p in self.fspaths)
 
+    @property
+    def mtimes(self) -> ty.Tuple[ty.Tuple[str, float], ...]:
+        """Modification times of all fspaths in the file-set
+
+        Returns
+        -------
+        tuple[tuple[str, float], ...]
+            a tuple of tuples containing the file paths and the modification time sorted
+            by the file path
+        """
+        return tuple((str(p), p.stat().st_mtime) for p in sorted(self.fspaths))
+
     @classproperty
     def mime_type(cls) -> str:
         """Generates a MIME type (IANA) identifier from a format class. If an official
@@ -225,41 +244,22 @@ class FileSet(DataType):
             pass
         return possible
 
-    @property
+    @mtime_cached_property
     def metadata(self) -> ty.Mapping[str, ty.Any]:
         """Lazily load metadata from `read_metadata` extra if implemented, returning an
         empty metadata array if not"""
-        if self._metadata is not False:
-            assert self._metadata is not True
-            return self._metadata if self._metadata else {}
+        if self._explicit_metadata is not None:
+            return self._explicit_metadata
         try:
-            self._metadata = self.read_metadata()
+            metadata = self.read_metadata(selected_keys=self._metadata_keys)
         except FileFormatsExtrasPkgUninstalledError:
             raise
         except FileFormatsExtrasPkgNotCheckedError as e:
             logger.warning(str(e))
-            self._metadata = None
+            metadata = {}
         except FileFormatsExtrasError:
-            self._metadata = None
-        return self._metadata if self._metadata else {}
-
-    def select_metadata(
-        self, selected_keys: ty.Union[ty.Sequence[str], None] = None
-    ) -> None:
-        """Selects a subset of the metadata to be read and stored instead all available
-        (i.e for performance reasons).
-
-        Parameters
-        ----------
-        selected_keys : Union[Sequence[str], None]
-            the keys of the values to load. If None, all values are loaded
-        """
-        if not (
-            isinstance(self._metadata, dict)
-            and selected_keys is not None
-            and set(selected_keys).issubset(self._metadata)
-        ):
-            self._metadata = dict(self.read_metadata(selected_keys))
+            metadata = {}
+        return metadata
 
     @extra
     def read_metadata(
@@ -672,7 +672,7 @@ class FileSet(DataType):
         """a dictionary containing all formats by their IANA MIME type (if applicable)"""
         if cls._formats_by_iana_mime is None:
             cls._formats_by_iana_mime = {
-                f.iana_mime: f  # type: ignore
+                f.iana_mime: f  # type: ignore[misc]
                 for f in FileSet.all_formats
                 if f.__dict__.get("iana_mime") is not None
             }
