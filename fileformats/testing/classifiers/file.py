@@ -84,9 +84,10 @@ class N(WithClassifiers, File):
 
 
 @attrs.define
-class TestField(Singular[ty.Any, ty.Any]):
+class TestField(Singular[ty.Any, str]):
 
     value: ty.Any
+    primitive = str
 
 
 class P(WithClassifiers, File):
