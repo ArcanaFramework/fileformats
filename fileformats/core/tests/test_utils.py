@@ -385,6 +385,9 @@ def test_mtime_cached_property(tmp_path: Path):
 
     file.flag = 0
     assert file.cached_prop == 0
+    # Need a long delay to ensure the mtime changes on Ubuntu and particularly on Windows
+    # On MacOS, the mtime resolution is much higher so not usually an issue. Use
+    # explicitly cache clearing if needed
     time.sleep(2)
     file.flag = 1
     assert file.cached_prop == 0
