@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Public API" href="api.html" /><link rel="prev" title="Typing" href="typing.html" />
 
     <!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 -->
-        <title>Developer Guide - FileFormats v0.12.0</title>
+        <title>Developer Guide - FileFormats v0.12.1</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d8449d71" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
@@ -172,7 +172,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">FileFormats v0.12.0</div></a>
+      <a href="index.html"><div class="brand">FileFormats v0.12.1</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -199,7 +199,7 @@
     <img class="sidebar-logo" src="_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.12.0</span>
+  <span class="sidebar-brand-text">FileFormats v0.12.1</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -325,7 +325,7 @@ magic numbers you will also need to set the <code class="docutils literal notran
 </pre></div>
 </div>
 <p>Formats will contain metadata in a separate header file can be defined using
-the <code class="docutils literal notranslate"><span class="pre">WithSeparateHeader</span></code> mixin.</p>
+the <a class="reference internal" href="api.html#fileformats.core.mixin.WithSeparateHeader" title="fileformats.core.mixin.WithSeparateHeader"><code class="xref py py-class docutils literal notranslate"><span class="pre">WithSeparateHeader</span></code></a> mixin.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.generic</span> <span class="kn">import</span> <span class="n">File</span>
 <span class="kn">from</span> <span class="nn">fileformats.core.mixin</span> <span class="kn">import</span> <span class="n">WithSeparateHeader</span>
 
@@ -351,10 +351,10 @@ return a dictionary containing metadata for the file-set.</p>
 <span class="go">&#39;0001&#39;</span>
 </pre></div>
 </div>
-<p>Similar to <code class="docutils literal notranslate"><span class="pre">WithSeparateHeader</span></code>, <code class="docutils literal notranslate"><span class="pre">WithSideCars</span></code> can be used to define a format that
+<p>Similar to <a class="reference internal" href="api.html#fileformats.core.mixin.WithSeparateHeader" title="fileformats.core.mixin.WithSeparateHeader"><code class="xref py py-class docutils literal notranslate"><span class="pre">WithSeparateHeader</span></code></a>, <a class="reference internal" href="api.html#fileformats.core.mixin.WithSideCars" title="fileformats.core.mixin.WithSideCars"><code class="xref py py-class docutils literal notranslate"><span class="pre">WithSideCars</span></code></a> can be used to define a format that
 contains some metadata within the main file, and additional metadata in a separate
-&quot;side-car&quot; file. It can be used the same as <code class="docutils literal notranslate"><span class="pre">WithSeparateHeader</span></code>, however, the
-type of the primary file that reads the metadata from the binary file with <code class="docutils literal notranslate"><span class="pre">read_metadata</span></code>
+&quot;side-car&quot; file. It can be used the same as <a class="reference internal" href="api.html#fileformats.core.mixin.WithSeparateHeader" title="fileformats.core.mixin.WithSeparateHeader"><code class="xref py py-class docutils literal notranslate"><span class="pre">WithSeparateHeader</span></code></a>, however, the
+type of the primary file that reads the metadata from the binary file with <code class="docutils literal notranslate"><span class="pre">read_metadata()</span></code>
 must also be defined in <code class="docutils literal notranslate"><span class="pre">primary_type</span></code></p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -365,12 +365,13 @@ method resolution order of the types bases, so that they can override methods in
 </section>
 <section id="custom-format-patterns">
 <h2>Custom format patterns<a class="headerlink" href="#custom-format-patterns" title="Link to this heading">¶</a></h2>
-<p>While the standard mixin classes should cover 90% of all formats, in the wild-west of
-scientific data formats you might need to write custom validators. This is simply done
-by adding a new property to the class using the <cite>&#64;property</cite> decorator.</p>
+<p>While the standard mixin classes should cover the large majority standard formats, in
+the wild-west of science data formats you are likely to need to design custom validators
+for your format. This is simply done by adding a new property to the class using the
+<cite>&#64;property</cite> decorator.</p>
 <p>Take for example the <a class="reference external" href="https://www.earthdatascience.org/courses/earth-analytics/spatial-data-r/shapefile-structure/">GIS shapefile structure</a>,
 it is a file-set consisting of 3 to 6 files differentiated by their extensions. To
-implement this class we use the <code class="docutils literal notranslate"><span class="pre">&#64;property</span></code> decorator. We inherit from the <code class="docutils literal notranslate"><span class="pre">WithAdjacentFiles</span></code>
+implement this class we use the <code class="docutils literal notranslate"><span class="pre">&#64;property</span></code> decorator. We inherit from the <a class="reference internal" href="api.html#fileformats.core.mixin.WithAdjacentFiles" title="fileformats.core.mixin.WithAdjacentFiles"><code class="xref py py-class docutils literal notranslate"><span class="pre">WithAdjacentFiles</span></code></a>
 mixin so that neighbouring files (i.e. files with the same stem but different extension)
 are included when the class is instantiated with just the primary &quot;.shp&quot; file.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.generic</span> <span class="kn">import</span> <span class="n">File</span>
@@ -449,7 +450,7 @@ are included when the class is instantiated with just the primary &quot;.shp&quo
 &quot;required paths&quot;, and are copied along side the main path in the <code class="docutils literal notranslate"><span class="pre">copy_to</span></code> method
 even when the <code class="docutils literal notranslate"><span class="pre">trim</span></code> argument is set to True.</p>
 <p>After the required properties have been deeper checks can be by using the <code class="docutils literal notranslate"><span class="pre">check</span></code>
-decorator. Take the <code class="docutils literal notranslate"><span class="pre">fileformats.image.Tiff</span></code> class</p>
+decorator. Take the <code class="xref py py-class docutils literal notranslate"><span class="pre">fileformats.image.Tiff</span></code> class</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Tiff</span><span class="p">(</span><span class="n">RasterImage</span><span class="p">):</span>
 
    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.tiff&quot;</span>
@@ -458,7 +459,7 @@ decorator. Take the <code class="docutils literal notranslate"><span class="pre"
    <span class="n">magic_number_le</span> <span class="o">=</span> <span class="s2">&quot;49492A00&quot;</span>
    <span class="n">magic_number_be</span> <span class="o">=</span> <span class="s2">&quot;4D4D002A&quot;</span>
 
-   <span class="nd">@mark</span><span class="o">.</span><span class="n">check</span>
+   <span class="nd">@property</span>
    <span class="k">def</span> <span class="nf">endianness</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
       <span class="n">read_magic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_contents</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">magic_number_le</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
       <span class="k">if</span> <span class="n">read_magic</span> <span class="o">==</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">magic_number_le</span><span class="p">):</span>
@@ -475,10 +476,65 @@ decorator. Take the <code class="docutils literal notranslate"><span class="pre"
       <span class="k">return</span> <span class="n">endianness</span>
 </pre></div>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">Tiff</span></code> format class needs to check two different magic numbers, one for big endian
+<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">Tiff</span></code> format class needs to check two different magic numbers, one for big endian
 files and another one for little endian files. Therefore we can't just use the
-<code class="docutils literal notranslate"><span class="pre">WithMagicNumber</span></code> mixin and have to roll our own, <code class="docutils literal notranslate"><span class="pre">endianness</span></code> is decorated with
-<code class="docutils literal notranslate"><span class="pre">fileformats.core.mark.check</span></code>.</p>
+<a class="reference internal" href="api.html#fileformats.core.mixin.WithMagicNumber" title="fileformats.core.mixin.WithMagicNumber"><code class="xref py py-class docutils literal notranslate"><span class="pre">WithMagicNumber</span></code></a> mixin and have to roll our own.</p>
+</section>
+<section id="extra-methods">
+<h2>Extra methods<a class="headerlink" href="#extra-methods" title="Link to this heading">¶</a></h2>
+<p>FileFormats <em>Extras</em> enable the creation of hooks in <cite>FileSet</cite> classes using the <cite>&#64;extra</cite>
+decorator that can be implemented in separate modules using the <cite>&#64;extra_implementation</cite>
+decorator. The &quot;extra methods&quot; typically add additional functionality for accessing and
+maninpulating the data within the fileset, i.e. not required for format detection and
+validation, and should be implemented in a separate package if they have external
+dependencies to keep the main and extension packages dependency free. The
+standard place to put these extras-implementations is in the sister &quot;extras&quot; package
+named <cite>fileformats-&lt;yournamespace&gt;-extras</cite>, located in the <cite>extras</cite> directory in the
+extension package root (see <a class="reference external" href="https://github.com/ArcanaFramework/fileformats-extension-template">https://github.com/ArcanaFramework/fileformats-extension-template</a>
+for further instructions). It is possible to implement extra methods in other modules,
+however, the extras package associated with formats namespace will be loaded by default
+when a hooked method is accessed.</p>
+<blockquote>
+<div><p>Use the <cite>&#64;extra</cite> decorator on a method in the to define an extras method,</p>
+</div></blockquote>
+<p>and then reference that method in the extras package using the <cite>&#64;extra_implementation</cite></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">some_external_package</span> <span class="kn">import</span> <span class="n">load_my_format</span><span class="p">,</span> <span class="n">save_my_format</span>
+<span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">extra_implementation</span>
+<span class="kn">from</span> <span class="nn">fileformats.mypackage</span> <span class="kn">import</span> <span class="n">MyFormat</span>
+
+<span class="nd">@extra_implementation</span><span class="p">(</span><span class="n">MyFormat</span><span class="o">.</span><span class="n">my_extra_method</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">my_extra_method</span><span class="p">(</span>
+    <span class="n">my_format</span><span class="p">:</span> <span class="n">MyFormat</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">save_path</span><span class="p">:</span> <span class="n">Path</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MyFormat</span><span class="p">:</span>
+    <span class="n">data_array</span> <span class="o">=</span> <span class="n">load_my_format</span><span class="p">(</span><span class="n">my_format</span><span class="o">.</span><span class="n">fspath</span><span class="p">)</span>
+    <span class="n">data_array</span><span class="p">[:</span><span class="n">index</span><span class="p">]</span> <span class="o">*=</span> <span class="n">scale</span>
+    <span class="n">save_my_format</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">data_array</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">MyFormat</span><span class="p">(</span><span class="n">save_path</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The first argument to the implementation functions is the instance the method
+is executed on, and the types of the remaining arguments and return need to match
+the hooked method exactly.</p>
+<p>It is possible to provide multiple overloads for subclasses of the format that defines
+the hook. Like <cite>functools.singledispacth</cite> (which is used under the hood), the type of
+the first argument (not the type of the class the method is referenced from in the decorated)
+determines which of the overloaded methods is called</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyFormatX</span><span class="p">(</span><span class="n">MyFormat</span><span class="p">):</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.myx&quot;</span>
+
+<span class="nd">@extra_implementation</span><span class="p">(</span><span class="n">MyFormat</span><span class="o">.</span><span class="n">my_extra_method</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">my_extra_method</span><span class="p">(</span>
+    <span class="n">my_format</span><span class="p">:</span> <span class="n">MyFormat</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">save_path</span><span class="p">:</span> <span class="n">Path</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MyFormat</span><span class="p">:</span>
+    <span class="o">...</span>
+
+<span class="nd">@extra_implementation</span><span class="p">(</span><span class="n">MyFormat</span><span class="o">.</span><span class="n">my_extra_method</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">my_extra_method</span><span class="p">(</span>
+    <span class="n">my_format</span><span class="p">:</span> <span class="n">MyFormatX</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">save_path</span><span class="p">:</span> <span class="n">Path</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MyFormatX</span><span class="p">:</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
 </section>
 <section id="implementing-converters">
 <h2>Implementing converters<a class="headerlink" href="#implementing-converters" title="Link to this heading">¶</a></h2>
@@ -487,11 +543,8 @@ files and another one for little endian files. Therefore we can't just use the
 of <a class="reference external" href="https://pydra.readthedocs.io">Pydra</a> tasks, function tasks, Python functions decorated by <code class="docutils literal notranslate"><span class="pre">&#64;pydra.mark.task</span></code>, and
 shell-command tasks, which wrap command-line tools in Python classes. To register a
 <a class="reference external" href="https://pydra.readthedocs.io">Pydra</a> task as a converter between two file formats it needs to be decorated with the
-<code class="docutils literal notranslate"><span class="pre">&#64;fileformats.core.mark.converter</span></code> decorator. Note that converters that rely on
-any additional dependencies should not be implemented in your extension package, rather
-in a sister &quot;extras&quot; package named <cite>fileformats-&lt;yournamespace&gt;-extras</cite>,
-see the <a class="reference external" href="https://github.com/ArcanaFramework/fileformats-extras-template">extras template</a>
-for further instructions.</p>
+<code class="docutils literal notranslate"><span class="pre">&#64;fileformats.core.converter</span></code> decorator. Like the implementation of extra methods,
+converters should be implemented in the sister extras package.</p>
 <p>Pydra uses type annotations to define the input and outputs of the tasks. It there is
 a input to the task named <code class="docutils literal notranslate"><span class="pre">in_file</span></code>, and either a single anonymous output or an output
 named <code class="docutils literal notranslate"><span class="pre">out_file</span></code>, and both are format classes, then no arguments need to be passed
@@ -500,11 +553,11 @@ automatically. For example,</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
 <span class="kn">import</span> <span class="nn">pydra.mark</span>
-<span class="kn">import</span> <span class="nn">fileformats.core.mark</span>
+<span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">converter</span>
 <span class="kn">from</span> <span class="nn">.mypackage</span> <span class="kn">import</span> <span class="n">MyFormat</span><span class="p">,</span> <span class="n">MyOtherFormat</span>
 
 
-<span class="nd">@fileformats</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">converter</span>
+<span class="nd">@converter</span>
 <span class="nd">@pydra</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">task</span>
 <span class="k">def</span> <span class="nf">convert_my_format</span><span class="p">(</span><span class="n">in_file</span><span class="p">:</span> <span class="n">MyFormat</span><span class="p">,</span> <span class="n">conversion_argument</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MyOtherFormat</span><span class="p">:</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">in_file</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
@@ -527,15 +580,15 @@ to do a generic conversion between all image types,</p>
 <span class="kn">import</span> <span class="nn">tempfile</span>
 <span class="kn">import</span> <span class="nn">pydra.mark</span>
 <span class="kn">import</span> <span class="nn">pydra.engine.specs</span>
-<span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">mark</span>
+<span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">converter</span>
 <span class="kn">from</span> <span class="nn">.raster</span> <span class="kn">import</span> <span class="n">RasterImage</span><span class="p">,</span> <span class="n">Bitmap</span><span class="p">,</span> <span class="n">Gif</span><span class="p">,</span> <span class="n">Jpeg</span><span class="p">,</span> <span class="n">Png</span><span class="p">,</span> <span class="n">Tiff</span>
 
 
-<span class="nd">@mark</span><span class="o">.</span><span class="n">converter</span><span class="p">(</span><span class="n">target_format</span><span class="o">=</span><span class="n">Bitmap</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="n">Bitmap</span><span class="p">)</span>
-<span class="nd">@mark</span><span class="o">.</span><span class="n">converter</span><span class="p">(</span><span class="n">target_format</span><span class="o">=</span><span class="n">Gif</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="n">Gif</span><span class="p">)</span>
-<span class="nd">@mark</span><span class="o">.</span><span class="n">converter</span><span class="p">(</span><span class="n">target_format</span><span class="o">=</span><span class="n">Jpeg</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="n">Jpeg</span><span class="p">)</span>
-<span class="nd">@mark</span><span class="o">.</span><span class="n">converter</span><span class="p">(</span><span class="n">target_format</span><span class="o">=</span><span class="n">Png</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="n">Png</span><span class="p">)</span>
-<span class="nd">@mark</span><span class="o">.</span><span class="n">converter</span><span class="p">(</span><span class="n">target_format</span><span class="o">=</span><span class="n">Tiff</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="n">Tiff</span><span class="p">)</span>
+<span class="nd">@converter</span><span class="p">(</span><span class="n">target_format</span><span class="o">=</span><span class="n">Bitmap</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="n">Bitmap</span><span class="p">)</span>
+<span class="nd">@converter</span><span class="p">(</span><span class="n">target_format</span><span class="o">=</span><span class="n">Gif</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="n">Gif</span><span class="p">)</span>
+<span class="nd">@converter</span><span class="p">(</span><span class="n">target_format</span><span class="o">=</span><span class="n">Jpeg</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="n">Jpeg</span><span class="p">)</span>
+<span class="nd">@converter</span><span class="p">(</span><span class="n">target_format</span><span class="o">=</span><span class="n">Png</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="n">Png</span><span class="p">)</span>
+<span class="nd">@converter</span><span class="p">(</span><span class="n">target_format</span><span class="o">=</span><span class="n">Tiff</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="n">Tiff</span><span class="p">)</span>
 <span class="nd">@pydra</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">task</span>
 <span class="nd">@pydra</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">annotate</span><span class="p">({</span><span class="s2">&quot;return&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;out_file&quot;</span><span class="p">:</span> <span class="n">RasterImage</span><span class="p">}})</span>
 <span class="k">def</span> <span class="nf">convert_image</span><span class="p">(</span><span class="n">in_file</span><span class="p">:</span> <span class="n">RasterImage</span><span class="p">,</span> <span class="n">output_format</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
@@ -579,11 +632,11 @@ input fields</p>
 <p>If you need to map any of the converter arguments or perform more complex logic, it is
 also possible to decorate a generic function that returns an instantiated <a class="reference external" href="https://pydra.readthedocs.io">Pydra</a> task,
 such as in the <code class="docutils literal notranslate"><span class="pre">mrconvert</span></code> converter in the <code class="docutils literal notranslate"><span class="pre">fileformats-medimage</span></code> package.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@mark</span><span class="o">.</span><span class="n">converter</span><span class="p">(</span><span class="n">source_format</span><span class="o">=</span><span class="n">MedicalImage</span><span class="p">,</span> <span class="n">target_format</span><span class="o">=</span><span class="n">Analyze</span><span class="p">,</span> <span class="n">out_ext</span><span class="o">=</span><span class="n">Analyze</span><span class="o">.</span><span class="n">ext</span><span class="p">)</span>
-<span class="nd">@mark</span><span class="o">.</span><span class="n">converter</span><span class="p">(</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@converter</span><span class="p">(</span><span class="n">source_format</span><span class="o">=</span><span class="n">MedicalImage</span><span class="p">,</span> <span class="n">target_format</span><span class="o">=</span><span class="n">Analyze</span><span class="p">,</span> <span class="n">out_ext</span><span class="o">=</span><span class="n">Analyze</span><span class="o">.</span><span class="n">ext</span><span class="p">)</span>
+<span class="nd">@converter</span><span class="p">(</span>
     <span class="n">source_format</span><span class="o">=</span><span class="n">MedicalImage</span><span class="p">,</span> <span class="n">target_format</span><span class="o">=</span><span class="n">MrtrixImage</span><span class="p">,</span> <span class="n">out_ext</span><span class="o">=</span><span class="n">MrtrixImage</span><span class="o">.</span><span class="n">ext</span>
 <span class="p">)</span>
-<span class="nd">@mark</span><span class="o">.</span><span class="n">converter</span><span class="p">(</span>
+<span class="nd">@converter</span><span class="p">(</span>
     <span class="n">source_format</span><span class="o">=</span><span class="n">MedicalImage</span><span class="p">,</span>
     <span class="n">target_format</span><span class="o">=</span><span class="n">MrtrixImageHeader</span><span class="p">,</span>
     <span class="n">out_ext</span><span class="o">=</span><span class="n">MrtrixImageHeader</span><span class="o">.</span><span class="n">ext</span><span class="p">,</span>
@@ -680,6 +733,7 @@ FormatB.</p>
 <li><a class="reference internal" href="#basic-formats">Basic formats</a></li>
 <li><a class="reference internal" href="#standard-mixins">Standard mixins</a></li>
 <li><a class="reference internal" href="#custom-format-patterns">Custom format patterns</a></li>
+<li><a class="reference internal" href="#extra-methods">Extra methods</a></li>
 <li><a class="reference internal" href="#implementing-converters">Implementing converters</a></li>
 </ul>
 </li>
@@ -692,7 +746,7 @@ FormatB.</p>
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=aeb4b65a"></script>
+</div><script src="_static/documentation_options.js?v=31f622c0"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=5fa4622c"></script>

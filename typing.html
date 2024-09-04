@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Developer Guide" href="developer.html" /><link rel="prev" title="Read, write and convert" href="extras.html" />
 
     <!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 -->
-        <title>Typing - FileFormats v0.12.0</title>
+        <title>Typing - FileFormats v0.12.1</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d8449d71" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
@@ -172,7 +172,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">FileFormats v0.12.0</div></a>
+      <a href="index.html"><div class="brand">FileFormats v0.12.1</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -199,7 +199,7 @@
     <img class="sidebar-logo" src="_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.12.0</span>
+  <span class="sidebar-brand-text">FileFormats v0.12.1</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -282,15 +282,13 @@ be classified as containing a PNG image</p>
 <span class="go">False</span>
 </pre></div>
 </div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>warning
-At the time of writing currently classifiers are not supported by Mypy and other
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Classifiers are currently not supported by Mypy and other
 static type checkers (only dynamic type-checking in <a href="#id1"><span class="problematic" id="id2">Pydra_</span></a>) because they use a
 custom <cite>__subclasshook__</cite> method to implement the subclassing behaviour and overload
-the <cite>__class_getitem__</cite> method, which isn't recommended in the official docs. It is
-hoped that it will be possible to implement a custom Mypy plugin in the future to
-support this feature.</p>
+the <cite>__class_getitem__</cite> method. It is hoped that it will be possible to implement
+a custom Mypy plugin in the future to support this feature.</p>
 </div>
 <p>The types of classes that can be used to classify varies from type to type. For archive
 types like <code class="xref py py-class docutils literal notranslate"><span class="pre">Zip</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Gzip</span></code>, take another file format type, others specific
@@ -499,7 +497,7 @@ a subclass</p>
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=aeb4b65a"></script>
+</div><script src="_static/documentation_options.js?v=31f622c0"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=5fa4622c"></script>
