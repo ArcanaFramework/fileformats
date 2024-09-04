@@ -1,6 +1,7 @@
 import sys
 import json
 import requests
+import typing as ty
 from warnings import warn
 from tqdm import tqdm
 from bs4 import BeautifulSoup
@@ -11,7 +12,7 @@ IANA_URL = "https://www.iana.org/assignments/media-types/media-types.xhtml"
 NONE_TYPES = ("none", "n/a", "")
 
 
-def extract_info_from_subtype_template(name, registry, text):
+def extract_info_from_subtype_template(name: str, registry: str, text: str) -> str:
     mime_info = {}
 
     def add_mime_info(key: str, value: str):
@@ -47,11 +48,11 @@ def extract_info_from_subtype_template(name, registry, text):
     return mime_info
 
 
-def get_subtype_templates():
+def get_subtype_templates() -> ty.Dict[str, ty.Dict[str, ty.Dict[str, ty.Any]]]:
     # Send a GET request to the URL
     response = requests.get(IANA_URL)
 
-    subtype_templates = {}
+    subtype_templates: ty.Dict[str, ty.Dict[str, ty.Dict[str, ty.Any]]] = {}
 
     # Parse the HTML content of the response
     soup = BeautifulSoup(response.content, "html.parser")

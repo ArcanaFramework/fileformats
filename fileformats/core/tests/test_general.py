@@ -1,11 +1,11 @@
 from pathlib import Path
 import platform
 import pytest
+import typing as ty
 from fileformats.generic import File
 from fileformats.field import Integer, Boolean, Decimal, Array, Text
 from fileformats.testing import Foo
 from fileformats.core.exceptions import FormatMismatchError
-from fileformats.core import hook
 from conftest import write_test_file
 
 
@@ -134,7 +134,9 @@ class ImageWithInlineHeader(File):
 
     header_separator = b"---END HEADER---"
 
-    def read_metadata(self):
+    def read_metadata(
+        self, selected_keys: ty.Optional[ty.Sequence[str]] = None
+    ) -> ty.Mapping[str, ty.Any]:
         hdr = self.contents.split(self.header_separator)[0].decode("utf-8")
         return {k: int(v) for k, v in (ln.split(":") for ln in hdr.splitlines())}
 
@@ -162,12 +164,11 @@ def test_header_overwrite(work_dir):
 
 
 class YFile(ImageWithInlineHeader):
-    @hook.required
     @property
     def y(self):
         return self.metadata["y"]
 
-    @hook.check
+    @property
     def y_value(self):
         if self.y <= 10:
             raise FormatMismatchError(f"'y' property is not > 10 ({self.y})")

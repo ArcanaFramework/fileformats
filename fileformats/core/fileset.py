@@ -14,6 +14,7 @@ import functools
 from pathlib import Path
 import hashlib
 import logging
+from fileformats.core.typing import Self
 from .utils import (
     classproperty,
     fspaths_converter,
@@ -21,12 +22,12 @@ from .utils import (
     matching_source,
     import_extras_module,
 )
+from .typing import FspathsInputType, CryptoMethod, PathType
 from .sampling import SampleFileGenerator
 from .identification import (
     to_mime_format_name,
     IANA_MIME_TYPE_REGISTRIES,
 )
-from .converter import SubtypeVar
 from .classifier import Classifier
 from .exceptions import (
     FormatMismatchError,
@@ -39,14 +40,12 @@ from .exceptions import (
     FileFormatsExtrasPkgNotCheckedError,
 )
 from .datatype import DataType
-from . import hook
+from .extras import extra
 from .fs_mount_identifier import FsMountIdentifier
 
-
-try:
-    from typing import Self
-except ImportError:
-    from typing_extensions import Self
+if ty.TYPE_CHECKING:
+    from pydra.engine.task import TaskBase
+    from .converter_helpers import ConverterSpec
 
 
 FILE_CHUNK_LEN_DEFAULT = 8192
@@ -68,33 +67,34 @@ class FileSet(DataType):
         a set of file-system paths pointing to all the resources in the file-set
     metadata : dict[str, Any]
         metadata associated with the file-set, typically lazily loaded via `read_metadata`
-        extras hook
+        extra hook
     """
 
     # Class attributes
-
-    # Store converters registered by @converter decorator that convert to FileSet
-    # NB: each class will have its own version of this dictionary
-    converters = {}
 
     # differentiate between Field and other DataType classes
     is_fileset = True
 
     # File extensions associated with file format
-    ext = None
-    alternate_exts = ()
+    ext: ty.Union[str, None] = None
+    alternate_exts: ty.Tuple[ty.Optional[str], ...] = ()
 
     # to be overridden in subclasses
     # Explicitly set the Internet Assigned Numbers Authority (https://iana_mime.org) MIME
     # type to None for any base classes that should not correspond to a MIME or MIME-like
     # type.
-    iana_mime = None
+    iana_mime: ty.Optional[str] = None
 
     # Member attributes
     fspaths: ty.FrozenSet[Path]
-    _metadata: ty.Union[ty.Dict[str, ty.Any], bool, None]
+    _metadata: ty.Union[ty.Mapping[str, ty.Any], bool, None]
 
-    def __init__(self, fspaths, metadata=False):
+    def __init__(
+        self,
+        fspaths: FspathsInputType,
+        metadata: ty.Union[ty.Dict[str, ty.Any], bool, None] = False,
+    ):
+        self._metadata = metadata
         self._validate_class()
         self.fspaths = fspaths_converter(fspaths)
         self._validate_fspaths()
@@ -103,10 +103,9 @@ class FileSet(DataType):
             raise TypeError(
                 f"Fileset metadata value needs to be None or dict, not {metadata} ({self})"
             )
-        self._metadata = metadata
         self._validate_properties()
 
-    def _validate_fspaths(self):
+    def _validate_fspaths(self) -> None:
         if not self.fspaths:
             raise ValueError(f"No file-system paths provided to {self}")
         missing = [p for p in self.fspaths if not p or not p.exists()]
@@ -128,24 +127,39 @@ class FileSet(DataType):
                 msg += "\n".join(str(p) for p in parent.iterdir())
             raise FileNotFoundError(msg)
 
-    def _validate_class(self):
+    def _validate_class(self) -> ty.Union[bool, None]:
         """Check that the class has been correctly defined"""
+        if self._valid_class:
+            return True
+        type(self)._valid_class = True
+        module_name = type(self).__module__
+        if (
+            not module_name.startswith("fileformats")
+            and not isinstance(self, MockMixin)
+            and not module_name.split(".")[-1].startswith("test_")
+        ):
+            raise FormatDefinitionError(
+                f"FileSet class {type(self).__name__} should be defined in the "
+                f"fileformats namespace not {module_name} unless it is in a test module"
+            )
+        return None  # Continue with subclass validation
 
-    def _additional_fspaths(self):
+    def _additional_fspaths(self) -> None:
         """Additional checks to be performed on the file-system paths provided to the"""
 
-    def _validate_properties(self):
+    def _validate_properties(self) -> None:
         # Check required properties don't raise errors
         for prop_name in self.required_properties():
             getattr(self, prop_name)
-        # Loop through all attributes and find methods marked by CHECK_ANNOTATION
-        for check in self.checks():
-            getattr(self, check)()
 
-    def __eq__(self, other) -> bool:
-        return type(self) is type(other) and self.fspaths == other.fspaths
+    def __eq__(self, other: object) -> bool:
+        return (
+            isinstance(other, FileSet)
+            and type(self) is type(other)
+            and self.fspaths == other.fspaths
+        )
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
 
     def __hash__(self) -> int:
@@ -158,7 +172,7 @@ class FileSet(DataType):
     @property
     def parent(self) -> Path:
         "A common parent directory for all the top-level paths in the file-set"
-        return Path(os.path.commonpath(p.parent for p in self.fspaths))
+        return Path(os.path.commonpath([p.parent for p in self.fspaths]))
 
     @property
     def relative_fspaths(self) -> ty.Iterator[Path]:
@@ -166,7 +180,7 @@ class FileSet(DataType):
         return (p.relative_to(self.parent) for p in self.fspaths)
 
     @classproperty
-    def mime_type(cls):
+    def mime_type(cls) -> str:
         """Generates a MIME type (IANA) identifier from a format class. If an official
         IANA MIME type doesn't exist it will create one in the in the MIME style, e.g.
 
@@ -181,12 +195,14 @@ class FileSet(DataType):
         str
             the MIME type corresponding to the class
         """
-        if getattr(cls, "iana_mime", None) is not None:
-            mime_type = cls.iana_mime
-        else:
+        try:
+            mime_type = cls.__dict__["iana_mime"]
+            assert isinstance(mime_type, str)
+            return mime_type
+        except KeyError:
+            assert isinstance(cls, type)
             format_name = to_mime_format_name(cls.__name__)
-            mime_type = f"application/x-{format_name}"
-        return mime_type
+            return f"application/x-{format_name}"
 
     @classproperty
     def strext(cls) -> str:
@@ -200,7 +216,7 @@ class FileSet(DataType):
         return not list(cls.required_properties())
 
     @classproperty
-    def possible_exts(cls):
+    def possible_exts(cls) -> ty.List[ty.Optional[str]]:
         """All possible extensions of the file format"""
         possible = [cls.ext]
         try:
@@ -210,11 +226,12 @@ class FileSet(DataType):
         return possible
 
     @property
-    def metadata(self) -> ty.Dict[str, ty.Any]:
+    def metadata(self) -> ty.Mapping[str, ty.Any]:
         """Lazily load metadata from `read_metadata` extra if implemented, returning an
         empty metadata array if not"""
         if self._metadata is not False:
-            return self._metadata
+            assert self._metadata is not True
+            return self._metadata if self._metadata else {}
         try:
             self._metadata = self.read_metadata()
         except FileFormatsExtrasPkgUninstalledError:
@@ -224,9 +241,11 @@ class FileSet(DataType):
             self._metadata = None
         except FileFormatsExtrasError:
             self._metadata = None
-        return self._metadata
+        return self._metadata if self._metadata else {}
 
-    def select_metadata(self, selected_keys: ty.Union[ty.Sequence[str], None]):
+    def select_metadata(
+        self, selected_keys: ty.Union[ty.Sequence[str], None] = None
+    ) -> None:
         """Selects a subset of the metadata to be read and stored instead all available
         (i.e for performance reasons).
 
@@ -235,15 +254,14 @@ class FileSet(DataType):
         selected_keys : Union[Sequence[str], None]
             the keys of the values to load. If None, all values are loaded
         """
-        if (
-            self._metadata
+        if not (
+            isinstance(self._metadata, dict)
             and selected_keys is not None
             and set(selected_keys).issubset(self._metadata)
         ):
-            return
-        self._metadata = self.read_metadata(selected_keys)
+            self._metadata = dict(self.read_metadata(selected_keys))
 
-    @hook.extra
+    @extra
     def read_metadata(
         self, selected_keys: ty.Optional[ty.Sequence[str]] = None
     ) -> ty.Mapping[str, ty.Any]:
@@ -262,29 +280,49 @@ class FileSet(DataType):
         raise NotImplementedError
 
     @classmethod
-    def required_properties(cls) -> ty.Generator[str, None, None]:
+    def required_properties(cls) -> ty.Tuple[str, ...]:
         """Find all properties required to treat file-set as being in the format specified
         by the class
 
         Returns
         -------
-        Generator[str, None, None]
-            an iterator over all properties names marked as "required"
+        tuple[str, ...]
+            a tuple containing all the properties names defined outside of core and
+            generic classes
         """
-        fileset_props = dir(FileSet)
-        for attr_name in dir(cls):
-            if attr_name in fileset_props:
+        required_props = cls.__dict__.get("_required_props")
+        if required_props is not None:
+            assert isinstance(required_props, tuple) and all(
+                isinstance(p, str) for p in required_props
+            )
+            return required_props  # return cached value
+        required_props = set()
+        for base in cls.__mro__:
+            mod_name = base.__module__
+            mod_parts = mod_name.split(".")
+            if mod_name.startswith("fileformats"):
+                subpkg = mod_parts[1]
+            elif mod_name.split(".")[-1].startswith("test_"):
+                subpkg = None
+            else:
                 continue
-            klass_attr = getattr(cls, attr_name)
-            if isinstance(klass_attr, property):
-                try:
-                    klass_attr.fget.__annotations__[cls.REQUIRED_ANNOTATION]
-                except KeyError:
-                    pass
-                else:
-                    yield attr_name
+            if subpkg in ("core", "generic") and mod_parts[-1] != "mixin":
+                base_name = base.__name__
+                if base_name == "FsObject":
+                    required_props.add("fspath")
+                elif base_name in ("Directory", "TypedSet"):
+                    required_props.add("_validate_contents")
+            else:
+                required_props.update(
+                    name
+                    for name, attr in base.__dict__.items()
+                    if (not name.startswith("__") and isinstance(attr, property))
+                )
+        required_props = tuple(required_props)
+        cls._required_props = required_props
+        return required_props
 
-    def required_paths(self) -> ty.Set[Path]:
+    def required_paths(self) -> ty.FrozenSet[Path]:
         """Returns all fspaths that are required for the format"""
         required = set()
         for prop_name in self.required_properties():
@@ -301,7 +339,7 @@ class FileSet(DataType):
             for path in paths:
                 if path in self.fspaths:
                     required.add(path)
-        return required
+        return frozenset(required)
 
     def nested_filesets(self) -> ty.List["FileSet"]:
         """Returns all nested filesets that are required for the format
@@ -319,37 +357,13 @@ class FileSet(DataType):
                 nested.extend(prop.nested_filesets())
         return nested
 
-    def trim_paths(self):
+    def trim_paths(self) -> Self:
         """Trims paths in fspaths to only those that are "required" by the format class
         i.e. returned by a required property"""
         self.fspaths = fspaths_converter(self.required_paths())
         return self
 
-    @classmethod
-    def checks(cls):
-        """Find all methods used to check the validity of the file format
-
-        Returns
-        -------
-        iter(str)
-            an iterator over all method names marked as a "check"
-        """
-        # Loop through all attributes and find methods marked by CHECK_ANNOTATION
-        fileset_props = dir(FileSet)
-        for attr_name in dir(cls):
-            if attr_name in fileset_props:
-                continue
-            klass_attr = getattr(cls, attr_name)
-            try:
-                klass_attr.__annotations__[cls.CHECK_ANNOTATION]
-            except (AttributeError, KeyError):
-                pass
-            else:
-                yield attr_name
-
-    def select_by_ext(
-        self, fileformat: ty.Optional[type] = None, allow_none: bool = False
-    ) -> Path:
+    def select_by_ext(self, fileformat: ty.Optional[ty.Type["FileSet"]] = None) -> Path:
         """Selects a single path from a set of file-system paths based on the file
         extension
 
@@ -357,20 +371,15 @@ class FileSet(DataType):
         ----------
         fileformat : type
             the format class of the path to select
-        allow_none : bool
-            whether to return None instead of raising an error if the file is not found
 
         Returns
         -------
-        Path or None
-            the selected file-system path that matches the extension or None if not found
-            and `allow_none` is True
+        Path
+            the selected file-system path that matches the extension
 
         Raises
         ------
-        FileFormatError
-            if no paths match the extension and `allow_none` is False
-        FileFormatError
+        FormatMismatchError
             if more than one paths matches the extension
         """
         if fileformat is None:
@@ -382,8 +391,6 @@ class FileSet(DataType):
             pass
         matches = self.matching_exts(self.fspaths, exts)
         if not matches:
-            if allow_none:
-                return None
             paths_str = ", ".join(str(p) for p in self.fspaths)
             raise FormatMismatchError(
                 f"No matching files with extensions in {exts} in file set {paths_str}"
@@ -397,7 +404,9 @@ class FileSet(DataType):
 
     @classmethod
     def matching_exts(
-        cls, fspaths: ty.Set[Path], exts: ty.Optional[ty.List[str]] = None
+        cls,
+        fspaths: ty.Collection[Path],
+        exts: ty.Optional[ty.List[ty.Optional[str]]] = None,
     ) -> ty.List[Path]:
         """Returns the paths out of the candidates provided that matches the
         given extension (by default the extension of the class)
@@ -423,14 +432,20 @@ class FileSet(DataType):
             fspaths = [fspaths]
         if exts is None:
             if cls.ext is None:
-                return True
+                return list(fspaths)
             exts = cls.possible_exts
         return [
             p for p in fspaths if any(e is None or str(p).endswith(e) for e in exts)
         ]
 
     @classmethod
-    def convert(cls, fileset, plugin="serial", task_name=None, **kwargs):
+    def convert(
+        cls,
+        fileset: "FileSet",
+        plugin: str = "serial",
+        task_name: ty.Optional[str] = None,
+        **kwargs: ty.Any,
+    ) -> Self:
         """Convert a given file-set into the format specified by the class
 
         Parameters
@@ -457,10 +472,15 @@ class FileSet(DataType):
         out_file = result.output.out_file
         if not isinstance(out_file, cls):
             out_file = cls(out_file)
-        return out_file
+        return out_file  # type: ignore
 
     @classmethod
-    def get_converter(cls, source_format: type, name: str = "converter", **kwargs):
+    def get_converter(
+        cls,
+        source_format: ty.Type[DataType],
+        name: str = "converter",
+        **kwargs: ty.Any,
+    ) -> "TaskBase":
         """Get a converter that converts from the source format type
         into the format specified by the class
 
@@ -488,34 +508,27 @@ class FileSet(DataType):
         """
         if issubclass(source_format, cls):
             return None
-        converters = (
-            cls.get_converters_dict()
-        )  # triggers loading of standard converters for target format
+        # trigger loading of standard converters for target format
+        converters = cls.get_converters_dict()
         try:
-            unclassified = source_format.unclassified
+            unclassified = source_format.unclassified  # type: ignore
         except AttributeError:
             import_extras_module(source_format)
         else:
             import_extras_module(unclassified)
         try:
-            converter_tuple = converters[source_format]
+            converter_spec = converters[source_format]
         except KeyError:
             # If no direct mapping check for mapping from source super types and wildcard
             # matches
-            available_converters = cls.get_converter_tuples(source_format)
+            available_converters = cls.get_converter_specs(source_format)
             if len(available_converters) > 1:
                 # FIXME: Hack to avoid situation where multiple converters get added but are identical
-                if all(
-                    matching_source(a[0], available_converters[0][0])
-                    for a in available_converters[1:]
-                ) and all(
-                    a[1:] == available_converters[0][1:]
-                    for a in available_converters[1:]
-                ):
+                if all(a == available_converters[0] for a in available_converters[1:]):
                     available_converters = [available_converters[0]]
                 else:
                     available_str = "\n".join(
-                        describe_task(a[0]) for a in available_converters
+                        describe_task(a.task) for a in available_converters
                     )
                     raise FormatConversionError(
                         f"Ambiguous converters found between '{cls.mime_like}' and "
@@ -534,35 +547,36 @@ class FileSet(DataType):
                         f"from PyPI (e.g. pip install {extras_mod.pypi}) or check it isn't broken"
                     )
                 raise FormatConversionError(msg) from None
-            converter_tuple = available_converters[0]
+            converter_spec = available_converters[0]
             # Store mapping for future reference
-            converters[source_format] = converter_tuple
-        converter, conv_kwargs = converter_tuple
+            converters[source_format] = converter_spec
         if kwargs:
             # Merge kwargs provided to get_conveter with stored kwargs
-            conv_kwargs = copy(conv_kwargs)
+            conv_kwargs = copy(converter_spec.args)
             conv_kwargs.update(kwargs)
-        return converter(name=name, **conv_kwargs)
+        else:
+            conv_kwargs = converter_spec.args
+        return converter_spec.task(name=name, **conv_kwargs)
 
     @classmethod
-    def get_converters_dict(cls, klass=None):
+    def get_converters_dict(
+        cls, klass: ty.Optional[ty.Type[DataType]] = None
+    ) -> ty.Dict[ty.Type[DataType], "ConverterSpec"]:
         # Only access converters to the specific class, not superclasses (which may not
         # be able to convert to the specific type)
         if klass is None:
             klass = cls
         # import related extras module for the target class
         import_extras_module(klass)
+        converters_dict: ty.Dict[ty.Type[DataType], "ConverterSpec"]
         try:
             converters_dict = klass.__dict__["converters"]
         except KeyError:
-            converters_dict = {}
-            klass.converters = converters_dict
+            converters_dict = klass.converters = {}
         return converters_dict
 
     @classmethod
-    def get_converter_tuples(
-        cls, source_format: type
-    ) -> ty.List[ty.Tuple[ty.Callable, ty.Dict[str, ty.Any]]]:
+    def get_converter_specs(cls, source_format: type) -> ty.List["ConverterSpec"]:
         """Search the registered converters to find any matches and return list of
         task and associated key-word args to perform the conversion between source and
         target formats
@@ -577,32 +591,33 @@ class FileSet(DataType):
         available : list[tuple[TaskBase, dict[str, Any]]]
             list of available converters between the source and target formats
         """
+        from .converter_helpers import SubtypeVar
+
         converters_dict = cls.get_converters_dict()
         available = []
         for src_frmt, converter in converters_dict.items():
-            if len(converter) == 2:  # Ignore converters with wildcards at this point
+            # Ignore converters with wildcards at this point
+            if not converter.classifiers:
                 if issubclass(source_format, src_frmt):
                     available.append(converter)
         if not available and hasattr(source_format, "unclassified"):
-            available = SubtypeVar.get_converter_tuples(
-                source_format, target_format=cls
-            )
+            available = SubtypeVar.get_converter_specs(source_format, target_format=cls)
         return available
 
     @classmethod
     def register_converter(
         cls,
-        source_format: type,
-        converter_tuple: ty.Tuple[ty.Callable, ty.Dict[str, ty.Any]],
-    ):
+        source_format: ty.Type["FileSet"],
+        converter_spec: "ConverterSpec",
+    ) -> None:
         """Registers a converter task within a class attribute. Called by the
-        @fileformats.hook.converter decorator.
+        @fileformats.core.converter decorator.
 
         Parameters
         ----------
         source_format : type
             the source format to register a converter from
-        converter_tuple
+        converter_spec
             a tuple consisting of a `task_spec` callable that resolves to a Pydra task
             and a dictionary of keyword arguments to be passed to the task spec at
             initialisation time
@@ -615,50 +630,56 @@ class FileSet(DataType):
         converters_dict = cls.get_converters_dict()
         # If no converters are loaded, attempt to load from the standard location
         if source_format in converters_dict:
-            prev_tuple = cls.converters[source_format]
-            task, task_kwargs = converter_tuple
-            prev_task, prev_kwargs = prev_tuple
-            if matching_source(task, prev_task) and task_kwargs == prev_kwargs:
+            prev_spec = cls.converters[source_format]
+            # task, task_kwargs = converter_spec
+            # prev_task, prev_kwargs = prev_tuple
+            if (
+                matching_source(converter_spec.task, prev_spec.task)
+                and converter_spec.args == prev_spec.args
+            ):
                 logger.warning(
                     "Ignoring duplicate registrations of the same converter %s",
-                    describe_task(task),
+                    describe_task(converter_spec.task),
                 )
                 return  # actually the same task but just imported twice for some reason
             raise FormatConversionError(
                 f"Cannot register converter from {source_format.__name__} "
-                f"to {cls.__name__}, {describe_task(task)}, because there is already "
-                f"one registered from {describe_task(prev_task)}:"
-                f"\n\n{inspect.getsource(task)}\n\nand{inspect.getsource(prev_task)}\n\n"
+                f"to {cls.__name__}, {describe_task(converter_spec.task)}, because there is already "
+                f"one registered from {describe_task(prev_spec.task)}:"
+                f"\n\n{inspect.getsource(converter_spec.task)}\n\n"
+                f"and{inspect.getsource(prev_spec.task)}\n\n"
             )
-        converters_dict[source_format] = converter_tuple
+        converters_dict[source_format] = converter_spec
 
     @classproperty
-    def all_formats(cls) -> set:
+    def all_formats(cls) -> ty.Set[ty.Type["FileSet"]]:
         """Iterate over all FileSet formats in fileformats.* namespaces"""
         if cls._all_formats is None:
             cls._all_formats = set(
-                f for f in FileSet.subclasses() if f.__dict__.get("iana_mime", True)
+                f
+                for f in FileSet.subclasses()
+                if (f.__dict__.get("iana_mime", True) and not inspect.isabstract(f))
             )
         return cls._all_formats
 
     @classproperty
-    def standard_formats(cls):
+    def standard_formats(cls) -> ty.Iterable[ty.Type["FileSet"]]:
         """Iterate over all formats in the standard fileformats.* namespaces"""
         return (f for f in cls.all_formats if f.namespace in IANA_MIME_TYPE_REGISTRIES)
 
     @classproperty
-    def formats_by_iana_mime(cls):
+    def formats_by_iana_mime(cls) -> ty.Dict[str, ty.Type["FileSet"]]:
         """a dictionary containing all formats by their IANA MIME type (if applicable)"""
         if cls._formats_by_iana_mime is None:
             cls._formats_by_iana_mime = {
-                f.iana_mime: f
+                f.iana_mime: f  # type: ignore
                 for f in FileSet.all_formats
                 if f.__dict__.get("iana_mime") is not None
             }
         return cls._formats_by_iana_mime
 
     @classproperty
-    def formats_by_name(cls):
+    def formats_by_name(cls) -> ty.Dict[str, ty.Set[ty.Type["FileSet"]]]:
         """a dictionary containing lists of formats by their translated class names,
         i.e. their can be more than one format with the same translated name"""
         if cls._formats_by_name is None:
@@ -669,7 +690,7 @@ class FileSet(DataType):
                         (
                             (to_mime_format_name(f.__name__), f)
                             for f in FileSet.all_formats
-                            if getattr(f, "iana_mime", None) is None
+                            if f.__dict__.get("iana_mime") is None
                         ),
                         key=itemgetter(0),
                     ),
@@ -692,11 +713,11 @@ class FileSet(DataType):
     def byte_chunks(
         self,
         mtime: bool = False,
-        chunk_len=FILE_CHUNK_LEN_DEFAULT,
-        relative_to: ty.Optional[os.PathLike] = None,
+        chunk_len: int = FILE_CHUNK_LEN_DEFAULT,
+        relative_to: ty.Optional[Path] = None,
         ignore_hidden_files: bool = False,
         ignore_hidden_dirs: bool = False,
-    ) -> ty.Generator[ty.Tuple[str, bytes], None, None]:
+    ) -> ty.Generator[ty.Tuple[str, ty.Iterator[bytes]], None, None]:
         """Yields relative paths for all files within the file-set along with iterators
         over their byte-contents. To be used when generating hashes for the file set.
 
@@ -728,7 +749,7 @@ class FileSet(DataType):
         """
         # If "relative_to" is not provided, get the common path between
         if relative_to is None:
-            relative_to = Path(os.path.commonpath(self.fspaths))
+            relative_to = Path(os.path.commonpath(list(self.fspaths)))
             if all(p.is_file() and p.parent == relative_to for p in self.fspaths):
                 relative_to /= os.path.commonprefix(
                     [p.name for p in self.fspaths]
@@ -736,20 +757,19 @@ class FileSet(DataType):
         # yield the absolute base path if using mtimes instead of contents
         if mtime:
             yield ("<base-path>", iter([str(relative_to.absolute()).encode()]))
-
-        relative_to = str(relative_to)
-        if Path(relative_to).is_dir() and not relative_to.endswith(os.path.sep):
-            relative_to += os.path.sep
+        relative_to_str = str(relative_to)
+        if relative_to.is_dir() and not relative_to_str.endswith(os.path.sep):
+            relative_to_str += os.path.sep
 
         if mtime:
 
-            def chunk_file(fspath: Path):
+            def chunk_file(fspath: Path) -> ty.Iterator[bytes]:
                 """Yields a byte representation of the last modified time for the file"""
                 yield bytes(struct.pack("<d", os.stat(fspath).st_mtime))
 
         else:
 
-            def chunk_file(fspath: Path):
+            def chunk_file(fspath: Path) -> ty.Iterator[bytes]:
                 """Yields the contents of the file in byte chunks"""
                 if not fspath.is_file():
                     assert fspath.is_symlink()  # broken symlink
@@ -759,11 +779,11 @@ class FileSet(DataType):
                         for chunk in iter(functools.partial(fp.read, chunk_len), b""):
                             yield chunk
 
-        def chunk_dir(fspath):
-            for dpath, _, filenames in sorted(os.walk(fspath)):
+        def chunk_dir(fspath: Path) -> ty.Iterator[ty.Tuple[str, ty.Iterator[bytes]]]:
+            for dpath_str, _, filenames in sorted(os.walk(fspath)):
                 # Sort in-place to guarantee order.
                 filenames.sort()
-                dpath = Path(dpath)
+                dpath = Path(dpath_str)
                 if (
                     ignore_hidden_dirs
                     and dpath.name.startswith(".")
@@ -774,12 +794,12 @@ class FileSet(DataType):
                     if ignore_hidden_files and filename.startswith("."):
                         continue
                     yield (
-                        str((dpath / filename).relative_to(relative_to)),
+                        str((dpath / filename).relative_to(relative_to_str)),
                         chunk_file(dpath / filename),
                     )
 
         for key, fspath in sorted(
-            ((str(p)[len(relative_to) :], p) for p in self.fspaths),
+            ((str(p)[len(relative_to_str) :], p) for p in self.fspaths),
             key=itemgetter(0),
         ):
             if fspath.is_dir():
@@ -787,7 +807,15 @@ class FileSet(DataType):
             else:
                 yield (key, chunk_file(fspath))
 
-    def hash(self, crypto=None, **kwargs) -> bytes:
+    def hash(
+        self,
+        crypto: CryptoMethod = None,
+        mtime: bool = False,
+        chunk_len: int = FILE_CHUNK_LEN_DEFAULT,
+        relative_to: ty.Optional[Path] = None,
+        ignore_hidden_files: bool = False,
+        ignore_hidden_dirs: bool = False,
+    ) -> str:
         """Calculate a unique hash for the file-set based on the relative paths and
         contents of its constituent files
 
@@ -806,13 +834,28 @@ class FileSet(DataType):
         if crypto is None:
             crypto = hashlib.sha256
         crytpo_obj = crypto()
-        for path, bytes_iter in self.byte_chunks(**kwargs):
+        for path, bytes_iter in self.byte_chunks(
+            mtime=mtime,
+            chunk_len=chunk_len,
+            relative_to=relative_to,
+            ignore_hidden_files=ignore_hidden_files,
+            ignore_hidden_dirs=ignore_hidden_dirs,
+        ):
             crytpo_obj.update(path.encode())
             for bytes_str in bytes_iter:
                 crytpo_obj.update(bytes_str)
-        return crytpo_obj.hexdigest()
+        digest: str = crytpo_obj.hexdigest()
+        return digest
 
-    def hash_files(self, crypto=None, **kwargs) -> ty.Dict[str, bytes]:
+    def hash_files(
+        self,
+        crypto: CryptoMethod = None,  # s
+        mtime: bool = False,
+        chunk_len: int = FILE_CHUNK_LEN_DEFAULT,
+        relative_to: ty.Optional[Path] = None,
+        ignore_hidden_files: bool = False,
+        ignore_hidden_dirs: bool = False,
+    ) -> ty.Dict[str, str]:
         """Calculate hashes for all files in the file-set based on the relative paths and
         contents of its constituent files
 
@@ -831,7 +874,13 @@ class FileSet(DataType):
         if crypto is None:
             crypto = hashlib.sha256
         file_hashes = {}
-        for path, bytes_iter in self.byte_chunks(**kwargs):
+        for path, bytes_iter in self.byte_chunks(
+            mtime=mtime,
+            chunk_len=chunk_len,
+            relative_to=relative_to,
+            ignore_hidden_files=ignore_hidden_files,
+            ignore_hidden_dirs=ignore_hidden_dirs,
+        ):
             crypto_obj = crypto()
             for bytes_str in bytes_iter:
                 crypto_obj.update(bytes_str)
@@ -839,14 +888,14 @@ class FileSet(DataType):
         return file_hashes
 
     def __bytes_repr__(
-        self, cache: dict  # pylint: disable=unused-argument
+        self, cache: ty.Dict[ty.Any, str]  # pylint: disable=unused-argument
     ) -> ty.Iterable[bytes]:
         """Provided for compatibility with Pydra's hashing function, return the contents
         of all the files in the file-set in chunks
 
         Parameters
         ----------
-        cache : dict
+        cache : dict[Any, str]
             an object passed around by Pydra's hashing function to store cached versions
             of previously hashed objects, to allow recursive structures
 
@@ -863,7 +912,7 @@ class FileSet(DataType):
             yield from chunk_iter
 
     @classmethod
-    def referenced_types(cls) -> ty.Set[Classifier]:
+    def referenced_types(cls) -> ty.Set[ty.Type[Classifier]]:
         """Returns a flattened list of nested types referenced within the fileset type
 
         Returns
@@ -871,10 +920,10 @@ class FileSet(DataType):
         types : set[Classifier]
             all the types that are referenced in shape or form within the class
         """
-        types = set([cls])
+        types: ty.Set[ty.Type[Classifier]] = set([cls])
         for b in cls.__mro__:
             try:
-                nested = b.nested_types
+                nested = b.nested_types  # type: ignore
             except AttributeError:
                 continue
             for t in nested:
@@ -882,36 +931,39 @@ class FileSet(DataType):
         return types
 
     @classmethod
-    def mock(cls, *fspaths: ty.Tuple[ty.Union[Path, str]]) -> "FileSet":
+    def mock(cls, *fspaths: ty.Union[Path, str]) -> "Self":
         """Return an instance of a mocked sub-class of the file format to be used in
         test routines like doctests that doesn't require to point at actual files
 
         Parameters
         ----------
-        *fspaths: tuple[Path]
+        *fspaths: sequence[Path | str]
             the paths to be provided to the mocked class, by default will be ["mock/<class-name-lower>"]
 
         Returns
         -------
-        FileSet
+        Self
             a file-set that will pass type-checking as an instance of the given
             fileset class but which doesn't actually point to any FS objects.
         """
-        mock_cls = type(cls.__name__ + "Mock", (MockMixin, cls), {"TRUE_CLASS": cls})
+        mock_cls: ty.Type[Self] = type(
+            cls.__name__ + "Mock", (MockMixin, cls), {"TRUE_CLASS": cls}
+        )
+        fspaths_lst = list(fspaths)
         if not fspaths:
-            fspaths = []
+            fspaths_lst = []
             fspath = f"/mock/{cls.__name__.lower()}"
             if cls.ext:
                 fspath += cls.ext
-            fspaths.append(fspath)
-        return mock_cls(fspaths=fspaths)
+            fspaths_lst.append(fspath)
+        return mock_cls(fspaths=fspaths_lst)
 
     @classmethod
     def sample(
         cls,
         dest_dir: ty.Optional[Path] = None,
         seed: ty.Union[int, str] = 0,
-        stem: str = None,
+        stem: ty.Optional[str] = None,
     ) -> Self:
         """Return an sample instance of the file-set type for classes where the
         `test_data` extra has been implemented
@@ -934,7 +986,7 @@ class FileSet(DataType):
         if not dest_dir:
             dest_dir = Path(tempfile.mkdtemp())
         # Need to use mock to get an instance in order to use the singledispatch-based
-        # hook.extra decorator
+        # extra decorator
         fspaths = cls.sample_data(
             SampleFileGenerator(dest_dir=dest_dir, seed=seed, fname_stem=stem)
         )
@@ -942,9 +994,9 @@ class FileSet(DataType):
             obj = cls(fspaths)
         except FormatMismatchError as e:
             raise NotImplementedError(
-                f"File paths generated by Fileset.generate_sample_data() overload "
+                f"File paths generated by override of Fileset.generate_sample_data() "
                 f"({fspaths}) do not match '{cls.mime_like}' file type. A more specific "
-                f"overload is required. Reason:\n\n{e}"
+                f"implementation is required. Reason:\n\n{e}"
             )
         return obj
 
@@ -966,11 +1018,11 @@ class FileSet(DataType):
         mock: FileSet = cls.mock()
         return mock.generate_sample_data(generator)
 
-    @hook.extra
+    @extra
     def generate_sample_data(
         self,
         generator: SampleFileGenerator,
-    ) -> ty.Iterable[Path]:
+    ) -> ty.List[Path]:
         """Generate test data at the fspaths of the file-set
 
         Parameters
@@ -1010,7 +1062,7 @@ class FileSet(DataType):
         single = 1
         multiple = 2
 
-        def __str__(self):
+        def __str__(self) -> str:
             return self.name
 
     def decomposed_fspaths(
@@ -1058,7 +1110,9 @@ class FileSet(DataType):
                     implicit.remove(fileset.fspath)
                 elif decomposed not in decomposed_fspaths:
                     previous_fileset = next(
-                        f for f in nested if f.fspath == fileset.fspath
+                        f
+                        for f in nested
+                        if isinstance(f, File) and f.fspath == fileset.fspath
                     )
                     previous = (
                         previous_fileset.fspath.parent,
@@ -1079,7 +1133,9 @@ class FileSet(DataType):
 
     @classmethod
     def decompose_fspath(
-        cls, fspath: Path, mode: ExtensionDecomposition = ExtensionDecomposition.single
+        cls,
+        fspath: ty.Union[Path, str],
+        mode: ExtensionDecomposition = ExtensionDecomposition.single,
     ) -> ty.Tuple[Path, str, str]:
         if isinstance(fspath, str):
             fspath = Path(fspath)
@@ -1093,14 +1149,14 @@ class FileSet(DataType):
             ext = fspath.suffix
         else:
             assert mode == cls.ExtensionDecomposition.none
-            stem = fspath
+            stem = str(fspath)
             ext = ""
         return fspath.parent, stem, ext
 
     @classmethod
     def from_paths(
         cls, fspaths: ty.Iterable[Path], common_ok: bool = False
-    ) -> ty.Tuple[ty.Set["FileSet"], ty.Set[Path]]:
+    ) -> ty.Tuple[ty.Set[Self], ty.Set[Path]]:
         """Finds all instances of the fileset class that can be constructed from a
         collection of file-system paths.
 
@@ -1199,22 +1255,22 @@ class FileSet(DataType):
         leave_or_symlink_or_copy = 0b1011
         leave_or_hardlink_or_copy = 0b1101
 
-        def __xor__(self, other):
+        def __xor__(self, other: "FileSet.CopyMode") -> "FileSet.CopyMode":
             return type(self)(self.value ^ other.value)
 
-        def __and__(self, other):
+        def __and__(self, other: "FileSet.CopyMode") -> "FileSet.CopyMode":
             return type(self)(self.value & other.value)
 
-        def __or__(self, other):
+        def __or__(self, other: "FileSet.CopyMode") -> "FileSet.CopyMode":
             return type(self)(self.value | other.value)
 
-        def __sub__(self, other):
+        def __sub__(self, other: "FileSet.CopyMode") -> "FileSet.CopyMode":
             return type(self)((self.value & (self.value ^ other.value)))
 
-        def __bool__(self):
+        def __bool__(self) -> bool:
             return bool(self.value)
 
-        def __str__(self):
+        def __str__(self) -> str:
             return self.name
 
     class CopyCollation(IntEnum):
@@ -1243,12 +1299,12 @@ class FileSet(DataType):
         siblings = 1
         adjacent = 2
 
-        def __str__(self):
+        def __str__(self) -> str:
             return self.name
 
     def copy(
         self,
-        dest_dir: Path,
+        dest_dir: PathType,
         mode: ty.Union[CopyMode, str] = CopyMode.copy,
         collation: ty.Union[CopyCollation, str] = CopyCollation.any,
         new_stem: ty.Optional[str] = None,
@@ -1257,7 +1313,7 @@ class FileSet(DataType):
         overwrite: bool = False,
         supported_modes: CopyMode = CopyMode.any,
         extension_decomposition: ExtensionDecomposition = ExtensionDecomposition.single,
-    ):
+    ) -> Self:
         """Copies the file-set to a new directory, optionally renaming the files
         to have consistent name-stems.
 
@@ -1298,6 +1354,7 @@ class FileSet(DataType):
             FileSet isn't explicitly defined by the FileSet class. Only relevant when
             collation mode is set to "adjacent". By default True
         """
+        dest_dir = Path(dest_dir)
         # Logic to determine the laziest mode to use
         mode = self.CopyMode[mode] if isinstance(mode, str) else mode
         if len(self.fspaths) == 1:
@@ -1354,15 +1411,18 @@ class FileSet(DataType):
         if selected_mode & self.CopyMode.leave:
             return self  # Don't need to do anything
 
+        copy_file: ty.Callable[[Path, Path], None]
+        copy_dir: ty.Callable[[Path, Path], None]
+
         # Select inner copy/link methods
         if selected_mode & self.CopyMode.symlink:
             copy_dir = copy_file = os.symlink
         elif selected_mode & self.CopyMode.hardlink:
             copy_file = os.link
 
-            def hardlink_dir(src: Path, dest: Path):
-                for dpath, _, fpaths in os.walk(src):
-                    dpath = Path(dpath)
+            def hardlink_dir(src: Path, dest: Path) -> None:
+                for dpath_str, _, fpaths in os.walk(src):
+                    dpath = Path(dpath_str)
                     relpath = dpath.relative_to(src)
                     (dest / relpath).mkdir()
                     for fpath in fpaths:
@@ -1372,7 +1432,7 @@ class FileSet(DataType):
         else:
             assert selected_mode & self.CopyMode.copy
             copy_dir = shutil.copytree
-            copy_file = shutil.copyfile
+            copy_file = shutil.copyfile  # type: ignore
 
         # Get the paths that need to be copied, checking that it is possible to achieve
         # the requested collation mode
@@ -1414,14 +1474,14 @@ class FileSet(DataType):
 
     def move(
         self,
-        dest_dir: Path,
+        dest_dir: PathType,
         collation: ty.Union[CopyCollation, str] = CopyCollation.any,
         new_stem: ty.Optional[str] = None,
         trim: bool = True,
         make_dirs: bool = False,
         overwrite: bool = False,
         extension_decomposition: ExtensionDecomposition = ExtensionDecomposition.single,
-    ):
+    ) -> Self:
         """Moves the file-set to a new directory, optionally renaming the files
         to have consistent name-stems.
 
@@ -1450,6 +1510,7 @@ class FileSet(DataType):
             FileSet isn't explicitly defined by the FileSet class. Only relevant when
             collation mode is set to "adjacent". By default True
         """
+        dest_dir = Path(dest_dir)
         if len(self.fspaths) == 1:
             # If there is only one path to copy, then collation isn't meaningful
             collation = self.CopyCollation.any
@@ -1485,7 +1546,7 @@ class FileSet(DataType):
                         f"Destination path '{str(new_path)}' exists, set "
                         "'overwrite' to overwrite it"
                     )
-            shutil.move(fspath, new_path)
+            shutil.move(str(fspath), new_path)
             new_paths.append(new_path)
         return type(self)(new_paths)
 
@@ -1495,7 +1556,9 @@ class FileSet(DataType):
         trim: bool,
         collation: CopyCollation,
         extension_decomposition: ExtensionDecomposition,
-    ) -> ty.Iterable[ty.Union[Path, ty.Tuple[Path, str, str]]]:
+    ) -> ty.Tuple[
+        ty.Iterable[ty.Union[Path, ty.Tuple[Path, str, str]]], ty.Optional[str]
+    ]:
         """Returns the file-paths to be copied/moved based on the collation mode and
         new_stem
 
@@ -1547,6 +1610,7 @@ class FileSet(DataType):
                     f'"{collation}", as there are duplicate extensions, {duplicate_exts}, '
                     f"in file paths: " + "\n".join(str(p) for p in self.fspaths)
                 )
+        fspaths_to_copy: ty.Iterable[ty.Union[Path, ty.Tuple[Path, str, str]]]
         if trim and self.required_paths():
             fspaths_to_copy = self.required_paths()
         else:
@@ -1561,6 +1625,7 @@ class FileSet(DataType):
             if new_stem is None:
                 new_stem = sorted(decomposed_fspaths)[0][1]
         # WARNING we redefine fspaths_to_copy as list of tuples not Paths
+
         if new_stem:
             fspaths_to_copy = decomposed_fspaths
         return fspaths_to_copy, new_stem
@@ -1569,7 +1634,7 @@ class FileSet(DataType):
         self,
         dest_dir: Path,
         fspath: ty.Union[Path, ty.Tuple[Path, str, str]],
-        new_stem: str,
+        new_stem: ty.Optional[str],
         collation: CopyCollation,
     ) -> ty.Tuple[Path, Path]:
         """Returns the new path for a file to be copied/moved based on the collation mode
@@ -1596,7 +1661,8 @@ class FileSet(DataType):
         fspath : Path
             the original file-path, reconstructed from its decomposition if necessary
         """
-        if new_stem:
+        if not isinstance(fspath, Path):
+            assert new_stem
             # fspath is a path decomposed into parent, stem, ext instead of a Path
             parent_dir, old_stem, ext = fspath
             fspath = parent_dir / (old_stem + ext)  # reconstruct into a Path
@@ -1609,51 +1675,47 @@ class FileSet(DataType):
             new_path.parent.mkdir(parents=True, exist_ok=True)
         return new_path, fspath
 
-    def copy_to(self, *args, **kwargs):
-        """For b/w compatibility (temporary message)"""
-        warn("'FileSet.copy_to()' has been deprecated, please use copy() instead")
-        return self.copy(*args, **kwargs)
-
-    _all_formats = None
-    _formats_by_iana_mime = None
-    _formats_by_name = None
+    # Class attributes, used to cache the results of the class methods
+    _all_formats: ty.Optional[ty.Set[ty.Type["FileSet"]]] = None
+    _formats_by_iana_mime: ty.Optional[ty.Dict[str, ty.Type["FileSet"]]] = None
+    _formats_by_name: ty.Optional[ty.Dict[str, ty.Set[ty.Type["FileSet"]]]] = None
+    _required_props: ty.Optional[ty.Tuple[str, ...]] = None
+    _valid_class: ty.Optional[bool] = None
 
 
 class MockMixin:
     """Strips out validation methods of a class, allowing it to be mocked in a way that
     still satisfies type-checking"""
 
-    # Mirror fspaths here so we can unset its validator
-    fspaths: ty.FrozenSet[Path]
-
-    def _additional_fspaths(self):
-        pass  # disable implicit addition of related fspaths
-
-    def _validate_fspaths(self):
-        pass  # disable validation of fspaths
-
-    def _validate_properties(self):
-        pass  # disable validation of properties
+    def __init__(
+        self,
+        fspaths: FspathsInputType,
+        metadata: ty.Union[ty.Dict[str, ty.Any], bool, None] = False,
+    ):
+        self.fspaths = fspaths_converter(fspaths)
+        self._metadata = metadata
 
     @classproperty
-    def type_name(cls):
-        assert cls.__name__.endswith("Mock")
-        return cls.__name__[: -len("Mock")]
+    def type_name(cls) -> str:
+        class_name: str = cls.__name__  # type: ignore
+        assert class_name.endswith("Mock")
+        return class_name[: -len("Mock")]
 
-    def __bytes_repr__(self, cache):
+    def __bytes_repr__(self, cache: ty.Dict[str, ty.Any]) -> ty.Iterable[bytes]:
         yield from (str(fspath).encode() for fspath in self.fspaths)
 
     @classproperty
-    def namespace(cls):
+    def namespace(cls) -> str:
         """The "namespace" the format belongs to under the "fileformats" umbrella
         namespace"""
-        for base in cls.__mro__:
+        mro: ty.Tuple[ty.Type] = cls.__mro__  # type: ignore
+        for base in mro:
             if issubclass(base, MockMixin):
                 continue
             try:
-                return base.namespace
+                return base.namespace  # type: ignore
             except FormatDefinitionError:
                 pass
         raise FormatDefinitionError(
-            f"None of of the bases classes of {cls} ({cls.__mro__}) have a valid namespace"
+            f"None of of the bases classes of {cls} ({mro}) have a valid namespace"
         )

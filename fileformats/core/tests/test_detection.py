@@ -167,8 +167,7 @@ def test_nested_directories_fail2(work_dir):
 
 #     ext = ".foo"
 
-#     @hook.required
-#     @property
+#     @#     @property
 #     def bar(self):
 #         return self.select_by_ext(".bar")
 

@@ -8,13 +8,15 @@ from contextlib import contextmanager
 import subprocess as sp
 from .utils import logger
 
+PathLike = ty.Union[str, Path]
+
 
 class FsMountIdentifier:
     """Used to check the mount type that given file paths reside on in order to determine
     features that can be used (e.g. symlinks)"""
 
     @classmethod
-    def symlinks_supported(cls, path: os.PathLike) -> bool:
+    def symlinks_supported(cls, path: PathLike) -> bool:
         """
         Check whether a file path is on a CIFS filesystem mounted in a POSIX host.
 
@@ -37,12 +39,12 @@ class FsMountIdentifier:
         return cls.get_mount(path)[1] != "cifs"
 
     @classmethod
-    def on_same_mount(cls, path1: os.PathLike, path2: os.PathLike) -> bool:
+    def on_same_mount(cls, path1: PathLike, path2: PathLike) -> bool:
         """Checks whether two or paths are on the same logical file system"""
         return cls.get_mount(path1)[0] == cls.get_mount(path2)[0]
 
     @classmethod
-    def get_mount(cls, path: os.PathLike) -> ty.Tuple[Path, str]:
+    def get_mount(cls, path: PathLike) -> ty.Tuple[Path, str]:
         """Get the mount point for a given file-system path
 
         Parameters
@@ -123,8 +125,8 @@ class FsMountIdentifier:
         matches = [(ll, pattern.match(ll)) for ll in output.strip().splitlines() if ll]
 
         # (path, fstype) tuples, sorted by path length (longest first)
-        mounts = sorted(
-            (match.groups() for _, match in matches if match is not None),
+        mounts: ty.List[ty.Tuple[str, str]] = sorted(
+            (match.groups() for _, match in matches if match is not None),  # type: ignore
             key=lambda x: len(x[0]),
             reverse=True,
         )
@@ -144,7 +146,7 @@ class FsMountIdentifier:
 
     @classmethod
     @contextmanager
-    def patch_table(cls, mount_table: ty.List[ty.Tuple[str, str]]):
+    def patch_table(cls, mount_table: ty.List[ty.Tuple[str, str]]) -> ty.Iterator[None]:
         """Patch the mount table with new values. Used in test routines"""
         orig_table = cls._mount_table
         cls._mount_table = list(mount_table)

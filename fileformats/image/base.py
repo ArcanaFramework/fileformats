@@ -3,4 +3,5 @@ from fileformats.generic import File
 
 # General image formats
 class Image(File):
-    iana_mime = None
+    # iana_mime = None
+    pass

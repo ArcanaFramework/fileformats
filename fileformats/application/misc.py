@@ -1,3 +1,4 @@
+import typing as ty
 from fileformats.generic import File
 from fileformats.core.mixin import WithMagicNumber
 from .serialization import Xml, Json
@@ -6,8 +7,8 @@ from .serialization import Xml, Json
 class _1dInterleavedParityfec(File):
     """Multimedia applications that want to improve resiliency against packet loss by sending redundant data in addition to the source media."""
 
-    iana_mime = "application/1d-interleaved-parityfec"
-    ext = None
+    iana_mime: ty.Optional[str] = "application/1d-interleaved-parityfec"
+    ext: ty.Optional[str] = None
 
 
 class _3gpdashQoeReport__Xml(Xml):
@@ -1059,7 +1060,8 @@ class Encaprtp(File):
 class Epp__Xml(Xml):
     """EPP is device-, platform-, and vendor-neutral and is supported by multiple service providers.
 
-    If used, magic numbers, fragment identifiers, base URIs, and use of the BOM should be as specified in [RFC3023]."""
+    If used, magic numbers, fragment identifiers, base URIs, and use of the BOM should be as specified in [RFC3023].
+    """
 
     iana_mime = "application/epp+xml"
     ext = ".xml"
@@ -2177,7 +2179,8 @@ class P21__Zip(File):
 class P2pOverlay__Xml(Xml):
     """The type is used to configure the peer to peer overlay networks defined in RFC-to-be.
 
-    The syntax for this media type is specified in Section 11.1 of [RFC-to-be].  The contents MUST be valid XML compliant with the RELAX NG grammar specified in RFC-to-be and use the UTF-8[RFC3629] character encoding."""
+    The syntax for this media type is specified in Section 11.1 of [RFC-to-be].  The contents MUST be valid XML compliant with the RELAX NG grammar specified in RFC-to-be and use the UTF-8[RFC3629] character encoding.
+    """
 
     iana_mime = "application/p2p-overlay+xml"
     ext = ".relo"
@@ -2538,7 +2541,8 @@ class Raptorfec(File):
 class Rdap__Json(Json):
     """Implementations of the Registration Data Access Protocol (RDAP).
 
-    This media type is a product of the IETF REGEXT Working Group.  The REGEXT charter, information on the REGEXT mailing list, and other documents produced by the REGEXT"""
+    This media type is a product of the IETF REGEXT Working Group.  The REGEXT charter, information on the REGEXT mailing list, and other documents produced by the REGEXT
+    """
 
     iana_mime = "application/rdap+json"
     ext = None
@@ -3044,7 +3048,8 @@ class Soap__Xml(Xml):
 class SparqlQuery(File):
     """
 
-    TODO: A SPARQL query may have the string 'PREFIX' (case independent) near the beginning of the document."""
+    TODO: A SPARQL query may have the string 'PREFIX' (case independent) near the beginning of the document.
+    """
 
     iana_mime = "application/sparql-query"
     ext = ".rq"

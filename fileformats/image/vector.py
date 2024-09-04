@@ -3,7 +3,8 @@ from fileformats.application import InformalSchema, Xml
 
 
 class VectorImage(Image):
-    iana_mime = None
+    # iana_mime = None
+    pass
 
 
 class Svg(InformalSchema):

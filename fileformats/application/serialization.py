@@ -1,11 +1,15 @@
 import json
 import typing as ty
+from fileformats.core.typing import Self, TypeAlias
 from pathlib import Path
-from fileformats.core import hook, DataType, FileSet
+from fileformats.core import extra, DataType, FileSet, extra_implementation
 from fileformats.core.mixin import WithClassifiers
 from ..generic import File
 from fileformats.core.exceptions import FormatMismatchError
 from fileformats.core import SampleFileGenerator
+
+
+LoadedSerialization: TypeAlias = ty.Union[ty.Dict[str, ty.Any], ty.List[ty.Any]]
 
 
 class Schema(DataType):
@@ -31,27 +35,27 @@ class DataSerialization(WithClassifiers, File):
     "Base class for text-based hierarchical data-serialization formats, e.g. JSON, YAML"
 
     # Classifiers class attrs
-    classifiers_attr_name = "schema"
-    schema = None
-    multiple_classifiers = False
-    allowed_classifiers = (Schema,)
-    generically_classifies = True
-    binary = False
+    classifiers_attr_name: ty.Optional[str] = "schema"
+    schema: ty.Optional[ty.Type[Schema]] = None
+    multiple_classifiers: bool = False
+    allowed_classifiers: ty.Tuple[ty.Type[Schema], ...] = (Schema,)
+    generically_classifiable: bool = True
+    binary: bool = False
 
-    iana_mime = None
+    iana_mime: ty.Optional[str] = None
 
-    @hook.extra
-    def load(self) -> dict:
+    @extra
+    def load(self) -> LoadedSerialization:
         """Load the contents of the file into a dictionary"""
         raise NotImplementedError
 
-    @hook.extra
-    def save(self, data: dict):
+    @extra
+    def save(self, data: LoadedSerialization) -> None:
         """Serialise a dictionary to a new file"""
         raise NotImplementedError
 
     @classmethod
-    def save_new(cls, fspath, data):
+    def save_new(cls, fspath: ty.Union[str, Path], data: LoadedSerialization) -> Self:
         # We have to use a mock object as the data file hasn't been written yet
         mock = cls.mock(fspath)
         mock.save(data)
@@ -59,26 +63,25 @@ class DataSerialization(WithClassifiers, File):
 
 
 class Xml(DataSerialization):
-    ext = ".xml"
+    ext: ty.Optional[str] = ".xml"
     allowed_classifiers = (XmlSchema, InformalSchema)
 
 
 class Json(DataSerialization):
-    ext = ".json"
+    ext: ty.Optional[str] = ".json"
     allowed_classifiers = (JsonSchema, InformalSchema)
 
-    @hook.check
-    def load(self):
+    def load(self) -> LoadedSerialization:
         try:
             with open(self.fspath) as f:
-                dct = json.load(f)
+                dct: ty.Dict[str, ty.Any] = json.load(f)
         except json.JSONDecodeError as e:
             raise FormatMismatchError(
                 f"'{self.fspath}' is not a valid JSON file"
             ) from e
         return dct
 
-    def save(self, data):
+    def save(self, data: LoadedSerialization) -> None:
         with open(self.fspath, "w") as f:
             json.dump(data, f)
 
@@ -92,11 +95,11 @@ class Toml(DataSerialization):
     ext = ".toml"
 
 
-@FileSet.generate_sample_data.register
+@extra_implementation(FileSet.generate_sample_data)
 def generate_json_sample_data(
     js: Json,
     generator: SampleFileGenerator,
-) -> ty.Iterable[Path]:
+) -> ty.List[Path]:
     js_file = generator.generate_fspath(file_type=Json)
     with open(js_file, "w") as f:
         json.dump(
@@ -111,11 +114,11 @@ def generate_json_sample_data(
     return [js_file]
 
 
-@FileSet.generate_sample_data.register
+@extra_implementation(FileSet.generate_sample_data)
 def generate_yaml_sample_data(
     yml: Yaml,
     generator: SampleFileGenerator,
-) -> ty.Iterable[Path]:
+) -> ty.List[Path]:
     yml_file = generator.generate_fspath(file_type=Yaml)
     with open(yml_file, "w") as f:
         f.write(

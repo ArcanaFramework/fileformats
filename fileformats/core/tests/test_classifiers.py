@@ -3,7 +3,7 @@ import decimal
 import pytest
 import pydra.mark
 from fileformats.core import from_mime, DataType, FileSet
-from fileformats.core.hook import converter
+from fileformats.core import converter
 from fileformats.application import Zip
 from fileformats.generic import DirectoryOf
 from fileformats.field import Array, Integer, Decimal, Text, Boolean
@@ -187,7 +187,7 @@ def test_file_classifiers7():
 
 @converter
 @converter(source_format=F[A], target_format=H[A])  # Additional converter
-@pydra.mark.task
+@pydra.mark.task  # type: ignore[misc]
 def f2h(in_file: F) -> H:
     return in_file
 
@@ -212,7 +212,7 @@ def test_qualifier_converters():
 @converter(source_format=K[C, D], target_format=L[D, C])
 @converter(source_format=K[A, B, C], target_format=L[A, B])
 @converter(source_format=K[A, C, B], target_format=L[C, A])
-@pydra.mark.task
+@pydra.mark.task  # type: ignore[misc]
 def k2l(in_file: K) -> L:
     return in_file
 
@@ -294,19 +294,19 @@ def test_arrays():
 
 
 @converter
-@pydra.mark.task
+@pydra.mark.task  # type: ignore[misc]
 def f2n_template(in_file: F[SpecificDataType]) -> N[SpecificDataType]:
     return in_file
 
 
 @converter
-@pydra.mark.task
+@pydra.mark.task  # type: ignore[misc]
 def f2p_template(in_file: F[SpecificDataType]) -> P[SpecificDataType]:
     return in_file
 
 
 @converter
-@pydra.mark.task
+@pydra.mark.task  # type: ignore[misc]
 def p2n_template(in_file: P[SpecificDataType]) -> N[SpecificDataType]:
     return in_file
 
@@ -321,13 +321,13 @@ def test_wildcard_template_from_template_conversion():
 
 
 @converter
-@pydra.mark.task
+@pydra.mark.task  # type: ignore[misc]
 def generic2f(in_file: SpecificDataType) -> F[SpecificDataType]:
     return in_file
 
 
 @converter
-@pydra.mark.task
+@pydra.mark.task  # type: ignore[misc]
 def generic2n(in_file: SpecificDataType) -> N[SpecificDataType, H]:
     return in_file
 
@@ -363,14 +363,14 @@ def test_wildcard_template_from_generic_conversion6():
 
 
 @converter
-@pydra.mark.task
-def f2generic(in_file: F[SpecificDataType]) -> SpecificDataType:
+@pydra.mark.task  # type: ignore[misc]
+def f2generic(in_file: F[SpecificFileSet]) -> SpecificFileSet:
     return in_file
 
 
 @converter
-@pydra.mark.task
-def n2generic(in_file: N[SpecificDataType, G]) -> SpecificDataType:
+@pydra.mark.task  # type: ignore[misc]
+def n2generic(in_file: N[SpecificFileSet, G]) -> SpecificFileSet:
     return in_file
 
 
@@ -387,8 +387,8 @@ def test_wildcard_generic_from_multi_template_conversion():
 
 
 @converter
-@pydra.mark.task
-def l2r(in_file: L[A, SpecificDataType, C]) -> R[A, SpecificDataType, C, D]:
+@pydra.mark.task  # type: ignore[misc]
+def l2r(in_file: L[A, SpecificFileSet, C]) -> R[A, SpecificFileSet, C, D]:
     return in_file
 
 

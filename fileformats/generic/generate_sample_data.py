@@ -2,7 +2,7 @@ import os
 import typing as ty
 import itertools
 from pathlib import Path
-from fileformats.core.fileset import FileSet
+from fileformats.core import FileSet, extra_implementation
 from fileformats.core import SampleFileGenerator
 from .fsobject import FsObject
 from .file import File
@@ -14,19 +14,19 @@ from .directory import Directory, DirectoryOf
 FILE_FILL_LENGTH = 256
 
 
-@FileSet.generate_sample_data.register
+@extra_implementation(FileSet.generate_sample_data)
 def fsobject_generate_sample_data(
     fsobject: FsObject,
     generator: SampleFileGenerator,
-) -> ty.Iterable[Path]:
+) -> ty.List[Path]:
     return [generator.generate(File, fill=FILE_FILL_LENGTH)]
 
 
-@FileSet.generate_sample_data.register
+@extra_implementation(FileSet.generate_sample_data)
 def file_generate_sample_data(
     file: File,
     generator: SampleFileGenerator,
-) -> ty.Iterable[Path]:
+) -> ty.List[Path]:
     contents = None
     if file.binary:
         if hasattr(file, "magic_number"):
@@ -49,11 +49,11 @@ def file_generate_sample_data(
     return fspaths
 
 
-@FileSet.generate_sample_data.register
+@extra_implementation(FileSet.generate_sample_data)
 def directory_generate_sample_data(
     directory: Directory,
     generator: SampleFileGenerator,
-) -> ty.Iterable[Path]:
+) -> ty.List[Path]:
     a_dir = generator.generate_fspath(Directory)
     a_dir.mkdir()
     File.sample_data(
@@ -62,11 +62,11 @@ def directory_generate_sample_data(
     return [a_dir]
 
 
-@FileSet.generate_sample_data.register
+@extra_implementation(FileSet.generate_sample_data)
 def directory_containing_generate_sample_data(
     directory: DirectoryOf,
     generator: SampleFileGenerator,
-) -> ty.Iterable[Path]:
+) -> ty.List[Path]:
     a_dir = generator.generate_fspath(Directory)
     a_dir.mkdir()
     for tp in directory.content_types:
@@ -74,11 +74,11 @@ def directory_containing_generate_sample_data(
     return [a_dir]
 
 
-@FileSet.generate_sample_data.register
+@extra_implementation(FileSet.generate_sample_data)
 def set_of_sample_data(
     set_of: SetOf,
     generator: SampleFileGenerator,
-) -> ty.Iterable[Path]:
+) -> ty.List[Path]:
     return list(
         itertools.chain(
             *(tp.sample_data(generator.child()) for tp in set_of.content_types)

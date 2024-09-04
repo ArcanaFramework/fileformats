@@ -1,6 +1,6 @@
+import typing as ty
 from conftest import write_test_file
 from fileformats.generic import File
-from fileformats.core import hook
 from fileformats.core.mixin import WithMagicNumber, WithSeparateHeader, WithSideCars
 from fileformats.core.exceptions import FormatMismatchError
 
@@ -48,8 +48,8 @@ class FileWithSeparateHeader(WithSeparateHeader, File):
     image_type = "sample-image-type"
     binary = False
 
-    @hook.check
-    def check_image_type(self):
+    @property
+    def _check_image_type(self):
         if self.metadata[self.image_type_key] != self.image_type:
             raise FormatMismatchError(
                 f"Mismatch in '{self.image_type_key}', expected {self.image_type}, "
@@ -107,7 +107,9 @@ class ImageWithInlineHeader(File):
 
     header_separator = b"---END HEADER---"
 
-    def read_metadata(self):
+    def read_metadata(
+        self, selected_keys: ty.Optional[ty.Sequence[str]] = None
+    ) -> ty.Mapping[str, ty.Any]:
         hdr = self.contents.split(self.header_separator)[0].decode("utf-8")
         return dict(ln.split(":") for ln in hdr.splitlines())
 
@@ -121,8 +123,8 @@ class FileWithSideCars(WithSideCars, ImageWithInlineHeader):
     experiment_type_key = "experiment-type"
     experiment_type = "sample-experiment-type"
 
-    @hook.check
-    def check_image_type(self):
+    @property
+    def _check_image_type(self):
         """Loaded from inline-header"""
         if self.metadata[self.image_type_key] != self.image_type:
             raise FormatMismatchError(
@@ -130,8 +132,8 @@ class FileWithSideCars(WithSideCars, ImageWithInlineHeader):
                 f"found {self.metadata[self.image_type_key]}"
             )
 
-    @hook.check
-    def check_experiment_type(self):
+    @property
+    def _check_experiment_type(self):
         """Loaded from side-car"""
         if self.metadata["header"][self.experiment_type_key] != self.experiment_type:
             raise FormatMismatchError(

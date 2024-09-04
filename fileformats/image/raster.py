@@ -1,23 +1,36 @@
+from pathlib import Path
+from fileformats.core.typing import Self, TypeAlias
+import typing as ty
 from fileformats.core.mixin import WithMagicNumber
-from fileformats.core import hook
+from fileformats.core import extra
 from fileformats.core.exceptions import FormatMismatchError
 from .base import Image
 
+# if ty.TYPE_CHECKING:
+#     import numpy.typing
+#     import numpy as np
+
+
+DataArrayType: TypeAlias = (
+    ty.Any
+)  # "numpy.typing.NDArray[ty.Union[np.float_, np.int_]]"
+
 
 class RasterImage(Image):
-    iana_mime = None
+    # iana_mime = None
+    pass
     binary = True
 
-    @hook.extra
-    def read_data(self):
+    @extra
+    def read_data(self) -> DataArrayType:
         raise NotImplementedError
 
-    @hook.extra
-    def write_data(self, data_array):
+    @extra
+    def write_data(self, data_array: DataArrayType) -> None:
         raise NotImplementedError
 
     @classmethod
-    def save_new(cls, fspath, data_array):
+    def save_new(cls, fspath: Path, data_array: DataArrayType) -> Self:
         # We have to use a mock object as the data file hasn't been written yet
         mock = cls.mock(fspath)
         mock.write_data(data_array)
@@ -58,9 +71,10 @@ class Tiff(RasterImage):
     magic_number_le = "49492A00"
     magic_number_be = "4D4D002A"
 
-    @hook.check
-    def endianness(self):
+    @property
+    def endianness(self) -> str:
         read_magic = self.read_contents(len(self.magic_number_le) // 2)
+        assert isinstance(read_magic, bytes)
         if read_magic == bytes.fromhex(self.magic_number_le):
             endianness = "little"
         elif read_magic == bytes.fromhex(self.magic_number_be):

@@ -6,7 +6,8 @@ from fileformats.generic import File
 class Video(File):
     "Base class for audio file formats"
     binary = True
-    iana_mime = None
+    # iana_mime = None
+    pass
 
 
 class Mp4(Video):
@@ -236,7 +237,7 @@ class Mj2(WithMagicNumber, Video):
     iana_mime = "video/mj2"
     ext = ".mj2"
     alternate_exts = (".mjp2",)
-    magic_number = "c6a5020200d0a870a"
+    magic_number = "0000000C6A5020200D0A870A"
 
 
 class Mp1s(Video):

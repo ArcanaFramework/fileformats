@@ -1,7 +1,8 @@
 Quick start
 ===========
 
-Validate an JPEG image file's extension and magic number simply by instantiating the class.
+Validate the format of a file, in this case a JPEG image, by passing the file path(s) to the
+corresponding FileFormat, :class:`fileformats.image.Jpeg`,
 
 .. code-block:: python
 
@@ -10,7 +11,12 @@ Validate an JPEG image file's extension and magic number simply by instantiating
    >>> str(jpeg_file)  # returns the file path
    "/path/to/an-image.jpeg
 
-For conditional checks instead of raising an error, use the ``matches`` method.
+For JPEG files, this validation will check the file extension and for the JPEG
+`magic number <https://en.wikipedia.org/wiki/Magic_number_(programming)>`__
+(``0xffd8ffe0``) at the start of the file. If the file doesn't match the format, the
+init method will raise a :class:`.FormatMismatchError`.
+
+For a conditional check instead of validation, use the ``matches`` method.
 
 .. code-block:: python
 
@@ -38,14 +44,13 @@ or set of files.
 .. code-block:: python
 
    >>> from fileformats.core import find_matching
-   >>> detected_format = find_matching("/path/to/an-image.jpeg")
-   >>> detected_format
-   fileformats.image.raster.Jpeg
+   >>> find_matching("/path/to/an-image.jpeg")
+   [fileformats.image.raster.Jpeg]
 
 And use the ``to_mime`` and ``from_mime`` methods to convert between file formats and their
 MIME types.
 
-   >>> mime = to_mime(detected_format)
+   >>> mime = to_mime(Jpeg)
    >>> mime
    "image/jpeg"
    >>> from_mime(mime)
@@ -61,7 +66,7 @@ To copy or move the files in a :class:`.FileSet` to a new directory, use the
    {"/path/to/destination/an-image.jpeg"}
 
 The ``copy`` method also supports creating links (both soft and hard) instead of copying the
-file (see :ref:`Mode`).
+file (see :ref:`Copy-mode`).
 
 .. code-block:: python
 
@@ -89,8 +94,8 @@ convert between equivalent formats, e.g. to convert a JPEG image to a PNG format
    >>> repr(png_file)
    Png("/path/to/an-image.png")
 
-Again for some select formats methods to read metadata have been implemented, in which case
-the medata can be accessed as a dictionary.
+For some select formats there are also methods to read metadata, in which case
+the metadata can be accessed as a dictionary attribute.
 
 .. code-block:: python
 
@@ -101,5 +106,5 @@ the medata can be accessed as a dictionary.
 
 .. note::
    Only a small fraction of formats have extra functionality added in the main package.
-   They are only intended to implemented as they are needed. See the :ref:`Developer guide`
-   for information on how to implement new file formats, converters and extras functionality.
+   Extra functionality is only planned to be implemented as required. See the :ref:`Developer guide`
+   for information on how to implement new file formats, converters and extra functionality.

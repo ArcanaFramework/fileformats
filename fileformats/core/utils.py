@@ -1,15 +1,20 @@
 import importlib
 from pathlib import Path
 import inspect
+import sys
 import typing as ty
+from types import ModuleType
 import urllib.request
 import urllib.error
 import os
 import logging
 import pkgutil
 from contextlib import contextmanager
+from .typing import FspathsInputType
 import fileformats.core
 
+if ty.TYPE_CHECKING:
+    import pydra.engine.core
 
 logger = logging.getLogger("fileformats")
 
@@ -18,8 +23,10 @@ _excluded_subpackages = set(
     ["core", "testing", "serialization", "archive", "document", "conftest"]
 )
 
+T = ty.TypeVar("T")
 
-def include_testing_package(flag: bool = True):
+
+def include_testing_package(flag: bool = True) -> None:
     """Include testing package in list of sub-packages. Typically set in conftest.py
     or similar when setting up unittesting. Must be set globally before any methods are
     called within the package as member classes are cached.
@@ -36,7 +43,9 @@ def include_testing_package(flag: bool = True):
         _excluded_subpackages.add("testing")
 
 
-def subpackages(exclude: ty.Sequence[str] = _excluded_subpackages):
+def subpackages(
+    exclude: ty.Iterable[str] = _excluded_subpackages,
+) -> ty.Generator[ModuleType, None, None]:
     """Iterates over all subpackages within the fileformats namespace
 
     Parameters
@@ -58,7 +67,7 @@ def subpackages(exclude: ty.Sequence[str] = _excluded_subpackages):
 
 
 @contextmanager
-def set_cwd(path: Path):
+def set_cwd(path: Path) -> ty.Generator[Path, None, None]:
     """Sets the current working directory to `path` and back to original
     working directory on exit
 
@@ -75,34 +84,37 @@ def set_cwd(path: Path):
         os.chdir(pwd)
 
 
-def fspaths_converter(
-    fspaths: ty.Union[
-        ty.Iterable[ty.Union[str, os.PathLike, bytes]],
-        str,
-        os.PathLike,
-        bytes,
-        "fileformats.core.FileSet",
-    ]
-):
+def fspaths_converter(fspaths: FspathsInputType) -> ty.FrozenSet[Path]:
     """Ensures fs-paths are a set of pathlib.Path"""
     import fileformats.core
 
     if isinstance(fspaths, fileformats.core.FileSet):
         fspaths = fspaths.fspaths
-    elif isinstance(fspaths, (str, os.PathLike, bytes)):
-        fspaths = [fspaths]
+    elif isinstance(fspaths, (str, os.PathLike)):
+        fspaths = [Path(fspaths)]
     return frozenset(Path(p).absolute() for p in fspaths)
 
 
-class classproperty(object):
-    def __init__(self, f):
-        self.f = f
+PropReturn = ty.TypeVar("PropReturn")
 
-    def __get__(self, obj, owner):
-        return self.f(owner)
+if sys.version_info[:2] < (3, 9):
+
+    class classproperty(object):
+        def __init__(self, f: ty.Callable[[ty.Type[ty.Any]], ty.Any]):
+            self.f = f
+
+        def __get__(self, obj: ty.Any, owner: ty.Any) -> ty.Any:
+            return self.f(owner)
+
+else:
+
+    def classproperty(meth: ty.Callable[..., PropReturn]) -> PropReturn:
+        """Access a @classmethod like a @property."""
+        # mypy doesn't understand class properties yet: https://github.com/python/mypy/issues/2563
+        return classmethod(property(meth))  # type: ignore
 
 
-def add_exc_note(e, note):
+def add_exc_note(e: Exception, note: str) -> Exception:
     """Adds a note to an exception in a Python <3.11 compatible way
 
     Parameters
@@ -124,7 +136,7 @@ def add_exc_note(e, note):
     return e
 
 
-def describe_task(task):
+def describe_task(task: "pydra.engine.task.TaskBase") -> str:
     """Returns the name of a Pydra task and where it was defined for debugging purposes
 
     Parameters
@@ -132,7 +144,7 @@ def describe_task(task):
     task : pydra.engine.core.TaskBase
         the task to describe
     """
-    from fileformats.core.converter import ConverterWrapper
+    from fileformats.core.converter_helpers import ConverterWrapper
 
     if isinstance(task, ConverterWrapper):
         task = task.task_spec
@@ -148,12 +160,15 @@ def describe_task(task):
     return f"{task} (defined at line {src_line} of {src_file})"
 
 
-def matching_source(task1, task2) -> bool:
+def matching_source(
+    task1: ty.Callable[..., ty.Any], task2: ty.Callable[..., ty.Any]
+) -> bool:
     """Checks to see if the tasks share the same source code but are just getting reimported
     for some unknown reason"""
-    return inspect.getsource(inspect.getmodule(task1)) == inspect.getsource(
-        inspect.getmodule(task2)
-    )
+    mod1 = inspect.getmodule(task1)
+    mod2 = inspect.getmodule(task2)
+    assert mod1 and mod2
+    return inspect.getsource(mod1) == inspect.getsource(mod2)
 
 
 def check_package_exists_on_pypi(package_name: str, timeout: int = 5) -> bool:
@@ -181,13 +196,13 @@ def check_package_exists_on_pypi(package_name: str, timeout: int = 5) -> bool:
 
 
 class ExtrasModule:
-    def __init__(self, imported: bool, pkg: str, pypi: str):
+    def __init__(self, imported: bool, pkg: ty.Optional[str], pypi: ty.Optional[str]):
         self.imported = imported
         self.pkg = pkg
         self.pypi = pypi
 
 
-def import_extras_module(klass: type) -> ExtrasModule:
+def import_extras_module(klass: ty.Type["fileformats.core.DataType"]) -> ExtrasModule:
     """Attempt to load extras module corresponding to the provided class's module
 
     Parameters
@@ -206,7 +221,7 @@ def import_extras_module(klass: type) -> ExtrasModule:
 
     # Check for Mock class
     try:
-        klass = klass.TRUE_CLASS
+        klass = klass.TRUE_CLASS  # type: ignore
     except AttributeError:
         pass
     pkg_parts = klass.__module__.split(".")
@@ -217,7 +232,7 @@ def import_extras_module(klass: type) -> ExtrasModule:
             klass.__name__,
             klass.__module__,
         )
-        return True, None, None
+        return ExtrasModule(True, None, None)
     sub_pkg = pkg_parts[1]
     extras_pkg = "fileformats.extras." + sub_pkg
     if sub_pkg in IANA_MIME_TYPE_REGISTRIES + ["testing"]:

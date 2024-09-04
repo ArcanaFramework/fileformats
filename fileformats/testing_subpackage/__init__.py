@@ -7,7 +7,7 @@ class SubpackageClassified(WithClassifiers, DataType):
     classifiers = ()
     multiple_classifiers = True
     allowed_classifiers = (Classifier,)
-    generically_classifies = False
+    generically_classifiable = False
 
 
 class Psi(DataType):

@@ -2,11 +2,12 @@ from pathlib import Path
 import re
 import typing as ty
 import logging
-from . import hook
-from .fileset import FileSet
+from .datatype import DataType
+import fileformats.core
 from .utils import classproperty, describe_task, matching_source
 from .identification import to_mime_format_name
-from .converter import SubtypeVar
+from .converter_helpers import SubtypeVar, ConverterSpec
+from .classifier import Classifier
 from .exceptions import (
     FormatMismatchError,
     FormatRecognitionError,
@@ -38,25 +39,34 @@ class WithMagicNumber:
     binary: bool
     magic_number: ty.Union[str, bytes]
 
-    @hook.check
-    def check_magic_number(self):
+    @property
+    def _check_magic_number(self) -> None:
         if self.binary and isinstance(self.magic_number, str):
-            magic_bytes = bytes.fromhex(self.magic_number)
+            try:
+                magic_bytes = bytes.fromhex(self.magic_number)
+            except ValueError:
+                raise FormatDefinitionError(
+                    f"Magic number of file {type(self)} is not a valid hex string"
+                )
         else:
+            assert isinstance(self.magic_number, bytes)
             magic_bytes = self.magic_number
-        read_magic_number = self.read_contents(
+        read_magic_number = self.read_contents(  # type: ignore[attr-defined]
             len(magic_bytes), offset=self.magic_number_offset
         )
         if read_magic_number != magic_bytes:
+            read_magic: ty.Union[str, bytes]
+            ref_magic: ty.Union[str, bytes]
             if self.binary and isinstance(self.magic_number, str):
-                read_magic_str = '"' + bytes.hex(read_magic_number) + '"'
-                magic_str = '"' + self.magic_number + '"'
+                read_magic = '"' + bytes.hex(read_magic_number) + '"'
+                ref_magic = '"' + self.magic_number + '"'
             else:
-                read_magic_str = read_magic_number
-                magic_str = self.magic_number
+                read_magic = read_magic_number
+                assert isinstance(self.magic_number, bytes)
+                ref_magic = self.magic_number
             raise FormatMismatchError(
-                f"Magic number of file {read_magic_str} doesn't match expected "
-                f"{magic_str}"
+                f"Magic number of file {read_magic!r} doesn't match expected "
+                f"{ref_magic!r}"
             )
 
 
@@ -80,31 +90,30 @@ class WithMagicVersion:
     binary: bool
     magic_pattern: bytes
     magic_pattern_offset = 0
-    magic_pattern_maxlength = None
+    magic_pattern_maxlength: ty.Optional[int] = None
 
-    @hook.required
     @property
-    def version(self) -> ty.Union[str, ty.Tuple[str]]:
+    def version(self) -> ty.Union[str, ty.Tuple[str, ...]]:
         read_length = (
-            self.magic_pattern_length
-            if self.magic_pattern_length
+            self.magic_pattern_maxlength
+            if self.magic_pattern_maxlength
             else len(self.magic_pattern)
         )
-        read_bytes = self.read_contents(read_length, offset=self.magic_pattern_offset)
+        read_bytes = self.read_contents(read_length, offset=self.magic_pattern_offset)  # type: ignore[attr-defined]
         match = re.match(self.magic_pattern, read_bytes)
         if not match:
             raise FormatMismatchError(
                 f"Byte-string of length {read_length} at {self.magic_pattern_offset} "
-                f"({read_bytes}), doesn't match expected pattern, {self.magic_pattern}"
+                f"({read_bytes!r}), doesn't match expected pattern, {self.magic_pattern!r}"
             )
-        version = tuple(b.decode("utf-8") for b in match.groups())
+        version: ty.Tuple[str, ...] = tuple(b.decode("utf-8") for b in match.groups())
         if not version:
             raise FormatDefinitionError(
                 f"No version patterns found in magic pattern of {type(self).__name__} "
-                f"class, {self.magic_pattern}"
+                f"class, {self.magic_pattern!r}"
             )
         if len(version) == 1:
-            version = version[0]
+            return version[0]
         return version
 
 
@@ -124,21 +133,21 @@ class WithAdjacentFiles:
 
     fspaths: ty.FrozenSet[Path]
 
-    def _additional_fspaths(self):
+    def _additional_fspaths(self) -> None:
         if len(self.fspaths) == 1:
             self.fspaths |= self.get_adjacent_files()
             trim = True
         else:
             trim = False
         if trim:
-            self.trim_paths()
+            self.trim_paths()  # type: ignore[attr-defined]
 
     def get_adjacent_files(self) -> ty.Set[Path]:
-        stem = self.stem  # pylint: disable=no-member
+        stem = self.stem  # type: ignore[attr-defined]
         adjacents = set()
-        for sibling in self.fspath.parent.iterdir():  # pylint: disable=no-member
+        for sibling in self.fspath.parent.iterdir():  # type: ignore[attr-defined]
             if (
-                sibling != self.fspath  # pylint: disable=no-member
+                sibling != self.fspath  # type: ignore[attr-defined]
                 and sibling.is_file()
                 and sibling.name.startswith(stem + ".")
             ):
@@ -163,17 +172,23 @@ class WithSeparateHeader(WithAdjacentFiles):
         the file-format of the header file
     """
 
+    header_type: ty.Type["fileformats.core.FileSet"]
+
     @classproperty
-    def nested_types(cls):
+    def nested_types(cls) -> ty.Tuple[ty.Type[Classifier], ...]:
         return (cls.header_type,)
 
-    @hook.required
     @property
-    def header(self):
-        return self.header_type(self.select_by_ext(self.header_type))
+    def header(self) -> "fileformats.core.FileSet":
+        return self.header_type(self.select_by_ext(self.header_type))  # type: ignore[attr-defined]
 
-    def read_metadata(self):
-        return self.header.load()
+    def read_metadata(
+        self, selected_keys: ty.Optional[ty.Sequence[str]] = None
+    ) -> ty.Mapping[str, ty.Any]:
+        header: ty.Dict[str, ty.Any] = self.header.load()  # type: ignore[attr-defined]
+        if selected_keys:
+            header = {k: v for k, v in header.items() if k in selected_keys}
+        return header
 
 
 class WithSideCars(WithAdjacentFiles):
@@ -198,26 +213,29 @@ class WithSideCars(WithAdjacentFiles):
         the file-formats of the expected side-car files
     """
 
-    @hook.required
-    @property
-    def side_cars(self):
-        return [tp(self.select_by_ext(tp)) for tp in self.side_car_types]
+    primary_type: ty.Type["fileformats.core.FileSet"]
+    side_car_types: ty.Tuple[ty.Type["fileformats.core.FileSet"], ...]
 
-    def read_metadata(self):
-        metadata = self.primary_type.read_metadata(self)
+    @property
+    def side_cars(self) -> ty.Tuple["fileformats.core.FileSet", ...]:
+        return tuple(tp(self.select_by_ext(tp)) for tp in self.side_car_types)  # type: ignore[attr-defined]
+
+    def read_metadata(
+        self, selected_keys: ty.Optional[ty.Sequence[str]] = None
+    ) -> ty.Mapping[str, ty.Any]:
+        metadata: ty.Dict[str, ty.Any] = dict(self.primary_type.read_metadata(self, selected_keys=selected_keys))  # type: ignore[arg-type]
         for side_car in self.side_cars:
             try:
-                side_car_metadata = side_car.load()
+                side_car_metadata: ty.Dict[str, ty.Any] = side_car.load()  # type: ignore[attr-defined]
             except AttributeError:
                 continue
             else:
-                metadata[
-                    to_mime_format_name(type(side_car).__name__)
-                ] = side_car_metadata
+                side_car_class_name: str = to_mime_format_name(type(side_car).__name__)
+                metadata[side_car_class_name] = side_car_metadata
         return metadata
 
     @classproperty
-    def nested_types(cls):
+    def nested_types(cls) -> ty.Tuple[ty.Type[Classifier], ...]:
         return cls.side_car_types
 
 
@@ -267,57 +285,72 @@ class WithClassifiers:
         "gzip", "json", "yaml", etc...
     """
 
-    classifiers = ()  # classifiers set in the current class
-    _classified_subtypes = {}
+    # classifiers set in the current class
+    classifiers: ty.Tuple[ty.Type[DataType], ...] = ()
+    _classified_subtypes: ty.Dict[
+        ty.Tuple[ty.Type[Classifier], ...], ty.Type[DataType]
+    ] = {}
     # dict of previously created classified subtypes. If an existing class with matching
     # classifiers has been created it is returned instead of creating a new type. This
     # ensures that ``assert MyFormat[Qualifier] is MyFormat[Qualifier]``
 
     # Default values for class attrs
     multiple_classifiers = True
-    allowed_classifiers: ty.Optional[ty.Tuple[ty.Type[ty.Any]]] = None
-    exclusive_classifiers: ty.Tuple[ty.Type[ty.Any]] = ()
+    allowed_classifiers: ty.Optional[ty.Tuple[ty.Type[Classifier], ...]] = None
+    exclusive_classifiers: ty.Tuple[ty.Type[Classifier], ...] = ()
     ordered_classifiers = False
-    generically_classifies = False
+    generically_classifiable = False
 
-    def _validate_class(self):
-        if self.wildcard_classifiers():
-            raise FormatDefinitionError(
-                f"Can instantiate {type(self)} class as it has wildcard classifiers "
-                "and therefore should only be used for converter specifications"
-            )
+    def _validate_class(self) -> ty.Union[bool, None]:
+        validated: ty.Union[bool, None] = super()._validate_class()  # type: ignore
+        if validated is None:
+            if self.wildcard_classifiers():
+                raise FormatDefinitionError(
+                    f"Can instantiate {type(self)} class as it has wildcard classifiers "
+                    "and therefore should only be used for converter specifications"
+                )
+        return validated
 
     @classproperty
-    def is_classified(cls):  # pylint: disable=no-self-argument
+    def is_classified(cls) -> bool:
         return "unclassified" in cls.__dict__
 
     @classproperty
-    def nested_types(cls):
+    def nested_types(cls) -> ty.Tuple[ty.Type[Classifier], ...]:
         return cls.classifiers
 
     @classmethod
-    def wildcard_classifiers(cls, classifiers=None):
+    def wildcard_classifiers(
+        cls, classifiers: ty.Optional[ty.Sequence[ty.Type[Classifier]]] = None
+    ) -> ty.FrozenSet[ty.Type[SubtypeVar]]:
         if classifiers is None:
             classifiers = cls.classifiers if cls.is_classified else ()
         return frozenset(t for t in classifiers if issubclass(t, SubtypeVar))
 
     @classmethod
-    def non_wildcard_classifiers(cls, classifiers=None):
+    def non_wildcard_classifiers(
+        cls, classifiers: ty.Optional[ty.Collection[ty.Type[Classifier]]] = None
+    ) -> ty.FrozenSet[ty.Type[Classifier]]:
         if classifiers is None:
             classifiers = cls.classifiers if cls.is_classified else ()
+        assert classifiers is not None
         return frozenset(q for q in classifiers if not issubclass(q, SubtypeVar))
 
     @classmethod
-    def __class_getitem__(cls, classifiers):
+    def __class_getitem__(
+        cls,
+        classifiers: ty.Union[ty.Collection[ty.Type[Classifier]], ty.Type[Classifier]],
+    ) -> ty.Type[DataType]:
         """Set the content types for a newly created dynamically type"""
         if isinstance(classifiers, ty.Iterable):
-            classifiers = tuple(classifiers)
+            classifiers_tuple = tuple(classifiers)
         else:
-            classifiers = (classifiers,)
+            classifiers_tuple = (classifiers,)
+
         if cls.allowed_classifiers:
             not_allowed = [
                 q
-                for q in classifiers
+                for q in classifiers_tuple
                 if not any(issubclass(q, t) for t in cls.allowed_classifiers)
             ]
             if not_allowed:
@@ -329,15 +362,15 @@ class WithClassifiers:
         if cls.multiple_classifiers:
             if not cls.ordered_classifiers:
                 # Check for duplicate classifiers in the multiple list
-                if len(classifiers) > 1:
+                if len(classifiers_tuple) > 1:
                     # Sort the classifiers into categories and ensure that there aren't more
                     # than one type for each category. Otherwise, if the classifier doesn't
                     # belong to a category, check to see that there aren't multiple sub-classes
                     # in the classifier set
-                    repetitions = {
-                        c: [] for c in cls.exclusive_classifiers + classifiers
-                    }
-                    for classifier in classifiers:
+                    repetitions: ty.Dict[
+                        ty.Type[Classifier], ty.List[ty.Type[Classifier]]
+                    ] = {c: [] for c in cls.exclusive_classifiers + classifiers_tuple}
+                    for classifier in classifiers_tuple:
                         for exc_classifier in repetitions:
                             if issubclass(classifier, exc_classifier):
                                 repetitions[exc_classifier].append(classifier)
@@ -352,12 +385,14 @@ class WithClassifiers:
                                 for k, v in repeated
                             )
                         )
-                classifiers = frozenset(classifiers)
+                classifiers_tuple = tuple(
+                    sorted(set(classifiers_tuple), key=lambda x: x.__name__)
+                )
         else:
-            if len(classifiers) > 1:
+            if len(classifiers_tuple) > 1:
                 raise FormatDefinitionError(
                     f"Multiple classifiers not permitted for {cls} types, provided: "
-                    f"({classifiers})"
+                    f"({classifiers_tuple})"
                 )
         # Make sure that the "classified" dictionary is present in this class not super
         # classes
@@ -365,7 +400,7 @@ class WithClassifiers:
             cls._classified_subtypes = {}
         try:
             # Load previously created type so we can do ``assert MyType[Integer] is MyType[Integer]``
-            classified = cls._classified_subtypes[classifiers]
+            classified = cls._classified_subtypes[classifiers_tuple]
         except KeyError:
             if not hasattr(cls, "classifiers_attr_name"):
                 raise FormatDefinitionError(
@@ -393,12 +428,12 @@ class WithClassifiers:
                     )
             class_attrs = {
                 "unclassified": cls,
-                "classifiers": classifiers,
+                "classifiers": classifiers_tuple,
             }
             class_attrs[cls.classifiers_attr_name] = (
-                classifiers if cls.multiple_classifiers else classifiers[0]
+                classifiers_tuple if cls.multiple_classifiers else classifiers_tuple[0]
             )
-            classifier_names = [t.__name__ for t in classifiers]
+            classifier_names = [t.__name__ for t in classifiers_tuple]
             if not cls.ordered_classifiers:
                 classifier_names.sort()
             classified = type(
@@ -407,13 +442,11 @@ class WithClassifiers:
                 class_attrs,
             )
             classified.__module__ = cls.__module__
-            cls._classified_subtypes[classifiers] = classified
+            cls._classified_subtypes[classifiers_tuple] = classified
         return classified
 
     @classmethod
-    def get_converter_tuples(
-        cls, source_format: type
-    ) -> ty.List[ty.Tuple[ty.Callable, ty.Dict[str, ty.Any]]]:
+    def get_converter_specs(cls, source_format: type) -> ty.List[ConverterSpec]:
         """Search the registered converters to find an appropriate task and associated
         key-word args to perform the conversion between source and target formats
 
@@ -422,27 +455,28 @@ class WithClassifiers:
         source_format : type(FileSet)
             the source format to convert from
         """
+        from fileformats.core import FileSet
+
         # Try to see if a converter has been defined to the exact type
-        available_converters = super().get_converter_tuples(
+        available_converters: ty.List[ConverterSpec] = super().get_converter_specs(  # type: ignore[misc]
             source_format
-        )  # pylint: disable=no-member
+        )
         # Failing that, see if there is a generic conversion between the container type
         # the source format (or subclass of) defined with matching wildcards in the source
         # and target formats
         if not available_converters and cls.is_classified:
             converters_dict = FileSet.get_converters_dict(
-                cls.unclassified
+                cls.unclassified  # type: ignore[attr-defined]
             )  # pylint: disable=no-member
             for template_source_format, converter in converters_dict.items():
-                if len(converter) == 3:  # was defined with wildcard classifiers
-                    converter, conv_kwargs, template_classifiers = converter
+                if converter.classifiers:  # was defined with wildcard classifiers
                     # Attempt conversion from generic type to template match
                     if issubclass(template_source_format, SubtypeVar):
                         assert tuple(
-                            cls.wildcard_classifiers(template_classifiers)
+                            cls.wildcard_classifiers(converter.classifiers)
                         ) == (template_source_format,)
                         non_wildcards = cls.non_wildcard_classifiers(
-                            template_classifiers
+                            converter.classifiers
                         )
                         to_match = tuple(set(cls.classifiers).difference(non_wildcards))
                         if len(to_match) > 1:
@@ -451,29 +485,33 @@ class WithClassifiers:
                             wildcard_match = issubclass(source_format, to_match[0])
                     # Attempt template to template conversion match
                     elif getattr(source_format, "is_classified", False) and issubclass(
-                        source_format.unclassified, template_source_format.unclassified
+                        source_format.unclassified, template_source_format.unclassified  # type: ignore[attr-defined]
                     ):
                         assert cls.wildcard_classifiers(
-                            template_classifiers
+                            converter.classifiers
                         ) == cls.wildcard_classifiers(
-                            template_source_format.classifiers
+                            template_source_format.classifiers  # type: ignore[attr-defined]
                         )
                         if cls.ordered_classifiers:
-                            if len(cls.classifiers) != len(template_classifiers) or len(
-                                source_format.classifiers
-                            ) != len(template_source_format.classifiers):
+                            if len(cls.classifiers) != len(
+                                converter.classifiers
+                            ) or len(
+                                source_format.classifiers  # type: ignore[attr-defined]
+                            ) != len(
+                                template_source_format.classifiers  # type: ignore[attr-defined]
+                            ):
                                 wildcard_match = False
                             else:
                                 wildcard_map = {}
                                 for actual, template in zip(
-                                    source_format.classifiers,
-                                    template_source_format.classifiers,
+                                    source_format.classifiers,  # type: ignore[attr-defined]
+                                    template_source_format.classifiers,  # type: ignore[attr-defined]
                                 ):
                                     if issubclass(template, SubtypeVar):
                                         wildcard_map[template] = actual
                                 wildcard_match = True
                                 for actual, template in zip(
-                                    cls.classifiers, template_classifiers
+                                    cls.classifiers, converter.classifiers
                                 ):
                                     if issubclass(template, SubtypeVar):
                                         try:
@@ -490,29 +528,31 @@ class WithClassifiers:
                                         break
                         else:
                             non_wildcards = cls.non_wildcard_classifiers(
-                                template_classifiers
+                                converter.classifiers
                             )
                             src_non_wildcards = cls.non_wildcard_classifiers(
-                                template_source_format.classifiers
+                                template_source_format.classifiers  # type: ignore[attr-defined]
                             )
                             if not non_wildcards.issubset(
                                 set(cls.classifiers)
                             ) or not src_non_wildcards.issubset(
-                                set(source_format.classifiers)
+                                set(source_format.classifiers)  # type: ignore[attr-defined]
                             ):
                                 wildcard_match = False
                             else:
                                 to_match = set(cls.classifiers).difference(
                                     non_wildcards
                                 )
-                                from_types = set(source_format.classifiers).difference(
+                                from_types = set(source_format.classifiers).difference(  # type: ignore[attr-defined]
                                     src_non_wildcards
                                 )
                                 wildcard_match = to_match.issubset(from_types)
                     else:
                         wildcard_match = False
                     if wildcard_match:
-                        available_converters.append((converter, conv_kwargs))
+                        available_converters.append(
+                            ConverterSpec(converter.task, converter.args)
+                        )
         return available_converters
 
     @classmethod
@@ -525,26 +565,26 @@ class WithClassifiers:
         if (
             not cls.is_classified
             or not getattr(subclass, "is_classified", False)
-            or not issubclass(subclass.unclassified, cls.unclassified)
+            or not issubclass(subclass.unclassified, cls.unclassified)  # type: ignore[attr-defined]
         ):
             return False
         if cls.ordered_classifiers:
-            assert subclass.ordered_classifiers
-            if len(subclass.classifiers) != len(cls.classifiers):
+            assert subclass.ordered_classifiers  # type: ignore[attr-defined]
+            if len(subclass.classifiers) != len(cls.classifiers):  # type: ignore[attr-defined]
                 is_subclass = False
             else:
                 is_subclass = all(
                     issubclass(q, s)
-                    for q, s in zip(subclass.classifiers, cls.classifiers)
+                    for q, s in zip(subclass.classifiers, cls.classifiers)  # type: ignore[attr-defined]
                 )
         else:
-            assert not subclass.ordered_classifiers
-            if subclass.classifiers.issuperset(cls.classifiers):
+            assert not subclass.ordered_classifiers  # type: ignore[attr-defined]
+            if set(subclass.classifiers).issuperset(cls.classifiers):  # type: ignore[attr-defined]
                 is_subclass = True
             else:
                 # Check for sub-classes of classifiers
                 is_subclass = all(
-                    any(issubclass(q, s) for q in subclass.classifiers)
+                    any(issubclass(q, s) for q in subclass.classifiers)  # type: ignore[attr-defined]
                     for s in cls.classifiers
                 )
         return is_subclass
@@ -552,17 +592,17 @@ class WithClassifiers:
     @classmethod
     def register_converter(
         cls,
-        source_format: type,
-        converter_tuple: ty.Tuple[ty.Callable, ty.Dict[str, ty.Any]],
-    ):
-        """Registers a converter task within a class attribute. Called by the @fileformats.hook.converter
+        source_format: ty.Type["fileformats.core.FileSet"],
+        converter_spec: ConverterSpec,
+    ) -> None:
+        """Registers a converter task within a class attribute. Called by the @fileformats.converter
         decorator.
 
         Parameters
         ----------
         source_format : type
             the source format to register a converter from
-        converter_tuple
+        converter_spec
             a tuple consisting of a `task_spec` callable that resolves to a Pydra task
             and a dictionary of keyword arguments to be passed to the task spec at
             initialisation time
@@ -580,62 +620,66 @@ class WithClassifiers:
                         "Can only have one wildcard qualifier when registering a converter "
                         f"to {cls} from a generic type, found {cls.wildcard_classifiers()}"
                     )
-            elif not source_format.is_classified:
+            elif not source_format.is_classified:  # type: ignore[attr-defined]
                 raise FormatDefinitionError(
                     "Can only use wildcard classifiers when registering a converter "
                     f"from a generic type or similarly classified type, not {source_format}"
                 )
             else:
-                if cls.wildcard_classifiers() != source_format.wildcard_classifiers():
+                if cls.wildcard_classifiers() != source_format.wildcard_classifiers():  # type: ignore[attr-defined]
                     raise FormatDefinitionError(
                         f"Mismatching wildcards between source format, {source_format} "
-                        f"({list(source_format.wildcard_classifiers())}), and target "
+                        f"({list(source_format.wildcard_classifiers())}), and target "  # type: ignore[attr-defined]
                         f"{cls} ({cls.wildcard_classifiers()})"
                     )
                 prev_registered = [
                     f
-                    for f in cls.converters
+                    for f in cls.converters  # type: ignore[attr-defined]
                     if (
-                        issubclass(source_format.unclassified, f.unclassified)
+                        issubclass(source_format.unclassified, f.unclassified)  # type: ignore[attr-defined]
                         and f.non_wildcard_classifiers()
-                        == source_format.non_wildcard_classifiers()
+                        == source_format.non_wildcard_classifiers()  # type: ignore[attr-defined]
                     )
                 ]
                 assert len(prev_registered) <= 1
                 prev = prev_registered[0] if prev_registered else None
                 if prev:
-                    prev_tuple = cls.converters[prev]
-                    task, task_kwargs = converter_tuple
-                    prev_task, prev_kwargs, prev_classifiers = prev_tuple
+                    prev_spec = cls.converters[prev]  # type: ignore[attr-defined]
+                    # task, task_kwargs = converter_spec
+                    # prev_task, prev_kwargs, prev_classifiers = prev_tuple
                     if (
-                        matching_source(task, prev_task)
-                        and task_kwargs == prev_kwargs
-                        and cls.classifiers == prev_classifiers
+                        matching_source(converter_spec.task, prev_spec.task)
+                        and converter_spec.args == prev_spec.args
+                        and cls.classifiers == prev_spec.classifiers
                     ):
                         logger.warning(
                             "Ignoring duplicate registrations of the same converter %s",
-                            describe_task(task),
+                            describe_task(converter_spec.task),
                         )
                         return  # actually the same task but just imported twice for some reason
                     raise FormatDefinitionError(
-                        f"Cannot register converter from {prev.unclassified} "
+                        f"Cannot register converter from {prev.unclassified} "  # type: ignore[attr-defined]
                         f"to {cls.unclassified} with non-wildcard classifiers "
-                        f"{list(prev.non_wildcard_classifiers())}, {describe_task(task)}, "
-                        f"because there is already one registered, {describe_task(prev_task)}"
+                        f"{list(prev.non_wildcard_classifiers())}, {describe_task(converter_spec.task)}, "
+                        f"because there is already one registered, {describe_task(prev_spec.task)}"
                     )
-            converters_dict = cls.unclassified.get_converters_dict()
-            converters_dict[source_format] = converter_tuple + (cls.classifiers,)
+            converters_dict = cls.unclassified.get_converters_dict()  # type: ignore[attr-defined]
+            converter_spec.classifiers = cls.classifiers
+            converters_dict[source_format] = converter_spec
         else:
-            super().register_converter(source_format, converter_tuple)
+            super().register_converter(source_format, converter_spec)  # type: ignore[misc]
 
     @classproperty
-    def namespace(cls):  # pylint: disable=no-self-argument
+    def namespace(cls) -> ty.Optional[str]:
         """The "namespace" the format belongs to under the "fileformats" umbrella
         namespace"""
+        namespace: ty.Optional[str]
         if cls.is_classified:
-            namespaces = set(t.namespace for t in cls.classifiers)
-            if not cls.generically_classifies:
-                namespaces.add(cls.unclassified.namespace)
+            namespaces: ty.Collection[str] = set(
+                t.namespace for t in cls.classifiers if t.namespace
+            )
+            if not cls.generically_classifiable:
+                namespaces.add(cls.unclassified.namespace)  # type: ignore[attr-defined]
             if len(namespaces) == 1:
                 return next(iter(namespaces))
             else:
@@ -650,20 +694,22 @@ class WithClassifiers:
                     "Cannot create reversible MIME type for because did not find a "
                     f"common namespace between all classifiers {list(cls.classifiers)}"
                 )
-                if not cls.generically_classifies:
-                    msg += (
-                        f" and (non genericly classified) base class {cls.unclassified}"
-                    )
+                if not cls.generically_classifiable:
+                    msg += f" and (non genericly classified) base class {cls.unclassified}"  # type: ignore[attr-defined]
                 raise FormatRecognitionError(msg + f", found:\n{list(namespaces)}")
         else:
-            namespace = super().namespace
+            try:
+                namespace = super().namespace  # type: ignore[misc]
+            except AttributeError:
+                namespace = None
         return namespace
 
     @classproperty
-    def type_name(cls):
+    def type_name(cls) -> str:
         """Name of type including classifiers to be used in __repr__"""
+        unclassified: str
         if cls.is_classified:
-            unclassified = cls.unclassified.__name__
+            unclassified = cls.unclassified.__name__  # type: ignore[attr-defined]
         else:
             unclassified = type(cls).__name__
         return (

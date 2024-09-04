@@ -52,9 +52,8 @@ to the file-set
 .. code-block:: python
 
     >>> from fileformats.medimage import Analyze
-    >>> analyze_file = Analyze("/path/to/neuroimage.img")
-    >>> analyze_file.fspaths
-    {"/path/to/neuroimage.hdr", "/path/to/neuroimage.img"}
+    >>> analyze_file = repr(Analyze("/path/to/neuroimage.img"))
+    Analyze("/path/to/neuroimage.hdr", "/path/to/neuroimage.img")
 
 This is very useful when reading the output path of a workflow where only primary path
 is returned and associated files also need to be saved to an output directory.
@@ -86,13 +85,81 @@ To copy all files/directories in a format you can use the ``FileSet.copy()`` met
 
 .. code-block:: python
 
-    >>> new_analyze = analyze_file.copy(dest_dir="/path/to/destination")
-    >>> new_analyze.fspaths
-    {"/path/to/destination/t1w.hdr", "/path/to/destination/t1w.img"}
+    >>> repr(analyze_file.copy(dest_dir="/path/to/destination"))
+    Analyze("/path/to/destination/mprage.hdr", "/path/to/destination/mprage.img")
+
+By default, the source filenames will be used in the destination directory. To specify a
+new file stem, pass the ``new_stem`` argument
+
+.. code-block:: python
+
+    >>> repr(analyze_file.copy(dest_dir="/path/to/destination", new_stem="t1w"))
+    Analyze("/path/to/destination/t1w.hdr", "/path/to/destination/t1w.img")
+
+For formats that define a file extension, this will be used to determine which part of
+the filename is considered stem, and which is extension. This is useful when dealing
+with double-barrel extensions such as ".nii.gz"
+
+.. code-block:: python
+
+    >>> from fileformats.medimage import NiftiGz
+    >>> niftigz = NiftiGzX(["/path/to/image.nii.gz"])
+    >>> repr(niftigzx.copy(dest_dir="/path/to/destination", new_stem="t1w"))
+    NiftiGz("/path/to/destination/t1w.nii.gz")
+
+However, if you are working with generic base classes such as :class:`.FileSet`,
+:class:`.FsObject` and :class:`.File`, what is extension and what is stem is not defined
+and needs to be specified by a :class:`.FileSet.ExtensionDecomposition` enum passed to
+the ``extension_decomposition`` argument
 
 
-Mode
-~~~~
+.. code-block:: python
+
+    >>> from fileformats.generic import File
+    >>> a_file = File(["/path/to/image.nii.gz"])
+    >>> repr(a_file.copy(
+    ...     dest_dir="/path/to/destination",
+    ...     new_stem="t1w",
+    ...     extension_decomposition=FileSet.ExtensionDecomposition.single)
+    ... )
+    File("/path/to/destination/t1w.gz")
+    >>> repr(a_file.copy(
+    ...     dest_dir="/path/to/destination",
+    ...     new_stem="t1w",
+    ...     extension_decomposition="multiple")
+    ... )
+    File("/path/to/destination/t1w.nii.gz")
+    >>> repr(a_file.copy(
+    ...     dest_dir="/path/to/destination",
+    ...     new_stem="t1w",
+    ...     extension_decomposition=FileSet.ExtensionDecomposition.none)
+    ... )
+    File("/path/to/destination/t1w")
+
+.. warning::
+
+    If ``extension_decomposition == "multiple"`` and there are '.' in the filename they
+    will be treated as if they are part of the filename even if they aren't intended to
+    be.
+
+
+Additional files within a fileset that aren't required for the format can be trimmed
+using the ``trim`` argument
+
+.. code-block:: python
+
+    >>> niftigz = NiftiGz(["/path/to/t1w.nii.gz", "/path/to/t1w.json"])
+    >>> repr(niftigz)
+    NiftiGz("/path/to/t1w.nii.gz", "/path/to/t1w.json")
+    >>> trimmed_niftigz = niftigz.copy("/new/destination", trim=True)
+    >>> repr(trimmed_niftigz)
+    NiftiGz("/new/destination/t1w.nii.gz")
+
+The other (self-explanatory) arguments that can be provided to copy are ``make_dirs`` and
+``overwrite``.
+
+Copy-mode
+~~~~~~~~~
 
 The copy method also supports creating links (both soft and hard) instead of copying the
 file by passing a value from the :class:`.FileSet.CopyMode` enum to the ``mode`` argument.
@@ -116,9 +183,7 @@ combination of link and copy modes,
 
 .. code-block:: python
 
-    new_analyze = analyze_file.copy(
-        dest_dir="/path/to/destination", mode=FileSet.CopyMode.link_or_copy
-    )
+    new_analyze = analyze_file.copy(dest_dir="/path/to/destination", mode="link_or_copy")
 
 in which case the copy method will attempt to create a symlink, then if that fails, a
 hardlink, and failing that fallback to a copy. The supported modes can also be specified
@@ -135,20 +200,20 @@ unsupported modes will be masked out of the ``supported_modes`` before it is app
     )
 
 
-Collation
-~~~~~~~~~
+Copy-collation
+~~~~~~~~~~~~~~
 
-When working with file formats with multiple files, there is not requirement that the
-filepaths are adjacent to each other in the same , for example
+There is not requirement that file formats consisting of multiple files (e.g. with a separate
+header) are "adjacent" to each other, i.e. in the same directory with the same file-stem
 
 .. code-block:: python
 
     >>> from fileformats.medimage import NiftiX
     >>> niftix = NiftiX(["/a/path/to/a/t1w.nii", "/an/unrelated/path/t1-weighted.json"])
 
-However, some commands expect auxiliary files to be "adjacent" to the primary file, i.e.
-in the same directory as the primary with the same file stem. To support this use case,
-the :meth:`.FileSet.copy()` can be passed a ``collation`` argument, which takes a
+However, some commands expect side-car and header files to be "adjacent" to the primary
+file, i.e. in the same directory as the primary with the same file stem. To support this
+use case, the :meth:`.FileSet.copy()` can be passed a ``collation`` argument, which takes a
 :class:`.FileSet.Collation` enum value.
 
 .. code-block:: python
@@ -182,14 +247,11 @@ If the files just need to be in the same directory, but not necessarily adjacent
 
 .. code-block:: python
 
-    >>> new_niftix = niftix.copy(
-    ...    dest_dir="/path/to/destination", collation=FileSet.Collation.siblings
-    ... )
+    >>> new_niftix = niftix.copy(dest_dir="/path/to/destination", collation="siblings")
     >>> new_niftix.fspaths
     {"/path/to/destination/t1w.nii", "/path/to/destination/t1-weighted.json"}
 
-
-The collation setting can also be used to decide whether files need to be copied or linked
+The collation setting will also be used to decide whether files need to be copied or linked
 to a new location. For example, if the files are already adjacent, then they can be simply
 left where they are by setting the mode to ``FileSet.CopyMode.any`` flag, which encompasses the
 ``FileSet.CopyMode.leave`` mode.
@@ -202,13 +264,13 @@ left where they are by setting the mode to ``FileSet.CopyMode.any`` flag, which 
     ...    mode=FileSet.CopyMode.any
     ... )
 
-The behaviour of this copy becomes a little complex and will be determined by the
+The behaviour of this call is a little complex and will be determined by the
 file paths in the ``niftix`` FileSet and the location of the source and destination
 directories. For example, if the file paths are already adjacent in the source directory
 they will be left where they are. However, if the files are not adjacent, they will be
-symlinked to the destination directory, unless the mount that directory is on doesn't
+symlinked to the destination directory, unless the mount/drive that directory is on doesn't
 support symlinks, in which case they will be hardlinked, unless the destination directory
-is on a different physical drive, in which case they will be copied.
+is on a different physical drive, in which case the copy method will fallback to a full copy.
 
 
 Moving

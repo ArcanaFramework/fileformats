@@ -1,13 +1,13 @@
 from pathlib import Path
 import re
 import json
-from fileformats.core.utils import from_mime_format_name
+from fileformats.core.identification import from_mime_format_name
 
 
 PKG_DIR = Path(__file__).parent.parent / "fileformats"
 
 
-def addin_descriptions(scraped_json_file: str):
+def addin_descriptions(scraped_json_file: str) -> None:
 
     with open(scraped_json_file) as f:
         scraped_jasn = json.load(f)

@@ -1,8 +1,8 @@
+import typing as ty
 from fileformats.core.fileset import FileSet
 from fileformats.core.exceptions import (
     FormatMismatchError,
 )
-from fileformats.core import hook
 from fileformats.core.mixin import WithClassifiers
 
 
@@ -10,10 +10,10 @@ class TypedSet(FileSet):
     """List of specific file types (similar to the contents of a directory but not
     enclosed in one)"""
 
-    content_types = ()
+    content_types: ty.Tuple[ty.Type[FileSet], ...] = ()
 
     @property
-    def contents(self):
+    def contents(self) -> ty.Iterable[FileSet]:
         for content_type in self.content_types:
             for p in self.fspaths:
                 try:
@@ -21,8 +21,8 @@ class TypedSet(FileSet):
                 except FormatMismatchError:
                     continue
 
-    @hook.check
-    def validate_contents(self):
+    @property
+    def _validate_contents(self) -> None:
         if not self.content_types:
             return
         not_found = set(self.content_types)
@@ -43,4 +43,4 @@ class SetOf(WithClassifiers, TypedSet):
     # WithClassifiers-required class attrs
     classifiers_attr_name = "content_types"
     allowed_classifiers = (FileSet,)
-    generically_classifies = True
+    generically_classifiable = True

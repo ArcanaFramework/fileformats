@@ -1,10 +1,12 @@
 from __future__ import annotations
 from inspect import isclass
+import typing as ty
+from fileformats.core.typing import Self
 from abc import ABCMeta
 import importlib
 import itertools
-from .converter import SubtypeVar
 from .exceptions import (
+    FileFormatsError,
     FormatMismatchError,
     FormatConversionError,
     FormatRecognitionError,
@@ -25,14 +27,21 @@ from .classifier import Classifier
 class DataType(Classifier, metaclass=ABCMeta):
     is_fileset = False
     is_field = False
-    nested_types = ()
+    nested_types: ty.Tuple[ty.Type[Classifier], ...] = ()
+    # Store converters registered by @converter decorator that convert to FileSet
+    # NB: each class will have its own version of this dictionary
+    converters: ty.Dict[
+        ty.Type["DataType"], "fileformats.core.converter_helpers.ConverterSpec"
+    ] = {}
 
     @classmethod
-    def type_var(cls, name):
-        return SubtypeVar.new(name, cls)
+    def type_var(cls, name: str) -> "fileformats.core.converter_helpers.SubtypeVar":
+        import fileformats.core.converter_helpers
+
+        return fileformats.core.converter_helpers.SubtypeVar.new(name, cls)
 
     @classmethod
-    def matches(cls, values) -> bool:
+    def matches(cls, values: ty.Any) -> bool:
         """Checks whether the given value (fspaths for file-sets) match the datatype
         specified by the class
 
@@ -47,27 +56,37 @@ class DataType(Classifier, metaclass=ABCMeta):
             whether the datatype matches the provided values
         """
         try:
-            cls(values)
+            cls(values)  # type: ignore
         except FormatMismatchError:
             return False
         else:
             return True
 
     @classproperty
-    def all_types(self):
+    def all_types(self) -> ty.Iterator[ty.Type[DataType]]:
         return itertools.chain(FileSet.all_formats, Field.all_fields)
 
     @classmethod
-    def subclasses(cls):
+    def subclasses(cls) -> ty.Generator[ty.Type[Self], None, None]:
         """Iterate over all installed subclasses"""
         for subpkg in subpackages():
             for attr_name in dir(subpkg):
                 attr = getattr(subpkg, attr_name)
-                if isclass(attr) and issubclass(attr, cls):
+                if (
+                    attr is not cls
+                    and isclass(attr)
+                    and issubclass(attr, cls)
+                    and ty.get_origin(attr) is None
+                ):
                     yield attr
 
     @classmethod
-    def get_converter(cls, source_format: type, name: str = "converter", **kwargs):
+    def get_converter(
+        cls,
+        source_format: ty.Type[DataType],
+        name: str = "converter",
+        **kwargs: ty.Any,
+    ) -> ty.Union[None]:
         if issubclass(source_format, cls):
             return None
         else:
@@ -76,7 +95,13 @@ class DataType(Classifier, metaclass=ABCMeta):
             )
 
     @classproperty
-    def mime_like(cls):
+    def mime_type(cls) -> str:
+        """Generates a MIME type identifier from a format class (i.e. an identifier
+        for a non-MIME class in the MIME"""
+        raise FileFormatsError(f"MIME type not defined for {cls} class")
+
+    @classproperty
+    def mime_like(cls) -> str:
         """Generates a "MIME-like" identifier from a format class (i.e.
         an identifier for a non-MIME class in the MIME style), e.g.
 
@@ -99,10 +124,10 @@ class DataType(Classifier, metaclass=ABCMeta):
         type
             the corresponding file format class
         """
-        return f"{cls.namespace}/{to_mime_format_name(cls.__name__)}"
+        return f"{cls.namespace}/{to_mime_format_name(cls.__name__)}"  # type: ignore
 
     @classmethod
-    def from_mime(cls, mime_string):
+    def from_mime(cls, mime_string: str) -> ty.Type[DataType]:
         """Resolves a FileFormat class from a MIME (IANA) or "MIME-like" identifier (i.e.
         an identifier for a non-MIME class in the MIME style), e.g.
 
@@ -141,7 +166,9 @@ class DataType(Classifier, metaclass=ABCMeta):
             # treats it). Therefore, we loop through all subclasses across the different
             # namespaces to find one that matches the name.
             format_name = format_name[2:]  # remove "x-" prefix
-            matching_name = FileSet.formats_by_name.get(format_name, ())
+            matching_name: ty.Collection[
+                ty.Type[FileSet]
+            ] = FileSet.formats_by_name.get(format_name, ())
             matching_name = [
                 m
                 for m in matching_name
@@ -151,7 +178,7 @@ class DataType(Classifier, metaclass=ABCMeta):
                 namespace_names = [
                     p.__name__
                     for p in subpackages()
-                    if p.__name__ not in IANA_MIME_TYPE_REGISTRIES
+                    if p.__name__.split(".")[-1] not in IANA_MIME_TYPE_REGISTRIES
                 ]
                 class_name = from_mime_format_name(format_name)
                 raise FormatRecognitionError(
@@ -185,6 +212,7 @@ class DataType(Classifier, metaclass=ABCMeta):
                 klass = getattr(module, class_name)
             except AttributeError:
                 if "+" in format_name:
+                    parent_namespace: ty.Optional[str]
                     if "_" in namespace:
                         parent_namespace = namespace.split("_")[0]
                         parent_module = importlib.import_module(
@@ -193,14 +221,14 @@ class DataType(Classifier, metaclass=ABCMeta):
                     else:
                         parent_namespace = parent_module = None
 
-                    def get_format(mime_name):
+                    def get_format(mime_name: str) -> ty.Type[DataType]:
                         name = from_mime_format_name(mime_name)
                         try:
-                            return getattr(module, name)
+                            return getattr(module, name)  # type: ignore
                         except AttributeError:
                             if parent_module:
                                 try:
-                                    return getattr(parent_module, name)
+                                    return getattr(parent_module, name)  # type: ignore
                                 except AttributeError:
                                     pass
                                 err_msg_part = f" or fileformats.{parent_namespace}"
@@ -219,7 +247,7 @@ class DataType(Classifier, metaclass=ABCMeta):
                         classified = get_format(classified_name)
                     except FormatRecognitionError as e:
                         try:
-                            classified = cls.generically_classifies_by_name[
+                            classified = cls.generically_classifiable_by_name[
                                 classified_name
                             ]
                         except KeyError:
@@ -227,11 +255,11 @@ class DataType(Classifier, metaclass=ABCMeta):
                                 e,
                                 (
                                     "neither list of generic types "
-                                    f"({list(cls.generically_classifies_by_name)})"
+                                    f"({list(cls.generically_classifiable_by_name)})"
                                 ),
                             )
                             raise e
-                    klass = classified[classifiers]
+                    klass = classified[classifiers]  # type: ignore
                 else:
                     raise FormatRecognitionError(
                         f"Did not find '{class_name}' class in fileformats.{namespace} "
@@ -240,16 +268,19 @@ class DataType(Classifier, metaclass=ABCMeta):
         return klass
 
     @classproperty
-    def generically_classifies_by_name(cls):
-        if cls._generically_classifies_by_name is None:
-            cls._generically_classifies_by_name = {
+    def generically_classifiable_by_name(cls) -> ty.Dict[str, ty.Type[DataType]]:
+        if cls._generically_classifiable_by_name is None:
+            cls._generically_classifiable_by_name = {
                 to_mime_format_name(f.__name__): f
                 for f in FileSet.all_formats
-                if getattr(f, "generically_classifies", False)
+                if getattr(f, "generically_classifiable", False)
             }
-        return cls._generically_classifies_by_name
+        return cls._generically_classifiable_by_name
 
-    _generically_classifies_by_name = None  # Register all generically classified types
+    # Register all generically classified types
+    _generically_classifiable_by_name: ty.Optional[
+        ty.Dict[str, ty.Type[DataType]]
+    ] = None
 
     REQUIRED_ANNOTATION = "__fileformats_required__"
     CHECK_ANNOTATION = "__fileformats_check__"
@@ -257,3 +288,4 @@ class DataType(Classifier, metaclass=ABCMeta):
 
 from .fileset import FileSet  # noqa
 from .field import Field  # noqa
+import fileformats.core.converter_helpers  # noqa

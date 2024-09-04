@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 from pydra.engine.specs import File
 from fileformats.testing import Foo, Bar, Baz, Qux
-from fileformats.core import hook
+from fileformats.core import converter
 from fileformats.core.exceptions import FormatConversionError
 from conftest import write_test_file
 
@@ -18,9 +18,9 @@ except ImportError:
 def foo_bar_converter():
     work_dir = Path(tempfile.mkdtemp())
 
-    @hook.converter
-    @pydra.mark.task
-    @pydra.mark.annotate({"return": {"out_file": Bar}})
+    @converter
+    @pydra.mark.task  # type: ignore[misc]
+    @pydra.mark.annotate({"return": {"out_file": Bar}})  # type: ignore[misc]
     def foo_bar_converter_(in_file: Foo):
         return Bar(write_test_file(work_dir / "bar.bar", in_file.contents))
 
@@ -31,9 +31,9 @@ def foo_bar_converter():
 def baz_bar_converter():
     work_dir = Path(tempfile.mkdtemp())
 
-    @hook.converter(out_file="out")
-    @pydra.mark.task
-    @pydra.mark.annotate({"return": {"out": Bar}})
+    @converter(out_file="out")
+    @pydra.mark.task  # type: ignore[misc]
+    @pydra.mark.annotate({"return": {"out": Bar}})  # type: ignore[misc]
     def baz_bar_converter_(in_file: Baz):
         assert in_file
         return Bar(write_test_file(work_dir / "bar.bar", in_file.contents))
@@ -84,7 +84,7 @@ def FooQuxConverter():
         name="Output", fields=output_fields, bases=(specs.ShellOutSpec,)
     )
 
-    @hook.converter(source_format=Foo, target_format=Qux)
+    @converter(source_format=Foo, target_format=Qux)
     class FooQuxConverter_(ShellCommandTask):
 
         input_spec = FooQux_input_spec

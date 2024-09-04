@@ -33,24 +33,24 @@ logger.addHandler(sch)
 # break at it
 if os.getenv("_PYTEST_RAISE", "0") != "0":
 
-    @pytest.hookimpl(tryfirst=True)
-    def pytest_exception_interact(call):
+    @pytest.hookimpl(tryfirst=True)  # type: ignore
+    def pytest_exception_interact(call: ty.Any) -> None:
         raise call.excinfo.value
 
-    @pytest.hookimpl(tryfirst=True)
-    def pytest_internalerror(excinfo):
+    @pytest.hookimpl(tryfirst=True)  # type: ignore
+    def pytest_internalerror(excinfo: ty.Any) -> None:
         raise excinfo.value
 
 
 @pytest.fixture
-def work_dir():
+def work_dir() -> Path:
     work_dir = tempfile.mkdtemp()
     return Path(work_dir)
 
 
 def write_test_file(
-    fpath: Path, contents: ty.Union[str, bytes] = "some contents", binary=False
-):
+    fpath: Path, contents: ty.Union[str, bytes] = "some contents", binary: bool = False
+) -> Path:
     fpath.parent.mkdir(exist_ok=True, parents=True)
     with open(fpath, "wb" if binary else "w") as f:
         f.write(contents)
