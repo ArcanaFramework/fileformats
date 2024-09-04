@@ -72,7 +72,7 @@ def test_metadata_reload(file_with_metadata_fspath):
     file_with_metadata = FileWithMetadata(file_with_metadata_fspath)
     assert sorted(file_with_metadata.metadata) == ["a", "b", "c", "d", "e"]
     # add new metadata line to check and check that it is reloaded
+    time.sleep(2)
     with open(file_with_metadata, "a") as f:
         f.write("\nf:6")
-    time.sleep(2)
     assert sorted(file_with_metadata.metadata) == ["a", "b", "c", "d", "e", "f"]
