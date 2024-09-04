@@ -125,7 +125,7 @@ class File(FsObject):
                 "(i.e. matches the None extension)"
             )
         # Return the longest matching extension, useful for optional extensions
-        return sorted(matching, key=len)[-1]  # type: ignore[no-any-return]
+        return sorted(matching, key=len)[-1]
 
     @property
     def stem(self) -> str:

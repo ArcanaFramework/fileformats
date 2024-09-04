@@ -98,16 +98,16 @@ def fspaths_converter(fspaths: FspathsInputType) -> ty.FrozenSet[Path]:
 
 PropReturn = ty.TypeVar("PropReturn")
 
-if sys.version_info[:2] >= (3, 9):
 
-    def classproperty(meth: ty.Callable[..., PropReturn]) -> PropReturn:
-        """Access a @classmethod like a @property."""
-        # mypy doesn't understand class properties yet: https://github.com/python/mypy/issues/2563
-        return classmethod(property(meth))  # type: ignore
+def classproperty(meth: ty.Callable[..., PropReturn]) -> PropReturn:
+    """Access a @classmethod like a @property."""
+    # mypy doesn't understand class properties yet: https://github.com/python/mypy/issues/2563
+    return classmethod(property(meth))  # type: ignore
 
-else:
 
-    class classproperty(object):
+if sys.version_info[:2] < (3, 9):
+
+    class classproperty(object):  # type: ignore[no-redef]  # noqa
         def __init__(self, f: ty.Callable[[ty.Type[ty.Any]], ty.Any]):
             self.f = f
 
