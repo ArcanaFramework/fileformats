@@ -26,6 +26,14 @@ be classified as containing a PNG image
     >>> Zip[Jpeg].matches(zipped_png_fspath)
     False
 
+.. note:: warning
+    At the time of writing currently classifiers are not supported by Mypy and other
+    static type checkers (only dynamic type-checking in Pydra_) because they use a
+    custom `__subclasshook__` method to implement the subclassing behaviour and overload
+    the `__class_getitem__` method, which isn't recommended in the official docs. It is
+    hoped that it will be possible to implement a custom Mypy plugin in the future to
+    support this feature.
+
 The types of classes that can be used to classify varies from type to type. For archive
 types like :class:`.Zip`, :class:`.Gzip`, take another file format type, others specific
 classifier types. Some classifiable types can take multiple classifiers, whereas others can
