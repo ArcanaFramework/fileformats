@@ -656,7 +656,9 @@ class FileSet(DataType):
         """Iterate over all FileSet formats in fileformats.* namespaces"""
         if cls._all_formats is None:
             cls._all_formats = set(
-                f for f in FileSet.subclasses() if f.__dict__.get("iana_mime", True)
+                f
+                for f in FileSet.subclasses()
+                if (f.__dict__.get("iana_mime", True) and not inspect.isabstract(f))
             )
         return cls._all_formats
 
@@ -1020,7 +1022,7 @@ class FileSet(DataType):
     def generate_sample_data(
         self,
         generator: SampleFileGenerator,
-    ) -> ty.Iterable[Path]:
+    ) -> ty.List[Path]:
         """Generate test data at the fspaths of the file-set
 
         Parameters
@@ -1154,7 +1156,7 @@ class FileSet(DataType):
     @classmethod
     def from_paths(
         cls, fspaths: ty.Iterable[Path], common_ok: bool = False
-    ) -> ty.Tuple[ty.Set["FileSet"], ty.Set[Path]]:
+    ) -> ty.Tuple[ty.Set[Self], ty.Set[Path]]:
         """Finds all instances of the fileset class that can be constructed from a
         collection of file-system paths.
 

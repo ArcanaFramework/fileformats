@@ -18,7 +18,7 @@ FILE_FILL_LENGTH = 256
 def fsobject_generate_sample_data(
     fsobject: FsObject,
     generator: SampleFileGenerator,
-) -> ty.Iterable[Path]:
+) -> ty.List[Path]:
     return [generator.generate(File, fill=FILE_FILL_LENGTH)]
 
 
@@ -26,7 +26,7 @@ def fsobject_generate_sample_data(
 def file_generate_sample_data(
     file: File,
     generator: SampleFileGenerator,
-) -> ty.Iterable[Path]:
+) -> ty.List[Path]:
     contents = None
     if file.binary:
         if hasattr(file, "magic_number"):
@@ -53,7 +53,7 @@ def file_generate_sample_data(
 def directory_generate_sample_data(
     directory: Directory,
     generator: SampleFileGenerator,
-) -> ty.Iterable[Path]:
+) -> ty.List[Path]:
     a_dir = generator.generate_fspath(Directory)
     a_dir.mkdir()
     File.sample_data(
@@ -66,7 +66,7 @@ def directory_generate_sample_data(
 def directory_containing_generate_sample_data(
     directory: DirectoryOf,
     generator: SampleFileGenerator,
-) -> ty.Iterable[Path]:
+) -> ty.List[Path]:
     a_dir = generator.generate_fspath(Directory)
     a_dir.mkdir()
     for tp in directory.content_types:
@@ -78,7 +78,7 @@ def directory_containing_generate_sample_data(
 def set_of_sample_data(
     set_of: SetOf,
     generator: SampleFileGenerator,
-) -> ty.Iterable[Path]:
+) -> ty.List[Path]:
     return list(
         itertools.chain(
             *(tp.sample_data(generator.child()) for tp in set_of.content_types)

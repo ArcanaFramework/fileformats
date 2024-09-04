@@ -7,4 +7,8 @@ def test_definitions(tmp_path):
     fspath = tmp_path / "test.txt"
     Path(fspath).write_text("test")
     for frmt in FileSet.all_formats:
-        frmt.matches(fspath)
+        try:
+            frmt.matches(fspath)
+        except TypeError as e:
+            if "Can't instantiate abstract class" not in str(e):
+                raise

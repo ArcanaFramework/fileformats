@@ -28,7 +28,7 @@ def dicom_read_metadata(
 def dicom_generate_sample_data(
     dicom: Dicom,
     generator: SampleFileGenerator,
-) -> ty.Iterable[Path]:
+) -> ty.List[Path]:
     return next(
         medimages4tests.dummy.dicom.mri.t1w.siemens.skyra.syngo_d13c.get_image(
             out_dir=generator.dest_dir

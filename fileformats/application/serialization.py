@@ -99,7 +99,7 @@ class Toml(DataSerialization):
 def generate_json_sample_data(
     js: Json,
     generator: SampleFileGenerator,
-) -> ty.Iterable[Path]:
+) -> ty.List[Path]:
     js_file = generator.generate_fspath(file_type=Json)
     with open(js_file, "w") as f:
         json.dump(
@@ -118,7 +118,7 @@ def generate_json_sample_data(
 def generate_yaml_sample_data(
     yml: Yaml,
     generator: SampleFileGenerator,
-) -> ty.Iterable[Path]:
+) -> ty.List[Path]:
     yml_file = generator.generate_fspath(file_type=Yaml)
     with open(yml_file, "w") as f:
         f.write(
