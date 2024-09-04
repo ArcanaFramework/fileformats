@@ -17,73 +17,73 @@ FileFormats
    :target: https://github.com/ArcanaFramework/fileformats
 
 
-*Fileformats* provides a library of file-format types implemented as Python classes.
-The format classes are designed to be used in file-type validation during the construction
-of data workflows (e.g. Pydra_, Fastr_), and provide a common interface to general methods
-for manipulating and moving the underlying file-system objects between storage locations.
-
-Unlike other file-type Python packages, *FileFormats*, supports multi-file data
-formats ("file sets") often found in scientific workflows, e.g. with separate header/data
-files, directories containing certain file types, and mechanisms to peek at metadata fields
-to define complex data formats or specific sub-types (e.g. functional MRI DICOM file set).
+*Fileformats* is a library of Python classes that correspond to different file formats
+for file-type detection/validation, MIME-type lookup and file handling. The format classes also
+provide hooks for methods to read and manipulate the data contained in the files to
+facilitate the writing of duck-typed code. Unlike other Python packages, multi-file data
+formats, e.g. with separate header/data files or directories containing specific files,
+are supported, and can be handled just like single file types.
 
 File-format types are typically identified by a combination of file extensions
-and "magic numbers", where applicable. In addition to these generic methods,
-*FileFormats* provides a flexible framework to conveniently add custom identification
-routines for exotic file formats, e.g. formats that require inspection of headers to
-locate other members of the "file set".
+and "magic numbers", where applicable. In these cases new formats can be defined in just
+a few lines. However, for more exotic file formats like
+`MRtrix Image Header <https://mrtrix.readthedocs.io/en/dev/getting_started/image_data.html#mrtrix-image-formats>`__,
+which requires inspection of headers to locate other members of the "file set",
+*FileFormats* provides a framework to add custom detection methods.
+
+Extensions and Extras
+---------------------
+
+The main *FileFormats* package covers all file-types with registered MIME types (see
+`IANA MIME-types`_). Additional, domain-specific formats can be added via *FileFormats* **extension**
+framework, such as `fileformats-medimage <https://pypi.org/project/fileformats-medimage>`__
+for medical imaging data, and `fileformats-datascience <https://pypi.org/project/fileformats-datascience>`__
+for formats commonly found in datascience. These extension packages are understandably
+not comprehensive, but expected to grow as new use cases are found and new formats added
+(see :ref:`Developer Guide`).
+
+The main *FileFormats* and its extension packages don't have any external dependencies.
+Extra functionality that requires external dependencies, such as libraries to read and
+write the file data, are implemented in separate **extras** packages (see
+`fileformats-extras <https://pypi.org/project/fileformats-extras/>`__,
+`fileformats-medimage-extras <https://pypi.org/project/fileformats-medimage-extras/>`__),
+to keep the base packages for format detection and file handling extremely
+light-weight.
+
 
 Installation
 ------------
 
-*FileFormats* can be installed for Python >=3.7 using *pip*
+*FileFormats* can be installed for Python >=3.8 using *pip*
 
-.. code-block:: bash
+.. code-block:: console
 
     $ python3 -m pip install fileformats
 
-This will perform a basic install with minimal dependencies, which can be used for
-type validation and detection. To also install the dependencies required to read data
-from, and converters between, select file formats, you can install the package with
-the ``extended`` option.
+Extension packages can be installed similarly
 
 .. code-block:: bash
 
-    $ python3 -m pip install fileformats[extended]
+    $ python3 -m pip install fileformats-medimage fileformats-datascience
+
+These installations have no dependencies and provide basic format detection and
+file handling functionality. However, for metadata inspection and format conversion methods
+that require external dependencies, you will need install the ``fileformats-extras`` package.
+
+.. code-block:: console
+
+    $ python3 -m pip install fileformats-extras
 
 
-.. toctree::
-    :maxdepth: 2
-    :hidden:
+and likewise for the extension packages
 
-    workflows
-    identification
-    developer
+.. code-block:: bash
 
+    $ python3 -m pip install fileformats-medimage-extras fileformats-datascience-extras
 
-Quick Example
--------------
-
-Validate an mp4 audio file's extension and magic number simply by instantiating the class.
-
-
-.. code-block:: python
-
-   >>> from fileformats.audio import Mp4
-   >>> mp4_file = Mp4("/path/to/audio.mp4")  # checks it exists, its extension and magic number
-   >>> str(mp4_file)
-   "/path/to/audio.mp4"
-
-The created ``FileSet`` object implements ``os.PathLike`` so can used in place of ``str``
-or ``pathlib.Path`` in most cases, e.g. when opening files
-
-   >>> fp = open(mp4_file, "rb")
-   >>> contents = fp.read()
-
-or in string templates, e.g.
-
-   >>> import subprocess
-   >>> subprocess.run(f"cp {mp4_file} new-dest.mp4", shell=True)
+.. note::
+   See the :ref:`Developer Guide` for instructions on how to implement your own extensions
+   and extras.
 
 
 License
@@ -97,5 +97,26 @@ This work is licensed under a
   :alt: Creative Commons Attribution 4.0 International License
 
 
+.. toctree::
+    :maxdepth: 2
+    :hidden:
+
+    quick_start
+    detection
+    file_handling
+    mime
+    extras
+    typing
+    developer
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Reference
+   :hidden:
+
+   api.rst
+
+
 .. _Pydra: https://pydra.readthedocs.io
 .. _Fastr: https://gitlab.com/radiology/infrastructure/fastr
+.. _`IANA MIME-types`: https://www.iana.org/assignments/media-types/media-types.xhtml

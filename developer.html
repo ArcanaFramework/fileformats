@@ -3,12 +3,12 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="prev" title="Format Identification" href="identification.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Public API" href="api.html" /><link rel="prev" title="Typing" href="typing.html" />
 
-    <!-- Generated with Sphinx 7.4.7 and Furo 2024.07.18 -->
-        <title>Developer Guide - FileFormats v0.11.4</title>
+    <!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 -->
+        <title>Developer Guide - FileFormats v0.12.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d8449d71" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=613ab9ff" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
     
     
@@ -172,7 +172,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">FileFormats v0.11.4</div></a>
+      <a href="index.html"><div class="brand">FileFormats v0.12.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -195,8 +195,11 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="_static/logo_small.png" alt="Logo"/>
+  </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.11.4</span>
+  <span class="sidebar-brand-text">FileFormats v0.12.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -205,9 +208,17 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="workflows.html">Data Workflows</a></li>
-<li class="toctree-l1"><a class="reference internal" href="identification.html">Format Identification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="detection.html">Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="file_handling.html">File handling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mime.html">MIME types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extras.html">Read, write and convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="typing.html">Typing</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Developer Guide</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Public API</a></li>
 </ul>
 
 </div>
@@ -355,11 +366,11 @@ method resolution order of the types bases, so that they can override methods in
 <section id="custom-format-patterns">
 <h2>Custom format patterns<a class="headerlink" href="#custom-format-patterns" title="Link to this heading">¶</a></h2>
 <p>While the standard mixin classes should cover 90% of all formats, in the wild-west of
-scientific data formats you might need to write custom validators using the
-<code class="docutils literal notranslate"><span class="pre">&#64;fileformats.core.mark.required</span></code> and <code class="docutils literal notranslate"><span class="pre">&#64;fileformats.core.mark.check</span></code> decorators.</p>
+scientific data formats you might need to write custom validators. This is simply done
+by adding a new property to the class using the <cite>&#64;property</cite> decorator.</p>
 <p>Take for example the <a class="reference external" href="https://www.earthdatascience.org/courses/earth-analytics/spatial-data-r/shapefile-structure/">GIS shapefile structure</a>,
 it is a file-set consisting of 3 to 6 files differentiated by their extensions. To
-implement this class we use the <code class="docutils literal notranslate"><span class="pre">required</span></code> decorator. We inherit from the <code class="docutils literal notranslate"><span class="pre">WithAdjacentFiles</span></code>
+implement this class we use the <code class="docutils literal notranslate"><span class="pre">&#64;property</span></code> decorator. We inherit from the <code class="docutils literal notranslate"><span class="pre">WithAdjacentFiles</span></code>
 mixin so that neighbouring files (i.e. files with the same stem but different extension)
 are included when the class is instantiated with just the primary &quot;.shp&quot; file.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.generic</span> <span class="kn">import</span> <span class="n">File</span>
@@ -403,36 +414,30 @@ are included when the class is instantiated with just the primary &quot;.shp&quo
 
     <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.shp&quot;</span>  <span class="c1"># the main file that will be mapped to fspath</span>
 
-    <span class="nd">@mark</span><span class="o">.</span><span class="n">required</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">index_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">GisShapeIndex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">select_by_ext</span><span class="p">(</span><span class="n">GisShapeIndex</span><span class="p">))</span>
 
-    <span class="nd">@mark</span><span class="o">.</span><span class="n">required</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">features_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">GisShapeFeatures</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">select_by_ext</span><span class="p">(</span><span class="n">GisShapeFeatures</span><span class="p">))</span>
 
-    <span class="nd">@mark</span><span class="o">.</span><span class="n">required</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">project_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">WellKnownText</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">select_by_ext</span><span class="p">(</span><span class="n">WellKnownText</span><span class="p">),</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="nd">@mark</span><span class="o">.</span><span class="n">required</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">spatial_index_n_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">GisShapeSpatialIndexN</span><span class="p">(</span>
            <span class="bp">self</span><span class="o">.</span><span class="n">select_by_ext</span><span class="p">(</span><span class="n">GisShapeSpatialIndexN</span><span class="p">),</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
 
-    <span class="nd">@mark</span><span class="o">.</span><span class="n">required</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">spatial_index_n_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">GisShapeSpatialIndexB</span><span class="p">(</span>
            <span class="bp">self</span><span class="o">.</span><span class="n">select_by_ext</span><span class="p">(</span><span class="n">GisShapeSpatialIndexB</span><span class="p">),</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
 
-    <span class="nd">@mark</span><span class="o">.</span><span class="n">required</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">geospatial_metadata_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">GisShapeGeoSpatialMetadata</span><span class="p">(</span>
@@ -440,10 +445,9 @@ are included when the class is instantiated with just the primary &quot;.shp&quo
         <span class="p">)</span>
 </pre></div>
 </div>
-<p>By marking the properties as required, means that they need to be able to return a
-value without raising a <code class="docutils literal notranslate"><span class="pre">FormatsMismatchError</span></code> for the class to be initiated. Required
-properties, that appear in <code class="docutils literal notranslate"><span class="pre">fspaths</span></code> attribute of the object are considered to be
-&quot;required paths&quot;, and are copied along side the main path in the <code class="docutils literal notranslate"><span class="pre">copy_to</span></code> method.</p>
+<p>Properties that appear in <code class="docutils literal notranslate"><span class="pre">fspaths</span></code> attribute of the object are considered to be
+&quot;required paths&quot;, and are copied along side the main path in the <code class="docutils literal notranslate"><span class="pre">copy_to</span></code> method
+even when the <code class="docutils literal notranslate"><span class="pre">trim</span></code> argument is set to True.</p>
 <p>After the required properties have been deeper checks can be by using the <code class="docutils literal notranslate"><span class="pre">check</span></code>
 decorator. Take the <code class="docutils literal notranslate"><span class="pre">fileformats.image.Tiff</span></code> class</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Tiff</span><span class="p">(</span><span class="n">RasterImage</span><span class="p">):</span>
@@ -476,8 +480,8 @@ files and another one for little endian files. Therefore we can't just use the
 <code class="docutils literal notranslate"><span class="pre">WithMagicNumber</span></code> mixin and have to roll our own, <code class="docutils literal notranslate"><span class="pre">endianness</span></code> is decorated with
 <code class="docutils literal notranslate"><span class="pre">fileformats.core.mark.check</span></code>.</p>
 </section>
-<section id="converters">
-<h2>Converters<a class="headerlink" href="#converters" title="Link to this heading">¶</a></h2>
+<section id="implementing-converters">
+<h2>Implementing converters<a class="headerlink" href="#implementing-converters" title="Link to this heading">¶</a></h2>
 <p>Converters between two equivalent formats are defined using <a class="reference external" href="https://pydra.readthedocs.io">Pydra</a> dataflow engine
 <a class="reference external" href="https://pydra.readthedocs.io/en/latest/components.html">tasks</a>. There are two types
 of <a class="reference external" href="https://pydra.readthedocs.io">Pydra</a> tasks, function tasks, Python functions decorated by <code class="docutils literal notranslate"><span class="pre">&#64;pydra.mark.task</span></code>, and
@@ -607,8 +611,8 @@ they are not loaded by default. However, if there is a package at
 <code class="docutils literal notranslate"><span class="pre">fileformats.&lt;namespace&gt;.converters</span></code>, it will be attempted to be imported and throw
 a warning if the import fails, when get_converter is called on a format in that
 namespace.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
 <p>If the converters aren't imported successfully, then you will receive a
 <code class="docutils literal notranslate"><span class="pre">FormatConversionError</span></code> error saying there are no converters between FormatA and
 FormatB.</p>
@@ -621,15 +625,23 @@ FormatB.</p>
       <footer>
         
         <div class="related-pages">
-          
-          <a class="prev-page" href="identification.html">
+          <a class="next-page" href="api.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Public API</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="typing.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Format Identification</div>
+                <div class="title">Typing</div>
                 
               </div>
             </a>
@@ -668,7 +680,7 @@ FormatB.</p>
 <li><a class="reference internal" href="#basic-formats">Basic formats</a></li>
 <li><a class="reference internal" href="#standard-mixins">Standard mixins</a></li>
 <li><a class="reference internal" href="#custom-format-patterns">Custom format patterns</a></li>
-<li><a class="reference internal" href="#converters">Converters</a></li>
+<li><a class="reference internal" href="#implementing-converters">Implementing converters</a></li>
 </ul>
 </li>
 </ul>
@@ -680,7 +692,7 @@ FormatB.</p>
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=3b781160"></script>
+</div><script src="_static/documentation_options.js?v=aeb4b65a"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=5fa4622c"></script>

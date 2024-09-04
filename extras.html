@@ -3,12 +3,12 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Format Identification" href="identification.html" /><link rel="prev" title="FileFormats" href="index.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Typing" href="typing.html" /><link rel="prev" title="MIME types" href="mime.html" />
 
-    <!-- Generated with Sphinx 7.4.7 and Furo 2024.07.18 -->
-        <title>Data Workflows - FileFormats v0.11.4</title>
+    <!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 -->
+        <title>Read, write and convert - FileFormats v0.12.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d8449d71" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=613ab9ff" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
     
     
@@ -172,7 +172,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">FileFormats v0.11.4</div></a>
+      <a href="index.html"><div class="brand">FileFormats v0.12.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -195,8 +195,11 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="_static/logo_small.png" alt="Logo"/>
+  </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.11.4</span>
+  <span class="sidebar-brand-text">FileFormats v0.12.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -205,9 +208,17 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul class="current">
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Data Workflows</a></li>
-<li class="toctree-l1"><a class="reference internal" href="identification.html">Format Identification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="detection.html">Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="file_handling.html">File handling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mime.html">MIME types</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Read, write and convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="typing.html">Typing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developer.html">Developer Guide</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Public API</a></li>
 </ul>
 
 </div>
@@ -228,7 +239,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="_sources/workflows.rst.txt" title="View this page">
+  <a class="muted-link" href="_sources/extras.rst.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -248,156 +259,20 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="data-workflows">
-<h1>Data Workflows<a class="headerlink" href="#data-workflows" title="Link to this heading">¶</a></h1>
-<p><em>FileFormats</em> is primarily designed for the typing of data workflows to ensure
-that data is transferred between workflow nodes in compatible formats. See <a class="reference external" href="https://pydra.readthedocs.io">Pydra</a>
-and <a class="reference external" href="https://gitlab.com/radiology/infrastructure/fastr">Fastr</a> for examples of compatible workflow engines.</p>
-<section id="base-features">
-<h2>Base features<a class="headerlink" href="#base-features" title="Link to this heading">¶</a></h2>
-<p>Base features are available for all types within <em>FileFormats</em> and its extension
-packages using the base install. They are designed to be broadly available for a large
-range of types and very light-weight in terms of external dependencies.</p>
-<section id="validation">
-<h3>Validation<a class="headerlink" href="#validation" title="Link to this heading">¶</a></h3>
-<p>In the basic case, <em>FileFormats</em> can be used for checking the format of files and
-directories against known types. Typically, there are two layers of checks, ones
-performed on the file-system paths alone,</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.image</span> <span class="kn">import</span> <span class="n">Jpeg</span>
-
-<span class="n">jpeg_file</span> <span class="o">=</span> <span class="n">Jpeg</span><span class="p">(</span><span class="s2">&quot;/path/to/image.jpg&quot;</span><span class="p">)</span>  <span class="c1"># PASSES</span>
-<span class="n">jpeg_file</span> <span class="o">=</span> <span class="n">Jpeg</span><span class="p">(</span><span class="s2">&quot;/path/to/image.png&quot;</span><span class="p">)</span>  <span class="c1"># FAILS!</span>
-</pre></div>
-</div>
-<p>The second layer of checks, which typically require reading the file and peeking at its
-contents for magic numbers and the like</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fspath</span> <span class="o">=</span> <span class="s2">&quot;/path/to/fake-image.jpg&quot;</span>
-
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fspath</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;this is not a valid JPEG file&quot;</span><span class="p">)</span>
-
-<span class="n">jpeg_file</span> <span class="o">=</span> <span class="n">Jpeg</span><span class="p">(</span><span class="n">fspath</span><span class="p">)</span>  <span class="c1"># FAILS!</span>
-</pre></div>
-</div>
-<p>Directories are classified by the contents of the files within them, via the
-<code class="docutils literal notranslate"><span class="pre">content_types</span></code> class attribute, e.g.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.generic</span> <span class="kn">import</span> <span class="n">File</span><span class="p">,</span> <span class="n">Directory</span>
-
-<span class="k">class</span> <span class="nc">Dicom</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
-    <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;DICM&quot;</span>
-    <span class="n">magic_number_offset</span> <span class="o">=</span> <span class="mi">128</span>
-
-<span class="k">class</span>  <span class="nc">DicomDir</span><span class="p">(</span><span class="n">Directory</span><span class="p">):</span>
-    <span class="n">content_types</span> <span class="o">=</span> <span class="p">(</span><span class="n">Dicom</span><span class="p">,)</span>
-</pre></div>
-</div>
-<p>Note that only one file within the directory needs to match the specified content type
-for it to be considered a match and additional files will be ignored. For example,
-the <code class="docutils literal notranslate"><span class="pre">Dicom</span></code> type would be considered valid on the following directory structure
-despite the presence of the <code class="docutils literal notranslate"><span class="pre">.DS_Store</span></code> directory and the <code class="docutils literal notranslate"><span class="pre">catalog.xml</span></code> file.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>dicom-directory
-├── .DS_Store
-│   ├── deleted-file1.txt
-│   ├── deleted-file2.txt
-│   └── ...
-├── 1.dcm
-├── 2.dcm
-├── 3.dcm
-├── ...
-├── 1024.dcm
-└── catalog.xml
-</pre></div>
-</div>
-<p>In addition to statically defining <cite>Directory</cite> formats such as the Dicom example above,
-dynamic directory types can be created on the fly by providing the content types as
-arguments to the <cite>DirectoryContaining[]</cite> method,
-e.g.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.generic</span> <span class="kn">import</span> <span class="n">Directory</span>
-<span class="kn">from</span> <span class="nn">fileformats.image</span> <span class="kn">import</span> <span class="n">Png</span>
-<span class="kn">from</span> <span class="nn">fileformats.text</span> <span class="kn">import</span> <span class="n">Csv</span>
-
-<span class="k">def</span> <span class="nf">my_task</span><span class="p">(</span><span class="n">image_dir</span><span class="p">:</span> <span class="n">DirectoryContaining</span><span class="p">[</span><span class="n">Png</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Csv</span><span class="p">:</span>
-    <span class="o">...</span> <span class="n">task</span> <span class="n">implementation</span> <span class="o">...</span>
-</pre></div>
-</div>
-</section>
-<section id="path-handling">
-<h3>Path handling<a class="headerlink" href="#path-handling" title="Link to this heading">¶</a></h3>
-<p>Once a file object is initiated you are able to access the &quot;required properties&quot; of the
-format class, which for single file formats is typically just the file-system path,
-<code class="docutils literal notranslate"><span class="pre">fspath</span></code>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.image</span> <span class="kn">import</span> <span class="n">Jpeg</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">jpeg_file</span> <span class="o">=</span> <span class="n">Jpeg</span><span class="p">(</span><span class="s2">&quot;/path/to/image.jpg&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">jpeg_file</span><span class="o">.</span><span class="n">fspath</span>
-<span class="go">&quot;/path/to/image.jpg&quot;</span>
-</pre></div>
-</div>
-<p>However, file-formats that consist of multiple files (common in scientific
-data) will typically define separate required properties for each file. For example, the
-<a class="reference external" href="https://en.wikipedia.org/wiki/Analyze_(imaging_software)">Analyze</a> neuroimaging format, which stores the image in a file with the extension
-&quot;.img&quot; and metadata in a separate header file with the extension &quot;.hdr&quot;.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.medimage</span> <span class="kn">import</span> <span class="n">Analyze</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">analyze_file</span> <span class="o">=</span> <span class="n">Analyze</span><span class="p">([</span><span class="s2">&quot;/path/to/neuroimage.hdr&quot;</span><span class="p">,</span> <span class="s2">&quot;/path/to/neuroimage.img&quot;</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">analyze_file</span><span class="o">.</span><span class="n">fspath</span>
-<span class="go">&quot;/path/to/neuroimage.img&quot;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">analyze_file</span><span class="o">.</span><span class="n">header</span>
-<span class="go">&quot;/path/to/neuroimage.hdr&quot;</span>
-</pre></div>
-</div>
-<p>To access all file-system paths in a format object you can access the <code class="docutils literal notranslate"><span class="pre">fspaths</span></code>
-attribute from the base class of all file formats <code class="docutils literal notranslate"><span class="pre">fileformats.core.base.FileSet</span></code></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">analyze_file</span><span class="o">.</span><span class="n">fspaths</span>
-<span class="go">{&quot;/path/to/neuroimage.hdr&quot;, &quot;/path/to/neuroimage.img&quot;}</span>
-</pre></div>
-</div>
-<p>In the case of file formats with &quot;adjacent&quot; files that share the same file-name stem,
-i.e. same file path and name minus the file extension (such as <a class="reference external" href="https://en.wikipedia.org/wiki/Analyze_(imaging_software)">Analyze</a>), you only need
-to provide one the primary path and the header will be automatically detected and added
-to the file-set</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.medimage</span> <span class="kn">import</span> <span class="n">Analyze</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">analyze_file</span> <span class="o">=</span> <span class="n">Analyze</span><span class="p">(</span><span class="s2">&quot;/path/to/neuroimage.img&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">analyze_file</span><span class="o">.</span><span class="n">fspaths</span>
-<span class="go">{&quot;/path/to/neuroimage.hdr&quot;, &quot;/path/to/neuroimage.img&quot;}</span>
-</pre></div>
-</div>
-<p>This is very useful when reading the output path of a workflow where only primary path
-is returned and associated files also need to be saved to an output directory. To copy
-all files/directories in a format you can use the <code class="docutils literal notranslate"><span class="pre">FileSet.copy()</span></code> method</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">analyze_file_copy</span> <span class="o">=</span> <span class="n">analyze_file</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">dest_dir</span><span class="o">=</span><span class="s2">&quot;/path/to/destination&quot;</span><span class="p">,</span> <span class="n">stem</span><span class="o">=</span><span class="s2">&quot;new-stem&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">analyze_file_copy</span><span class="o">.</span><span class="n">fspaths</span>
-<span class="go">{&quot;/path/to/destination/new-stem.hdr&quot;, &quot;/path/to/destination/new-stem.img&quot;}</span>
-</pre></div>
-</div>
-<p>Going in the other direction from a format class to a workflow/task input, the transformation
-of the format object to a path-like string is handled implicitly through the
-implementation of the <code class="docutils literal notranslate"><span class="pre">__str__</span></code> and <code class="docutils literal notranslate"><span class="pre">__fspath__</span></code> magic methods. This means
-that format objects can be used in place of the path objects themselves, e.g.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">subprocess</span>
-<span class="kn">from</span> <span class="nn">fileformats.text</span> <span class="kn">import</span> <span class="n">Plain</span>
-<span class="n">text_file</span> <span class="o">=</span> <span class="n">Plain</span><span class="p">(</span><span class="s2">&quot;/path/to/text-file.txt&quot;</span><span class="p">)</span>
-
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">text_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">contents</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-
-<span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cp </span><span class="si">{</span><span class="n">text_file</span><span class="si">}</span><span class="s2"> /path/to/destination&quot;</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Noting that it is only the &quot;primary&quot; path as returned by the <code class="docutils literal notranslate"><span class="pre">fspath</span></code> property that
-is rendered.</p>
-</section>
-</section>
-<section id="extras">
-<h2>Extras<a class="headerlink" href="#extras" title="Link to this heading">¶</a></h2>
+          <section id="read-write-and-convert">
+<h1>Read, write and convert<a class="headerlink" href="#read-write-and-convert" title="Link to this heading">¶</a></h1>
 <p>In addition to the basic features of validation and path handling, it is possible to
 implement methods to interact with the data of file format objects via &quot;extras hooks&quot;.
-Such features are added to selected
-format classes on a needs basis (pull requests welcome 😊, see <a class="reference internal" href="developer.html#developer-guide"><span class="std std-ref">Developer Guide</span></a>),
-so are by no means comprehensive, and <strong>are very much provided &quot;as-is&quot;</strong>.</p>
-<p>Since these features, typically rely on a range of external libraries, the dependencies
-are kept separate and only installed if the <code class="docutils literal notranslate"><span class="pre">[extended]</span></code> install option is used
-(i.e. <code class="docutils literal notranslate"><span class="pre">python3</span> <span class="pre">-m</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">filformats[extended]</span></code>).</p>
+Such features are added to selected format classes on a needs basis (pull requests
+welcome 😊, see <a class="reference internal" href="developer.html#developer-guide"><span class="std std-ref">Developer Guide</span></a>), so are by no means comprehensive, and
+are provided &quot;as-is&quot;.</p>
+<p>Since these features typically rely on a range of external libraries, they are kept in
+separate <em>extras</em> packages (e.g.
+<a class="reference external" href="https://pypi.org/project/fileformats-extras/">fileformats-extras</a>,
+<a class="reference external" href="https://pypi.org/project/fileformats-medimage-extras/">fileformats-medimage-extras</a>),
+which need to be installed separately.</p>
 <section id="metadata">
-<h3>Metadata<a class="headerlink" href="#metadata" title="Link to this heading">¶</a></h3>
+<h2>Metadata<a class="headerlink" href="#metadata" title="Link to this heading">¶</a></h2>
 <p>If there has been an extras overload registered for the <code class="docutils literal notranslate"><span class="pre">read_metadata</span></code> method,
 then metadata associated with the fileset can be accessed via the <code class="docutils literal notranslate"><span class="pre">metadata</span></code> property,
 e.g.</p>
@@ -405,33 +280,35 @@ e.g.</p>
 <span class="go">&quot;localizer&quot;</span>
 </pre></div>
 </div>
+<p>Formats the <code class="docutils literal notranslate"><span class="pre">WithSeparateHeader</span></code> and <code class="docutils literal notranslate"><span class="pre">WithSideCars</span></code> mixin classes will attempt the
+side car if a metadata reader is implemented (e.g. JSON) and merge that with any header
+information read from the primary file.</p>
 </section>
-<section id="load-saving-data">
-<h3>Load/saving data<a class="headerlink" href="#load-saving-data" title="Link to this heading">¶</a></h3>
+<section id="reading-and-writing">
+<h2>Reading and writing<a class="headerlink" href="#reading-and-writing" title="Link to this heading">¶</a></h2>
 <p>Several classes in the base fileformats package implement <code class="docutils literal notranslate"><span class="pre">load</span></code> and <code class="docutils literal notranslate"><span class="pre">save</span></code> methods.
 An advantage of implementing them  in the format class is that objects instantiated from
 them can then be duck-typed in calling functions/methods. For example, both <code class="docutils literal notranslate"><span class="pre">Yaml</span></code> and
 <code class="docutils literal notranslate"><span class="pre">Json</span></code> formats (both inherit from the <code class="docutils literal notranslate"><span class="pre">DataSerialization</span></code> type) implement the
 <code class="docutils literal notranslate"><span class="pre">load</span></code> method, which returns a dictionary</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.application</span> <span class="kn">import</span> <span class="n">DataSerialization</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.application</span> <span class="kn">import</span> <span class="n">DataSerialization</span>  <span class="c1"># i.e. JSON or YAML</span>
 
-<span class="k">def</span> <span class="nf">read_json_or_yaml_to_dict</span><span class="p">(</span><span class="n">serialized</span><span class="p">:</span> <span class="n">DataSerialization</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">read_serialisation</span><span class="p">(</span><span class="n">serialized</span><span class="p">:</span> <span class="n">DataSerialization</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">serialized</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Also, when providing the the <code class="docutils literal notranslate"><span class="pre">WithSeparateHeader</span></code> and <code class="docutils literal notranslate"><span class="pre">WithSideCars</span></code> mixin classes will</p>
 </section>
-<section id="conversion">
-<h3>Conversion<a class="headerlink" href="#conversion" title="Link to this heading">¶</a></h3>
+<section id="converters">
+<h2>Converters<a class="headerlink" href="#converters" title="Link to this heading">¶</a></h2>
 <p>Several conversion methods are available between equivalent file-formats in the standard
 classes. For example, archive types such as <code class="docutils literal notranslate"><span class="pre">Zip</span></code> can be converted into and generic
 file/directories using the <code class="docutils literal notranslate"><span class="pre">convert</span></code> classmethod of the target format to convert to</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.application</span> <span class="kn">import</span> <span class="n">Zip</span>
 <span class="kn">from</span> <span class="nn">fileformats.generic</span> <span class="kn">import</span> <span class="n">Directory</span>
 
+<span class="c1"># Example round trip from directory to zip file</span>
 <span class="n">zip_file</span> <span class="o">=</span> <span class="n">Zip</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">Directory</span><span class="p">(</span><span class="s2">&quot;/path/to/a/directory&quot;</span><span class="p">))</span>
 <span class="n">extracted</span> <span class="o">=</span> <span class="n">Directory</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">zip_file</span><span class="p">)</span>
-<span class="n">copied</span> <span class="o">=</span> <span class="n">extracted</span><span class="o">.</span><span class="n">copy_to</span><span class="p">(</span><span class="s2">&quot;/path/to/output&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The converters are implemented in the <a class="reference external" href="https://pydra.readthedocs.io">Pydra</a> dataflow framework, and can be linked into
@@ -456,30 +333,29 @@ classmethod</p>
 </div>
 </section>
 </section>
-</section>
 
         </article>
       </div>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="identification.html">
+          <a class="next-page" href="typing.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Format Identification</div>
+                <div class="title">Typing</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="index.html">
+          <a class="prev-page" href="mime.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Home</div>
+                <div class="title">MIME types</div>
                 
               </div>
             </a>
@@ -513,18 +389,10 @@ classmethod</p>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Data Workflows</a><ul>
-<li><a class="reference internal" href="#base-features">Base features</a><ul>
-<li><a class="reference internal" href="#validation">Validation</a></li>
-<li><a class="reference internal" href="#path-handling">Path handling</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#extras">Extras</a><ul>
+<li><a class="reference internal" href="#">Read, write and convert</a><ul>
 <li><a class="reference internal" href="#metadata">Metadata</a></li>
-<li><a class="reference internal" href="#load-saving-data">Load/saving data</a></li>
-<li><a class="reference internal" href="#conversion">Conversion</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#reading-and-writing">Reading and writing</a></li>
+<li><a class="reference internal" href="#converters">Converters</a></li>
 </ul>
 </li>
 </ul>
@@ -536,7 +404,7 @@ classmethod</p>
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=3b781160"></script>
+</div><script src="_static/documentation_options.js?v=aeb4b65a"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=5fa4622c"></script>

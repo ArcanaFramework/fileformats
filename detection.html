@@ -3,12 +3,12 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Developer Guide" href="developer.html" /><link rel="prev" title="Data Workflows" href="workflows.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="File handling" href="file_handling.html" /><link rel="prev" title="Quick start" href="quick_start.html" />
 
-    <!-- Generated with Sphinx 7.4.7 and Furo 2024.07.18 -->
-        <title>Format Identification - FileFormats v0.11.4</title>
+    <!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 -->
+        <title>Detection - FileFormats v0.12.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d8449d71" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=613ab9ff" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
     
     
@@ -172,7 +172,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">FileFormats v0.11.4</div></a>
+      <a href="index.html"><div class="brand">FileFormats v0.12.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -195,8 +195,11 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="_static/logo_small.png" alt="Logo"/>
+  </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.11.4</span>
+  <span class="sidebar-brand-text">FileFormats v0.12.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -205,9 +208,17 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="workflows.html">Data Workflows</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Format Identification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick start</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="file_handling.html">File handling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mime.html">MIME types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extras.html">Read, write and convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="typing.html">Typing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developer.html">Developer Guide</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Public API</a></li>
 </ul>
 
 </div>
@@ -228,7 +239,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="_sources/identification.rst.txt" title="View this page">
+  <a class="muted-link" href="_sources/detection.rst.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -248,102 +259,110 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="format-identification">
-<h1>Format Identification<a class="headerlink" href="#format-identification" title="Link to this heading">¶</a></h1>
-<p>In addition to simply importing and using a format class in your Python code, format classes
-can be loaded from their <a class="reference external" href="https://www.iana_mime.org/assignments/media-types/media-types.xhtml">MIME type</a> or detected from
-file-system objects.</p>
-<section id="detecting-formats">
-<h2>Detecting formats<a class="headerlink" href="#detecting-formats" title="Link to this heading">¶</a></h2>
-<p>While not a primary design goal of the <em>FileFormats</em> library, it is
-possible to detect the formats that match a given set of files using the <code class="docutils literal notranslate"><span class="pre">find_matching</span></code>
-function. Note that it isn't always possible to uniquely identify a single format, since
-there may be several matching formats for, non-descript binary file formats that use the
-&quot;.dat&quot; extension for example.</p>
+          <section id="detection">
+<h1>Detection<a class="headerlink" href="#detection" title="Link to this heading">¶</a></h1>
+<p><em>FileFormats</em> has been designed to detect whether a set of files matches a given
+format specification. This can be used either be in the form of validating file types
+in workflows or identifying the format in which user input files have been provided.</p>
+<section id="validation">
+<h2>Validation<a class="headerlink" href="#validation" title="Link to this heading">¶</a></h2>
+<p>In the basic case, <em>FileFormats</em> can be used for checking the format of files and
+directories against known types. Typically this will involve checking the file extension
+and magic number if applicable</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.image</span> <span class="kn">import</span> <span class="n">Jpeg</span>
+
+<span class="n">jpeg_file</span> <span class="o">=</span> <span class="n">Jpeg</span><span class="p">(</span><span class="s2">&quot;/path/to/image.jpg&quot;</span><span class="p">)</span>  <span class="c1"># PASSES</span>
+<span class="n">Jpeg</span><span class="p">(</span><span class="s2">&quot;/path/to/image.png&quot;</span><span class="p">)</span>  <span class="c1"># FAILS!</span>
+
+<span class="n">fake_fspath</span> <span class="o">=</span> <span class="s2">&quot;/path/to/fake-image.jpg&quot;</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fake_fspath</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;this is not a valid JPEG file&quot;</span><span class="p">)</span>
+
+<span class="n">Jpeg</span><span class="p">(</span><span class="n">fake_fspath</span><span class="p">)</span>  <span class="c1"># FAILS!</span>
+</pre></div>
+</div>
+<p>To check whether a format matches without attempting to initialise the object use the
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">FileSet.matches()</span></code> method</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">Jpeg</span><span class="o">.</span><span class="n">matches</span><span class="p">(</span><span class="s2">&quot;/path/to/image.jpg&quot;</span><span class="p">):</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>Directories are classified by the contents of the files within them, via the
+<code class="docutils literal notranslate"><span class="pre">content_types</span></code> class attribute, e.g.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.generic</span> <span class="kn">import</span> <span class="n">File</span><span class="p">,</span> <span class="n">Directory</span>
+
+<span class="k">class</span> <span class="nc">Dicom</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;DICM&quot;</span>
+    <span class="n">magic_number_offset</span> <span class="o">=</span> <span class="mi">128</span>
+
+<span class="k">class</span>  <span class="nc">DicomDir</span><span class="p">(</span><span class="n">Directory</span><span class="p">):</span>
+    <span class="n">content_types</span> <span class="o">=</span> <span class="p">(</span><span class="n">Dicom</span><span class="p">,)</span>
+</pre></div>
+</div>
+<p>Note that only one file within the directory needs to match the specified content type
+for it to be considered a match and additional files will be ignored. For example,
+the <code class="docutils literal notranslate"><span class="pre">Dicom</span></code> type would be considered valid on the following directory structure
+despite the presence of the <code class="docutils literal notranslate"><span class="pre">.DS_Store</span></code> directory and the <code class="docutils literal notranslate"><span class="pre">catalog.xml</span></code> file.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>dicom-directory
+├── .DS_Store
+│   ├── deleted-file1.txt
+│   ├── deleted-file2.txt
+│   └── ...
+├── 1.dcm
+├── 2.dcm
+├── 3.dcm
+├── ...
+├── 1024.dcm
+└── catalog.xml
+</pre></div>
+</div>
+<p>In addition to statically defining <cite>Directory</cite> formats such as the Dicom example above,
+dynamic directory types can be created on the fly by providing the content types as
+&quot;classifier&quot; arguments to the <cite>DirectoryOf[]</cite> class (see <a class="reference internal" href="typing.html#classifiers"><span class="std std-ref">Classifiers</span></a>),
+e.g.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.generic</span> <span class="kn">import</span> <span class="n">Directory</span>
+<span class="kn">from</span> <span class="nn">fileformats.image</span> <span class="kn">import</span> <span class="n">Png</span>
+<span class="kn">from</span> <span class="nn">fileformats.text</span> <span class="kn">import</span> <span class="n">Csv</span>
+
+<span class="k">def</span> <span class="nf">my_task</span><span class="p">(</span><span class="n">image_dir</span><span class="p">:</span> <span class="n">DirectoryOf</span><span class="p">[</span><span class="n">Png</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Csv</span><span class="p">:</span>
+    <span class="o">...</span> <span class="n">task</span> <span class="n">implementation</span> <span class="o">...</span>
+</pre></div>
+</div>
+</section>
+<section id="identification">
+<h2>Identification<a class="headerlink" href="#identification" title="Link to this heading">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">find_matching</span></code> function can be used to list the formats that match a given file</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">find_matching</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">find_matching</span><span class="p">(</span><span class="s2">&quot;/path/to/word.doc&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">find_matching</span><span class="p">([</span><span class="s2">&quot;/path/to/word.doc&quot;</span><span class="p">])</span>
 <span class="go">[&lt;class &#39;fileformats.application.Msword&#39;&gt;]</span>
 </pre></div>
 </div>
-<p>Note that the installation of additional sub-packages may cause detection code to
-break if your code doesn't the potential of new formats being added with overlapping
-cases where they will both match a given file set. If you are only interested in
-formats covered in the main fileformats package then you should use the <code class="docutils literal notranslate"><span class="pre">standard_only</span></code>
-flag</p>
-</section>
-<section id="mime-types">
-<h2>MIME Types<a class="headerlink" href="#mime-types" title="Link to this heading">¶</a></h2>
-<p>Namespaces in the <code class="docutils literal notranslate"><span class="pre">fileformats</span></code> package are largely named after MIME type registries
-as defined by the <a class="reference external" href="https://www.iana_mime.org/assignments/media-types/media-types.xhtml">Internet Assigned Numbering Authority (IANA)</a>.
-The difference is that there is no &quot;application&quot; registry, which acts as a
-bit of a catch-all in the MIME-type specification. Instead, types that
-fall under the &quot;application&quot; registry are grouped by the types of data that they
-store, e.g. <code class="docutils literal notranslate"><span class="pre">fileformats.application</span></code> for (typically compressed) archives such as
-zip, bzip, gzip, etc..., <code class="docutils literal notranslate"><span class="pre">fileformats.application</span></code> for PDFs, word docs,
-<code class="docutils literal notranslate"><span class="pre">fileformats.application</span></code> for JSON, YAML and XML, etc...</p>
-<p>Format class can be converted to and from MIME type strings using the <code class="docutils literal notranslate"><span class="pre">to_mime</span></code> and
-<code class="docutils literal notranslate"><span class="pre">from_mime</span></code> functions. If the the <code class="docutils literal notranslate"><span class="pre">iana_mime</span></code> attribute
-is present in the type class, it should correspond to a formally recognised MIME type
-by the , e.g.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">to_mime</span><span class="p">,</span> <span class="n">from_mime</span>
-<span class="kn">from</span> <span class="nn">fileformats.application</span> <span class="kn">import</span> <span class="n">MswordX</span>
-
-<span class="n">Loaded</span> <span class="o">=</span> <span class="n">from_mime</span><span class="p">(</span><span class="s2">&quot;application/vnd.openxmlformats-officedocument.wordprocessingml.document&quot;</span><span class="p">)</span>
-<span class="k">assert</span> <span class="n">Loaded</span> <span class="ow">is</span> <span class="n">MswordX</span>
-<span class="k">assert</span> <span class="n">Loaded</span><span class="o">.</span><span class="n">mime_type</span> <span class="o">==</span> <span class="s2">&quot;application/vnd.openxmlformats-officedocument.wordprocessingml.document&quot;</span>
-</pre></div>
-</div>
-<p>If the format class doesn't define an <code class="docutils literal notranslate"><span class="pre">iana_mime</span></code> attribute (i.e. in the actual class,
-not including <code class="docutils literal notranslate"><span class="pre">iana_mime</span></code> attributes defined in base classes), it will be assigned an informal
-MIME-type of &quot;application/x-&lt;transformed-class-name&gt;&quot;, where <em>transformed-class-name</em>
-is the name of the format class converted from &quot;PascalCase&quot; to &quot;kebab-case&quot;, with the
-single underscores converterd to &quot;.&quot; and a double underscores converted to &quot;+&quot; (there
-should be only one), e.g.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Nifti__Gzip_Json</span><span class="o">.</span><span class="n">mime_type</span>
-<span class="go">&quot;application/x-nifti+gzip.json&quot;</span>
-</pre></div>
-</div>
-<p>Note that if there are two file-formats with the same class name in different sub-packages
-then the <code class="docutils literal notranslate"><span class="pre">iana_mime</span></code> attribute will need to be set on at least one of them otherwise an
-error will be raised when they are loaded from a MIME type.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Note that the installation of additional sub-packages may cause detection code to
-break if your code doesn't the potential of new formats being added with the same
-class name. Therefore, you may prefer to use &quot;MIME-like&quot; type strings (see below)
-unless IANA compliance is required.</p>
+<p>The installation of extension packages may cause detection code to break if one of
+the newly added formats also matches the file and your code doesn't handle this case.
+If you are only interested in formats covered in the main fileformats package then
+you should use the <code class="docutils literal notranslate"><span class="pre">standard_only</span></code> flag</p>
 </div>
-</section>
-<section id="mime-like-types">
-<h2>MIME-like types<a class="headerlink" href="#mime-like-types" title="Link to this heading">¶</a></h2>
-<p>To avoid the issue with format classes in separate namespaces mapping onto the same
-IANA-style MIME type, as well as improving readability of the MIME string (i.e. not
-drowning in a sea of &quot;application/x-*&quot; types), it can be preferable in some use cases
-not to worry with closely matching the MIME-type specification for non-standard formats
-and just use the <em>FileFormats</em> namespace inplace of the generic &quot;application/x-&quot; prefix.
-This is accessed via the <code class="docutils literal notranslate"><span class="pre">mime_like</span></code> class-property.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.datascience</span> <span class="kn">import</span> <span class="n">Hdf5</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.medimage</span> <span class="kn">import</span> <span class="n">Nifti1</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">Hdf5</span><span class="o">.</span><span class="n">mime_like</span>
-<span class="go">&quot;datascience/hdf5&quot;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">Nifti1</span><span class="o">.</span><span class="n">mime_like</span>
-<span class="go">&quot;medimage/nifti1&quot;</span>
+<p>For loosely formats without many constraints, <code class="docutils literal notranslate"><span class="pre">find_matching</span></code> may return multiple
+formats that are not plausible for the given use case, in which case the <code class="docutils literal notranslate"><span class="pre">candidates</span></code>
+argument can be passed to restrict the possible formats that can be returned</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.datascience</span> <span class="kn">import</span> <span class="n">MatFile</span><span class="p">,</span> <span class="n">RData</span><span class="p">,</span> <span class="n">Hdf5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">find_matching</span><span class="p">([</span><span class="s2">&quot;/path/to/text/matrix/file.mat&quot;</span><span class="p">])</span>
+<span class="go">[fileformats.datascience.data.TextMatrix]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">find_matching</span><span class="p">([</span><span class="s2">&quot;/path/to/matlab/file.mat&quot;</span><span class="p">])</span>
+<span class="go">[fileformats.datascience.data.TextMatrix, fileformats.datascience.data.MatFile]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">find_matching</span><span class="p">([</span><span class="s2">&quot;/path/to/matlab/file.mat&quot;</span><span class="p">],</span> <span class="n">candidates</span><span class="o">=</span><span class="p">[</span><span class="n">MatFile</span><span class="p">,</span> <span class="n">RData</span><span class="p">,</span> <span class="n">Hdf5</span><span class="p">])</span>
+<span class="go">[fileformats.datascience.data.MatFile]</span>
 </pre></div>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">from_mime</span></code> function will resolve both official-style MIME types and the MIME-like
-types, so it is possible to roundtrip from both.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">to_mime</span><span class="p">,</span> <span class="n">from_mime</span>
-<span class="kn">from</span> <span class="nn">from</span> <span class="n">fileformats</span><span class="o">.</span><span class="n">medimage</span> <span class="kn">import</span> <span class="nn">DicomSeries</span>
-
-<span class="c1"># Using official-style MIME string</span>
-<span class="n">mime_type</span> <span class="o">=</span> <span class="n">DicomSeries</span><span class="o">.</span><span class="n">mime_type</span>
-<span class="k">assert</span> <span class="n">mime_type</span> <span class="o">==</span> <span class="s2">&quot;application/x-dicom-series&quot;</span>
-<span class="k">assert</span> <span class="n">from_mime</span><span class="p">(</span><span class="n">mime_type</span><span class="p">)</span> <span class="ow">is</span> <span class="n">DicomSeries</span>
-
-<span class="c1"># Using MIME-like string</span>
-<span class="n">mimelike_type</span> <span class="o">=</span> <span class="n">DicomSeries</span><span class="o">.</span><span class="n">mime_like</span>
-<span class="k">assert</span> <span class="n">mimelike_type</span> <span class="o">==</span> <span class="s2">&quot;medimage/dicom-series&quot;</span>
-<span class="k">assert</span> <span class="n">from_mime</span><span class="p">(</span><span class="n">mimelike_type</span><span class="p">)</span> <span class="ow">is</span> <span class="n">DicomSeries</span>
+<p><code class="docutils literal notranslate"><span class="pre">from_paths</span></code> can be used to return an initialised object instead of a list of matching
+files, however, since you need to be confident that there is only than one possible format
+it is advisable to also provide a list of candidate formats</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">from_paths</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">repr</span><span class="p">(</span><span class="n">from_paths</span><span class="p">([</span><span class="s2">&quot;/path/to/matlab/file.mat&quot;</span><span class="p">],</span> <span class="n">candidates</span><span class="o">=</span><span class="p">[</span><span class="n">MatFile</span><span class="p">,</span> <span class="n">RData</span><span class="p">,</span> <span class="n">Hdf5</span><span class="p">]))</span>
+<span class="go">fileformats.datascience.data.MatFile({&quot;/path/to/matlab/file.mat&quot;})</span>
 </pre></div>
 </div>
 </section>
@@ -354,23 +373,23 @@ types, so it is possible to roundtrip from both.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="developer.html">
+          <a class="next-page" href="file_handling.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Developer Guide</div>
+                <div class="title">File handling</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="workflows.html">
+          <a class="prev-page" href="quick_start.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Data Workflows</div>
+                <div class="title">Quick start</div>
                 
               </div>
             </a>
@@ -404,10 +423,9 @@ types, so it is possible to roundtrip from both.</p>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Format Identification</a><ul>
-<li><a class="reference internal" href="#detecting-formats">Detecting formats</a></li>
-<li><a class="reference internal" href="#mime-types">MIME Types</a></li>
-<li><a class="reference internal" href="#mime-like-types">MIME-like types</a></li>
+<li><a class="reference internal" href="#">Detection</a><ul>
+<li><a class="reference internal" href="#validation">Validation</a></li>
+<li><a class="reference internal" href="#identification">Identification</a></li>
 </ul>
 </li>
 </ul>
@@ -419,7 +437,7 @@ types, so it is possible to roundtrip from both.</p>
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=3b781160"></script>
+</div><script src="_static/documentation_options.js?v=aeb4b65a"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=5fa4622c"></script>

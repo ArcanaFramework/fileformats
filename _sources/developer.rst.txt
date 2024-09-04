@@ -131,12 +131,12 @@ Custom format patterns
 ----------------------
 
 While the standard mixin classes should cover 90% of all formats, in the wild-west of
-scientific data formats you might need to write custom validators using the
-``@fileformats.core.mark.required`` and ``@fileformats.core.mark.check`` decorators.
+scientific data formats you might need to write custom validators. This is simply done
+by adding a new property to the class using the `@property` decorator.
 
 Take for example the `GIS shapefile structure <https://www.earthdatascience.org/courses/earth-analytics/spatial-data-r/shapefile-structure/>`_,
 it is a file-set consisting of 3 to 6 files differentiated by their extensions. To
-implement this class we use the ``required`` decorator. We inherit from the ``WithAdjacentFiles``
+implement this class we use the ``@property`` decorator. We inherit from the ``WithAdjacentFiles``
 mixin so that neighbouring files (i.e. files with the same stem but different extension)
 are included when the class is instantiated with just the primary ".shp" file.
 
@@ -183,46 +183,39 @@ are included when the class is instantiated with just the primary ".shp" file.
 
         ext = ".shp"  # the main file that will be mapped to fspath
 
-        @mark.required
         @property
         def index_file(self):
             return GisShapeIndex(self.select_by_ext(GisShapeIndex))
 
-        @mark.required
         @property
         def features_file(self):
             return GisShapeFeatures(self.select_by_ext(GisShapeFeatures))
 
-        @mark.required
         @property
         def project_file(self):
             return WellKnownText(self.select_by_ext(WellKnownText), allow_none=True)
 
-        @mark.required
         @property
         def spatial_index_n_file(self):
             return GisShapeSpatialIndexN(
                self.select_by_ext(GisShapeSpatialIndexN), allow_none=True
             )
 
-        @mark.required
         @property
         def spatial_index_n_file(self):
             return GisShapeSpatialIndexB(
                self.select_by_ext(GisShapeSpatialIndexB), allow_none=True
             )
 
-        @mark.required
         @property
         def geospatial_metadata_file(self):
             return GisShapeGeoSpatialMetadata(
                self.select_by_ext(GisShapeGeoSpatialMetadata), allow_none=True
             )
 
-By marking the properties as required, means that they need to be able to return a
-value without raising a ``FormatsMismatchError`` for the class to be initiated. Required
-properties, that appear in ``fspaths`` attribute of the object are considered to be
-"required paths", and are copied along side the main path in the ``copy_to`` method.
+Properties that appear in ``fspaths`` attribute of the object are considered to be
+"required paths", and are copied along side the main path in the ``copy_to`` method
+even when the ``trim`` argument is set to True.
 
 After the required properties have been deeper checks can be by using the ``check``
 decorator. Take the ``fileformats.image.Tiff`` class
@@ -260,8 +253,8 @@ files and another one for little endian files. Therefore we can't just use the
 ``fileformats.core.mark.check``.
 
 
-Converters
-----------
+Implementing converters
+-----------------------
 
 Converters between two equivalent formats are defined using Pydra_ dataflow engine
 `tasks <https://pydra.readthedocs.io/en/latest/components.html>`_. There are two types
@@ -409,7 +402,7 @@ a warning if the import fails, when get_converter is called on a format in that
 namespace.
 
 
-.. note::
+.. warning::
     If the converters aren't imported successfully, then you will receive a
     ``FormatConversionError`` error saying there are no converters between FormatA and
     FormatB.
