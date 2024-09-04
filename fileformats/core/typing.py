@@ -1,6 +1,11 @@
 import typing as ty
+import sys
 from pathlib import Path
-from typing_extensions import TypeAlias
+
+if sys.version_info[:2] < (3, 11):
+    from typing_extensions import TypeAlias, Self
+else:
+    from typing import TypeAlias, Self
 
 if ty.TYPE_CHECKING:
     import fileformats.core
@@ -15,3 +20,6 @@ FspathsInputType: TypeAlias = ty.Union[  # noqa: F821
 ]
 
 PathType: TypeAlias = ty.Union[str, Path]
+
+
+__all__ = ["CryptoMethod", "FspathsInputType", "PathType", "TypeAlias", "Self"]

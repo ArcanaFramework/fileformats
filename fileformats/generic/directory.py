@@ -5,7 +5,7 @@ from fileformats.core.utils import classproperty
 from .fsobject import FsObject
 from fileformats.core.fileset import FileSet, FILE_CHUNK_LEN_DEFAULT
 from fileformats.core.mixin import WithClassifiers
-from fileformats.core.type_aliases import CryptoMethod
+from fileformats.core.typing import CryptoMethod
 
 
 class Directory(FsObject):

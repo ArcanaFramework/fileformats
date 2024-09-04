@@ -5,7 +5,7 @@ from itertools import zip_longest
 import functools
 import urllib.error
 import fileformats.core
-from typing_extensions import TypeAlias
+from fileformats.core.typing import TypeAlias
 from .datatype import DataType
 from .converter_helpers import ConverterWrapper, ConverterSpec, SubtypeVar
 from .exceptions import FormatConversionError, FileFormatsExtrasError

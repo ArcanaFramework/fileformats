@@ -10,7 +10,7 @@ import os
 import logging
 import pkgutil
 from contextlib import contextmanager
-from .type_aliases import FspathsInputType
+from .typing import FspathsInputType
 import fileformats.core
 
 if ty.TYPE_CHECKING:

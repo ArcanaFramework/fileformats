@@ -1,7 +1,7 @@
 from __future__ import annotations
 from inspect import isclass
 import typing as ty
-from typing_extensions import Self
+from fileformats.core.typing import Self
 from abc import ABCMeta
 import importlib
 import itertools
@@ -27,7 +27,7 @@ from .classifier import Classifier
 class DataType(Classifier, metaclass=ABCMeta):
     is_fileset = False
     is_field = False
-    nested_types: ty.Tuple[ty.Type["DataType"], ...] = ()
+    nested_types: ty.Tuple[ty.Type[Classifier], ...] = ()
     # Store converters registered by @converter decorator that convert to FileSet
     # NB: each class will have its own version of this dictionary
     converters: ty.Dict[

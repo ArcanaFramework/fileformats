@@ -10,7 +10,7 @@ import pydra.mark
 import pydra.engine.specs
 from fileformats.generic import FsObject
 from fileformats.core.utils import set_cwd
-from fileformats.core.type_aliases import PathType
+from fileformats.core.typing import PathType
 from fileformats.core import converter, FileSet
 from fileformats.application import Zip, Tar, TarGzip
 
@@ -238,4 +238,4 @@ def relative_path(path: PathType, base_dir: PathType) -> str:
             f"Cannot add {path} to archive as it is not a "
             f"subdirectory of {base_dir}"
         )
-    return relpath
+    return relpath  # type: ignore[no-any-return]

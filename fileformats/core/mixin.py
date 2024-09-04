@@ -175,7 +175,7 @@ class WithSeparateHeader(WithAdjacentFiles):
     header_type: ty.Type["fileformats.core.FileSet"]
 
     @classproperty
-    def nested_types(cls) -> ty.Tuple[ty.Type["DataType"], ...]:
+    def nested_types(cls) -> ty.Tuple[ty.Type[Classifier], ...]:
         return (cls.header_type,)
 
     @property
@@ -235,7 +235,7 @@ class WithSideCars(WithAdjacentFiles):
         return metadata
 
     @classproperty
-    def nested_types(cls) -> ty.Tuple[ty.Type["DataType"], ...]:
+    def nested_types(cls) -> ty.Tuple[ty.Type[Classifier], ...]:
         return cls.side_car_types
 
 
@@ -316,7 +316,7 @@ class WithClassifiers:
         return "unclassified" in cls.__dict__
 
     @classproperty
-    def nested_types(cls) -> ty.Tuple[ty.Type["DataType"], ...]:
+    def nested_types(cls) -> ty.Tuple[ty.Type[Classifier], ...]:
         return cls.classifiers
 
     @classmethod

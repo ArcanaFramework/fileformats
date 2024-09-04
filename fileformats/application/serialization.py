@@ -1,6 +1,6 @@
 import json
 import typing as ty
-from typing_extensions import Self, TypeAlias
+from fileformats.core.typing import Self, TypeAlias
 from pathlib import Path
 from fileformats.core import extra, DataType, FileSet, extra_implementation
 from fileformats.core.mixin import WithClassifiers

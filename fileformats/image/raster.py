@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing_extensions import Self, TypeAlias
+from fileformats.core.typing import Self, TypeAlias
 import typing as ty
 from fileformats.core.mixin import WithMagicNumber
 from fileformats.core import extra

@@ -14,7 +14,7 @@ import functools
 from pathlib import Path
 import hashlib
 import logging
-from typing_extensions import Self
+from fileformats.core.typing import Self
 from .utils import (
     classproperty,
     fspaths_converter,
@@ -22,7 +22,7 @@ from .utils import (
     matching_source,
     import_extras_module,
 )
-from .type_aliases import FspathsInputType, CryptoMethod, PathType
+from .typing import FspathsInputType, CryptoMethod, PathType
 from .sampling import SampleFileGenerator
 from .identification import (
     to_mime_format_name,
