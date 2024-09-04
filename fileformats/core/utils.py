@@ -266,6 +266,10 @@ class mtime_cached_property:
     def _cache_name(self) -> str:
         return f"_{self.func.__name__}_mtime_cache"
 
+    def clear(self, instance: "fileformats.core.FileSet") -> None:
+        """Forcibly clear the cache"""
+        del instance.__dict__[self._cache_name]
+
     def __get__(
         self,
         instance: ty.Optional["fileformats.core.FileSet"],
