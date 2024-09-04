@@ -14,8 +14,9 @@ class FsObject(FileSet, os.PathLike):  # type: ignore
     @property
     def fspath(self) -> Path:
         if len(self.fspaths) > 1:
+            fspaths = [str(f) for f in self.fspaths]
             raise FormatMismatchError(
-                f"More than one fspath ({self.fspaths}) provided to FsObject, "
+                f"More than one fspath ({fspaths}) provided to FsObject, "
                 f"primary path is ambiguous"
             )
         return next(iter(self.fspaths))
