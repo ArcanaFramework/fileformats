@@ -130,9 +130,10 @@ must also be defined in ``primary_type``
 Custom format patterns
 ----------------------
 
-While the standard mixin classes should cover 90% of all formats, in the wild-west of
-scientific data formats you might need to write custom validators. This is simply done
-by adding a new property to the class using the `@property` decorator.
+While the standard mixin classes should cover the large majority standard formats, in
+the wild-west of science data formats you are likely to need to design custom validators
+for your format. This is simply done by adding a new property to the class using the
+`@property` decorator.
 
 Take for example the `GIS shapefile structure <https://www.earthdatascience.org/courses/earth-analytics/spatial-data-r/shapefile-structure/>`_,
 it is a file-set consisting of 3 to 6 files differentiated by their extensions. To
@@ -231,7 +232,7 @@ decorator. Take the ``fileformats.image.Tiff`` class
        magic_number_le = "49492A00"
        magic_number_be = "4D4D002A"
 
-       @mark.check
+       @property
        def endianness(self):
           read_magic = self.read_contents(len(self.magic_number_le) // 2)
           if read_magic == bytes.fromhex(self.magic_number_le):
@@ -253,6 +254,80 @@ files and another one for little endian files. Therefore we can't just use the
 ``fileformats.core.mark.check``.
 
 
+Extra methods
+-------------
+
+FileFormats *Extras* enable the creation of hooks in `FileSet` classes using the `@extra`
+decorator that can be implemented in separate modules using the `@extra_implementation`
+decorator. The "extra methods" typically add additional functionality for accessing and
+maninpulating the data within the fileset, i.e. not required for format detection and
+validation, and should be implemented in a separate package if they have external
+dependencies to keep the main and extension packages dependency free. The
+standard place to put these extras-implementations is in the sister "extras" package
+named `fileformats-<yournamespace>-extras`, located in the `extras` directory in the
+extension package root (see `<https://github.com/ArcanaFramework/fileformats-extension-template>`__
+for further instructions). It is possible to implement extra methods in other modules,
+however, the extras package associated with formats namespace will be loaded by default
+when a hooked method is accessed.
+
+ Use the `@extra` decorator on a method in the to define an extras method,
+
+ .. code-block:: python
+    from typing import Self
+
+    class MyFormat(File):
+
+        ext = ".my"
+
+        @extra
+        def my_extra_method(self, index: int, scale: float, save_path: Path) -> Self:
+            ...
+
+and then reference that method in the extras package using the `@extra_implementation`
+
+.. code-block:: python
+
+    from some_external_package import load_my_format, save_my_format
+    from fileformats.core import extra_implementation
+    from fileformats.mypackage import MyFormat
+
+    @extra_implementation(MyFormat.my_extra_method)
+    def my_extra_method(
+        my_format: MyFormat, index: int scale: float, save_path: Path
+    ) -> MyFormat:
+        data_array = load_my_format(my_format.fspath)
+        data_array[:index] *= scale
+        save_my_format(save_path, data_array)
+        return MyFormat(save_path)
+
+The first argument to the implementation functions is the instance the method
+is executed on, and the types of the remaining arguments and return need to match
+the hooked method exactly.
+
+It is possible to provide multiple overloads for subclasses of the format that defines
+the hook. Like `functools.singledispacth` (which is used under the hood), the type of
+the first argument (not the type of the class the method is referenced from in the decorated)
+determines which of the overloaded methods is called
+
+
+.. code-block:: python
+
+    class MyFormatX(MyFormat):
+        ext = ".myx"
+
+    @extra_implementation(MyFormat.my_extra_method)
+    def my_extra_method(
+        my_format: MyFormat, index: int scale: float, save_path: Path
+    ) -> MyFormat:
+        ...
+
+    @extra_implementation(MyFormat.my_extra_method)
+    def my_extra_method(
+        my_format: MyFormatX, index: int scale: float, save_path: Path
+    ) -> MyFormatX:
+        ...
+
+
 Implementing converters
 -----------------------
 
@@ -261,11 +336,8 @@ Converters between two equivalent formats are defined using Pydra_ dataflow engi
 of Pydra_ tasks, function tasks, Python functions decorated by ``@pydra.mark.task``, and
 shell-command tasks, which wrap command-line tools in Python classes. To register a
 Pydra_ task as a converter between two file formats it needs to be decorated with the
-``@fileformats.core.mark.converter`` decorator. Note that converters that rely on
-any additional dependencies should not be implemented in your extension package, rather
-in a sister "extras" package named `fileformats-<yournamespace>-extras`,
-see the `extras template <https://github.com/ArcanaFramework/fileformats-extras-template>`__
-for further instructions.
+``@fileformats.core.converter`` decorator. Like the implementation of extra methods,
+converters should be implemented in the sister extras package.
 
 Pydra uses type annotations to define the input and outputs of the tasks. It there is
 a input to the task named ``in_file``, and either a single anonymous output or an output
@@ -278,11 +350,11 @@ automatically. For example,
     from pathlib import Path
     import tempfile
     import pydra.mark
-    import fileformats.core.mark
+    from fileformats.core import converter
     from .mypackage import MyFormat, MyOtherFormat
 
 
-    @fileformats.core.mark.converter
+    @converter
     @pydra.mark.task
     def convert_my_format(in_file: MyFormat, conversion_argument: int = 2) -> MyOtherFormat:
         data = in_file.load()
@@ -309,15 +381,15 @@ to do a generic conversion between all image types,
     import tempfile
     import pydra.mark
     import pydra.engine.specs
-    from fileformats.core import mark
+    from fileformats.core import converter
     from .raster import RasterImage, Bitmap, Gif, Jpeg, Png, Tiff
 
 
-    @mark.converter(target_format=Bitmap, output_format=Bitmap)
-    @mark.converter(target_format=Gif, output_format=Gif)
-    @mark.converter(target_format=Jpeg, output_format=Jpeg)
-    @mark.converter(target_format=Png, output_format=Png)
-    @mark.converter(target_format=Tiff, output_format=Tiff)
+    @converter(target_format=Bitmap, output_format=Bitmap)
+    @converter(target_format=Gif, output_format=Gif)
+    @converter(target_format=Jpeg, output_format=Jpeg)
+    @converter(target_format=Png, output_format=Png)
+    @converter(target_format=Tiff, output_format=Tiff)
     @pydra.mark.task
     @pydra.mark.annotate({"return": {"out_file": RasterImage}})
     def convert_image(in_file: RasterImage, output_format: type, out_dir: ty.Optional[Path] = None):
@@ -368,11 +440,11 @@ such as in the ``mrconvert`` converter in the ``fileformats-medimage`` package.
 
 .. code-block:: python
 
-    @mark.converter(source_format=MedicalImage, target_format=Analyze, out_ext=Analyze.ext)
-    @mark.converter(
+    @converter(source_format=MedicalImage, target_format=Analyze, out_ext=Analyze.ext)
+    @converter(
         source_format=MedicalImage, target_format=MrtrixImage, out_ext=MrtrixImage.ext
     )
-    @mark.converter(
+    @converter(
         source_format=MedicalImage,
         target_format=MrtrixImageHeader,
         out_ext=MrtrixImageHeader.ext,
