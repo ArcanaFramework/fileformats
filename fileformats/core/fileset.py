@@ -17,6 +17,7 @@ import logging
 from fileformats.core.typing import Self
 from .utils import (
     classproperty,
+    mtime_cached_property,
     fspaths_converter,
     describe_task,
     matching_source,
@@ -179,6 +180,11 @@ class FileSet(DataType):
         "Paths for all top-level paths in the file-set relative to the common parent directory"
         return (p.relative_to(self.parent) for p in self.fspaths)
 
+    @property
+    def mtimes(self) -> ty.Tuple[ty.Tuple[Path, float], ...]:
+        """Modification times of all files in the file-set"""
+        return tuple((p, p.stat().st_mtime) for p in sorted(self.fspaths))
+
     @classproperty
     def mime_type(cls) -> str:
         """Generates a MIME type (IANA) identifier from a format class. If an official
@@ -225,7 +231,7 @@ class FileSet(DataType):
             pass
         return possible
 
-    @property
+    @mtime_cached_property
     def metadata(self) -> ty.Mapping[str, ty.Any]:
         """Lazily load metadata from `read_metadata` extra if implemented, returning an
         empty metadata array if not"""
