@@ -1,6 +1,7 @@
 import importlib
 from pathlib import Path
 import inspect
+import sys
 import typing as ty
 from types import ModuleType
 import urllib.request
@@ -96,19 +97,21 @@ def fspaths_converter(fspaths: FspathsInputType) -> ty.FrozenSet[Path]:
 
 PropReturn = ty.TypeVar("PropReturn")
 
+if sys.version_info[:2] < (3, 9):
 
-def classproperty(meth: ty.Callable[..., PropReturn]) -> PropReturn:
-    """Access a @classmethod like a @property."""
-    # mypy doesn't understand class properties yet: https://github.com/python/mypy/issues/2563
-    return classmethod(property(meth))  # type: ignore
+    class classproperty(object):
+        def __init__(self, f: ty.Callable[[ty.Type[ty.Any]], ty.Any]):
+            self.f = f
 
+        def __get__(self, obj: ty.Any, owner: ty.Any) -> ty.Any:
+            return self.f(owner)
 
-# class classproperty(object):
-#     def __init__(self, f: ty.Callable[[ty.Type[ty.Any]], ty.Any]):
-#         self.f = f
+else:
 
-#     def __get__(self, obj: ty.Any, owner: ty.Any) -> ty.Any:
-#         return self.f(owner)
+    def classproperty(meth: ty.Callable[..., PropReturn]) -> PropReturn:
+        """Access a @classmethod like a @property."""
+        # mypy doesn't understand class properties yet: https://github.com/python/mypy/issues/2563
+        return classmethod(property(meth))  # type: ignore
 
 
 def add_exc_note(e: Exception, note: str) -> Exception:

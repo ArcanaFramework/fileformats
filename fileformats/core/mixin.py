@@ -338,17 +338,19 @@ class WithClassifiers:
 
     @classmethod
     def __class_getitem__(
-        cls, classifiers: ty.Tuple[ty.Type[Classifier], ...]
+        cls,
+        classifiers: ty.Union[ty.Collection[ty.Type[Classifier]], ty.Type[Classifier]],
     ) -> ty.Type[DataType]:
         """Set the content types for a newly created dynamically type"""
         if isinstance(classifiers, ty.Iterable):
-            classifiers = tuple(classifiers)
+            classifiers_tuple = tuple(classifiers)
         else:
-            classifiers = (classifiers,)
+            classifiers_tuple = (classifiers,)
+
         if cls.allowed_classifiers:
             not_allowed = [
                 q
-                for q in classifiers
+                for q in classifiers_tuple
                 if not any(issubclass(q, t) for t in cls.allowed_classifiers)
             ]
             if not_allowed:
@@ -360,15 +362,15 @@ class WithClassifiers:
         if cls.multiple_classifiers:
             if not cls.ordered_classifiers:
                 # Check for duplicate classifiers in the multiple list
-                if len(classifiers) > 1:
+                if len(classifiers_tuple) > 1:
                     # Sort the classifiers into categories and ensure that there aren't more
                     # than one type for each category. Otherwise, if the classifier doesn't
                     # belong to a category, check to see that there aren't multiple sub-classes
                     # in the classifier set
                     repetitions: ty.Dict[
                         ty.Type[Classifier], ty.List[ty.Type[Classifier]]
-                    ] = {c: [] for c in cls.exclusive_classifiers + classifiers}
-                    for classifier in classifiers:
+                    ] = {c: [] for c in cls.exclusive_classifiers + classifiers_tuple}
+                    for classifier in classifiers_tuple:
                         for exc_classifier in repetitions:
                             if issubclass(classifier, exc_classifier):
                                 repetitions[exc_classifier].append(classifier)
@@ -383,12 +385,14 @@ class WithClassifiers:
                                 for k, v in repeated
                             )
                         )
-                classifiers = tuple(sorted(set(classifiers), key=lambda x: x.__name__))
+                classifiers_tuple = tuple(
+                    sorted(set(classifiers_tuple), key=lambda x: x.__name__)
+                )
         else:
-            if len(classifiers) > 1:
+            if len(classifiers_tuple) > 1:
                 raise FormatDefinitionError(
                     f"Multiple classifiers not permitted for {cls} types, provided: "
-                    f"({classifiers})"
+                    f"({classifiers_tuple})"
                 )
         # Make sure that the "classified" dictionary is present in this class not super
         # classes
@@ -396,7 +400,7 @@ class WithClassifiers:
             cls._classified_subtypes = {}
         try:
             # Load previously created type so we can do ``assert MyType[Integer] is MyType[Integer]``
-            classified = cls._classified_subtypes[classifiers]
+            classified = cls._classified_subtypes[classifiers_tuple]
         except KeyError:
             if not hasattr(cls, "classifiers_attr_name"):
                 raise FormatDefinitionError(
@@ -424,12 +428,12 @@ class WithClassifiers:
                     )
             class_attrs = {
                 "unclassified": cls,
-                "classifiers": classifiers,
+                "classifiers": classifiers_tuple,
             }
             class_attrs[cls.classifiers_attr_name] = (
-                classifiers if cls.multiple_classifiers else classifiers[0]
+                classifiers_tuple if cls.multiple_classifiers else classifiers_tuple[0]
             )
-            classifier_names = [t.__name__ for t in classifiers]
+            classifier_names = [t.__name__ for t in classifiers_tuple]
             if not cls.ordered_classifiers:
                 classifier_names.sort()
             classified = type(
@@ -438,7 +442,7 @@ class WithClassifiers:
                 class_attrs,
             )
             classified.__module__ = cls.__module__
-            cls._classified_subtypes[classifiers] = classified
+            cls._classified_subtypes[classifiers_tuple] = classified
         return classified
 
     @classmethod
