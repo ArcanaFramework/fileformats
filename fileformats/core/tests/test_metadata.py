@@ -11,7 +11,7 @@ class FileWithMetadata(File):
 
 @extra_implementation(FileSet.read_metadata)
 def aformat_read_metadata(
-    mf: FileWithMetadata, selected_keys: ty.Optional[ty.Sequence[str]] = None
+    mf: FileWithMetadata, selected_keys: ty.Optional[ty.Collection[str]] = None
 ) -> ty.Mapping[str, ty.Any]:
     with open(mf) as f:
         metadata = f.read()

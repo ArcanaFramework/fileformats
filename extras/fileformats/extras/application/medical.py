@@ -9,7 +9,7 @@ from fileformats.core import SampleFileGenerator
 
 @extra_implementation(FileSet.read_metadata)
 def dicom_read_metadata(
-    dicom: Dicom, selected_keys: ty.Optional[ty.Sequence[str]] = None
+    dicom: Dicom, selected_keys: ty.Optional[ty.Collection[str]] = None
 ) -> ty.Mapping[str, ty.Any]:
     dcm = pydicom.dcmread(
         dicom.fspath,

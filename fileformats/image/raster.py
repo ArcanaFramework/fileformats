@@ -13,7 +13,7 @@ from .base import Image
 
 DataArrayType: TypeAlias = (
     ty.Any
-)  # "numpy.typing.NDArray[ty.Union[np.float_, np.int_]]"
+)  # "numpy.typing.NDArray[ty.Union[np.floating, np.integer]]"
 
 
 class RasterImage(Image):

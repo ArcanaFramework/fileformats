@@ -108,7 +108,7 @@ class ImageWithInlineHeader(File):
     header_separator = b"---END HEADER---"
 
     def read_metadata(
-        self, selected_keys: ty.Optional[ty.Sequence[str]] = None
+        self, selected_keys: ty.Optional[ty.Collection[str]] = None
     ) -> ty.Mapping[str, ty.Any]:
         hdr = self.contents.split(self.header_separator)[0].decode("utf-8")
         return dict(ln.split(":") for ln in hdr.splitlines())

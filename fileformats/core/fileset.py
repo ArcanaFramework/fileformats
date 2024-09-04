@@ -92,13 +92,13 @@ class FileSet(DataType):
     # Member attributes
     fspaths: ty.FrozenSet[Path]
     _explicit_metadata: ty.Optional[ty.Mapping[str, ty.Any]]
-    _metadata_keys: ty.Optional[ty.List[str]]
+    _metadata_keys: ty.Optional[ty.Collection[str]]
 
     def __init__(
         self,
         fspaths: FspathsInputType,
         metadata: ty.Optional[ty.Dict[str, ty.Any]] = None,
-        metadata_keys: ty.Optional[ty.List[str]] = None,
+        metadata_keys: ty.Optional[ty.Collection[str]] = None,
     ):
         self._explicit_metadata = metadata
         self._metadata_keys = metadata_keys
@@ -263,7 +263,7 @@ class FileSet(DataType):
 
     @extra
     def read_metadata(
-        self, selected_keys: ty.Optional[ty.Sequence[str]] = None
+        self, selected_keys: ty.Optional[ty.Collection[str]] = None
     ) -> ty.Mapping[str, ty.Any]:
         """Reads any metadata associated with the fileset and returns it as a dict
 

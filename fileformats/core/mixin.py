@@ -183,7 +183,7 @@ class WithSeparateHeader(WithAdjacentFiles):
         return self.header_type(self.select_by_ext(self.header_type))  # type: ignore[attr-defined]
 
     def read_metadata(
-        self, selected_keys: ty.Optional[ty.Sequence[str]] = None
+        self, selected_keys: ty.Optional[ty.Collection[str]] = None
     ) -> ty.Mapping[str, ty.Any]:
         header: ty.Dict[str, ty.Any] = self.header.load()  # type: ignore[attr-defined]
         if selected_keys:
@@ -221,7 +221,7 @@ class WithSideCars(WithAdjacentFiles):
         return tuple(tp(self.select_by_ext(tp)) for tp in self.side_car_types)  # type: ignore[attr-defined]
 
     def read_metadata(
-        self, selected_keys: ty.Optional[ty.Sequence[str]] = None
+        self, selected_keys: ty.Optional[ty.Collection[str]] = None
     ) -> ty.Mapping[str, ty.Any]:
         metadata: ty.Dict[str, ty.Any] = dict(self.primary_type.read_metadata(self, selected_keys=selected_keys))  # type: ignore[arg-type]
         for side_car in self.side_cars:
