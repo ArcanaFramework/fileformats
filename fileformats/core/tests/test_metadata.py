@@ -1,5 +1,6 @@
 import typing as ty
 import pytest
+import time
 from fileformats.core import FileSet, extra_implementation
 from fileformats.generic import File
 
@@ -73,4 +74,5 @@ def test_metadata_reload(file_with_metadata_fspath):
     # add new metadata line to check and check that it is reloaded
     with open(file_with_metadata, "a") as f:
         f.write("\nf:6")
+    time.sleep(2)
     assert sorted(file_with_metadata.metadata) == ["a", "b", "c", "d", "e", "f"]

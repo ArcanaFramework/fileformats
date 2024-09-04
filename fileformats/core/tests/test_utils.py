@@ -385,7 +385,9 @@ def test_mtime_cached_property(tmp_path: Path):
 
     file.flag = 0
     assert file.cached_prop == 0
+    time.sleep(2)
     file.flag = 1
     assert file.cached_prop == 0
+    time.sleep(2)
     fspath.write_text("world")
     assert file.cached_prop == 1
