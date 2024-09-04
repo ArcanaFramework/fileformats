@@ -81,7 +81,7 @@ magic numbers you will also need to set the ``binary`` attr to True.
 
 
 Formats will contain metadata in a separate header file can be defined using
-the ``WithSeparateHeader`` mixin.
+the :class:`.WithSeparateHeader` mixin.
 
 .. code-block:: python
 
@@ -113,10 +113,10 @@ return a dictionary containing metadata for the file-set.
     '0001'
 
 
-Similar to ``WithSeparateHeader``, ``WithSideCars`` can be used to define a format that
+Similar to :class:`.WithSeparateHeader`, :class:`.WithSideCars` can be used to define a format that
 contains some metadata within the main file, and additional metadata in a separate
-"side-car" file. It can be used the same as ``WithSeparateHeader``, however, the
-type of the primary file that reads the metadata from the binary file with ``read_metadata``
+"side-car" file. It can be used the same as :class:`.WithSeparateHeader`, however, the
+type of the primary file that reads the metadata from the binary file with ``read_metadata()``
 must also be defined in ``primary_type``
 
 
@@ -137,7 +137,7 @@ for your format. This is simply done by adding a new property to the class using
 
 Take for example the `GIS shapefile structure <https://www.earthdatascience.org/courses/earth-analytics/spatial-data-r/shapefile-structure/>`_,
 it is a file-set consisting of 3 to 6 files differentiated by their extensions. To
-implement this class we use the ``@property`` decorator. We inherit from the ``WithAdjacentFiles``
+implement this class we use the ``@property`` decorator. We inherit from the :class:`.WithAdjacentFiles`
 mixin so that neighbouring files (i.e. files with the same stem but different extension)
 are included when the class is instantiated with just the primary ".shp" file.
 
@@ -219,7 +219,7 @@ Properties that appear in ``fspaths`` attribute of the object are considered to 
 even when the ``trim`` argument is set to True.
 
 After the required properties have been deeper checks can be by using the ``check``
-decorator. Take the ``fileformats.image.Tiff`` class
+decorator. Take the :class:`fileformats.image.Tiff` class
 
 .. code-block:: python
 
@@ -248,10 +248,9 @@ decorator. Take the ``fileformats.image.Tiff`` class
                 )
           return endianness
 
-The ``Tiff`` format class needs to check two different magic numbers, one for big endian
+The :class:`.Tiff` format class needs to check two different magic numbers, one for big endian
 files and another one for little endian files. Therefore we can't just use the
-``WithMagicNumber`` mixin and have to roll our own, ``endianness`` is decorated with
-``fileformats.core.mark.check``.
+:class:`.WithMagicNumber` mixin and have to roll our own.
 
 
 Extra methods
