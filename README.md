@@ -47,12 +47,20 @@ Adding support for vendor formats is planned for v1.0.
     $ python3 -m pip fileformats
 ```
 
-Support for converter methods between a few select formats can be installed by
-passing the 'extras' package, e.g
+Implementations of methods and converters between select formats that require
+external dependencies require the installation of the corresponding "extras" package e.g
 
 ```console
     $ python3 -m pip install fileformats-extras
 ```
+
+Extension packages exist for for formats not covered by [IANA MIME types] (e.g. NIfTI, R-files, MATLAB files)
+and can be installed along with their "extras" package similarly
+
+```console
+    $ python3 -m pip install fileformats-medimage fileformats-medimage-extras fileformats-datascience fileformats-datascience-extras
+```
+
 
 ## Examples
 
