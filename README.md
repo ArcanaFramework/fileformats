@@ -58,7 +58,11 @@ Extension packages exist for for formats not covered by [IANA MIME types] (e.g. 
 and can be installed along with their "extras" package similarly
 
 ```console
-    $ python3 -m pip install fileformats-medimage fileformats-medimage-extras fileformats-datascience fileformats-datascience-extras
+    $ python3 -m pip install \
+      fileformats-medimage \
+      fileformats-medimage-extras \
+      fileformats-datascience \
+      fileformats-datascience-extras
 ```
 
 
