@@ -7,7 +7,6 @@ data, so the classes in this module are provided to support these use cases.
 
 import decimal
 import typing as ty
-import attrs
 from fileformats.core import Field
 from fileformats.core.mixin import WithClassifiers
 from fileformats.core.exceptions import FormatMismatchError
@@ -71,81 +70,16 @@ class ScalarMixin(LogicalMixin, Field[ValueType, PrimitiveType]):
         return abs(self.value)  # type: ignore
 
 
-def text_converter(value: ty.Any) -> str:
-    try:
-        return str(value)
-    except ValueError as e:
-        raise FormatMismatchError(str(e)) from None
-
-
-def integer_converter(value: ty.Any) -> int:
-    if isinstance(value, float):
-        raise FormatMismatchError(
-            f"Cannot convert float ({value}) to integer field without potential loss "
-            "of information"
-        )
-    try:
-        return int(value)
-    except ValueError as e:
-        raise FormatMismatchError(str(e)) from None
-
-
-def decimal_converter(value: ty.Any) -> decimal.Decimal:
-    if isinstance(value, Decimal):
-        return value.value
-    try:
-        return decimal.Decimal(value)
-    except decimal.InvalidOperation as e:
-        raise FormatMismatchError(str(e)) from None
-
-
-def boolean_converter(value: ty.Any) -> bool:
-    if isinstance(value, str):
-        if value.lower() in ("true", "1", "yes"):
-            value = True
-        elif value.lower() in ("false", "0", "no"):
-            value = False
-        else:
-            raise FormatMismatchError(
-                f"Cannot convert string '{value}' to boolean value"
-            )
-    else:
-        try:
-            value = bool(value)
-        except ValueError as e:
-            raise FormatMismatchError(str(e)) from None
-    assert isinstance(value, bool)
-    return value
-
-
-def array_converter(value: ty.Any) -> ty.Tuple[ty.Any, ...]:
-    if isinstance(value, str):
-        if (value.startswith("[") and value.endswith("]")) or (
-            value.startswith("(") and value.endswith(")")
-        ):
-            value = value[1:-1]
-        elif (
-            value.startswith("[")
-            or value.endswith("]")
-            or value.startswith("(")
-            or value.endswith(")")
-        ):
-            raise FormatMismatchError(f"Unmatched brackets in array field {value}")
-        value = tuple(v.strip() for v in value.split(","))
-    else:
-        try:
-            value = tuple(value)
-        except ValueError as e:
-            raise FormatMismatchError(str(e)) from None
-    assert isinstance(value, tuple)
-    return value
-
-
-@attrs.define(repr=False)
 class Text(Singular[str, str]):
-    value: str = attrs.field(converter=text_converter)
+    value: str
 
     primitive = str
+
+    def __init__(self, value: ty.Any):
+        try:
+            self.value = str(value)
+        except ValueError as e:
+            raise FormatMismatchError(str(e)) from None
 
     def __hash__(self) -> int:
         return hash(self.value)
@@ -154,11 +88,21 @@ class Text(Singular[str, str]):
         return f'{self.type_name}("{self.value}")'
 
 
-@attrs.define(repr=False)
 class Integer(Singular[int, int], ScalarMixin[int, int]):
-    value: int = attrs.field(converter=integer_converter)
+    value: int
 
     primitive = int
+
+    def __init__(self, value: ty.Any):
+        if isinstance(value, float):
+            raise FormatMismatchError(
+                f"Cannot convert float ({value}) to integer field without potential loss "
+                "of information"
+            )
+        try:
+            self.value = int(value)
+        except ValueError as e:
+            raise FormatMismatchError(str(e)) from None
 
     def __int__(self) -> int:
         return self.value
@@ -173,11 +117,18 @@ class Integer(Singular[int, int], ScalarMixin[int, int]):
         return hash(self.value)
 
 
-@attrs.define(repr=False)
 class Decimal(Singular[decimal.Decimal, float], ScalarMixin[decimal.Decimal, float]):
-    value: decimal.Decimal = attrs.field(converter=decimal_converter)
+    value: decimal.Decimal
 
     primitive = float
+
+    def __init__(self, value: ty.Any):
+        if isinstance(value, Decimal):
+            self.value = value.value
+        try:
+            self.value = decimal.Decimal(value)
+        except decimal.InvalidOperation as e:
+            raise FormatMismatchError(str(e)) from None
 
     def __float__(self) -> float:
         return float(self.value)
@@ -189,11 +140,28 @@ class Decimal(Singular[decimal.Decimal, float], ScalarMixin[decimal.Decimal, flo
         return hash(self.value)
 
 
-@attrs.define(repr=False)
 class Boolean(Singular[bool, bool], LogicalMixin):
     primitive = bool
 
-    value: bool = attrs.field(converter=boolean_converter)
+    value: bool
+
+    def __init__(self, value: ty.Any):
+        if isinstance(value, str):
+            if value.lower() in ("true", "1", "yes"):
+                value = True
+            elif value.lower() in ("false", "0", "no"):
+                value = False
+            else:
+                raise FormatMismatchError(
+                    f"Cannot convert string '{value}' to boolean value"
+                )
+        else:
+            try:
+                value = bool(value)
+            except ValueError as e:
+                raise FormatMismatchError(str(e)) from None
+        assert isinstance(value, bool)
+        self.value = value
 
     def __str__(self) -> str:
         return str(self.value).lower()
@@ -208,7 +176,6 @@ class Boolean(Singular[bool, bool], LogicalMixin):
 ItemType = ty.TypeVar("ItemType", decimal.Decimal, int, float, bool)
 
 
-@attrs.define(auto_attribs=False, repr=False)
 class Array(
     WithClassifiers,
     Field[ty.Tuple[ItemType, ...], ty.Tuple[ItemType, ...]],
@@ -224,12 +191,33 @@ class Array(
 
     primitive = tuple
 
-    value: ty.Tuple[ItemType] = attrs.field(converter=array_converter)
+    value: ty.Tuple[ItemType]
 
-    def __attrs_post_init__(self) -> None:
+    def __init__(self, value: ty.Union[str, ty.Sequence[ty.Any]]):
+
+        if isinstance(value, str):
+            if (value.startswith("[") and value.endswith("]")) or (
+                value.startswith("(") and value.endswith(")")
+            ):
+                value = value[1:-1]
+            elif (
+                value.startswith("[")
+                or value.endswith("]")
+                or value.startswith("(")
+                or value.endswith(")")
+            ):
+                raise FormatMismatchError(f"Unmatched brackets in array field {value}")
+            value = tuple(v.strip() for v in value.split(","))
+        else:
+            try:
+                value = tuple(value)
+            except ValueError as e:
+                raise FormatMismatchError(str(e)) from None
+        assert isinstance(value, tuple)
         # Ensure items are of the correct type
         if self.item_type is not None:
-            self.value = tuple(self.item_type(i).value for i in self.value)  # type: ignore
+            value = tuple(self.item_type(i).value for i in self.value)  # type: ignore
+        self.value = value  # type: ignore
 
     def __str__(self) -> str:
         return (
