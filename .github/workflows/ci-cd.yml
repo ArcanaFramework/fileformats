@@ -23,6 +23,8 @@ jobs:
     defaults:
       run:
         shell: bash -l {0}
+    env:
+      PIP_BREAK_SYSTEM_PACKAGES: 1
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -39,15 +41,13 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Update build tools
-      run: python3 -m pip install --break-system-packages --upgrade pip
+      run: python3 -m pip install --upgrade pip
     - name: Install Package
-      run: python3 -m pip install --break-system-packages -e .[test]
+      run: python3 -m pip install -e .[test]
     - name: Install Extras Package
-      run: python3 -m pip install --break-system-packages -e ./extras[test]
-    - name: Install types
-      run: PIP_BREAK_SYSTEM_PACKAGES=1 mypy --install-types --non-interactive .
+      run: python3 -m pip install -e ./extras[test]
     - name: MyPy
-      run: mypy .
+      run: mypy --install-types --non-interactive .
     - name: Pytest
       run: pytest -vvs --cov fileformats --cov-config .coveragerc --cov-report xml .
     - name: Upload coverage to Codecov

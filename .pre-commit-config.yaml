@@ -30,3 +30,10 @@ repos:
       rev: v1.11.2
       hooks:
           - id: mypy
+            args:
+                [
+                    --strict,
+                    --install-types,
+                    --non-interactive,
+                    --no-warn-unused-ignores,
+                ]
