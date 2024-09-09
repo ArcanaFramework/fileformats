@@ -220,6 +220,8 @@ class Array(
             parsed_value: ty.Tuple[ItemType, ...] = tuple(
                 self.item_type(i).value for i in value
             )
+        else:
+            parsed_value = value
         self.value = parsed_value
 
     def __str__(self) -> str:
