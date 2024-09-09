@@ -19,7 +19,9 @@ def dicom_read_metadata(
     metadata = {
         e.keyword: e.value
         for e in dcm.elements()
-        if getattr(e, "keyword", False) and e.keyword != "PixelData"
+        if isinstance(e, pydicom.DataElement)
+        and getattr(e, "keyword", False)
+        and e.keyword != "PixelData"
     }
     return metadata
 
