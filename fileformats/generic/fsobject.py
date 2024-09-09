@@ -1,6 +1,7 @@
 import os
+import platform
 import typing as ty
-from pathlib import Path, WindowsPath
+from pathlib import Path
 from fileformats.core.fileset import FileSet
 from fileformats.core.exceptions import (
     FormatMismatchError,
@@ -59,7 +60,7 @@ class FsObject(FileSet, os.PathLike):  # type: ignore
         return True
 
     def group(self) -> ty.Optional[str]:
-        if isinstance(self.fspath, WindowsPath):
+        if platform.system() == "Windows":
             return None
         return self.fspath.group()
 
@@ -74,7 +75,7 @@ class FsObject(FileSet, os.PathLike):  # type: ignore
         return self.fspath.name
 
     def owner(self) -> ty.Optional[str]:
-        if isinstance(self.fspath, WindowsPath):
+        if platform.system() == "Windows":
             return None
         return self.fspath.owner()
 
