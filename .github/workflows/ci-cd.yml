@@ -46,6 +46,8 @@ jobs:
       run: python3 -m pip install --break-system-packages -e ./extras[test]
     - name: Change out of root directory
       run: cd docs
+    - name: MyPy
+      run: mypy .
     - name: Pytest
       run: pytest -vvs --cov fileformats --cov-config .coveragerc --cov-report xml .
     - name: Upload coverage to Codecov
