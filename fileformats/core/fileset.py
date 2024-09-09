@@ -780,6 +780,7 @@ class FileSet(DataType):
                             yield chunk
 
         def chunk_dir(fspath: Path) -> ty.Iterator[ty.Tuple[str, ty.Iterator[bytes]]]:
+            fspath = Path(fspath)
             for dpath_str, _, filenames in sorted(os.walk(fspath)):
                 # Sort in-place to guarantee order.
                 filenames.sort()
@@ -787,7 +788,7 @@ class FileSet(DataType):
                 if (
                     ignore_hidden_dirs
                     and dpath.name.startswith(".")
-                    and str(dpath) != fspath
+                    and dpath != fspath
                 ):
                     continue
                 for filename in filenames:

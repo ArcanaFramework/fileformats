@@ -187,11 +187,11 @@ class Array(
     allowed_classifiers: ty.Tuple[
         ty.Type[Singular[ty.Tuple[ItemType, ...], ty.Tuple[ItemType, ...]]]
     ] = (Singular,)
-    item_type: ty.Union[ty.Type[Singular[ty.Any, ty.Any]], None] = None
+    item_type: ty.Optional[ty.Type[Singular[ItemType, ty.Any]]] = None
 
     primitive = tuple
 
-    value: ty.Tuple[ItemType]
+    value: ty.Tuple[ItemType, ...]
 
     def __init__(self, value: ty.Union[str, ty.Sequence[ty.Any]]):
 
@@ -215,9 +215,12 @@ class Array(
                 raise FormatMismatchError(str(e)) from None
         assert isinstance(value, tuple)
         # Ensure items are of the correct type
+        # if self.item_type is not None:
         if self.item_type is not None:
-            value = tuple(self.item_type(i).value for i in self.value)  # type: ignore
-        self.value = value  # type: ignore
+            parsed_value: ty.Tuple[ItemType, ...] = tuple(
+                self.item_type(i).value for i in value
+            )
+        self.value = parsed_value
 
     def __str__(self) -> str:
         return (
