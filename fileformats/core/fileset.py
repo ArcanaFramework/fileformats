@@ -949,30 +949,6 @@ class FileSet(DataType):
             file_hashes[str(path)] = crypto_obj.hexdigest()
         return file_hashes
 
-    def __bytes_repr__(
-        self, cache: ty.Dict[ty.Any, str]  # pylint: disable=unused-argument
-    ) -> ty.Iterable[bytes]:
-        """Provided for compatibility with Pydra's hashing function, return the contents
-        of all the files in the file-set in chunks
-
-        Parameters
-        ----------
-        cache : dict[Any, str]
-            an object passed around by Pydra's hashing function to store cached versions
-            of previously hashed objects, to allow recursive structures
-
-        Yields
-        ------
-        bytes
-            a chunk of bytes of length FILE_CHUNK_LEN_DEFAULT from the contents of all
-            files in the file-set.
-        """
-        cls = type(self)
-        yield f"{cls.__module__}.{cls.__name__}:".encode()
-        for key, chunk_iter in self.byte_chunks():
-            yield (",'" + key + "'=").encode()
-            yield from chunk_iter
-
     @classmethod
     def referenced_types(cls) -> ty.Set[ty.Type[Classifier]]:
         """Returns a flattened list of nested types referenced within the fileset type
