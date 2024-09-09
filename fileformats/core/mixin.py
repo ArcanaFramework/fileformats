@@ -657,7 +657,7 @@ class WithClassifiers:
                             describe_task(converter_spec.task),
                         )
                         return  # actually the same task but just imported twice for some reason
-                    prev_unclassified = prev.unclassified  # type: ignore[attr-defined]
+                    prev_unclassified = prev.unclassified
                     unclassified = cls.unclassified  # type: ignore[attr-defined]
                     raise FormatDefinitionError(
                         f"Cannot register converter from {prev_unclassified} "
