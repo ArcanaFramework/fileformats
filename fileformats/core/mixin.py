@@ -657,9 +657,11 @@ class WithClassifiers:
                             describe_task(converter_spec.task),
                         )
                         return  # actually the same task but just imported twice for some reason
+                    prev_unclassified = prev.unclassified  # type: ignore[attr-defined]
+                    unclassified = cls.unclassified  # type: ignore[attr-defined]
                     raise FormatDefinitionError(
-                        f"Cannot register converter from {prev.unclassified} "
-                        f"to {cls.unclassified} with non-wildcard classifiers "  # type: ignore[attr-defined]
+                        f"Cannot register converter from {prev_unclassified} "
+                        f"to {unclassified} with non-wildcard classifiers "
                         f"{list(prev.non_wildcard_classifiers())}, {describe_task(converter_spec.task)}, "
                         f"because there is already one registered, {describe_task(prev_spec.task)}"
                     )
