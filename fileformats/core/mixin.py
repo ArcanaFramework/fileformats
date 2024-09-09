@@ -626,10 +626,11 @@ class WithClassifiers:
                     f"from a generic type or similarly classified type, not {source_format}"
                 )
             else:
-                if cls.wildcard_classifiers() != source_format.wildcard_classifiers():  # type: ignore[attr-defined]
+                source_wildcard_classifiers = source_format.wildcard_classifiers()  # type: ignore[attr-defined]
+                if cls.wildcard_classifiers() != source_wildcard_classifiers:
                     raise FormatDefinitionError(
                         f"Mismatching wildcards between source format, {source_format} "
-                        f"({list(source_format.wildcard_classifiers())}), and target "  # type: ignore[attr-defined]
+                        f"({list(source_wildcard_classifiers)}), and target "
                         f"{cls} ({cls.wildcard_classifiers()})"
                     )
                 prev_registered = [

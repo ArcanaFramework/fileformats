@@ -58,8 +58,11 @@ class FsObject(FileSet, os.PathLike):  # type: ignore
     def exists(self) -> bool:
         return True
 
-    def group(self) -> str:
-        return self.fspath.group()
+    def group(self) -> ty.Optional[str]:
+        try:
+            return self.fspath.group()
+        except AttributeError:
+            return None
 
     def is_dir(self) -> bool:
         return self.fspath.is_dir()
@@ -71,8 +74,11 @@ class FsObject(FileSet, os.PathLike):  # type: ignore
     def name(self) -> str:
         return self.fspath.name
 
-    def owner(self) -> str:
-        return self.fspath.owner()
+    def owner(self) -> ty.Optional[str]:
+        try:
+            return self.fspath.owner()
+        except AttributeError:
+            return None
 
     @property
     def parent(self) -> Path:
