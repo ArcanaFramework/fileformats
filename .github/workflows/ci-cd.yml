@@ -45,7 +45,7 @@ jobs:
     - name: Install Extras Package
       run: python3 -m pip install --break-system-packages -e ./extras[test]
     - name: Install types
-      run: mypy --install-types
+      run: mypy --install-types .
     - name: MyPy
       run: mypy .
     - name: Pytest
