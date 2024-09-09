@@ -4,7 +4,8 @@ import typing as ty
 import logging
 from .datatype import DataType
 import fileformats.core
-from .utils import classproperty, describe_task, matching_source
+from .utils import describe_task, matching_source
+from .decorators import classproperty
 from .identification import to_mime_format_name
 from .converter_helpers import SubtypeVar, ConverterSpec
 from .classifier import Classifier

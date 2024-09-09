@@ -23,11 +23,11 @@ class RasterImage(Image):
 
     @extra
     def read_data(self) -> DataArrayType:
-        raise NotImplementedError
+        ...
 
     @extra
     def write_data(self, data_array: DataArrayType) -> None:
-        raise NotImplementedError
+        ...
 
     @classmethod
     def save_new(cls, fspath: Path, data_array: DataArrayType) -> Self:

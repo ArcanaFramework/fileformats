@@ -16,13 +16,12 @@ import hashlib
 import logging
 from fileformats.core.typing import Self
 from .utils import (
-    classproperty,
-    mtime_cached_property,
     fspaths_converter,
     describe_task,
     matching_source,
     import_extras_module,
 )
+from .decorators import contents_property, classproperty
 from .typing import FspathsInputType, CryptoMethod, PathType
 from .sampling import SampleFileGenerator
 from .identification import (
@@ -244,7 +243,7 @@ class FileSet(DataType):
             pass
         return possible
 
-    @mtime_cached_property
+    @contents_property
     def metadata(self) -> ty.Mapping[str, ty.Any]:
         """Lazily load metadata from `read_metadata` extra if implemented, returning an
         empty metadata array if not"""

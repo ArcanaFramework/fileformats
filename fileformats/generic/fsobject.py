@@ -6,7 +6,7 @@ from fileformats.core.fileset import FileSet
 from fileformats.core.exceptions import (
     FormatMismatchError,
 )
-from fileformats.core.utils import classproperty
+from fileformats.core.decorators import classproperty
 
 
 class FsObject(FileSet, os.PathLike):  # type: ignore

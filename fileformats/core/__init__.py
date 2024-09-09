@@ -11,6 +11,7 @@ from .identification import (
 )
 from .sampling import SampleFileGenerator
 from .extras import extra, extra_implementation, converter
+from .decorators import contents_property
 
 __all__ = [
     "__version__",

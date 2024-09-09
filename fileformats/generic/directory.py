@@ -1,7 +1,7 @@
 import typing as ty
 from pathlib import Path
 from fileformats.core.exceptions import FormatMismatchError
-from fileformats.core.utils import classproperty
+from fileformats.core.decorators import classproperty
 from .fsobject import FsObject
 from fileformats.core.fileset import FileSet, FILE_CHUNK_LEN_DEFAULT
 from fileformats.core.mixin import WithClassifiers

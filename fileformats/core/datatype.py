@@ -11,8 +11,8 @@ from .exceptions import (
     FormatConversionError,
     FormatRecognitionError,
 )
+from .decorators import classproperty
 from .utils import (
-    classproperty,
     subpackages,
     add_exc_note,
 )

@@ -1,8 +1,6 @@
 from __future__ import annotations
 import typing as ty
-from .utils import (
-    classproperty,
-)
+from .decorators import classproperty
 from .datatype import DataType
 from .exceptions import FormatMismatchError
 
