@@ -1,5 +1,5 @@
 import os
-import platform
+import sys
 import typing as ty
 from pathlib import Path
 from fileformats.core.fileset import FileSet
@@ -60,7 +60,7 @@ class FsObject(FileSet, os.PathLike):  # type: ignore
         return True
 
     def group(self) -> ty.Optional[str]:
-        if platform.system() == "Windows":
+        if sys.platform == "win32":
             return None
         return self.fspath.group()
 
@@ -75,7 +75,7 @@ class FsObject(FileSet, os.PathLike):  # type: ignore
         return self.fspath.name
 
     def owner(self) -> ty.Optional[str]:
-        if platform.system() == "Windows":
+        if sys.platform == "win32":
             return None
         return self.fspath.owner()
 
