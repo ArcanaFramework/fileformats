@@ -1,12 +1,10 @@
 import sys
 import typing as ty
 from threading import RLock
-
-if ty.TYPE_CHECKING:
-    import fileformats.core
+import fileformats.core
 
 
-ReturnType = ty.TypeVar("ReturnType")
+PropReturn = ty.TypeVar("PropReturn")
 
 
 class contents_property:
@@ -55,9 +53,6 @@ class contents_property:
             value = self.func(instance)
             instance.__dict__[self._cache_name] = (instance.mtimes, value)
         return value
-
-
-PropReturn = ty.TypeVar("PropReturn")
 
 
 def classproperty(meth: ty.Callable[..., PropReturn]) -> PropReturn:

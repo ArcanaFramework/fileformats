@@ -36,10 +36,5 @@ repos:
             --install-types,
             --non-interactive,
             --no-warn-unused-ignores,
-            --exclude,
-            tests,
-            --exclude,
-            scripts,
-            --exclude,
-            build,
           ]
+        exclude: tests

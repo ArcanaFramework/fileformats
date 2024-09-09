@@ -28,4 +28,5 @@ __all__ = [
     "extra",
     "extra_implementation",
     "converter",
+    "contents_property",
 ]
