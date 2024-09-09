@@ -199,3 +199,5 @@ a subclass
 
     assert issubclass(E, C)
     assert issubclass(R[A, B, E], R[A, B, C])
+
+.. _Pydra: https://pydra.readthedocs.io

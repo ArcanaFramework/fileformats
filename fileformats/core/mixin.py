@@ -626,10 +626,11 @@ class WithClassifiers:
                     f"from a generic type or similarly classified type, not {source_format}"
                 )
             else:
-                if cls.wildcard_classifiers() != source_format.wildcard_classifiers():  # type: ignore[attr-defined]
+                source_wildcard_classifiers = source_format.wildcard_classifiers()  # type: ignore[attr-defined]
+                if cls.wildcard_classifiers() != source_wildcard_classifiers:
                     raise FormatDefinitionError(
                         f"Mismatching wildcards between source format, {source_format} "
-                        f"({list(source_format.wildcard_classifiers())}), and target "  # type: ignore[attr-defined]
+                        f"({list(source_wildcard_classifiers)}), and target "
                         f"{cls} ({cls.wildcard_classifiers()})"
                     )
                 prev_registered = [
@@ -657,9 +658,11 @@ class WithClassifiers:
                             describe_task(converter_spec.task),
                         )
                         return  # actually the same task but just imported twice for some reason
+                    prev_unclassified = prev.unclassified
+                    unclassified = cls.unclassified  # type: ignore[attr-defined]
                     raise FormatDefinitionError(
-                        f"Cannot register converter from {prev.unclassified} "  # type: ignore[attr-defined]
-                        f"to {cls.unclassified} with non-wildcard classifiers "
+                        f"Cannot register converter from {prev_unclassified} "
+                        f"to {unclassified} with non-wildcard classifiers "
                         f"{list(prev.non_wildcard_classifiers())}, {describe_task(converter_spec.task)}, "
                         f"because there is already one registered, {describe_task(prev_spec.task)}"
                     )

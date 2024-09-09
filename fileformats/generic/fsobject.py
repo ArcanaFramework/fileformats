@@ -1,4 +1,5 @@
 import os
+import sys
 import typing as ty
 from pathlib import Path
 from fileformats.core.fileset import FileSet
@@ -58,7 +59,9 @@ class FsObject(FileSet, os.PathLike):  # type: ignore
     def exists(self) -> bool:
         return True
 
-    def group(self) -> str:
+    def group(self) -> ty.Optional[str]:
+        if sys.platform == "win32":
+            return None
         return self.fspath.group()
 
     def is_dir(self) -> bool:
@@ -71,7 +74,9 @@ class FsObject(FileSet, os.PathLike):  # type: ignore
     def name(self) -> str:
         return self.fspath.name
 
-    def owner(self) -> str:
+    def owner(self) -> ty.Optional[str]:
+        if sys.platform == "win32":
+            return None
         return self.fspath.owner()
 
     @property

@@ -123,7 +123,7 @@ def extract_tar(
     compression_type: str = "*",
 ) -> Path:
 
-    if extract_dir == attrs.NOTHING:
+    if extract_dir is attrs.NOTHING:  # type: ignore[comparison-overlap]
         extract_dir = Path(tempfile.mkdtemp())
     else:
         extract_dir = extract_dir.absolute()
@@ -167,10 +167,10 @@ def create_zip(
             "Can only archive file-sets with single paths currently"
         )
 
-    if out_file == attrs.NOTHING:
+    if out_file is attrs.NOTHING:  # type: ignore[comparison-overlap]
         out_file = Path(Path(in_file).name + ".zip")
 
-    if base_dir == attrs.NOTHING:
+    if base_dir is attrs.NOTHING:  # type: ignore[comparison-overlap]
         base_dir = Path(in_file).parent
 
     out_file = out_file.absolute()
@@ -212,7 +212,7 @@ def create_zip(
 @pydra.mark.annotate({"return": {"out_file": Path}})  # type: ignore[misc]
 def extract_zip(in_file: Zip, extract_dir: Path) -> Path:
 
-    if extract_dir == attrs.NOTHING:
+    if extract_dir is attrs.NOTHING:  # type: ignore[comparison-overlap]
         extract_dir = Path(tempfile.mkdtemp())
     else:
         extract_dir = extract_dir.absolute()

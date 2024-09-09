@@ -137,3 +137,26 @@ class X3d__Xml(Model):
 
     iana_mime = "model/x3d+xml"
     ext = ".x3d"
+
+
+__all__ = [
+    "Model",
+    "_3mf",
+    "E57",
+    "GltfBinary",
+    "Gltf__Json",
+    "Jt",
+    "Iges",
+    "Mtl",
+    "Obj",
+    "Prc",
+    "Step",
+    "Step__Xml",
+    "Step__Zip",
+    "StepXml__Zip",
+    "Stl",
+    "U3d",
+    "X3d_vrml",
+    "X3d__Fastinfoset",
+    "X3d__Xml",
+]

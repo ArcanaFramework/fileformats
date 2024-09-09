@@ -3025,10 +3025,10 @@ class Smpte336m(File):
 
 class Soap__Fastinfoset(File):
     """
-
     TODO: For details on the identification of a fast infoset document refer to the
     magic number section of the "application/fastinfoset" media type.
-       The identification of a W3C SOAP message infoset serialized as a fast
+
+    The identification of a W3C SOAP message infoset serialized as a fast
     infoset document requires that the fast infoset document be parsed and that
     the properties of the element information item, corresponding to the root of
     the element tree, conform to the properties of the SOAP Envelope element

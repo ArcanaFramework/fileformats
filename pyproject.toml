@@ -44,9 +44,11 @@ dev = [
     "flake8",
     "flake8-pyproject",
     "fileformats[test]",
+    "mypy >=1.5.1",
     "pydata-sphinx-theme >=0.13",
 ]
 test = [
+    "mypy >=1.5.1",
     "pytest >=6.2.5",
     "pytest-env>=0.6.2",
     "pytest-cov>=2.12.1",
