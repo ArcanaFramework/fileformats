@@ -195,7 +195,7 @@ class FileSet(DataType):
             a tuple of tuples containing the file paths and the modification time sorted
             by the file path
         """
-        return tuple((str(p), p.stat().st_mtime) for p in sorted(self.fspaths))
+        return tuple((str(p), p.stat().st_mtime_ns) for p in sorted(self.fspaths))
 
     @classproperty
     def mime_type(cls) -> str:

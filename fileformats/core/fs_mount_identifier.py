@@ -156,3 +156,33 @@ class FsMountIdentifier:
             cls._mount_table = orig_table
 
     _mount_table: ty.Optional[ty.List[ty.Tuple[str, str]]] = None
+
+
+# # Define a table of file system types and their mtime resolutions (in seconds)
+# FS_MTIME_NS_RESOLUTION = {
+#     "ext4": 1,  # 1 nanosecond
+#     "xfs": 1,  # 1 nanosecond
+#     "btrfs": 1,  # 1 nanosecond
+#     "ntfs": 100,  # 100 nanoseconds
+#     "hfs": 1,  # 1 nanosecond
+#     "apfs": 1,  # 1 nanosecond
+#     "fat32": 2e9,  # 2 seconds (2 * 10^9 nanoseconds)
+#     "exfat": 1e9,  # 1 second (1 * 10^9 nanoseconds)
+#     # Add more file systems and their resolutions as needed
+# }
+
+
+# def measure_mtime_resolution(file_path: str) -> float:
+#     # Get the initial mtime
+#     initial_mtime = os.path.getmtime(file_path)
+
+#     # Wait for a very short period and update the mtime using touch
+#     for sleep_time in [0.001, 0.01, 0.1, 1]:  # 1ms, 10ms, 100ms, 1s
+#         time.sleep(sleep_time)
+#         touch(file_path)
+#         new_mtime = os.path.getmtime(file_path)
+#         if new_mtime != initial_mtime:
+#             # Calculate the resolution
+#             resolution = new_mtime - initial_mtime
+#             return resolution
+#     return None
