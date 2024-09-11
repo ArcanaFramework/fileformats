@@ -121,4 +121,8 @@ def enough_time_has_elapsed_given_mtime_resolution(
     if current_time is None:
         current_time = time.time_ns()
     elapsed_time = current_time - max_mtime
+    raise Exception(
+        f"current_time: {current_time}, max_mtime: {max_mtime}, "
+        f"elapsed_time: {elapsed_time}, guessed_mtime_res: {guessed_mtime_res}"
+    )
     return elapsed_time > guessed_mtime_res
