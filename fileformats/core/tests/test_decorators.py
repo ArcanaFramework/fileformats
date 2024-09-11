@@ -1,6 +1,6 @@
 from pathlib import Path
 import time
-from fileformats.core.decorators import contents_property
+from fileformats.core.decorators import mtime_cached_property
 from fileformats.generic import File
 
 
@@ -8,12 +8,12 @@ class MtimeTestFile(File):
 
     flag: int
 
-    @contents_property
+    @mtime_cached_property
     def cached_prop(self):
         return self.flag
 
 
-def test_contents_property(tmp_path: Path):
+def test_mtime_cached_property(tmp_path: Path):
     fspath = tmp_path / "file_1.txt"
     fspath.write_text("hello")
 
@@ -32,7 +32,7 @@ def test_contents_property(tmp_path: Path):
     assert file.cached_prop == 1
 
 
-def test_contents_property_force_clear(tmp_path: Path):
+def test_mtime_cached_property_force_clear(tmp_path: Path):
     fspath = tmp_path / "file_1.txt"
     fspath.write_text("hello")
 

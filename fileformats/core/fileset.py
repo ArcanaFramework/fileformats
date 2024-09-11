@@ -21,7 +21,7 @@ from .utils import (
     matching_source,
     import_extras_module,
 )
-from .decorators import contents_property, classproperty
+from .decorators import mtime_cached_property, classproperty
 from .typing import FspathsInputType, CryptoMethod, PathType
 from .sampling import SampleFileGenerator
 from .identification import (
@@ -243,7 +243,7 @@ class FileSet(DataType):
             pass
         return possible
 
-    @contents_property
+    @mtime_cached_property
     def metadata(self) -> ty.Mapping[str, ty.Any]:
         """Lazily load metadata from `read_metadata` extra if implemented, returning an
         empty metadata array if not"""

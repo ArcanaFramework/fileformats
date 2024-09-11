@@ -9,10 +9,10 @@ import fileformats.core
 PropReturn = ty.TypeVar("PropReturn")
 
 
-__all__ = ["contents_property", "classproperty"]
+__all__ = ["mtime_cached_property", "classproperty"]
 
 
-class contents_property:
+class mtime_cached_property:
     """A property that is cached until the mtimes of the files in the fileset are changed"""
 
     def __init__(self, func: ty.Callable[..., ty.Any]):
@@ -36,7 +36,7 @@ class contents_property:
         if instance is None:  # if accessing property from class not instance
             return self
         assert isinstance(instance, fileformats.core.FileSet), (
-            "Cannot use contents_property instance with "
+            "Cannot use mtime_cached_property instance with "
             f"{type(instance).__name__!r} object, only FileSet objects."
         )
         try:

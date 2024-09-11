@@ -6,7 +6,7 @@ from fileformats.core.exceptions import (
     FormatMismatchError,
     UnconstrainedExtensionException,
 )
-from fileformats.core.decorators import classproperty, contents_property
+from fileformats.core.decorators import classproperty, mtime_cached_property
 from .fsobject import FsObject
 
 
@@ -80,7 +80,7 @@ class File(FsObject):
         )
         return Path(new_path).with_suffix(suffix)
 
-    @contents_property
+    @mtime_cached_property
     def contents(self) -> ty.Union[str, bytes]:
         return self.read_contents()
 
