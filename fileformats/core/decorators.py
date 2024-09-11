@@ -37,8 +37,13 @@ class mtime_cached_property:
         except KeyError:
             pass
         else:
-            if instance.mtimes == mtimes:
+            if (
+                instance.mtimes == mtimes
+                and enough_time_has_elapsed_given_mtime_resolution(mtimes)
+            ):
                 return value
+            else:
+                del instance.__dict__[self._cache_name]
         with self.lock:
             # check if another thread filled cache while we awaited lock
             try:
@@ -115,8 +120,5 @@ def enough_time_has_elapsed_given_mtime_resolution(
         raise ValueError("No mtimes provided")
     if current_time is None:
         current_time = time.time_ns()
-    raise Exception(
-        f"current_time: {current_time}, max_mtime: {max_mtime}, guessed_mtime_res: {guessed_mtime_res}"
-    )
     elapsed_time = current_time - max_mtime
     return elapsed_time > guessed_mtime_res
