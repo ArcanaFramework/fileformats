@@ -171,15 +171,15 @@ class FsMountIdentifier:
             the root of the mount the path sits on
         fstype : str
             the type of the file-system (e.g. ext4 or cifs)"""
-        mount_point, fstype = cls.get_mount(path)
-        try:
-            resolution = cls.FS_MTIME_NS_RESOLUTION[fstype]
-        except KeyError:
-            try:
-                resolution = cls.measure_mtime_resolution(mount_point)
-            except (RuntimeError, OSError):
-                # Fallback to the largest known mtime
-                resolution = max(cls.FS_MTIME_NS_RESOLUTION.values())
+        mount_point, _ = cls.get_mount(path)
+        # try:
+        #     resolution = cls.FS_MTIME_NS_RESOLUTION[fstype]
+        # except KeyError:
+        #     try:
+        resolution = cls.measure_mtime_resolution(mount_point)
+        # except (RuntimeError, OSError):
+        #     # Fallback to the largest known mtime
+        #     resolution = max(cls.FS_MTIME_NS_RESOLUTION.values())
         return resolution
 
     @classmethod
