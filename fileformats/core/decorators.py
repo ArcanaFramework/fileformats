@@ -78,8 +78,9 @@ def enough_time_has_elapsed_given_mtime_resolution(
     """Determines whether enough time has elapsed since the the last of the cached mtimes
     to be sure that changes in mtimes will be detected given the resolution of the mtimes
     on the file system. For example, on systems with a mtime resolution of a second,
-    a change in mtime may not be detected if the cache is read within a second of the
-    file being modified. So this function guesses the resolution of the mtimes by the
+    a change in mtime may not be detected if the cache is re-read within a second and
+    the file is modified in the intervening period (probably only likely during tests).
+    So this function guesses the resolution of the mtimes by the
     minimum number of trailing zeros in the mtimes and then checks if enough time has
     passed to be sure that any changes in mtimes will be detected.
 
