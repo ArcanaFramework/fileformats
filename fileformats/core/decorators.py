@@ -73,7 +73,7 @@ if sys.version_info[:2] < (3, 9):
 
 
 def enough_time_has_elapsed_given_mtime_resolution(
-    mtimes: ty.Iterable[ty.Tuple[Path, int]]
+    mtimes: ty.Iterable[ty.Tuple[Path, int]], current_time: ty.Optional[int] = None
 ) -> bool:
     """Determines whether enough time has elapsed since the the last of the cached mtimes
     to be sure that changes in mtimes will be detected given the resolution of the mtimes
@@ -102,15 +102,18 @@ def enough_time_has_elapsed_given_mtime_resolution(
     LARGE_INT = 10**18  # Larger than any reasonable mtime resolution but still int64
     guessed_mtime_res = LARGE_INT
     for _, mtime in mtimes:
+        if mtime > max_mtime:
+            max_mtime = mtime
         res = 1
-        while mtime % 10 == 0:
-            mtime //= 10
+        mt = mtime
+        while mt % 10 == 0:
+            mt //= 10
             res *= 10
         if res < guessed_mtime_res:
             guessed_mtime_res = res
-        if mtime > max_mtime:
-            max_mtime = mtime
     if guessed_mtime_res == LARGE_INT:
         raise ValueError("No mtimes provided")
-    elapsed_time = time.time_ns() - max_mtime
+    if current_time is None:
+        current_time = time.time_ns()
+    elapsed_time = current_time - max_mtime
     return elapsed_time > guessed_mtime_res

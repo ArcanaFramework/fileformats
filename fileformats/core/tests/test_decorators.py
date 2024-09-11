@@ -1,5 +1,8 @@
 from pathlib import Path
-from fileformats.core.decorators import mtime_cached_property
+from fileformats.core.decorators import (
+    mtime_cached_property,
+    enough_time_has_elapsed_given_mtime_resolution,
+)
 from fileformats.generic import File
 
 
@@ -24,3 +27,15 @@ def test_mtime_cached_property(tmp_path: Path):
     assert file.cached_prop == 0
     fspath.write_text("world")
     assert file.cached_prop == 1
+
+
+def test_enough_time_has_elapsed_given_mtime_resolution():
+    assert enough_time_has_elapsed_given_mtime_resolution(
+        [("", 110), ("", 220), ("", 300)], 311
+    )
+
+
+def test_not_enough_time_has_elapsed_given_mtime_resolution():
+    assert not enough_time_has_elapsed_given_mtime_resolution(
+        [("", 110), ("", 220), ("", 300)], 301
+    )
