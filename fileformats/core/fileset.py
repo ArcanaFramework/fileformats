@@ -186,14 +186,14 @@ class FileSet(DataType):
         return (p.relative_to(self.parent) for p in self.fspaths)
 
     @property
-    def mtimes(self) -> ty.Tuple[ty.Tuple[str, float], ...]:
+    def mtimes(self) -> ty.Tuple[ty.Tuple[str, int], ...]:
         """Modification times of all fspaths in the file-set
 
         Returns
         -------
-        tuple[tuple[str, float], ...]
-            a tuple of tuples containing the file paths and the modification time sorted
-            by the file path
+        tuple[tuple[str, int], ...]
+            a tuple of tuples containing the file paths and the modification time (ns)
+            sorted by the file path
         """
         return tuple((str(p), p.stat().st_mtime_ns) for p in sorted(self.fspaths))
 

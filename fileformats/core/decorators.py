@@ -4,6 +4,7 @@ from pathlib import Path
 import time
 from threading import RLock
 import fileformats.core
+from .fs_mount_identifier import FsMountIdentifier
 
 
 PropReturn = ty.TypeVar("PropReturn")
@@ -78,7 +79,8 @@ if sys.version_info[:2] < (3, 9):
 
 
 def enough_time_has_elapsed_given_mtime_resolution(
-    mtimes: ty.Iterable[ty.Tuple[Path, int]], current_time: ty.Optional[int] = None
+    mtimes: ty.Iterable[ty.Tuple[Path, ty.Union[int, float]]],
+    current_time: ty.Optional[int] = None,
 ) -> bool:
     """Determines whether enough time has elapsed since the the last of the cached mtimes
     to be sure that changes in mtimes will be detected given the resolution of the mtimes
@@ -103,26 +105,10 @@ def enough_time_has_elapsed_given_mtime_resolution(
     bool
         whether enough time has elapsed since the lagiven the guessed resolution of the mtimes
     """
-    max_mtime = 0
-    LARGE_INT = 10**18  # Larger than any reasonable mtime resolution but still int64
-    guessed_mtime_res = LARGE_INT
-    for _, mtime in mtimes:
-        if mtime > max_mtime:
-            max_mtime = mtime
-        res = 1
-        mt = mtime
-        while mt % 10 == 0:
-            mt //= 10
-            res *= 10
-        if res < guessed_mtime_res:
-            guessed_mtime_res = res
-    if guessed_mtime_res == LARGE_INT:
-        raise ValueError("No mtimes provided")
     if current_time is None:
         current_time = time.time_ns()
-    elapsed_time = current_time - max_mtime
-    raise Exception(
-        f"current_time: {current_time}, max_mtime: {max_mtime}, "
-        f"elapsed_time: {elapsed_time}, guessed_mtime_res: {guessed_mtime_res}"
-    )
-    return elapsed_time > guessed_mtime_res
+    for fspath, mtime in mtimes:
+        mtime_resolution = FsMountIdentifier.get_mtime_resolution(fspath)
+        if current_time - mtime <= mtime_resolution:
+            return False
+    return True
