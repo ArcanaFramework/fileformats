@@ -1,4 +1,5 @@
 from pathlib import Path
+import time
 from fileformats.core.decorators import (
     mtime_cached_property,
     enough_time_has_elapsed_given_mtime_resolution,
@@ -20,6 +21,9 @@ def test_mtime_cached_property(tmp_path: Path):
     fspath.write_text("hello")
 
     file = MtimeTestFile(fspath)
+    time.sleep(
+        2
+    )  # ensure enough time has elapsed since file creation/modification for mtime to increment
 
     file.flag = 0
     assert file.cached_prop == 0
@@ -31,7 +35,7 @@ def test_mtime_cached_property(tmp_path: Path):
 
 def test_enough_time_has_elapsed_given_mtime_resolution():
     assert enough_time_has_elapsed_given_mtime_resolution(
-        [("", 110), ("", 220), ("", 300)], 311
+        [("", 110), ("", 220), ("", 300)], int(3e9)  # need to make it high for windows
     )
 
 

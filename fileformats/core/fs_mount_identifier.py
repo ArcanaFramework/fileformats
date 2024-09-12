@@ -171,20 +171,24 @@ class FsMountIdentifier:
             the root of the mount the path sits on
         fstype : str
             the type of the file-system (e.g. ext4 or cifs)"""
-        mount_point, _ = cls.get_mount(path)
-        # try:
-        #     resolution = cls.FS_MTIME_NS_RESOLUTION[fstype]
-        # except KeyError:
-        #     try:
-        resolution = cls.measure_mtime_resolution(mount_point)
-        # except (RuntimeError, OSError):
-        #     # Fallback to the largest known mtime
-        #     resolution = max(cls.FS_MTIME_NS_RESOLUTION.values())
+        mount_point, fstype = cls.get_mount(path)
+        try:
+            resolution = cls.FS_MTIME_NS_RESOLUTION[fstype]
+        except KeyError:
+            try:
+                resolution = cls.measure_mtime_resolution(path)
+            except (RuntimeError, OSError):
+                # Fallback to the largest known mtime
+                resolution = max(cls.FS_MTIME_NS_RESOLUTION.values())
+            else:
+                cls.FS_MTIME_NS_RESOLUTION[fstype] = resolution
         return resolution
 
     @classmethod
-    def measure_mtime_resolution(cls, mount_point: Path) -> int:
-        tmp_file = Path(mount_point) / ".__fileformats_mtime_measurement_test_file__"
+    def measure_mtime_resolution(cls, sample_path: PathLike) -> int:
+        tmp_file = (
+            Path(sample_path).parent / ".__fileformats_mtime_measurement_test_file__"
+        )
         tmp_file.touch()
         try:
             # Get the initial mtime
@@ -198,11 +202,15 @@ class FsMountIdentifier:
                     # Calculate the resolution
                     resolution = new_mtime - initial_mtime
                     return resolution
-            raise RuntimeError(f"Couldn't determine the mtime for the {mount_point}")
+            raise RuntimeError(
+                f"Couldn't determine the mtime for the file-system that {sample_path}"
+                "is stored on"
+            )
         finally:
             tmp_file.unlink()
 
     _mount_table: ty.Optional[ty.List[ty.Tuple[str, str]]] = None
+    # _inode_size_table: ty.Dict[str, int] = {}
 
     # Define a table of file system types and their mtime resolutions (in seconds)
     FS_MTIME_NS_RESOLUTION: ty.Dict[str, int] = {
