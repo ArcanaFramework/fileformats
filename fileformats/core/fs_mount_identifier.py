@@ -186,22 +186,25 @@ class FsMountIdentifier:
 
     @classmethod
     def measure_mtime_resolution(cls, sample_path: PathLike) -> int:
-        tmp_file = (
-            Path(sample_path).parent / ".__fileformats_mtime_measurement_test_file__"
-        )
-        tmp_file.touch()
+        tmp_files = [
+            Path(sample_path).parent
+            / f".__fileformats_mtime_measurement_test_file__{i}"
+            for i in range(5)
+        ]
+        for tmp_file in tmp_files:
+            tmp_file.touch()
         try:
             # Get the initial mtime
-            initial_mtime = tmp_file.lstat().st_mtime_ns
+            initial_mtimes = [t.lstat().st_mtime_ns for t in tmp_files]
             # Wait for a very short period and update the mtime using touch
-            for sleep_time in [0.001, 0.01, 0.1, 1, 2]:  # 1ms, 10ms, 100ms, 1s
+            for sleep_time in [0, 0.001, 0.01, 0.1, 1, 2]:  # 1ms, 10ms, 100ms, 1s
                 time.sleep(sleep_time)
-                tmp_file.touch()
-                new_mtime = tmp_file.lstat().st_mtime_ns
-                if new_mtime != initial_mtime:
+                for tmp_file in tmp_files:
+                    tmp_file.touch()
+                new_mtimes = [t.lstat().st_mtime_ns for t in tmp_files]
+                if all(n != i for n, i in zip(new_mtimes, initial_mtimes)):
                     # Calculate the resolution
-                    resolution = new_mtime - initial_mtime
-                    return resolution
+                    return max(n - i for n, i in zip(new_mtimes, initial_mtimes))
             raise RuntimeError(
                 f"Couldn't determine the mtime for the file-system that {sample_path}"
                 "is stored on"
