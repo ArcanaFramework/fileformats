@@ -3,7 +3,7 @@ from fileformats.core.fileset import FileSet
 from fileformats.core.exceptions import (
     FormatMismatchError,
 )
-from fileformats.core.utils import mtime_cached_property
+from fileformats.core.decorators import mtime_cached_property
 from fileformats.core.mixin import WithClassifiers
 
 

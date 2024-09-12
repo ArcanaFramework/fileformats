@@ -1,3 +1,4 @@
+import io
 from pathlib import Path
 import typing as ty
 from fileformats.core.fileset import FileSet
@@ -5,7 +6,7 @@ from fileformats.core.exceptions import (
     FormatMismatchError,
     UnconstrainedExtensionException,
 )
-from fileformats.core.utils import classproperty, mtime_cached_property
+from fileformats.core.decorators import classproperty, mtime_cached_property
 from .fsobject import FsObject
 
 
@@ -107,7 +108,7 @@ class File(FsObject):
     ) -> ty.Union[str, bytes]:
         with self.open() as f:
             if offset:
-                f.read(offset)
+                f.seek(offset, (io.SEEK_SET if offset >= 0 else io.SEEK_END))
             contents = f.read(size) if size else f.read()
         return contents
 

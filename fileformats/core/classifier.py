@@ -1,5 +1,5 @@
 import typing as ty
-from .utils import classproperty
+from .decorators import classproperty
 from .exceptions import FormatDefinitionError
 
 

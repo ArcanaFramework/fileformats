@@ -155,4 +155,39 @@ class FsMountIdentifier:
         finally:
             cls._mount_table = orig_table
 
+    @classmethod
+    def get_mtime_resolution(cls, path: PathLike) -> int:
+        """Get the mount point for a given file-system path
+
+        Parameters
+        ----------
+        path: os.PathLike
+            the file-system path to identify the mount of
+
+        Returns
+        -------
+        mount_point: os.PathLike
+            the root of the mount the path sits on
+        fstype : str
+            the type of the file-system (e.g. ext4 or cifs)"""
+        mount_point, fstype = cls.get_mount(path)
+        try:
+            resolution = cls.FS_MAX_MTIME_NS_RESOLUTION[fstype]
+        except KeyError:
+            resolution = max(cls.FS_MAX_MTIME_NS_RESOLUTION.values())
+        return resolution
+
     _mount_table: ty.Optional[ty.List[ty.Tuple[str, str]]] = None
+
+    # Define a table of file system types and their mtime resolutions (in seconds)
+    FS_MAX_MTIME_NS_RESOLUTION: ty.Dict[str, int] = {
+        "ext4": int(1e9),  # docs say 1 nanosecond but in found 1 sec often in practice
+        "xfs": 1,
+        "btrfs": 1,
+        "ntfs": 100,
+        "hfs": 1,
+        "apfs": 1,
+        "fat32": int(2e9),  # 2 seconds
+        "exfat": int(1e9),  # 1 second
+        # Add more file systems and their resolutions as needed
+    }

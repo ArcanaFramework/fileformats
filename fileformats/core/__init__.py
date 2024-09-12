@@ -11,6 +11,7 @@ from .identification import (
 )
 from .sampling import SampleFileGenerator
 from .extras import extra, extra_implementation, converter
+from .decorators import mtime_cached_property
 
 __all__ = [
     "__version__",
@@ -27,4 +28,5 @@ __all__ = [
     "extra",
     "extra_implementation",
     "converter",
+    "mtime_cached_property",
 ]
