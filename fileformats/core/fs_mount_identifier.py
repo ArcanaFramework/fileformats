@@ -202,6 +202,7 @@ class FsMountIdentifier:
                 for tmp_file in tmp_files:
                     tmp_file.touch()
                 new_mtimes = [t.lstat().st_mtime_ns for t in tmp_files]
+                print(new_mtimes, initial_mtimes)
                 if all(n != i for n, i in zip(new_mtimes, initial_mtimes)):
                     # Calculate the resolution
                     return max(n - i for n, i in zip(new_mtimes, initial_mtimes))
@@ -210,7 +211,8 @@ class FsMountIdentifier:
                 "is stored on"
             )
         finally:
-            tmp_file.unlink()
+            for tmp_file in tmp_files:
+                tmp_file.unlink()
 
     _mount_table: ty.Optional[ty.List[ty.Tuple[str, str]]] = None
     # _inode_size_table: ty.Dict[str, int] = {}
