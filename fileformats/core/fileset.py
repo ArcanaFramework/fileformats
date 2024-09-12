@@ -328,7 +328,14 @@ class FileSet(DataType):
             prop = getattr(self, prop_name)
             paths = []
             if hasattr(prop, "required_paths"):
-                paths = prop.required_paths()
+                try:
+                    paths = prop.required_paths()
+                except RecursionError:
+                    warn(
+                        f"Recursion error when trying to get required paths from {prop_name} "
+                        f"property of {type(self)}"
+                    )
+                    raise
             elif isinstance(prop, os.PathLike):
                 paths = [Path(prop)]
             elif isinstance(prop, ty.Iterable):

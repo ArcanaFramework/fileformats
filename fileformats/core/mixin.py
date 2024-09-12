@@ -712,10 +712,9 @@ class WithClassifiers:
     def type_name(cls) -> str:
         """Name of type including classifiers to be used in __repr__"""
         unclassified: str
-        if cls.is_classified:
-            unclassified = cls.unclassified.__name__  # type: ignore[attr-defined]
-        else:
-            unclassified = type(cls).__name__
+        if not cls.is_classified:
+            return cls.__name__  # type: ignore[no-any-return, attr-defined]
+        unclassified = cls.unclassified.__name__  # type: ignore[attr-defined]
         return (
             unclassified + "[" + ", ".join(t.type_name for t in cls.classifiers) + "]"
         )

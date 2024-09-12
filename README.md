@@ -2,6 +2,8 @@
 
 [![CI/CD](https://github.com/arcanaframework/fileformats/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/arcanaframework/fileformats/actions/workflows/ci-cd.yml)
 [![Codecov](https://codecov.io/gh/arcanaframework/fileformats/branch/main/graph/badge.svg?token=UIS0OGPST7)](https://codecov.io/gh/arcanaframework/fileformats)
+[![Code style: black](https://camo.githubusercontent.com/5bf9e9fa18966df7cb5fac7715bef6b72df15e01a6efa9d616c83f9fcb527fe2/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f636f64652532307374796c652d626c61636b2d3030303030302e737667)](https://github.com/psf/black)
+![Static Badge](https://img.shields.io/badge/type%20checked-mypy-039dfc)
 [![Python Versions](https://img.shields.io/pypi/pyversions/fileformats.svg)](https://pypi.python.org/pypi/fileformats/)
 [![Latest Version](https://img.shields.io/pypi/v/fileformats.svg)](https://pypi.python.org/pypi/fileformats/)
 [![Documentation Status](https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat)](https://arcanaframework.github.io/fileformats/)
