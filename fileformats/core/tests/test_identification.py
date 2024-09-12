@@ -2,11 +2,12 @@ from collections import Counter
 import itertools
 import typing as ty
 import pytest
-from fileformats.core.identification import (
+from fileformats.core import (
     find_matching,
     to_mime,
     from_mime,
     from_paths,
+    FileSet,
 )
 from fileformats.core.exceptions import FormatRecognitionError
 from fileformats.testing import Foo, Bar
@@ -56,6 +57,11 @@ def test_to_from_list_union_mime_roundtrip():
 def test_official_mime_fail():
     with pytest.raises(TypeError, match="as it is not a proper file-type"):
         to_mime(ty.List[Foo], official=True)
+
+
+def test_repr():
+    for frmt in FileSet.all_formats:
+        assert repr(frmt.mock("/a/path")).startswith(f"{frmt.__name__}(")
 
 
 def test_from_paths(tmp_path):
