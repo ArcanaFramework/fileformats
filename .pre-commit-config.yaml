@@ -37,3 +37,4 @@ repos:
             --non-interactive,
           ]
         exclude: tests
+        additional_dependencies: [pytest]
