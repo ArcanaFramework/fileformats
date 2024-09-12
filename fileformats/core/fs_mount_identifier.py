@@ -3,7 +3,6 @@ import typing as ty
 import string
 from pathlib import Path
 import platform
-import time
 import re
 from contextlib import contextmanager
 import subprocess as sp
@@ -173,59 +172,22 @@ class FsMountIdentifier:
             the type of the file-system (e.g. ext4 or cifs)"""
         mount_point, fstype = cls.get_mount(path)
         try:
-            resolution = cls.FS_MTIME_NS_RESOLUTION[fstype]
+            resolution = cls.FS_MAX_MTIME_NS_RESOLUTION[fstype]
         except KeyError:
-            try:
-                resolution = cls.measure_mtime_resolution(path)
-            except (RuntimeError, OSError):
-                # Fallback to the largest known mtime
-                resolution = max(cls.FS_MTIME_NS_RESOLUTION.values())
-            else:
-                cls.FS_MTIME_NS_RESOLUTION[fstype] = resolution
+            resolution = max(cls.FS_MAX_MTIME_NS_RESOLUTION.values())
         return resolution
 
-    @classmethod
-    def measure_mtime_resolution(cls, sample_path: PathLike) -> int:
-        tmp_files = [
-            Path(sample_path).parent
-            / f".__fileformats_mtime_measurement_test_file__{i}"
-            for i in range(5)
-        ]
-        for tmp_file in tmp_files:
-            tmp_file.touch()
-        try:
-            # Get the initial mtime
-            initial_mtimes = [t.lstat().st_mtime_ns for t in tmp_files]
-            # Wait for a very short period and update the mtime using touch
-            for sleep_time in [0, 0.001, 0.01, 0.1, 1, 2]:  # 1ms, 10ms, 100ms, 1s
-                time.sleep(sleep_time)
-                for tmp_file in tmp_files:
-                    tmp_file.touch()
-                new_mtimes = [t.lstat().st_mtime_ns for t in tmp_files]
-                print(new_mtimes, initial_mtimes)
-                if all(n != i for n, i in zip(new_mtimes, initial_mtimes)):
-                    # Calculate the resolution
-                    return max(n - i for n, i in zip(new_mtimes, initial_mtimes))
-            raise RuntimeError(
-                f"Couldn't determine the mtime for the file-system that {sample_path}"
-                "is stored on"
-            )
-        finally:
-            for tmp_file in tmp_files:
-                tmp_file.unlink()
-
     _mount_table: ty.Optional[ty.List[ty.Tuple[str, str]]] = None
-    # _inode_size_table: ty.Dict[str, int] = {}
 
     # Define a table of file system types and their mtime resolutions (in seconds)
-    FS_MTIME_NS_RESOLUTION: ty.Dict[str, int] = {
-        "ext4": 1,  # 1 nanosecond
-        "xfs": 1,  # 1 nanosecond
-        "btrfs": 1,  # 1 nanosecond
-        "ntfs": 100,  # 100 nanoseconds
-        "hfs": 1,  # 1 nanosecond
-        "apfs": 1,  # 1 nanosecond
-        "fat32": int(2e9),  # 2 seconds (2 * 10^9 nanoseconds)
-        "exfat": int(1e9),  # 1 second (1 * 10^9 nanoseconds)
+    FS_MAX_MTIME_NS_RESOLUTION: ty.Dict[str, int] = {
+        "ext4": int(1e9),  # docs say 1 nanosecond but in found 1 sec often in practice
+        "xfs": 1,
+        "btrfs": 1,
+        "ntfs": 100,
+        "hfs": 1,
+        "apfs": 1,
+        "fat32": int(2e9),  # 2 seconds
+        "exfat": int(1e9),  # 1 second
         # Add more file systems and their resolutions as needed
     }
