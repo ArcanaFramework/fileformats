@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 -->
-        <title>fileformats.core.mixin - FileFormats v0.12.1</title>
+        <title>fileformats.core.mixin - FileFormats v0.12.2</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d8449d71" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
@@ -171,7 +171,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">FileFormats v0.12.1</div></a>
+      <a href="../../../index.html"><div class="brand">FileFormats v0.12.2</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -198,7 +198,7 @@
     <img class="sidebar-logo" src="../../../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.12.1</span>
+  <span class="sidebar-brand-text">FileFormats v0.12.2</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -217,7 +217,17 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../api.html">Public API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/generic.html">Generic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/field.html">Field</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/application.html">Application</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/audio.html">Audio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/image.html">Image</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/model.html">Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/text.html">Text</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/video.html">Video</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/datascience.html">Datascience</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/medimage.html">Medimage</a></li>
 </ul>
 
 </div>
@@ -259,7 +269,8 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">.datatype</span> <span class="kn">import</span> <span class="n">DataType</span>
 <span class="kn">import</span> <span class="nn">fileformats.core</span>
-<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">classproperty</span><span class="p">,</span> <span class="n">describe_task</span><span class="p">,</span> <span class="n">matching_source</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">describe_task</span><span class="p">,</span> <span class="n">matching_source</span>
+<span class="kn">from</span> <span class="nn">.decorators</span> <span class="kn">import</span> <span class="n">classproperty</span>
 <span class="kn">from</span> <span class="nn">.identification</span> <span class="kn">import</span> <span class="n">to_mime_format_name</span>
 <span class="kn">from</span> <span class="nn">.converter_helpers</span> <span class="kn">import</span> <span class="n">SubtypeVar</span><span class="p">,</span> <span class="n">ConverterSpec</span>
 <span class="kn">from</span> <span class="nn">.classifier</span> <span class="kn">import</span> <span class="n">Classifier</span>
@@ -274,7 +285,7 @@
 
 
 <div class="viewcode-block" id="WithMagicNumber">
-<a class="viewcode-back" href="../../../api.html#fileformats.core.mixin.WithMagicNumber">[docs]</a>
+<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.mixin.WithMagicNumber">[docs]</a>
 <span class="k">class</span> <span class="nc">WithMagicNumber</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Mixin class for Files with magic numbers at the start of their</span>
 <span class="sd">    contents.</span>
@@ -329,7 +340,7 @@
 
 
 <div class="viewcode-block" id="WithMagicVersion">
-<a class="viewcode-back" href="../../../api.html#fileformats.core.mixin.WithMagicVersion">[docs]</a>
+<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.mixin.WithMagicVersion">[docs]</a>
 <span class="k">class</span> <span class="nc">WithMagicVersion</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Mixin class for Files with version numbers embedded within &quot;magic numbers&quot;</span>
 <span class="sd">    the start of their contents.</span>
@@ -379,7 +390,7 @@
 
 
 <div class="viewcode-block" id="WithAdjacentFiles">
-<a class="viewcode-back" href="../../../api.html#fileformats.core.mixin.WithAdjacentFiles">[docs]</a>
+<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.mixin.WithAdjacentFiles">[docs]</a>
 <span class="k">class</span> <span class="nc">WithAdjacentFiles</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    If only the main fspath is provided to the __init__ of the class, this mixin</span>
@@ -420,7 +431,7 @@
 
 
 <div class="viewcode-block" id="WithSeparateHeader">
-<a class="viewcode-back" href="../../../api.html#fileformats.core.mixin.WithSeparateHeader">[docs]</a>
+<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.mixin.WithSeparateHeader">[docs]</a>
 <span class="k">class</span> <span class="nc">WithSeparateHeader</span><span class="p">(</span><span class="n">WithAdjacentFiles</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Mixin class for Files with metadata stored in separate header files (typically</span>
 <span class="sd">    with the same file stem but differing extension)</span>
@@ -459,7 +470,7 @@
 
 
 <div class="viewcode-block" id="WithSideCars">
-<a class="viewcode-back" href="../../../api.html#fileformats.core.mixin.WithSideCars">[docs]</a>
+<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.mixin.WithSideCars">[docs]</a>
 <span class="k">class</span> <span class="nc">WithSideCars</span><span class="p">(</span><span class="n">WithAdjacentFiles</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Mixin class for Files with a &quot;side-car&quot; file that augments the inline metadata</span>
 <span class="sd">    (typically with the same file stem but differing extension).</span>
@@ -510,7 +521,7 @@
 
 
 <div class="viewcode-block" id="WithClassifiers">
-<a class="viewcode-back" href="../../../api.html#fileformats.core.mixin.WithClassifiers">[docs]</a>
+<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.mixin.WithClassifiers">[docs]</a>
 <span class="k">class</span> <span class="nc">WithClassifiers</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Mixin class for adding the ability to qualify the format class to designate the</span>
 <span class="sd">    type of information stored within the format, e.g. ``DirectoryOf[Png, Gif]`` for a</span>
@@ -898,10 +909,11 @@
                     <span class="sa">f</span><span class="s2">&quot;from a generic type or similarly classified type, not </span><span class="si">{</span><span class="n">source_format</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">wildcard_classifiers</span><span class="p">()</span> <span class="o">!=</span> <span class="n">source_format</span><span class="o">.</span><span class="n">wildcard_classifiers</span><span class="p">():</span>  <span class="c1"># type: ignore[attr-defined]</span>
+                <span class="n">source_wildcard_classifiers</span> <span class="o">=</span> <span class="n">source_format</span><span class="o">.</span><span class="n">wildcard_classifiers</span><span class="p">()</span>  <span class="c1"># type: ignore[attr-defined]</span>
+                <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">wildcard_classifiers</span><span class="p">()</span> <span class="o">!=</span> <span class="n">source_wildcard_classifiers</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="n">FormatDefinitionError</span><span class="p">(</span>
                         <span class="sa">f</span><span class="s2">&quot;Mismatching wildcards between source format, </span><span class="si">{</span><span class="n">source_format</span><span class="si">}</span><span class="s2"> &quot;</span>
-                        <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">source_format</span><span class="o">.</span><span class="n">wildcard_classifiers</span><span class="p">())</span><span class="si">}</span><span class="s2">), and target &quot;</span>  <span class="c1"># type: ignore[attr-defined]</span>
+                        <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">source_wildcard_classifiers</span><span class="p">)</span><span class="si">}</span><span class="s2">), and target &quot;</span>
                         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">cls</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">wildcard_classifiers</span><span class="p">()</span><span class="si">}</span><span class="s2">)&quot;</span>
                     <span class="p">)</span>
                 <span class="n">prev_registered</span> <span class="o">=</span> <span class="p">[</span>
@@ -929,9 +941,11 @@
                             <span class="n">describe_task</span><span class="p">(</span><span class="n">converter_spec</span><span class="o">.</span><span class="n">task</span><span class="p">),</span>
                         <span class="p">)</span>
                         <span class="k">return</span>  <span class="c1"># actually the same task but just imported twice for some reason</span>
+                    <span class="n">prev_unclassified</span> <span class="o">=</span> <span class="n">prev</span><span class="o">.</span><span class="n">unclassified</span>
+                    <span class="n">unclassified</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">unclassified</span>  <span class="c1"># type: ignore[attr-defined]</span>
                     <span class="k">raise</span> <span class="n">FormatDefinitionError</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Cannot register converter from </span><span class="si">{</span><span class="n">prev</span><span class="o">.</span><span class="n">unclassified</span><span class="si">}</span><span class="s2"> &quot;</span>  <span class="c1"># type: ignore[attr-defined]</span>
-                        <span class="sa">f</span><span class="s2">&quot;to </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">unclassified</span><span class="si">}</span><span class="s2"> with non-wildcard classifiers &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Cannot register converter from </span><span class="si">{</span><span class="n">prev_unclassified</span><span class="si">}</span><span class="s2"> &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;to </span><span class="si">{</span><span class="n">unclassified</span><span class="si">}</span><span class="s2"> with non-wildcard classifiers &quot;</span>
                         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">prev</span><span class="o">.</span><span class="n">non_wildcard_classifiers</span><span class="p">())</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">describe_task</span><span class="p">(</span><span class="n">converter_spec</span><span class="o">.</span><span class="n">task</span><span class="p">)</span><span class="si">}</span><span class="s2">, &quot;</span>
                         <span class="sa">f</span><span class="s2">&quot;because there is already one registered, </span><span class="si">{</span><span class="n">describe_task</span><span class="p">(</span><span class="n">prev_spec</span><span class="o">.</span><span class="n">task</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
                     <span class="p">)</span>
@@ -980,10 +994,9 @@
     <span class="k">def</span> <span class="nf">type_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Name of type including classifiers to be used in __repr__&quot;&quot;&quot;</span>
         <span class="n">unclassified</span><span class="p">:</span> <span class="nb">str</span>
-        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">is_classified</span><span class="p">:</span>
-            <span class="n">unclassified</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">unclassified</span><span class="o">.</span><span class="vm">__name__</span>  <span class="c1"># type: ignore[attr-defined]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">unclassified</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">is_classified</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span>  <span class="c1"># type: ignore[no-any-return, attr-defined]</span>
+        <span class="n">unclassified</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">unclassified</span><span class="o">.</span><span class="vm">__name__</span>  <span class="c1"># type: ignore[attr-defined]</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="n">unclassified</span> <span class="o">+</span> <span class="s2">&quot;[&quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">type_name</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">classifiers</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span>
         <span class="p">)</span></div>
@@ -1020,7 +1033,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=31f622c0"></script>
+</div><script src="../../../_static/documentation_options.js?v=4b40992f"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=5fa4622c"></script>

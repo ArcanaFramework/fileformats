@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Detection" href="detection.html" /><link rel="prev" title="FileFormats" href="index.html" />
 
     <!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 -->
-        <title>Quick start - FileFormats v0.12.1</title>
+        <title>Quick start - FileFormats v0.12.2</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d8449d71" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
@@ -172,7 +172,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">FileFormats v0.12.1</div></a>
+      <a href="index.html"><div class="brand">FileFormats v0.12.2</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -199,7 +199,7 @@
     <img class="sidebar-logo" src="_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.12.1</span>
+  <span class="sidebar-brand-text">FileFormats v0.12.2</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -218,7 +218,17 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="api.html">Public API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/generic.html">Generic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/field.html">Field</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/application.html">Application</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/audio.html">Audio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/image.html">Image</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/model.html">Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/text.html">Text</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/video.html">Video</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/datascience.html">Datascience</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/medimage.html">Medimage</a></li>
 </ul>
 
 </div>
@@ -262,7 +272,7 @@
           <section id="quick-start">
 <h1>Quick start<a class="headerlink" href="#quick-start" title="Link to this heading">¶</a></h1>
 <p>Validate the format of a file, in this case a JPEG image, by passing the file path(s) to the
-corresponding FileFormat, <code class="xref py py-class docutils literal notranslate"><span class="pre">fileformats.image.Jpeg</span></code>,</p>
+corresponding FileFormat, <a class="reference internal" href="reference/image.html#fileformats.image.Jpeg" title="fileformats.image.Jpeg"><code class="xref py py-class docutils literal notranslate"><span class="pre">fileformats.image.Jpeg</span></code></a>,</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.image</span> <span class="kn">import</span> <span class="n">Jpeg</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">jpeg_file</span> <span class="o">=</span> <span class="n">Jpeg</span><span class="p">(</span><span class="s2">&quot;/path/to/an-image.jpeg&quot;</span><span class="p">)</span>  <span class="c1"># check exist., file ext. and magic num.</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">jpeg_file</span><span class="p">)</span>  <span class="c1"># returns the file path</span>
@@ -305,7 +315,7 @@ MIME types.</p>
 <span class="go">fileformats.image.raster.Jpeg</span>
 </pre></div>
 </div>
-<p>To copy or move the files in a <a class="reference internal" href="api.html#fileformats.core.FileSet" title="fileformats.core.FileSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileSet</span></code></a> to a new directory, use the
+<p>To copy or move the files in a <a class="reference internal" href="reference/core.html#fileformats.core.FileSet" title="fileformats.core.FileSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileSet</span></code></a> to a new directory, use the
 <code class="docutils literal notranslate"><span class="pre">copy</span></code> or <code class="docutils literal notranslate"><span class="pre">move</span></code> methods, respectively.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">new_jpeg</span> <span class="o">=</span> <span class="n">jpeg_file</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">dest_dir</span><span class="o">=</span><span class="s2">&quot;/path/to/destination&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">new_jpeg</span><span class="o">.</span><span class="n">fspaths</span>
@@ -322,7 +332,7 @@ file (see <a class="reference internal" href="file_handling.html#copy-mode"><spa
 <span class="go">)  # will fallback to a copy</span>
 </pre></div>
 </div>
-<p>To quickly generate a hash of the file set use the <a class="reference internal" href="api.html#fileformats.core.FileSet.hash" title="fileformats.core.FileSet.hash"><code class="xref py py-meth docutils literal notranslate"><span class="pre">FileSet.hash()</span></code></a> method.</p>
+<p>To quickly generate a hash of the file set use the <a class="reference internal" href="reference/core.html#fileformats.core.FileSet.hash" title="fileformats.core.FileSet.hash"><code class="xref py py-meth docutils literal notranslate"><span class="pre">FileSet.hash()</span></code></a> method.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">jpeg_file</span><span class="o">.</span><span class="n">hash</span><span class="p">()</span>
 <span class="go">&quot;d41d8cd98f00b204e9800998ecf8427e&quot;</span>
 </pre></div>
@@ -400,7 +410,7 @@ for information on how to implement new file formats, converters and extra funct
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=31f622c0"></script>
+</div><script src="_static/documentation_options.js?v=4b40992f"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=5fa4622c"></script>

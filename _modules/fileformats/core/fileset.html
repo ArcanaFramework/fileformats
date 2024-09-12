@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 -->
-        <title>fileformats.core.fileset - FileFormats v0.12.1</title>
+        <title>fileformats.core.fileset - FileFormats v0.12.2</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d8449d71" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
@@ -171,7 +171,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">FileFormats v0.12.1</div></a>
+      <a href="../../../index.html"><div class="brand">FileFormats v0.12.2</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -198,7 +198,7 @@
     <img class="sidebar-logo" src="../../../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.12.1</span>
+  <span class="sidebar-brand-text">FileFormats v0.12.2</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -217,7 +217,17 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../api.html">Public API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/generic.html">Generic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/field.html">Field</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/application.html">Application</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/audio.html">Audio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/image.html">Image</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/model.html">Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/text.html">Text</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/video.html">Video</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/datascience.html">Datascience</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/medimage.html">Medimage</a></li>
 </ul>
 
 </div>
@@ -271,13 +281,12 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">fileformats.core.typing</span> <span class="kn">import</span> <span class="n">Self</span>
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">classproperty</span><span class="p">,</span>
-    <span class="n">mtime_cached_property</span><span class="p">,</span>
     <span class="n">fspaths_converter</span><span class="p">,</span>
     <span class="n">describe_task</span><span class="p">,</span>
     <span class="n">matching_source</span><span class="p">,</span>
     <span class="n">import_extras_module</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.decorators</span> <span class="kn">import</span> <span class="n">mtime_cached_property</span><span class="p">,</span> <span class="n">classproperty</span>
 <span class="kn">from</span> <span class="nn">.typing</span> <span class="kn">import</span> <span class="n">FspathsInputType</span><span class="p">,</span> <span class="n">CryptoMethod</span><span class="p">,</span> <span class="n">PathType</span>
 <span class="kn">from</span> <span class="nn">.sampling</span> <span class="kn">import</span> <span class="n">SampleFileGenerator</span>
 <span class="kn">from</span> <span class="nn">.identification</span> <span class="kn">import</span> <span class="p">(</span>
@@ -311,7 +320,7 @@
 
 
 <div class="viewcode-block" id="FileSet">
-<a class="viewcode-back" href="../../../api.html#fileformats.core.FileSet">[docs]</a>
+<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.FileSet">[docs]</a>
 <span class="k">class</span> <span class="nc">FileSet</span><span class="p">(</span><span class="n">DataType</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The base class for all format types within the fileformats package. A generic</span>
@@ -444,16 +453,16 @@
         <span class="k">return</span> <span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fspaths</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">mtimes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="o">...</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">mtimes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Modification times of all fspaths in the file-set</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        tuple[tuple[str, float], ...]</span>
-<span class="sd">            a tuple of tuples containing the file paths and the modification time sorted</span>
-<span class="sd">            by the file path</span>
+<span class="sd">        tuple[tuple[str, int], ...]</span>
+<span class="sd">            a tuple of tuples containing the file paths and the modification time (ns)</span>
+<span class="sd">            sorted by the file path</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">tuple</span><span class="p">((</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">p</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_mtime</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fspaths</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">((</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">p</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_mtime_ns</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fspaths</span><span class="p">))</span>
 
     <span class="nd">@classproperty</span>
     <span class="k">def</span> <span class="nf">mime_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -586,7 +595,14 @@
             <span class="n">prop</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">)</span>
             <span class="n">paths</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">prop</span><span class="p">,</span> <span class="s2">&quot;required_paths&quot;</span><span class="p">):</span>
-                <span class="n">paths</span> <span class="o">=</span> <span class="n">prop</span><span class="o">.</span><span class="n">required_paths</span><span class="p">()</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">paths</span> <span class="o">=</span> <span class="n">prop</span><span class="o">.</span><span class="n">required_paths</span><span class="p">()</span>
+                <span class="k">except</span> <span class="ne">RecursionError</span><span class="p">:</span>
+                    <span class="n">warn</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Recursion error when trying to get required paths from </span><span class="si">{</span><span class="n">prop_name</span><span class="si">}</span><span class="s2"> &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;property of </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+                    <span class="k">raise</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">prop</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">):</span>
                 <span class="n">paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">Path</span><span class="p">(</span><span class="n">prop</span><span class="p">)]</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">prop</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Iterable</span><span class="p">):</span>
@@ -621,7 +637,7 @@
         <span class="k">return</span> <span class="bp">self</span>
 
 <div class="viewcode-block" id="FileSet.select_by_ext">
-<a class="viewcode-back" href="../../../api.html#fileformats.core.FileSet.select_by_ext">[docs]</a>
+<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.FileSet.select_by_ext">[docs]</a>
     <span class="k">def</span> <span class="nf">select_by_ext</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fileformat</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="s2">&quot;FileSet&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Selects a single path from a set of file-system paths based on the file</span>
 <span class="sd">        extension</span>
@@ -663,7 +679,7 @@
 
 
 <div class="viewcode-block" id="FileSet.matching_exts">
-<a class="viewcode-back" href="../../../api.html#fileformats.core.FileSet.matching_exts">[docs]</a>
+<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.FileSet.matching_exts">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">matching_exts</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -702,7 +718,7 @@
 
 
 <div class="viewcode-block" id="FileSet.convert">
-<a class="viewcode-back" href="../../../api.html#fileformats.core.FileSet.convert">[docs]</a>
+<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.FileSet.convert">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">convert</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -741,7 +757,7 @@
 
 
 <div class="viewcode-block" id="FileSet.get_converter">
-<a class="viewcode-back" href="../../../api.html#fileformats.core.FileSet.get_converter">[docs]</a>
+<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.FileSet.get_converter">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">get_converter</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -874,7 +890,7 @@
         <span class="k">return</span> <span class="n">available</span>
 
 <div class="viewcode-block" id="FileSet.register_converter">
-<a class="viewcode-back" href="../../../api.html#fileformats.core.FileSet.register_converter">[docs]</a>
+<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.FileSet.register_converter">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">register_converter</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -1052,6 +1068,7 @@
                             <span class="k">yield</span> <span class="n">chunk</span>
 
         <span class="k">def</span> <span class="nf">chunk_dir</span><span class="p">(</span><span class="n">fspath</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Iterator</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Iterator</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]]]:</span>
+            <span class="n">fspath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">fspath</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">dpath_str</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">filenames</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">fspath</span><span class="p">)):</span>
                 <span class="c1"># Sort in-place to guarantee order.</span>
                 <span class="n">filenames</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
@@ -1059,7 +1076,7 @@
                 <span class="k">if</span> <span class="p">(</span>
                     <span class="n">ignore_hidden_dirs</span>
                     <span class="ow">and</span> <span class="n">dpath</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
-                    <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span><span class="n">dpath</span><span class="p">)</span> <span class="o">!=</span> <span class="n">fspath</span>
+                    <span class="ow">and</span> <span class="n">dpath</span> <span class="o">!=</span> <span class="n">fspath</span>
                 <span class="p">):</span>
                     <span class="k">continue</span>
                 <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">:</span>
@@ -1080,7 +1097,7 @@
                 <span class="k">yield</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">chunk_file</span><span class="p">(</span><span class="n">fspath</span><span class="p">))</span>
 
 <div class="viewcode-block" id="FileSet.hash">
-<a class="viewcode-back" href="../../../api.html#fileformats.core.FileSet.hash">[docs]</a>
+<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.FileSet.hash">[docs]</a>
     <span class="k">def</span> <span class="nf">hash</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">crypto</span><span class="p">:</span> <span class="n">CryptoMethod</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1123,7 +1140,7 @@
 
 
 <div class="viewcode-block" id="FileSet.hash_files">
-<a class="viewcode-back" href="../../../api.html#fileformats.core.FileSet.hash_files">[docs]</a>
+<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.FileSet.hash_files">[docs]</a>
     <span class="k">def</span> <span class="nf">hash_files</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">crypto</span><span class="p">:</span> <span class="n">CryptoMethod</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># s</span>
@@ -1209,7 +1226,7 @@
         <span class="k">return</span> <span class="n">types</span>
 
 <div class="viewcode-block" id="FileSet.mock">
-<a class="viewcode-back" href="../../../api.html#fileformats.core.FileSet.mock">[docs]</a>
+<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.FileSet.mock">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">mock</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">fspaths</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;Self&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return an instance of a mocked sub-class of the file format to be used in</span>
@@ -1240,7 +1257,7 @@
 
 
 <div class="viewcode-block" id="FileSet.sample">
-<a class="viewcode-back" href="../../../api.html#fileformats.core.FileSet.sample">[docs]</a>
+<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.FileSet.sample">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -1350,7 +1367,7 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
 
 <div class="viewcode-block" id="FileSet.decomposed_fspaths">
-<a class="viewcode-back" href="../../../api.html#fileformats.core.FileSet.decomposed_fspaths">[docs]</a>
+<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.FileSet.decomposed_fspaths">[docs]</a>
     <span class="k">def</span> <span class="nf">decomposed_fspaths</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">required_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -1441,7 +1458,7 @@
         <span class="k">return</span> <span class="n">fspath</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="n">stem</span><span class="p">,</span> <span class="n">ext</span>
 
 <div class="viewcode-block" id="FileSet.from_paths">
-<a class="viewcode-back" href="../../../api.html#fileformats.core.FileSet.from_paths">[docs]</a>
+<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.FileSet.from_paths">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_paths</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">fspaths</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="n">Path</span><span class="p">],</span> <span class="n">common_ok</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
@@ -1593,7 +1610,7 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
 
 <div class="viewcode-block" id="FileSet.copy">
-<a class="viewcode-back" href="../../../api.html#fileformats.core.FileSet.copy">[docs]</a>
+<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.FileSet.copy">[docs]</a>
     <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">dest_dir</span><span class="p">:</span> <span class="n">PathType</span><span class="p">,</span>
@@ -1766,7 +1783,7 @@
 
 
 <div class="viewcode-block" id="FileSet.move">
-<a class="viewcode-back" href="../../../api.html#fileformats.core.FileSet.move">[docs]</a>
+<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.FileSet.move">[docs]</a>
     <span class="k">def</span> <span class="nf">move</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">dest_dir</span><span class="p">:</span> <span class="n">PathType</span><span class="p">,</span>
@@ -2048,7 +2065,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=31f622c0"></script>
+</div><script src="../../../_static/documentation_options.js?v=4b40992f"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=5fa4622c"></script>

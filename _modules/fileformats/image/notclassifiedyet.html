@@ -1,0 +1,786 @@
+<!doctype html>
+<html class="no-js" lang="English" data-content_root="../../../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
+
+    <!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 -->
+        <title>fileformats.image.notclassifiedyet - FileFormats v0.12.2</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d8449d71" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #ffffff;
+  --color-code-foreground: black;
+  --color-brand-primary: #0e691b;
+  --color-brand-content: #0e691b;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #111111;
+  --color-code-foreground: #ffffff;
+  --color-brand-primary: #5db754;
+  --color-brand-content: #5db754;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #111111;
+  --color-code-foreground: #ffffff;
+  --color-brand-primary: #5db754;
+  --color-brand-content: #5db754;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../index.html"><div class="brand">FileFormats v0.12.2</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../../../_static/logo_small.png" alt="Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">FileFormats v0.12.2</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../quick_start.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../detection.html">Detection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../file_handling.html">File handling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mime.html">MIME types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../extras.html">Read, write and convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../typing.html">Typing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer.html">Developer Guide</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/generic.html">Generic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/field.html">Field</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/application.html">Application</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/audio.html">Audio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/image.html">Image</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/model.html">Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/text.html">Text</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/video.html">Video</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/datascience.html">Datascience</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/medimage.html">Medimage</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <h1>Source code for fileformats.image.notclassifiedyet</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">from</span> <span class="nn">fileformats.core.mixin</span> <span class="kn">import</span> <span class="n">WithMagicNumber</span>
+
+
+<div class="viewcode-block" id="Aces">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Aces">[docs]</a>
+<span class="k">class</span> <span class="nc">Aces</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    TODO: or 76 2F 31 01 02 04 00 00 The attribute acesImageContainerFlag has value 1&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/aces&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.exr&quot;</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="s2">&quot;762f310102000000&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Apng">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Apng">[docs]</a>
+<span class="k">class</span> <span class="nc">Apng</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/apng&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.apng&quot;</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="s2">&quot;89504e470d0a1a0a&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Avci">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Avci">[docs]</a>
+<span class="k">class</span> <span class="nc">Avci</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/avci&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.avci&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Avcs">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Avcs">[docs]</a>
+<span class="k">class</span> <span class="nc">Avcs</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/avcs&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.avcs&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Avif">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Avif">[docs]</a>
+<span class="k">class</span> <span class="nc">Avif</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/avif&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.avif&quot;</span>
+    <span class="n">alternative_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.heif&quot;</span><span class="p">,</span> <span class="s2">&quot;.heifs&quot;</span><span class="p">,</span> <span class="s2">&quot;.hif&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Cgm">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Cgm">[docs]</a>
+<span class="k">class</span> <span class="nc">Cgm</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/cgm&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="DicomRle">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.DicomRle">[docs]</a>
+<span class="k">class</span> <span class="nc">DicomRle</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/dicom-rle&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.drle&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Dpx">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Dpx">[docs]</a>
+<span class="k">class</span> <span class="nc">Dpx</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    TODO: 0x53445058 (most-significant byte first</span>
+<span class="sd">    file) or 58 50&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/dpx&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.dpx&quot;</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="s2">&quot;53445058&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Emf">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Emf">[docs]</a>
+<span class="k">class</span> <span class="nc">Emf</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Office productivity applications; clip art applications; desktop</span>
+<span class="sd">    publishing applications; some web browsers (e.g., Internet</span>
+<span class="sd">    Explorer).</span>
+
+<span class="sd">    TODO: 0x01000000 (little-endian DWORD 0x00000001), corresponding to</span>
+<span class="sd">    the EMR_HEADER Type field.</span>
+<span class="sd">    The next field (EMR_HEADER Size) should be at least 88 (little-</span>
+<span class="sd">    endian DWORD 0x00000050).&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/emf&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.emf&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Fits">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Fits">[docs]</a>
+<span class="k">class</span> <span class="nc">Fits</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;There are many astronomical image viewing and data reduction</span>
+
+<span class="sd">    A FITS file described with the media type &quot;image/fits&quot; SHOULD have a PHDU with positive integer values for the NAXIS and NAXISn keywords, and hence SHOULD contain at least one pixel. Files with 4 or more non-degenerate axes (NAXISn&gt;1) SHOULD be described as &quot;application/fits&quot;, not as &quot;image/fits&quot;. (In rare cases it may be appropriate to describe a NULL image -- a dataless container for FITS keywords, with NAXIS=0 or NAXISn=0 -- or an image with 4+ non- degenerate axes as &quot;image/fits&quot; but this usage is discouraged because such files may confuse simple image viewer applications.)  FITS files declared as &quot;image/fits&quot; MAY also have one or more conforming XHDUs following their PHDUs. These extension HDUs MAY contain standard, non-linear, world coordinate system (WCS) information in the form of tables or images. The extension HDUs MAY also contain other, non-standard metadata pertaining to the image in the PHDU in the forms of keywords and tables.  A FITS file described with the media type &quot;image/fits&quot; SHOULD be principally intended to communicate the single data array in the PHDU. This means that &quot;image/fits&quot; SHOULD NOT be applied to FITS files containing MEF (multi-exposure-frame) mosaic images. Also, random groups files MUST be described as &quot;application/fits&quot; and not as &quot;image/fits&quot;.  A FITS file described with the media type &quot;image/fits&quot; is also valid as a file of media type &quot;application/fits&quot;. The choice of classification depends on the context and intended usage.</span>
+
+<span class="sd">        TODO: &quot;SIMPLE = T&quot;  Jeff Uphoff of the National Radio Astronomy Observatory (NRAO) has contributed database entries for the magic number file which is used by the Unix &quot;file&quot; command. Magic number files with these entries are distributed with a variety of Unix-like operating systems. In addition to recognizing a FITS file using the string given above, the Uphoff entries also recognize the data type of the pixels in the PHDU.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/fits&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.fits&quot;</span>
+    <span class="n">alternative_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.fit&quot;</span><span class="p">,</span> <span class="s2">&quot;.fts&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;SIMPLE = T&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="G3fax">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.G3fax">[docs]</a>
+<span class="k">class</span> <span class="nc">G3fax</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/g3fax&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="Heic">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Heic">[docs]</a>
+<span class="k">class</span> <span class="nc">Heic</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/heic&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.heic&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="HeicSequence">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.HeicSequence">[docs]</a>
+<span class="k">class</span> <span class="nc">HeicSequence</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/heic-sequence&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.heics&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Heif">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Heif">[docs]</a>
+<span class="k">class</span> <span class="nc">Heif</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/heif&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.heif&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="HeifSequence">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.HeifSequence">[docs]</a>
+<span class="k">class</span> <span class="nc">HeifSequence</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/heif-sequence&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.heifs&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Hej2k">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Hej2k">[docs]</a>
+<span class="k">class</span> <span class="nc">Hej2k</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/hej2k&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.hej2&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Hsj2">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Hsj2">[docs]</a>
+<span class="k">class</span> <span class="nc">Hsj2</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/hsj2&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.hsj2&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="J2c">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.J2c">[docs]</a>
+<span class="k">class</span> <span class="nc">J2c</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/j2c&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.j2c&quot;</span>
+    <span class="n">alternative_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.J2C&quot;</span><span class="p">,</span> <span class="s2">&quot;.j2k&quot;</span><span class="p">,</span> <span class="s2">&quot;.J2K&quot;</span><span class="p">)</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="s2">&quot;ff4fff51&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Jls">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Jls">[docs]</a>
+<span class="k">class</span> <span class="nc">Jls</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/jls&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.jls&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Jp2">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Jp2">[docs]</a>
+<span class="k">class</span> <span class="nc">Jp2</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/jp2&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.jp2&quot;</span>
+    <span class="n">alternative_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.jpg2&quot;</span><span class="p">,)</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="s2">&quot;0000000c6a5020200d0a870a&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Jph">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Jph">[docs]</a>
+<span class="k">class</span> <span class="nc">Jph</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    TODO: See Section 4.4 of RFC 3745&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/jph&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.jph&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Jphc">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Jphc">[docs]</a>
+<span class="k">class</span> <span class="nc">Jphc</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/jphc&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.jhc&quot;</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="s2">&quot;ff4fff51&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Jpm">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Jpm">[docs]</a>
+<span class="k">class</span> <span class="nc">Jpm</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/jpm&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.jpm&quot;</span>
+    <span class="n">alternative_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.jpgm&quot;</span><span class="p">,)</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="s2">&quot;0000000c6a5020200d0a870a&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Jpx">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Jpx">[docs]</a>
+<span class="k">class</span> <span class="nc">Jpx</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/jpx&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.jpf&quot;</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="s2">&quot;0000000c6a5020200d0a870a&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Jxr">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Jxr">[docs]</a>
+<span class="k">class</span> <span class="nc">Jxr</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Imaging, fax, messaging and multimedia.</span>
+
+<span class="sd">    TODO: Data begins with a FILE_HEADER( ) data structure, which begins  with a FIXED_FILE_HEADER_II_2BYTES field equal to 0x4949, followed by a FIXED_FILE_HEADER_0XBC_BYTE field equal to 0xBC, followed by a FILE_VERSION_ID which is equal to 1 for the current version of the Recommendation and International Standard (with other values reserved for future use, as modified in additional parts or amendments, by ITU-T or ISO/IEC).  Within the payload data, JPEG XR IMAGE_HEADER( ) data structures begin with a GDI_SIGNATURE, which is a 64-bit syntax element that has the value 0x574D50484F544F00 that corresponds to &quot;WMPHOTO&quot; using the UTF-8 character set encoding specified in Annex D of ISO/IEC 10646, followed by a byte equal to 0.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/jxr&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.jxr&quot;</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="s2">&quot;4949bc&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Jxra">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Jxra">[docs]</a>
+<span class="k">class</span> <span class="nc">Jxra</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/jxrA&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.jxra&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Jxrs">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Jxrs">[docs]</a>
+<span class="k">class</span> <span class="nc">Jxrs</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/jxrS&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.jxrs&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Jxs">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Jxs">[docs]</a>
+<span class="k">class</span> <span class="nc">Jxs</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/jxs&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.jxs&quot;</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="s2">&quot;0000000c4a5853200d0a870a&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Jxsc">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Jxsc">[docs]</a>
+<span class="k">class</span> <span class="nc">Jxsc</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/jxsc&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.jxsc&quot;</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="s2">&quot;ff10ff50&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Jxsi">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Jxsi">[docs]</a>
+<span class="k">class</span> <span class="nc">Jxsi</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/jxsi&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.jxsi&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Jxss">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Jxss">[docs]</a>
+<span class="k">class</span> <span class="nc">Jxss</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/jxss&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.jxss&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Ktx">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Ktx">[docs]</a>
+<span class="k">class</span> <span class="nc">Ktx</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Currently only etcpack. It is anticipated it will be widely used by applications built on top of the OpenGL family of standards, OpenGL, OpenGL ES and WebGL, as the means of delivering texture data.&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/ktx&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.ktx&quot;</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="s2">&quot;ab4b5458203131bb0d0a1a0a&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Ktx2">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Ktx2">[docs]</a>
+<span class="k">class</span> <span class="nc">Ktx2</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/ktx2&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.ktx2&quot;</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="s2">&quot;ab4b5458203230bb0d0a1a0a&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Naplps">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Naplps">[docs]</a>
+<span class="k">class</span> <span class="nc">Naplps</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/naplps&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="Prs_Btif">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Prs_Btif">[docs]</a>
+<span class="k">class</span> <span class="nc">Prs_Btif</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    TODO: Since BTIF files are an extension of TIFF 6.0, the magic numbers</span>
+<span class="sd">    are exactly the same as for TIFF 6.0.  The BTIF file</span>
+<span class="sd">    specification does not introduce any unique magic numbers</span>
+<span class="sd">    besides what&#39;s already present in TIFF 6.0.  (See attached</span>
+<span class="sd">    specification)&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/prs.btif&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.btif&quot;</span>
+    <span class="n">alternative_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.btf&quot;</span><span class="p">,)</span></div>
+
+
+
+<div class="viewcode-block" id="Prs_Pti">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Prs_Pti">[docs]</a>
+<span class="k">class</span> <span class="nc">Prs_Pti</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/prs.pti&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.pti&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="PwgRaster">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.PwgRaster">[docs]</a>
+<span class="k">class</span> <span class="nc">PwgRaster</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/pwg-raster&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="s2">&quot;52615332&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Svg__Xml">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Svg__Xml">[docs]</a>
+<span class="k">class</span> <span class="nc">Svg__Xml</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;SVG is used by Web browsers, often in conjunction with HTML; by mobile phones and digital cameras, as a format for interchange of graphical assets in desk top publishing, for industrial process visualization, display signage, and many other applications which require scalable static or interactive graphical capability.</span>
+
+<span class="sd">    TODO: Note that the extension &quot;.svgz&quot; is used as an alias for &quot;.svg.gz&quot; [rfc1952] i.e. octet streams of type image/svg+xml subsequently compressed with gzip.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/svg+xml&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.svg&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="T38">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.T38">[docs]</a>
+<span class="k">class</span> <span class="nc">T38</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/t38&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.T38&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="TiffFx">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.TiffFx">[docs]</a>
+<span class="k">class</span> <span class="nc">TiffFx</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/tiff-fx&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.TFX&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Webp">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Webp">[docs]</a>
+<span class="k">class</span> <span class="nc">Webp</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Applications that are used to display and process images, especially when smaller image file sizes are important.</span>
+
+<span class="sd">    TODO: The first 4 bytes are 0x52, 0x49, 0x46, 0x46 (&#39;RIFF&#39;), followed by 4 bytes for the RIFF chunk size. The next 7 bytes are 0x57, 0x45, 0x42, 0x50, 0x56, 0x50, 0x38 (&#39;WEBPVP8&#39;).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/webp&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.webp&quot;</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="s2">&quot;52494646&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Wmf">
+<a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Wmf">[docs]</a>
+<span class="k">class</span> <span class="nc">Wmf</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Office productivity applications; clip art applications; desktop</span>
+<span class="sd">    publishing applications; some web browsers (e.g., Internet</span>
+<span class="sd">    Explorer).</span>
+
+<span class="sd">    TODO: (little-endian DWORD 0x9AC6CDD7)&quot;&quot;&quot;</span>
+
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/wmf&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.wmf&quot;</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="s2">&quot;d7cdc69a&quot;</span></div>
+
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2024, Thomas G. Close
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script src="../../../_static/documentation_options.js?v=4b40992f"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/scripts/furo.js?v=5fa4622c"></script>
+    </body>
+</html>

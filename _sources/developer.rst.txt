@@ -272,6 +272,7 @@ when a hooked method is accessed.
  Use the `@extra` decorator on a method in the to define an extras method,
 
  .. code-block:: python
+
     from typing import Self
 
     class MyFormat(File):

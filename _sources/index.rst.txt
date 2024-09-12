@@ -114,7 +114,17 @@ This work is licensed under a
    :caption: Reference
    :hidden:
 
-   api.rst
+   reference/core.rst
+   reference/generic.rst
+   reference/field.rst
+   reference/application.rst
+   reference/audio.rst
+   reference/image.rst
+   reference/model.rst
+   reference/text.rst
+   reference/video.rst
+   reference/datascience.rst
+   reference/medimage.rst
 
 
 .. _Pydra: https://pydra.readthedocs.io
