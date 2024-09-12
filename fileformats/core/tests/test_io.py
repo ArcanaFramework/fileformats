@@ -55,14 +55,16 @@ def test_binary_window_negative():
 
 
 def test_binary_window_readlines():
-    data = b"abc\ndef\nghi\njkl\n"
+    data = b"abc\ndef\nghi\njkl\nmn"
     with BinaryIOWindow(io.BytesIO(data), start=4, end=-4) as window:
-        assert window.readlines() == [b"def\n", b"ghi\n"]
+        assert window.readlines() == [b"def\n", b"ghi\n", b"jk"]
+        assert window.readlines(hint=8) == [b"def\n", b"ghi\n"]
         window.seek(0)
         assert next(window) == b"def\n"
         assert window.tell() == 4
         assert window.readline() == b"ghi\n"
-        assert list(window) == [b"def\n", b"ghi\n"]
+        assert window.readline() == b"jk"
+        assert list(window) == [b"def\n", b"ghi\n", b"jk"]
 
 
 def test_binary_window_write():
