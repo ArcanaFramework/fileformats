@@ -1,17 +1,17 @@
 from .core import __version__  # noqa
+import typing as ty
 from fileformats.core.mixin import WithMagicNumber
 from fileformats.generic import File
 
 
 class Text(File):
     # iana_mime = None
-    pass
     binary = False
 
 
 # General formats
 class Plain(Text):
-    iana_mime = "text/plain"
+    iana_mime: ty.Optional[str] = "text/plain"
 
 
 class TextFile(Text):

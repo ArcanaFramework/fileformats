@@ -33,16 +33,16 @@ logger.addHandler(sch)
 # break at it
 if os.getenv("_PYTEST_RAISE", "0") != "0":
 
-    @pytest.hookimpl(tryfirst=True)
+    @pytest.hookimpl(tryfirst=True)  # type: ignore[misc]
     def pytest_exception_interact(call: ty.Any) -> None:
         raise call.excinfo.value
 
-    @pytest.hookimpl(tryfirst=True)
+    @pytest.hookimpl(tryfirst=True)  # type: ignore[misc]
     def pytest_internalerror(excinfo: ty.Any) -> None:
         raise excinfo.value
 
 
-@pytest.fixture
+@pytest.fixture  # type: ignore[misc]
 def work_dir() -> Path:
     work_dir = tempfile.mkdtemp()
     return Path(work_dir)
