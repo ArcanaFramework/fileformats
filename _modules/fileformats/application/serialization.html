@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 -->
-        <title>fileformats.application.serialization - FileFormats v0.12.2</title>
+        <title>fileformats.application.serialization - FileFormats v0.13.0</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d8449d71" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
@@ -171,7 +171,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">FileFormats v0.12.2</div></a>
+      <a href="../../../index.html"><div class="brand">FileFormats v0.13.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -198,7 +198,7 @@
     <img class="sidebar-logo" src="../../../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.12.2</span>
+  <span class="sidebar-brand-text">FileFormats v0.13.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -265,16 +265,16 @@
           <h1>Source code for fileformats.application.serialization</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">typing</span> <span class="k">as</span> <span class="nn">ty</span>
-<span class="kn">from</span> <span class="nn">fileformats.core.typing</span> <span class="kn">import</span> <span class="n">Self</span><span class="p">,</span> <span class="n">TypeAlias</span>
+<span class="kn">from</span> <span class="nn">fileformats.core.typing</span> <span class="kn">import</span> <span class="n">TypeAlias</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">extra</span><span class="p">,</span> <span class="n">DataType</span><span class="p">,</span> <span class="n">FileSet</span><span class="p">,</span> <span class="n">extra_implementation</span>
-<span class="kn">from</span> <span class="nn">fileformats.core.mixin</span> <span class="kn">import</span> <span class="n">WithClassifiers</span>
-<span class="kn">from</span> <span class="nn">..generic</span> <span class="kn">import</span> <span class="n">File</span>
+<span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">DataType</span><span class="p">,</span> <span class="n">FileSet</span><span class="p">,</span> <span class="n">extra_implementation</span>
+<span class="kn">from</span> <span class="nn">fileformats.core.mixin</span> <span class="kn">import</span> <span class="n">WithClassifier</span>
+<span class="kn">from</span> <span class="nn">..generic</span> <span class="kn">import</span> <span class="n">UnicodeFile</span>
 <span class="kn">from</span> <span class="nn">fileformats.core.exceptions</span> <span class="kn">import</span> <span class="n">FormatMismatchError</span>
 <span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">SampleFileGenerator</span>
 
 
-<span class="n">LoadedSerialization</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span> <span class="n">ty</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]]</span>
+<span class="n">SerializationType</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span> <span class="n">ty</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]]</span>
 
 
 <div class="viewcode-block" id="Schema">
@@ -308,43 +308,19 @@
 
 
 
-<div class="viewcode-block" id="DataSerialization">
-<a class="viewcode-back" href="../../../reference/application.html#fileformats.application.DataSerialization">[docs]</a>
-<span class="k">class</span> <span class="nc">DataSerialization</span><span class="p">(</span><span class="n">WithClassifiers</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">TextSerialization</span><span class="p">(</span><span class="n">WithClassifier</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
     <span class="s2">&quot;Base class for text-based hierarchical data-serialization formats, e.g. JSON, YAML&quot;</span>
 
     <span class="c1"># Classifiers class attrs</span>
     <span class="n">classifiers_attr_name</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;schema&quot;</span>
     <span class="n">schema</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">Schema</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">multiple_classifiers</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">allowed_classifiers</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">Schema</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Schema</span><span class="p">,)</span>
     <span class="n">generically_classifiable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">binary</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-
-    <span class="n">iana_mime</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-
-    <span class="nd">@extra</span>
-    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LoadedSerialization</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load the contents of the file into a dictionary&quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-
-    <span class="nd">@extra</span>
-    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">LoadedSerialization</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Serialise a dictionary to a new file&quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">save_new</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">fspath</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span> <span class="n">data</span><span class="p">:</span> <span class="n">LoadedSerialization</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
-        <span class="c1"># We have to use a mock object as the data file hasn&#39;t been written yet</span>
-        <span class="n">mock</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">mock</span><span class="p">(</span><span class="n">fspath</span><span class="p">)</span>
-        <span class="n">mock</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">fspath</span><span class="p">)</span></div>
-
 
 
 <div class="viewcode-block" id="Xml">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Xml">[docs]</a>
-<span class="k">class</span> <span class="nc">Xml</span><span class="p">(</span><span class="n">DataSerialization</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Xml</span><span class="p">(</span><span class="n">TextSerialization</span><span class="p">):</span>
     <span class="n">ext</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;.xml&quot;</span>
     <span class="n">allowed_classifiers</span> <span class="o">=</span> <span class="p">(</span><span class="n">XmlSchema</span><span class="p">,</span> <span class="n">InformalSchema</span><span class="p">)</span></div>
 
@@ -352,29 +328,17 @@
 
 <div class="viewcode-block" id="Json">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Json">[docs]</a>
-<span class="k">class</span> <span class="nc">Json</span><span class="p">(</span><span class="n">DataSerialization</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Json</span><span class="p">(</span><span class="n">TextSerialization</span><span class="p">):</span>
     <span class="n">ext</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;.json&quot;</span>
-    <span class="n">allowed_classifiers</span> <span class="o">=</span> <span class="p">(</span><span class="n">JsonSchema</span><span class="p">,</span> <span class="n">InformalSchema</span><span class="p">)</span>
+    <span class="n">allowed_classifiers</span> <span class="o">=</span> <span class="p">(</span><span class="n">JsonSchema</span><span class="p">,</span> <span class="n">InformalSchema</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LoadedSerialization</span><span class="p">:</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fspath</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-                <span class="n">dct</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-        <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">FormatMismatchError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fspath</span><span class="si">}</span><span class="s2">&#39; is not a valid JSON file&quot;</span>
-            <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
-        <span class="k">return</span> <span class="n">dct</span>
 
-    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">LoadedSerialization</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fspath</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div>
-
+    <span class="c1"># TODO: add validation mechanisms to check class</span>
 
 
 <div class="viewcode-block" id="Yaml">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Yaml">[docs]</a>
-<span class="k">class</span> <span class="nc">Yaml</span><span class="p">(</span><span class="n">DataSerialization</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Yaml</span><span class="p">(</span><span class="n">TextSerialization</span><span class="p">):</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.yaml&quot;</span>
     <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.yml&quot;</span><span class="p">,)</span></div>
 
@@ -382,7 +346,7 @@
 
 <div class="viewcode-block" id="Toml">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Toml">[docs]</a>
-<span class="k">class</span> <span class="nc">Toml</span><span class="p">(</span><span class="n">DataSerialization</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Toml</span><span class="p">(</span><span class="n">TextSerialization</span><span class="p">):</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.toml&quot;</span></div>
 
 
@@ -425,6 +389,22 @@
 <span class="s2">&quot;&quot;&quot;</span>
         <span class="p">)</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">yml_file</span><span class="p">]</span>
+
+
+<span class="nd">@extra_implementation</span><span class="p">(</span><span class="n">FileSet</span><span class="o">.</span><span class="n">load</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">jsn</span><span class="p">:</span> <span class="n">Json</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SerializationType</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">jsn</span><span class="o">.</span><span class="n">open</span><span class="p">()</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">dct</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">FormatMismatchError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">jsn</span><span class="o">.</span><span class="n">fspath</span><span class="si">}</span><span class="s2">&#39; is not a valid JSON file&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+    <span class="k">return</span> <span class="n">dct</span>
+
+
+<span class="nd">@extra_implementation</span><span class="p">(</span><span class="n">FileSet</span><span class="o">.</span><span class="n">save</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="n">jsn</span><span class="p">:</span> <span class="n">Json</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">SerializationType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">jsn</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
 </pre></div>
         </article>
       </div>
@@ -457,7 +437,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=4b40992f"></script>
+</div><script src="../../../_static/documentation_options.js?v=d2781cd5"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=5fa4622c"></script>

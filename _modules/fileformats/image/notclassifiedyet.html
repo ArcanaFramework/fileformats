@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 -->
-        <title>fileformats.image.notclassifiedyet - FileFormats v0.12.2</title>
+        <title>fileformats.image.notclassifiedyet - FileFormats v0.13.0</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d8449d71" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
@@ -171,7 +171,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">FileFormats v0.12.2</div></a>
+      <a href="../../../index.html"><div class="brand">FileFormats v0.13.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -198,7 +198,7 @@
     <img class="sidebar-logo" src="../../../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.12.2</span>
+  <span class="sidebar-brand-text">FileFormats v0.13.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -263,13 +263,15 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for fileformats.image.notclassifiedyet</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">Image</span>
+<span></span><span class="kn">import</span> <span class="nn">typing</span> <span class="k">as</span> <span class="nn">ty</span>
+<span class="kn">from</span> <span class="nn">fileformats.generic</span> <span class="kn">import</span> <span class="n">BinaryFile</span>
+<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">Image</span>
 <span class="kn">from</span> <span class="nn">fileformats.core.mixin</span> <span class="kn">import</span> <span class="n">WithMagicNumber</span>
 
 
 <div class="viewcode-block" id="Aces">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Aces">[docs]</a>
-<span class="k">class</span> <span class="nc">Aces</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Aces</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    TODO: or 76 2F 31 01 02 04 00 00 The attribute acesImageContainerFlag has value 1&quot;&quot;&quot;</span>
@@ -282,7 +284,7 @@
 
 <div class="viewcode-block" id="Apng">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Apng">[docs]</a>
-<span class="k">class</span> <span class="nc">Apng</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Apng</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/apng&quot;</span>
@@ -293,7 +295,7 @@
 
 <div class="viewcode-block" id="Avci">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Avci">[docs]</a>
-<span class="k">class</span> <span class="nc">Avci</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Avci</span><span class="p">(</span><span class="n">Image</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/avci&quot;</span>
@@ -303,7 +305,7 @@
 
 <div class="viewcode-block" id="Avcs">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Avcs">[docs]</a>
-<span class="k">class</span> <span class="nc">Avcs</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Avcs</span><span class="p">(</span><span class="n">Image</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/avcs&quot;</span>
@@ -313,7 +315,7 @@
 
 <div class="viewcode-block" id="Avif">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Avif">[docs]</a>
-<span class="k">class</span> <span class="nc">Avif</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Avif</span><span class="p">(</span><span class="n">Image</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/avif&quot;</span>
@@ -324,7 +326,7 @@
 
 <div class="viewcode-block" id="Cgm">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Cgm">[docs]</a>
-<span class="k">class</span> <span class="nc">Cgm</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Cgm</span><span class="p">(</span><span class="n">Image</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/cgm&quot;</span>
@@ -334,7 +336,7 @@
 
 <div class="viewcode-block" id="DicomRle">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.DicomRle">[docs]</a>
-<span class="k">class</span> <span class="nc">DicomRle</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">DicomRle</span><span class="p">(</span><span class="n">Image</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/dicom-rle&quot;</span>
@@ -344,7 +346,7 @@
 
 <div class="viewcode-block" id="Dpx">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Dpx">[docs]</a>
-<span class="k">class</span> <span class="nc">Dpx</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Dpx</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    TODO: 0x53445058 (most-significant byte first</span>
@@ -358,7 +360,7 @@
 
 <div class="viewcode-block" id="Emf">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Emf">[docs]</a>
-<span class="k">class</span> <span class="nc">Emf</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Emf</span><span class="p">(</span><span class="n">Image</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Office productivity applications; clip art applications; desktop</span>
 <span class="sd">    publishing applications; some web browsers (e.g., Internet</span>
 <span class="sd">    Explorer).</span>
@@ -375,12 +377,34 @@
 
 <div class="viewcode-block" id="Fits">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Fits">[docs]</a>
-<span class="k">class</span> <span class="nc">Fits</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Fits</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;There are many astronomical image viewing and data reduction</span>
 
-<span class="sd">    A FITS file described with the media type &quot;image/fits&quot; SHOULD have a PHDU with positive integer values for the NAXIS and NAXISn keywords, and hence SHOULD contain at least one pixel. Files with 4 or more non-degenerate axes (NAXISn&gt;1) SHOULD be described as &quot;application/fits&quot;, not as &quot;image/fits&quot;. (In rare cases it may be appropriate to describe a NULL image -- a dataless container for FITS keywords, with NAXIS=0 or NAXISn=0 -- or an image with 4+ non- degenerate axes as &quot;image/fits&quot; but this usage is discouraged because such files may confuse simple image viewer applications.)  FITS files declared as &quot;image/fits&quot; MAY also have one or more conforming XHDUs following their PHDUs. These extension HDUs MAY contain standard, non-linear, world coordinate system (WCS) information in the form of tables or images. The extension HDUs MAY also contain other, non-standard metadata pertaining to the image in the PHDU in the forms of keywords and tables.  A FITS file described with the media type &quot;image/fits&quot; SHOULD be principally intended to communicate the single data array in the PHDU. This means that &quot;image/fits&quot; SHOULD NOT be applied to FITS files containing MEF (multi-exposure-frame) mosaic images. Also, random groups files MUST be described as &quot;application/fits&quot; and not as &quot;image/fits&quot;.  A FITS file described with the media type &quot;image/fits&quot; is also valid as a file of media type &quot;application/fits&quot;. The choice of classification depends on the context and intended usage.</span>
+<span class="sd">    A FITS file described with the media type &quot;image/fits&quot; SHOULD have a PHDU with</span>
+<span class="sd">    positive integer values for the NAXIS and NAXISn keywords, and hence SHOULD contain</span>
+<span class="sd">    at least one pixel. Files with 4 or more non-degenerate axes (NAXISn&gt;1) SHOULD be</span>
+<span class="sd">    described as &quot;application/fits&quot;, not as &quot;image/fits&quot;. (In rare cases it may be</span>
+<span class="sd">    appropriate to describe a NULL image -- a dataless container for FITS keywords,</span>
+<span class="sd">    with NAXIS=0 or NAXISn=0 -- or an image with 4+ non- degenerate axes as &quot;image/fits&quot;</span>
+<span class="sd">    but this usage is discouraged because such files may confuse simple image viewer</span>
+<span class="sd">    applications.)  FITS files declared as &quot;image/fits&quot; MAY also have one or more</span>
+<span class="sd">    conforming XHDUs following their PHDUs. These extension HDUs MAY contain standard,</span>
+<span class="sd">    non-linear, world coordinate system (WCS) information in the form of tables or images.</span>
+<span class="sd">    The extension HDUs MAY also contain other, non-standard metadata pertaining to the</span>
+<span class="sd">    image in the PHDU in the forms of keywords and tables.  A FITS file described with</span>
+<span class="sd">    the media type &quot;image/fits&quot; SHOULD be principally intended to communicate the single</span>
+<span class="sd">    data array in the PHDU. This means that &quot;image/fits&quot; SHOULD NOT be applied to FITS</span>
+<span class="sd">    files containing MEF (multi-exposure-frame) mosaic images. Also, random groups files</span>
+<span class="sd">    MUST be described as &quot;application/fits&quot; and not as &quot;image/fits&quot;.  A FITS file described</span>
+<span class="sd">    with the media type &quot;image/fits&quot; is also valid as a file of media type &quot;application/fits&quot;.</span>
+<span class="sd">    The choice of classification depends on the context and intended usage.</span>
 
-<span class="sd">        TODO: &quot;SIMPLE = T&quot;  Jeff Uphoff of the National Radio Astronomy Observatory (NRAO) has contributed database entries for the magic number file which is used by the Unix &quot;file&quot; command. Magic number files with these entries are distributed with a variety of Unix-like operating systems. In addition to recognizing a FITS file using the string given above, the Uphoff entries also recognize the data type of the pixels in the PHDU.</span>
+<span class="sd">        TODO: &quot;SIMPLE = T&quot;  Jeff Uphoff of the National Radio Astronomy Observatory (NRAO)</span>
+<span class="sd">        has contributed database entries for the magic number file which is used by the</span>
+<span class="sd">        Unix &quot;file&quot; command. Magic number files with these entries are distributed with a</span>
+<span class="sd">        variety of Unix-like operating systems. In addition to recognizing a FITS file using</span>
+<span class="sd">        the string given above, the Uphoff entries also recognize the data type of the</span>
+<span class="sd">        pixels in the PHDU.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/fits&quot;</span>
@@ -392,17 +416,17 @@
 
 <div class="viewcode-block" id="G3fax">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.G3fax">[docs]</a>
-<span class="k">class</span> <span class="nc">G3fax</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">G3fax</span><span class="p">(</span><span class="n">Image</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/g3fax&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
+    <span class="n">ext</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
 
 <div class="viewcode-block" id="Heic">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Heic">[docs]</a>
-<span class="k">class</span> <span class="nc">Heic</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Heic</span><span class="p">(</span><span class="n">Image</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/heic&quot;</span>
@@ -412,7 +436,7 @@
 
 <div class="viewcode-block" id="HeicSequence">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.HeicSequence">[docs]</a>
-<span class="k">class</span> <span class="nc">HeicSequence</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">HeicSequence</span><span class="p">(</span><span class="n">Image</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/heic-sequence&quot;</span>
@@ -422,7 +446,7 @@
 
 <div class="viewcode-block" id="Heif">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Heif">[docs]</a>
-<span class="k">class</span> <span class="nc">Heif</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Heif</span><span class="p">(</span><span class="n">Image</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/heif&quot;</span>
@@ -432,7 +456,7 @@
 
 <div class="viewcode-block" id="HeifSequence">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.HeifSequence">[docs]</a>
-<span class="k">class</span> <span class="nc">HeifSequence</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">HeifSequence</span><span class="p">(</span><span class="n">Image</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/heif-sequence&quot;</span>
@@ -442,7 +466,7 @@
 
 <div class="viewcode-block" id="Hej2k">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Hej2k">[docs]</a>
-<span class="k">class</span> <span class="nc">Hej2k</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Hej2k</span><span class="p">(</span><span class="n">Image</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/hej2k&quot;</span>
@@ -452,7 +476,7 @@
 
 <div class="viewcode-block" id="Hsj2">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Hsj2">[docs]</a>
-<span class="k">class</span> <span class="nc">Hsj2</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Hsj2</span><span class="p">(</span><span class="n">Image</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/hsj2&quot;</span>
@@ -462,7 +486,7 @@
 
 <div class="viewcode-block" id="J2c">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.J2c">[docs]</a>
-<span class="k">class</span> <span class="nc">J2c</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">J2c</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/j2c&quot;</span>
@@ -474,7 +498,7 @@
 
 <div class="viewcode-block" id="Jls">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Jls">[docs]</a>
-<span class="k">class</span> <span class="nc">Jls</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Jls</span><span class="p">(</span><span class="n">Image</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/jls&quot;</span>
@@ -484,7 +508,7 @@
 
 <div class="viewcode-block" id="Jp2">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Jp2">[docs]</a>
-<span class="k">class</span> <span class="nc">Jp2</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Jp2</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/jp2&quot;</span>
@@ -496,7 +520,7 @@
 
 <div class="viewcode-block" id="Jph">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Jph">[docs]</a>
-<span class="k">class</span> <span class="nc">Jph</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Jph</span><span class="p">(</span><span class="n">Image</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    TODO: See Section 4.4 of RFC 3745&quot;&quot;&quot;</span>
@@ -508,7 +532,7 @@
 
 <div class="viewcode-block" id="Jphc">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Jphc">[docs]</a>
-<span class="k">class</span> <span class="nc">Jphc</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Jphc</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/jphc&quot;</span>
@@ -519,7 +543,7 @@
 
 <div class="viewcode-block" id="Jpm">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Jpm">[docs]</a>
-<span class="k">class</span> <span class="nc">Jpm</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Jpm</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/jpm&quot;</span>
@@ -531,7 +555,7 @@
 
 <div class="viewcode-block" id="Jpx">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Jpx">[docs]</a>
-<span class="k">class</span> <span class="nc">Jpx</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Jpx</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/jpx&quot;</span>
@@ -542,10 +566,19 @@
 
 <div class="viewcode-block" id="Jxr">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Jxr">[docs]</a>
-<span class="k">class</span> <span class="nc">Jxr</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Jxr</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Imaging, fax, messaging and multimedia.</span>
 
-<span class="sd">    TODO: Data begins with a FILE_HEADER( ) data structure, which begins  with a FIXED_FILE_HEADER_II_2BYTES field equal to 0x4949, followed by a FIXED_FILE_HEADER_0XBC_BYTE field equal to 0xBC, followed by a FILE_VERSION_ID which is equal to 1 for the current version of the Recommendation and International Standard (with other values reserved for future use, as modified in additional parts or amendments, by ITU-T or ISO/IEC).  Within the payload data, JPEG XR IMAGE_HEADER( ) data structures begin with a GDI_SIGNATURE, which is a 64-bit syntax element that has the value 0x574D50484F544F00 that corresponds to &quot;WMPHOTO&quot; using the UTF-8 character set encoding specified in Annex D of ISO/IEC 10646, followed by a byte equal to 0.</span>
+<span class="sd">    TODO: Data begins with a FILE_HEADER( ) data structure, which begins  with a</span>
+<span class="sd">    FIXED_FILE_HEADER_II_2BYTES field equal to 0x4949, followed by a</span>
+<span class="sd">    FIXED_FILE_HEADER_0XBC_BYTE field equal to 0xBC, followed by a FILE_VERSION_ID which</span>
+<span class="sd">    is equal to 1 for the current version of the Recommendation and International</span>
+<span class="sd">    Standard (with other values reserved for future use, as modified in additional</span>
+<span class="sd">    parts or amendments, by ITU-T or ISO/IEC).  Within the payload data, JPEG XR</span>
+<span class="sd">    IMAGE_HEADER( ) data structures begin with a GDI_SIGNATURE, which is a 64-bit</span>
+<span class="sd">    syntax element that has the value 0x574D50484F544F00 that corresponds to &quot;WMPHOTO&quot;</span>
+<span class="sd">    using the UTF-8 character set encoding specified in Annex D of ISO/IEC 10646,</span>
+<span class="sd">    followed by a byte equal to 0.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/jxr&quot;</span>
@@ -556,7 +589,7 @@
 
 <div class="viewcode-block" id="Jxra">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Jxra">[docs]</a>
-<span class="k">class</span> <span class="nc">Jxra</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Jxra</span><span class="p">(</span><span class="n">Image</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/jxrA&quot;</span>
@@ -566,7 +599,7 @@
 
 <div class="viewcode-block" id="Jxrs">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Jxrs">[docs]</a>
-<span class="k">class</span> <span class="nc">Jxrs</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Jxrs</span><span class="p">(</span><span class="n">Image</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/jxrS&quot;</span>
@@ -576,7 +609,7 @@
 
 <div class="viewcode-block" id="Jxs">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Jxs">[docs]</a>
-<span class="k">class</span> <span class="nc">Jxs</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Jxs</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/jxs&quot;</span>
@@ -587,7 +620,7 @@
 
 <div class="viewcode-block" id="Jxsc">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Jxsc">[docs]</a>
-<span class="k">class</span> <span class="nc">Jxsc</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Jxsc</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/jxsc&quot;</span>
@@ -598,7 +631,7 @@
 
 <div class="viewcode-block" id="Jxsi">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Jxsi">[docs]</a>
-<span class="k">class</span> <span class="nc">Jxsi</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Jxsi</span><span class="p">(</span><span class="n">Image</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/jxsi&quot;</span>
@@ -608,7 +641,7 @@
 
 <div class="viewcode-block" id="Jxss">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Jxss">[docs]</a>
-<span class="k">class</span> <span class="nc">Jxss</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Jxss</span><span class="p">(</span><span class="n">Image</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/jxss&quot;</span>
@@ -618,8 +651,10 @@
 
 <div class="viewcode-block" id="Ktx">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Ktx">[docs]</a>
-<span class="k">class</span> <span class="nc">Ktx</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Currently only etcpack. It is anticipated it will be widely used by applications built on top of the OpenGL family of standards, OpenGL, OpenGL ES and WebGL, as the means of delivering texture data.&quot;&quot;&quot;</span>
+<span class="k">class</span> <span class="nc">Ktx</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Currently only etcpack. It is anticipated it will be widely used by applications</span>
+<span class="sd">    built on top of the OpenGL family of standards, OpenGL, OpenGL ES and WebGL, as the</span>
+<span class="sd">    means of delivering texture data.&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/ktx&quot;</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.ktx&quot;</span>
@@ -629,7 +664,7 @@
 
 <div class="viewcode-block" id="Ktx2">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Ktx2">[docs]</a>
-<span class="k">class</span> <span class="nc">Ktx2</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Ktx2</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/ktx2&quot;</span>
@@ -640,7 +675,7 @@
 
 <div class="viewcode-block" id="Naplps">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Naplps">[docs]</a>
-<span class="k">class</span> <span class="nc">Naplps</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Naplps</span><span class="p">(</span><span class="n">Image</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/naplps&quot;</span>
@@ -650,7 +685,7 @@
 
 <div class="viewcode-block" id="Prs_Btif">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Prs_Btif">[docs]</a>
-<span class="k">class</span> <span class="nc">Prs_Btif</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Prs_Btif</span><span class="p">(</span><span class="n">Image</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    TODO: Since BTIF files are an extension of TIFF 6.0, the magic numbers</span>
@@ -667,7 +702,7 @@
 
 <div class="viewcode-block" id="Prs_Pti">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Prs_Pti">[docs]</a>
-<span class="k">class</span> <span class="nc">Prs_Pti</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Prs_Pti</span><span class="p">(</span><span class="n">Image</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/prs.pti&quot;</span>
@@ -677,7 +712,7 @@
 
 <div class="viewcode-block" id="PwgRaster">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.PwgRaster">[docs]</a>
-<span class="k">class</span> <span class="nc">PwgRaster</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">PwgRaster</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/pwg-raster&quot;</span>
@@ -688,10 +723,14 @@
 
 <div class="viewcode-block" id="Svg__Xml">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Svg__Xml">[docs]</a>
-<span class="k">class</span> <span class="nc">Svg__Xml</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;SVG is used by Web browsers, often in conjunction with HTML; by mobile phones and digital cameras, as a format for interchange of graphical assets in desk top publishing, for industrial process visualization, display signage, and many other applications which require scalable static or interactive graphical capability.</span>
+<span class="k">class</span> <span class="nc">Svg__Xml</span><span class="p">(</span><span class="n">Image</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;SVG is used by Web browsers, often in conjunction with HTML; by mobile phones and</span>
+<span class="sd">    digital cameras, as a format for interchange of graphical assets in desk top publishing,</span>
+<span class="sd">    for industrial process visualization, display signage, and many other applications</span>
+<span class="sd">    which require scalable static or interactive graphical capability.</span>
 
-<span class="sd">    TODO: Note that the extension &quot;.svgz&quot; is used as an alias for &quot;.svg.gz&quot; [rfc1952] i.e. octet streams of type image/svg+xml subsequently compressed with gzip.</span>
+<span class="sd">    TODO: Note that the extension &quot;.svgz&quot; is used as an alias for &quot;.svg.gz&quot; [rfc1952]</span>
+<span class="sd">    i.e. octet streams of type image/svg+xml subsequently compressed with gzip.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/svg+xml&quot;</span>
@@ -701,7 +740,7 @@
 
 <div class="viewcode-block" id="T38">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.T38">[docs]</a>
-<span class="k">class</span> <span class="nc">T38</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">T38</span><span class="p">(</span><span class="n">Image</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/t38&quot;</span>
@@ -711,7 +750,7 @@
 
 <div class="viewcode-block" id="TiffFx">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.TiffFx">[docs]</a>
-<span class="k">class</span> <span class="nc">TiffFx</span><span class="p">(</span><span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">TiffFx</span><span class="p">(</span><span class="n">Image</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/tiff-fx&quot;</span>
@@ -721,10 +760,12 @@
 
 <div class="viewcode-block" id="Webp">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Webp">[docs]</a>
-<span class="k">class</span> <span class="nc">Webp</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Applications that are used to display and process images, especially when smaller image file sizes are important.</span>
+<span class="k">class</span> <span class="nc">Webp</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Applications that are used to display and process images, especially when smaller</span>
+<span class="sd">    image file sizes are important.</span>
 
-<span class="sd">    TODO: The first 4 bytes are 0x52, 0x49, 0x46, 0x46 (&#39;RIFF&#39;), followed by 4 bytes for the RIFF chunk size. The next 7 bytes are 0x57, 0x45, 0x42, 0x50, 0x56, 0x50, 0x38 (&#39;WEBPVP8&#39;).</span>
+<span class="sd">    TODO: The first 4 bytes are 0x52, 0x49, 0x46, 0x46 (&#39;RIFF&#39;), followed by 4 bytes</span>
+<span class="sd">    for the RIFF chunk size. The next 7 bytes are 0x57, 0x45, 0x42, 0x50, 0x56, 0x50, 0x38 (&#39;WEBPVP8&#39;).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/webp&quot;</span>
@@ -735,7 +776,7 @@
 
 <div class="viewcode-block" id="Wmf">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Wmf">[docs]</a>
-<span class="k">class</span> <span class="nc">Wmf</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Wmf</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Office productivity applications; clip art applications; desktop</span>
 <span class="sd">    publishing applications; some web browsers (e.g., Internet</span>
 <span class="sd">    Explorer).</span>
@@ -778,7 +819,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=4b40992f"></script>
+</div><script src="../../../_static/documentation_options.js?v=d2781cd5"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=5fa4622c"></script>

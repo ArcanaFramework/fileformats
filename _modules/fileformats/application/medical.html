@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 -->
-        <title>fileformats.application.medical - FileFormats v0.12.2</title>
+        <title>fileformats.application.medical - FileFormats v0.13.0</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d8449d71" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
@@ -171,7 +171,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">FileFormats v0.12.2</div></a>
+      <a href="../../../index.html"><div class="brand">FileFormats v0.13.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -198,7 +198,7 @@
     <img class="sidebar-logo" src="../../../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.12.2</span>
+  <span class="sidebar-brand-text">FileFormats v0.13.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -263,13 +263,13 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for fileformats.application.medical</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">fileformats.generic</span> <span class="kn">import</span> <span class="n">File</span>
+<span></span><span class="kn">from</span> <span class="nn">fileformats.generic</span> <span class="kn">import</span> <span class="n">BinaryFile</span>
 <span class="kn">from</span> <span class="nn">fileformats.core.mixin</span> <span class="kn">import</span> <span class="n">WithMagicNumber</span>
 
 
 <div class="viewcode-block" id="Dicom">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Dicom">[docs]</a>
-<span class="k">class</span> <span class="nc">Dicom</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Dicom</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;application/dicom&quot;</span>
     <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;DICM&quot;</span>
@@ -310,7 +310,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=4b40992f"></script>
+</div><script src="../../../_static/documentation_options.js?v=d2781cd5"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=5fa4622c"></script>

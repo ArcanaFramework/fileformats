@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Core" href="reference/core.html" /><link rel="prev" title="Typing" href="typing.html" />
 
     <!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 -->
-        <title>Developer Guide - FileFormats v0.12.2</title>
+        <title>Developer Guide - FileFormats v0.13.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d8449d71" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
@@ -172,7 +172,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">FileFormats v0.12.2</div></a>
+      <a href="index.html"><div class="brand">FileFormats v0.13.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -199,7 +199,7 @@
     <img class="sidebar-logo" src="_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.12.2</span>
+  <span class="sidebar-brand-text">FileFormats v0.13.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -377,17 +377,22 @@ method resolution order of the types bases, so that they can override methods in
 <h2>Custom format patterns<a class="headerlink" href="#custom-format-patterns" title="Link to this heading">¶</a></h2>
 <p>While the standard mixin classes should cover the large majority standard formats, in
 the wild-west of science data formats you are likely to need to design custom validators
-for your format. This is simply done by adding a new property to the class using the
-<cite>&#64;property</cite> decorator.</p>
+for your format. This is done by adding a property to the class using the
+<cite>fileformats.core.validated_property</cite> decorator. Validated properties should check the
+validity of an aspect of the file, and raise a <cite>FormatMismatchError</cite> if the file does
+not match the expected pattern.</p>
+<p>To detect the presence of associated files, you can use the <cite>select_by_ext</cite> method of
+the file object, which selects a single file from a list of file paths that matches
+given extension, raising a FormatMismatchError if either no files or multiple files are found.</p>
 <p>Take for example the <a class="reference external" href="https://www.earthdatascience.org/courses/earth-analytics/spatial-data-r/shapefile-structure/">GIS shapefile structure</a>,
 it is a file-set consisting of 3 to 6 files differentiated by their extensions. To
-implement this class we use the <code class="docutils literal notranslate"><span class="pre">&#64;property</span></code> decorator. We inherit from the <a class="reference internal" href="reference/core.html#fileformats.core.mixin.WithAdjacentFiles" title="fileformats.core.mixin.WithAdjacentFiles"><code class="xref py py-class docutils literal notranslate"><span class="pre">WithAdjacentFiles</span></code></a>
+implement this class we use the <code class="docutils literal notranslate"><span class="pre">&#64;validated_property</span></code> decorator. We inherit from the <a class="reference internal" href="reference/core.html#fileformats.core.mixin.WithAdjacentFiles" title="fileformats.core.mixin.WithAdjacentFiles"><code class="xref py py-class docutils literal notranslate"><span class="pre">WithAdjacentFiles</span></code></a>
 mixin so that neighbouring files (i.e. files with the same stem but different extension)
 are included when the class is instantiated with just the primary &quot;.shp&quot; file.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.generic</span> <span class="kn">import</span> <span class="n">File</span>
 <span class="kn">from</span> <span class="nn">fileformats.application</span> <span class="kn">import</span> <span class="n">Xml</span>
 <span class="kn">from</span> <span class="nn">fileformats.mixin</span> <span class="kn">import</span> <span class="n">WithAdjacentFiles</span>
-<span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">mark</span>
+<span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">mark</span><span class="p">,</span> <span class="n">validated_property</span>
 
 <span class="k">class</span> <span class="nc">GisShapeIndex</span><span class="p">(</span><span class="n">File</span><span class="p">):</span>
     <span class="s2">&quot;the file that indexes the geometry.&quot;</span>
@@ -425,31 +430,31 @@ are included when the class is instantiated with just the primary &quot;.shp&quo
 
     <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.shp&quot;</span>  <span class="c1"># the main file that will be mapped to fspath</span>
 
-    <span class="nd">@property</span>
+    <span class="nd">@validated_property</span>
     <span class="k">def</span> <span class="nf">index_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">GisShapeIndex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">select_by_ext</span><span class="p">(</span><span class="n">GisShapeIndex</span><span class="p">))</span>
 
-    <span class="nd">@property</span>
+    <span class="nd">@validated_property</span>
     <span class="k">def</span> <span class="nf">features_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">GisShapeFeatures</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">select_by_ext</span><span class="p">(</span><span class="n">GisShapeFeatures</span><span class="p">))</span>
 
-    <span class="nd">@property</span>
+    <span class="nd">@validated_property</span>
     <span class="k">def</span> <span class="nf">project_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">WellKnownText</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">select_by_ext</span><span class="p">(</span><span class="n">WellKnownText</span><span class="p">),</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="nd">@property</span>
+    <span class="nd">@validated_property</span>
     <span class="k">def</span> <span class="nf">spatial_index_n_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">GisShapeSpatialIndexN</span><span class="p">(</span>
            <span class="bp">self</span><span class="o">.</span><span class="n">select_by_ext</span><span class="p">(</span><span class="n">GisShapeSpatialIndexN</span><span class="p">),</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
 
-    <span class="nd">@property</span>
+    <span class="nd">@validated_property</span>
     <span class="k">def</span> <span class="nf">spatial_index_n_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">GisShapeSpatialIndexB</span><span class="p">(</span>
            <span class="bp">self</span><span class="o">.</span><span class="n">select_by_ext</span><span class="p">(</span><span class="n">GisShapeSpatialIndexB</span><span class="p">),</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
 
-    <span class="nd">@property</span>
+    <span class="nd">@validated_property</span>
     <span class="k">def</span> <span class="nf">geospatial_metadata_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">GisShapeGeoSpatialMetadata</span><span class="p">(</span>
            <span class="bp">self</span><span class="o">.</span><span class="n">select_by_ext</span><span class="p">(</span><span class="n">GisShapeGeoSpatialMetadata</span><span class="p">),</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span>
@@ -767,7 +772,7 @@ FormatB.</p>
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=4b40992f"></script>
+</div><script src="_static/documentation_options.js?v=d2781cd5"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=5fa4622c"></script>

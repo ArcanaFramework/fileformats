@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 -->
-        <title>fileformats.application.misc - FileFormats v0.12.2</title>
+        <title>fileformats.application.misc - FileFormats v0.13.0</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d8449d71" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
@@ -171,7 +171,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">FileFormats v0.12.2</div></a>
+      <a href="../../../index.html"><div class="brand">FileFormats v0.13.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -198,7 +198,7 @@
     <img class="sidebar-logo" src="../../../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.12.2</span>
+  <span class="sidebar-brand-text">FileFormats v0.13.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -264,7 +264,7 @@
         <article role="main" id="furo-main-content">
           <h1>Source code for fileformats.application.misc</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">typing</span> <span class="k">as</span> <span class="nn">ty</span>
-<span class="kn">from</span> <span class="nn">fileformats.generic</span> <span class="kn">import</span> <span class="n">File</span>
+<span class="kn">from</span> <span class="nn">fileformats.generic</span> <span class="kn">import</span> <span class="n">BinaryFile</span><span class="p">,</span> <span class="n">File</span>
 <span class="kn">from</span> <span class="nn">fileformats.core.mixin</span> <span class="kn">import</span> <span class="n">WithMagicNumber</span>
 <span class="kn">from</span> <span class="nn">.serialization</span> <span class="kn">import</span> <span class="n">Xml</span><span class="p">,</span> <span class="n">Json</span>
 
@@ -274,7 +274,7 @@
 <span class="k">class</span> <span class="nc">_1dInterleavedParityfec</span><span class="p">(</span><span class="n">File</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Multimedia applications that want to improve resiliency against packet loss by sending redundant data in addition to the source media.&quot;&quot;&quot;</span>
 
-    <span class="n">iana_mime</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;application/1d-interleaved-parityfec&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;application/1d-interleaved-parityfec&quot;</span>
     <span class="n">ext</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -793,7 +793,7 @@
 
 <div class="viewcode-block" id="BacnetXdd__Zip">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.BacnetXdd__Zip">[docs]</a>
-<span class="k">class</span> <span class="nc">BacnetXdd__Zip</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">BacnetXdd__Zip</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;application/bacnet-xdd+zip&quot;</span>
@@ -1569,7 +1569,7 @@
 
 <div class="viewcode-block" id="Efi">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Efi">[docs]</a>
-<span class="k">class</span> <span class="nc">Efi</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Efi</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;EFI compliant firmware, boot loaders, and network boot programs (NBPs) utilizing UEFI HTTP Boot.</span>
 
 <span class="sd">    TODO: The first two octets are the ASCII Characters &quot;M&quot; and &quot;Z&quot; (&quot;MZ&quot; at offset 0) -</span>
@@ -1770,7 +1770,7 @@
 
 <div class="viewcode-block" id="Exi">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Exi">[docs]</a>
-<span class="k">class</span> <span class="nc">Exi</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Exi</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;No known applications currently use this media type.</span>
 
 <span class="sd">    TODO: The first four octets may be hexadecimal 24 45 58 49 (&quot;$EXI&quot;). The first</span>
@@ -1826,7 +1826,7 @@
 
 <div class="viewcode-block" id="Fdf">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Fdf">[docs]</a>
-<span class="k">class</span> <span class="nc">Fdf</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Fdf</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    TODO: &quot;%FDF-&quot; followed by the FDF</span>
@@ -1871,7 +1871,7 @@
 
 <div class="viewcode-block" id="Fits">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Fits">[docs]</a>
-<span class="k">class</span> <span class="nc">Fits</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Fits</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;There are many astronomical image viewing and data reduction</span>
 
 <span class="sd">    A FITS file described with the media type &quot;application/fits&quot; SHOULD conform to the published standards for FITS files as determined by convention and agreement within the international FITS community. No other constraints are placed on the content of a file described as &quot;application/fits&quot;.  A FITS file described with the media type &quot;application/fits&quot; may have an arbitrary number of conforming extension header and data units (XHDUs) that follow its mandatory primary header and data unit (PHDU). The XHDUs may be one of the standard types (&quot;IMAGE&quot;, &quot;TABLE&quot;, and &quot;BINTABLE&quot;) or any other type that satisfies the &quot;Requirements for Conforming Extensions&quot; (section 4.4.1 of [NOST]). The PHDU or any &quot;IMAGE&quot; XHDU may contain zero to 999 dimensions with zero or more pixels along each dimension.  The PHDU may use the random groups convention, in which the dimension of the first axis is zero and the keywords GROUPS, PCOUNT and GCOUNT appear in the header. NAXIS1=0 and GROUPS=T is the signature of random groups; see section 7 of the Definition of FITS paper [NOST].</span>
@@ -1937,7 +1937,7 @@
 
 <div class="viewcode-block" id="Geopackage__Sqlite3">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Geopackage__Sqlite3">[docs]</a>
-<span class="k">class</span> <span class="nc">Geopackage__Sqlite3</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Geopackage__Sqlite3</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;application/geopackage+sqlite3&quot;</span>
@@ -1977,7 +1977,7 @@
 
 
 
-<span class="k">class</span> <span class="nc">Gzip</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Gzip</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;anywhere data size is an issue&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;application/gzip&quot;</span>
@@ -2203,7 +2203,7 @@
 
 <div class="viewcode-block" id="JavaArchive">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.JavaArchive">[docs]</a>
-<span class="k">class</span> <span class="nc">JavaArchive</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">JavaArchive</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;application/java-archive&quot;</span>
@@ -2449,7 +2449,7 @@
 
 <div class="viewcode-block" id="Lpf__Zip">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Lpf__Zip">[docs]</a>
-<span class="k">class</span> <span class="nc">Lpf__Zip</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Lpf__Zip</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This media type is intended to</span>
 <span class="sd">    be used by multiple interoperable applications for the</span>
 <span class="sd">    distribution and consumption of ebooks, audiobooks, digital visual</span>
@@ -2685,7 +2685,7 @@
 
 <div class="viewcode-block" id="Mbox">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Mbox">[docs]</a>
-<span class="k">class</span> <span class="nc">Mbox</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Mbox</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;hundreds of messaging products make use of the mbox database format, in one form or another.</span>
 
 <span class="sd">    TODO: mbox database files can be recognized by having a leading character</span>
@@ -3206,7 +3206,7 @@
 
 <div class="viewcode-block" id="Ogg">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Ogg">[docs]</a>
-<span class="k">class</span> <span class="nc">Ogg</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Ogg</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;application/ogg&quot;</span>
@@ -3248,7 +3248,7 @@
 
 <div class="viewcode-block" id="Oxps">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Oxps">[docs]</a>
-<span class="k">class</span> <span class="nc">Oxps</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Oxps</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The application/oxps MIME type can be used to identify CSTA XML (ECMA-388) instance documents. No published applications or print drivers currently use OpenXPS. The intent is for any application or driver that can currently produce/consume Microsoft XPS to also adopt OpenXPS. Examples of such applications would include&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;application/oxps&quot;</span>
@@ -3322,7 +3322,7 @@
 
 
 
-<span class="k">class</span> <span class="nc">Pdf</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Pdf</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;See Section 6 of  RFC-hardy-pdf-mime-05.&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;application/pdf&quot;</span>
@@ -3963,7 +3963,7 @@
 
 <div class="viewcode-block" id="Rtf">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Rtf">[docs]</a>
-<span class="k">class</span> <span class="nc">Rtf</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Rtf</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;application/rtf&quot;</span>
@@ -4582,7 +4582,7 @@
 
 <div class="viewcode-block" id="Swid__Cbor">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Swid__Cbor">[docs]</a>
-<span class="k">class</span> <span class="nc">Swid__Cbor</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Swid__Cbor</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The type is used by software asset management systems and vulnerability assessment systems and is used in applications that use remote integrity verification.&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;application/swid+cbor&quot;</span>
@@ -4894,7 +4894,7 @@
 
 <div class="viewcode-block" id="Tzif">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Tzif">[docs]</a>
-<span class="k">class</span> <span class="nc">Tzif</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Tzif</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This media type is designed</span>
 <span class="sd">    for widespread use by applications that need to use or exchange</span>
 <span class="sd">    time zone information, such as the Time Zone Information Compiler</span>
@@ -4909,7 +4909,7 @@
 
 <div class="viewcode-block" id="TzifLeap">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.TzifLeap">[docs]</a>
-<span class="k">class</span> <span class="nc">TzifLeap</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">TzifLeap</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This media type is designed</span>
 <span class="sd">    for widespread use by applications that need to use or exchange</span>
 <span class="sd">    time zone information, such as the Time Zone Information Compiler</span>
@@ -5039,7 +5039,7 @@
 
 <div class="viewcode-block" id="Wasm">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Wasm">[docs]</a>
-<span class="k">class</span> <span class="nc">Wasm</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Wasm</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;application/wasm&quot;</span>
@@ -5092,7 +5092,7 @@
 
 <div class="viewcode-block" id="Widget">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Widget">[docs]</a>
-<span class="k">class</span> <span class="nc">Widget</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Widget</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;User agents that claim conformance to this specification.&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;application/widget&quot;</span>
@@ -5504,7 +5504,7 @@
 
 <div class="viewcode-block" id="Zlib">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Zlib">[docs]</a>
-<span class="k">class</span> <span class="nc">Zlib</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Zlib</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;anywhere data size is an issue</span>
 
 <span class="sd">    TODO: first byte is usually 0x78 but can also be 0x08, 0x18, 0x28, 0x38, 0x48,</span>
@@ -5519,7 +5519,7 @@
 
 <div class="viewcode-block" id="Zstd">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Zstd">[docs]</a>
-<span class="k">class</span> <span class="nc">Zstd</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Zstd</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;anywhere data size is an</span>
 <span class="sd">    issue&quot;&quot;&quot;</span>
 
@@ -5559,7 +5559,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=4b40992f"></script>
+</div><script src="../../../_static/documentation_options.js?v=d2781cd5"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=5fa4622c"></script>

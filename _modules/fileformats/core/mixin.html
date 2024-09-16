@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 -->
-        <title>fileformats.core.mixin - FileFormats v0.12.2</title>
+        <title>fileformats.core.mixin - FileFormats v0.13.0</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d8449d71" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
@@ -171,7 +171,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">FileFormats v0.12.2</div></a>
+      <a href="../../../index.html"><div class="brand">FileFormats v0.13.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -198,7 +198,7 @@
     <img class="sidebar-logo" src="../../../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.12.2</span>
+  <span class="sidebar-brand-text">FileFormats v0.13.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -270,7 +270,7 @@
 <span class="kn">from</span> <span class="nn">.datatype</span> <span class="kn">import</span> <span class="n">DataType</span>
 <span class="kn">import</span> <span class="nn">fileformats.core</span>
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">describe_task</span><span class="p">,</span> <span class="n">matching_source</span>
-<span class="kn">from</span> <span class="nn">.decorators</span> <span class="kn">import</span> <span class="n">classproperty</span>
+<span class="kn">from</span> <span class="nn">.decorators</span> <span class="kn">import</span> <span class="n">validated_property</span><span class="p">,</span> <span class="n">classproperty</span>
 <span class="kn">from</span> <span class="nn">.identification</span> <span class="kn">import</span> <span class="n">to_mime_format_name</span>
 <span class="kn">from</span> <span class="nn">.converter_helpers</span> <span class="kn">import</span> <span class="n">SubtypeVar</span><span class="p">,</span> <span class="n">ConverterSpec</span>
 <span class="kn">from</span> <span class="nn">.classifier</span> <span class="kn">import</span> <span class="n">Classifier</span>
@@ -307,7 +307,7 @@
     <span class="n">binary</span><span class="p">:</span> <span class="nb">bool</span>
     <span class="n">magic_number</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">]</span>
 
-    <span class="nd">@property</span>
+    <span class="nd">@validated_property</span>
     <span class="k">def</span> <span class="nf">_check_magic_number</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">binary</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">magic_number</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
@@ -363,7 +363,7 @@
     <span class="n">magic_pattern_offset</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">magic_pattern_maxlength</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="nd">@property</span>
+    <span class="nd">@validated_property</span>
     <span class="k">def</span> <span class="nf">version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
         <span class="n">read_length</span> <span class="o">=</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">magic_pattern_maxlength</span>
@@ -455,16 +455,12 @@
     <span class="k">def</span> <span class="nf">nested_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">Classifier</span><span class="p">],</span> <span class="o">...</span><span class="p">]:</span>
         <span class="k">return</span> <span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">header_type</span><span class="p">,)</span>
 
-    <span class="nd">@property</span>
+    <span class="nd">@validated_property</span>
     <span class="k">def</span> <span class="nf">header</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;fileformats.core.FileSet&quot;</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">header_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">select_by_ext</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header_type</span><span class="p">))</span>  <span class="c1"># type: ignore[attr-defined]</span>
 
-    <span class="k">def</span> <span class="nf">read_metadata</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">selected_keys</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
-        <span class="n">header</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>  <span class="c1"># type: ignore[attr-defined]</span>
-        <span class="k">if</span> <span class="n">selected_keys</span><span class="p">:</span>
-            <span class="n">header</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">header</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">selected_keys</span><span class="p">}</span>
+    <span class="k">def</span> <span class="nf">read_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
+        <span class="n">header</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">header</span></div>
 
 
@@ -496,22 +492,24 @@
     <span class="n">primary_type</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="s2">&quot;fileformats.core.FileSet&quot;</span><span class="p">]</span>
     <span class="n">side_car_types</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="s2">&quot;fileformats.core.FileSet&quot;</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span>
 
-    <span class="nd">@property</span>
+    <span class="nd">@validated_property</span>
     <span class="k">def</span> <span class="nf">side_cars</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="s2">&quot;fileformats.core.FileSet&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
         <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">tp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">select_by_ext</span><span class="p">(</span><span class="n">tp</span><span class="p">))</span> <span class="k">for</span> <span class="n">tp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">side_car_types</span><span class="p">)</span>  <span class="c1"># type: ignore[attr-defined]</span>
 
-    <span class="k">def</span> <span class="nf">read_metadata</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">selected_keys</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
-        <span class="n">metadata</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_type</span><span class="o">.</span><span class="n">read_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selected_keys</span><span class="o">=</span><span class="n">selected_keys</span><span class="p">))</span>  <span class="c1"># type: ignore[arg-type]</span>
+    <span class="k">def</span> <span class="nf">read_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
+        <span class="n">metadata</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_type</span><span class="o">.</span><span class="n">read_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>  <span class="c1"># type: ignore[arg-type]</span>
         <span class="k">for</span> <span class="n">side_car</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">side_cars</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">side_car_metadata</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">side_car</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>  <span class="c1"># type: ignore[attr-defined]</span>
+                <span class="n">side_car_metadata</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">side_car</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
             <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
                 <span class="k">continue</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">side_car_class_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">to_mime_format_name</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">side_car</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
-                <span class="n">metadata</span><span class="p">[</span><span class="n">side_car_class_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">side_car_metadata</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">side_car_metadata</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;`load` method of side-car type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">side_car</span><span class="p">)</span><span class="si">}</span><span class="s2"> must return a &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;dictionary, not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">side_car_metadata</span><span class="p">)</span><span class="si">!r}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+            <span class="n">side_car_class_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">to_mime_format_name</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">side_car</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+            <span class="n">metadata</span><span class="p">[</span><span class="n">side_car_class_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">side_car_metadata</span>
         <span class="k">return</span> <span class="n">metadata</span>
 
     <span class="nd">@classproperty</span>
@@ -529,7 +527,7 @@
 <span class="sd">    ``Array[Integer]`` for an array containing integers, or DicomDir[T1w, Brain] for a</span>
 <span class="sd">    T1-weighted MRI scan of the brain in DICOM format.</span>
 
-<span class="sd">        class MyFormatWithClassifiers(WithClassifiers, File):</span>
+<span class="sd">        class MyFormatWithClassifiers(WithClassifiers, BinaryFile):</span>
 
 <span class="sd">            ext = &quot;.myf</span>
 
@@ -551,13 +549,9 @@
 <span class="sd">        which is either ``()`` if ``multiple_classifiers`` is true and ``None`` otherwise</span>
 <span class="sd">    &lt;classifiers-attr-name&gt; : tuple[type, ...] or None, optional</span>
 <span class="sd">        pass a default value to the attribute referenced by &#39;classifiers_attr_name&#39;</span>
-<span class="sd">    multiple_classifiers : bool, optional</span>
-<span class="sd">        whether or not multiple content types are permitted for the container type, True</span>
 <span class="sd">    allowed_classifiers : tuple[type,...], optional</span>
 <span class="sd">        the allowable types (+ subclasses) for the content types. If None all types</span>
 <span class="sd">        are allowed</span>
-<span class="sd">    ordered_classifiers : bool, optional</span>
-<span class="sd">        whether the order of the content types is important or not, by default false</span>
 <span class="sd">    genericly_classified : bool, optional</span>
 <span class="sd">        whether the class can be classified by classifiers in any namespace (true) or just the</span>
 <span class="sd">        namespace it belongs to (false). If true, then the namespace of the genericly</span>
@@ -1001,6 +995,16 @@
             <span class="n">unclassified</span> <span class="o">+</span> <span class="s2">&quot;[&quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">type_name</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">classifiers</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span>
         <span class="p">)</span></div>
 
+
+
+<span class="k">class</span> <span class="nc">WithClassifier</span><span class="p">(</span><span class="n">WithClassifiers</span><span class="p">):</span>
+
+    <span class="n">multiple_classifiers</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+<span class="k">class</span> <span class="nc">WithOrderedClassifiers</span><span class="p">(</span><span class="n">WithClassifiers</span><span class="p">):</span>
+
+    <span class="n">ordered_classifiers</span> <span class="o">=</span> <span class="kc">True</span>
 </pre></div>
         </article>
       </div>
@@ -1033,7 +1037,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=4b40992f"></script>
+</div><script src="../../../_static/documentation_options.js?v=d2781cd5"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=5fa4622c"></script>

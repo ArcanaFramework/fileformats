@@ -132,12 +132,18 @@ Custom format patterns
 
 While the standard mixin classes should cover the large majority standard formats, in
 the wild-west of science data formats you are likely to need to design custom validators
-for your format. This is simply done by adding a new property to the class using the
-`@property` decorator.
+for your format. This is done by adding a property to the class using the
+`fileformats.core.validated_property` decorator. Validated properties should check the
+validity of an aspect of the file, and raise a `FormatMismatchError` if the file does
+not match the expected pattern.
+
+To detect the presence of associated files, you can use the `select_by_ext` method of
+the file object, which selects a single file from a list of file paths that matches
+given extension, raising a FormatMismatchError if either no files or multiple files are found.
 
 Take for example the `GIS shapefile structure <https://www.earthdatascience.org/courses/earth-analytics/spatial-data-r/shapefile-structure/>`_,
 it is a file-set consisting of 3 to 6 files differentiated by their extensions. To
-implement this class we use the ``@property`` decorator. We inherit from the :class:`.WithAdjacentFiles`
+implement this class we use the ``@validated_property`` decorator. We inherit from the :class:`.WithAdjacentFiles`
 mixin so that neighbouring files (i.e. files with the same stem but different extension)
 are included when the class is instantiated with just the primary ".shp" file.
 
@@ -146,7 +152,7 @@ are included when the class is instantiated with just the primary ".shp" file.
     from fileformats.generic import File
     from fileformats.application import Xml
     from fileformats.mixin import WithAdjacentFiles
-    from fileformats.core import mark
+    from fileformats.core import mark, validated_property
 
     class GisShapeIndex(File):
         "the file that indexes the geometry."
@@ -184,31 +190,31 @@ are included when the class is instantiated with just the primary ".shp" file.
 
         ext = ".shp"  # the main file that will be mapped to fspath
 
-        @property
+        @validated_property
         def index_file(self):
             return GisShapeIndex(self.select_by_ext(GisShapeIndex))
 
-        @property
+        @validated_property
         def features_file(self):
             return GisShapeFeatures(self.select_by_ext(GisShapeFeatures))
 
-        @property
+        @validated_property
         def project_file(self):
             return WellKnownText(self.select_by_ext(WellKnownText), allow_none=True)
 
-        @property
+        @validated_property
         def spatial_index_n_file(self):
             return GisShapeSpatialIndexN(
                self.select_by_ext(GisShapeSpatialIndexN), allow_none=True
             )
 
-        @property
+        @validated_property
         def spatial_index_n_file(self):
             return GisShapeSpatialIndexB(
                self.select_by_ext(GisShapeSpatialIndexB), allow_none=True
             )
 
-        @property
+        @validated_property
         def geospatial_metadata_file(self):
             return GisShapeGeoSpatialMetadata(
                self.select_by_ext(GisShapeGeoSpatialMetadata), allow_none=True
