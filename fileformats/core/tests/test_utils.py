@@ -4,7 +4,7 @@ import random
 import shutil
 import time
 import pytest
-from fileformats.core import FileSet
+from fileformats.core import FileSet, validated_property
 from fileformats.generic import File, Directory, FsObject
 from fileformats.core.mixin import WithSeparateHeader
 from fileformats.core.exceptions import UnsatisfiableCopyModeError
@@ -261,11 +261,11 @@ def test_decompose_fspaths(work_dir):
         ext = ".luigi.mario"
 
     class DoubleMario(FileSet):
-        @property
+        @validated_property
         def bar(self):
             return Mario(self.select_by_ext(Mario))
 
-        @property
+        @validated_property
         def luigi_bar(self):
             return LuigiMario(self.select_by_ext(LuigiMario))
 

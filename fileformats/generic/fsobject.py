@@ -6,13 +6,13 @@ from fileformats.core.fileset import FileSet
 from fileformats.core.exceptions import (
     FormatMismatchError,
 )
-from fileformats.core.decorators import classproperty
+from fileformats.core.decorators import validated_property, classproperty
 
 
 class FsObject(FileSet, os.PathLike):  # type: ignore
     "Generic file-system object, can be either a file or a directory"
 
-    @property
+    @validated_property
     def fspath(self) -> Path:
         if len(self.fspaths) > 1:
             fspaths = [str(f) for f in self.fspaths]
@@ -40,7 +40,7 @@ class FsObject(FileSet, os.PathLike):  # type: ignore
         constraint"""
         # We have to subtract `fspath` from required properties as we defined unconstrained
         # file-sets as ones that have more constraints than simply existing
-        return not (len(list(cls.required_properties())) - 1)
+        return not (len(list(cls.validated_properties())) - 1)
 
     def absolute(self) -> Path:
         return self.fspath

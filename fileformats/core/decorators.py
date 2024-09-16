@@ -68,6 +68,13 @@ def classproperty(meth: ty.Callable[..., PropReturn]) -> PropReturn:
     return classmethod(property(meth))  # type: ignore
 
 
+def validated_property(meth: ty.Callable[..., PropReturn]) -> PropReturn:
+    """A property that is checked during validation of a FileSet"""
+    prop = property(meth)
+    prop.fget.__annotations__[VALIDATED_PROPERTY_FLAG] = True
+    return prop  # type: ignore
+
+
 if sys.version_info[:2] < (3, 9):
 
     class classproperty(object):  # type: ignore[no-redef]  # noqa
@@ -112,3 +119,6 @@ def enough_time_has_elapsed_given_mtime_resolution(
         if current_time - mtime <= mtime_resolution:
             return False
     return True
+
+
+VALIDATED_PROPERTY_FLAG = "_validated_property"

@@ -47,7 +47,7 @@ class Field(ty.Generic[ValueType, PrimitiveType], DataType):
         import fileformats.field  # noqa
 
         if cls._all_fields is None:
-            cls._all_fields = [f for f in Field.subclasses() if f.primitive is not None]  # type: ignore
+            cls._all_fields = [f for f in Field.subclasses() if getattr(f, "primitive", None) is not None]  # type: ignore
         return cls._all_fields
 
     def to_primitive(self) -> PrimitiveType:

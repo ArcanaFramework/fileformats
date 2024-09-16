@@ -1,6 +1,7 @@
-from fileformats.core.typing import TypeAlias
 import typing  # noqa: F401
 import typing as ty
+from fileformats.core import validated_property
+from fileformats.core.typing import TypeAlias
 from fileformats.core.mixin import WithMagicNumber
 from fileformats.core.exceptions import FormatMismatchError
 from .base import Image
@@ -54,7 +55,7 @@ class Tiff(RasterImage):
     magic_number_le = "49492A00"
     magic_number_be = "4D4D002A"
 
-    @property
+    @validated_property
     def endianness(self) -> str:
         read_magic = self.read_contents(len(self.magic_number_le) // 2)
         assert isinstance(read_magic, bytes)

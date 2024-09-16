@@ -2,6 +2,7 @@ from pathlib import Path
 import platform
 import pytest
 import typing as ty
+from fileformats.core import validated_property
 from fileformats.generic import File
 from fileformats.field import Integer, Boolean, Decimal, Array, Text
 from fileformats.testing import Foo
@@ -160,11 +161,11 @@ def test_header_overwrite(work_dir):
 
 
 class YFile(ImageWithInlineHeader):
-    @property
+    @validated_property
     def y(self):
         return self.metadata["y"]
 
-    @property
+    @validated_property
     def y_value(self):
         if self.y <= 10:
             raise FormatMismatchError(f"'y' property is not > 10 ({self.y})")
