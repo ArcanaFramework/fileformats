@@ -1,9 +1,9 @@
 import typing as ty
 from fileformats.core.fileset import FileSet
+from functools import cached_property
 from fileformats.core.exceptions import (
     FormatMismatchError,
 )
-from fileformats.core.decorators import mtime_cached_property
 from fileformats.core.mixin import WithClassifiers
 
 
@@ -13,14 +13,16 @@ class TypedSet(FileSet):
 
     content_types: ty.Tuple[ty.Type[FileSet], ...] = ()
 
-    @mtime_cached_property
-    def contents(self) -> ty.Iterable[FileSet]:
+    @cached_property
+    def contents(self) -> ty.List[FileSet]:
+        contnts = []
         for content_type in self.content_types:
             for p in self.fspaths:
                 try:
-                    yield content_type([p])
+                    contnts.append(content_type([p], **self._metadata_kwargs))
                 except FormatMismatchError:
                     continue
+        return contnts
 
     @property
     def _validate_contents(self) -> None:

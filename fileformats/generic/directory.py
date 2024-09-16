@@ -1,7 +1,7 @@
 import typing as ty
 from pathlib import Path
 from fileformats.core.exceptions import FormatMismatchError
-from fileformats.core.decorators import classproperty
+from fileformats.core.decorators import classproperty, mtime_cached_property
 from .fsobject import FsObject
 from fileformats.core.fileset import FileSet, FILE_CHUNK_LEN_DEFAULT
 from fileformats.core.mixin import WithClassifiers
@@ -44,15 +44,17 @@ class Directory(FsObject):
             )
         return fspath
 
-    @property
-    def contents(self) -> ty.Iterable[FileSet]:
+    @mtime_cached_property
+    def contents(self) -> ty.List[FileSet]:
+        contnts = []
         for content_type in self.content_types:
             assert content_type
             for p in self.fspath.iterdir():
                 try:
-                    yield content_type([p])
+                    contnts.append(content_type([p], **self._metadata_kwargs))
                 except FormatMismatchError:
                     continue
+        return contnts
 
     @classproperty
     def unconstrained(cls) -> bool:

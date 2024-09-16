@@ -9,11 +9,13 @@ from fileformats.core import SampleFileGenerator
 
 @extra_implementation(FileSet.read_metadata)
 def dicom_read_metadata(
-    dicom: Dicom, selected_keys: ty.Optional[ty.Collection[str]] = None
+    dicom: Dicom,
+    specific_tags: ty.Optional[ty.Collection[str]] = None,
+    **kwargs: ty.Any,
 ) -> ty.Mapping[str, ty.Any]:
     dcm = pydicom.dcmread(
         dicom.fspath,
-        specific_tags=list(selected_keys if selected_keys is not None else []),
+        specific_tags=list(specific_tags if specific_tags is not None else []),
     )
     [getattr(dcm, a, None) for a in dir(dcm)]  # Ensure all keywords are set
     metadata = {

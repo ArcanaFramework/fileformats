@@ -63,13 +63,14 @@ class FileSet(DataType):
 
     Parameters
     ----------
-    fspaths : set[Path]
+    *fspaths : Path | str | FileSet | Collection[Path | str | FileSet]
         a set of file-system paths pointing to all the resources in the file-set
     metadata : dict[str, Any]
         metadata associated with the file-set, typically lazily loaded via `read_metadata`
         extra hook but can be provided directly at the time of instantiation
-    metadata_keys : list[str]
-        the keys of the metadata to load when the `metadata` property is called. Provided
+    **metadata_keys : ty.Any
+        Any keyword arguments to be passed through to the read_metadata function when
+        loading metadata to fill the `metadata` property. Provided
         to allow for selective loading of metadata fields for performance reasons.
     """
 
@@ -91,18 +92,20 @@ class FileSet(DataType):
     # Member attributes
     fspaths: ty.FrozenSet[Path]
     _explicit_metadata: ty.Optional[ty.Mapping[str, ty.Any]]
-    _metadata_keys: ty.Optional[ty.Collection[str]]
+    _metadata_kwargs: ty.Dict[str, ty.Any]
 
     def __init__(
         self,
-        fspaths: FspathsInputType,
+        *fspaths: FspathsInputType,
         metadata: ty.Optional[ty.Dict[str, ty.Any]] = None,
-        metadata_keys: ty.Optional[ty.Collection[str]] = None,
+        **metadata_kwargs: ty.Any,
     ):
         self._explicit_metadata = metadata
-        self._metadata_keys = metadata_keys
+        self._metadata_kwargs = metadata_kwargs
         self._validate_class()
-        self.fspaths = fspaths_converter(fspaths)
+        self.fspaths = frozenset(
+            itertools.chain(*(fspaths_converter(p) for p in fspaths))
+        )
         self._validate_fspaths()
         self._additional_fspaths()
         if metadata and not isinstance(metadata, dict):
@@ -250,7 +253,7 @@ class FileSet(DataType):
         if self._explicit_metadata is not None:
             return self._explicit_metadata
         try:
-            metadata = self.read_metadata(selected_keys=self._metadata_keys)
+            metadata = self.read_metadata(**self._metadata_kwargs)
         except FileFormatsExtrasPkgUninstalledError:
             raise
         except FileFormatsExtrasPkgNotCheckedError as e:
@@ -261,15 +264,13 @@ class FileSet(DataType):
         return metadata
 
     @extra
-    def read_metadata(
-        self, selected_keys: ty.Optional[ty.Collection[str]] = None
-    ) -> ty.Mapping[str, ty.Any]:
+    def read_metadata(self, **kwargs: ty.Any) -> ty.Mapping[str, ty.Any]:
         """Reads any metadata associated with the fileset and returns it as a dict
 
         Parameters
         ----------
-        selected_keys : Sequence[str], optional
-            selected keys to load instead of loading the complete metadata set
+        **kwargs : Any
+            any format-specific keyword arguments to pass to the metadata reader
 
         Returns
         -------

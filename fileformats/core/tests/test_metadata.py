@@ -11,13 +11,11 @@ class FileWithMetadata(File):
 
 @extra_implementation(FileSet.read_metadata)
 def aformat_read_metadata(
-    mf: FileWithMetadata, selected_keys: ty.Optional[ty.Collection[str]] = None
+    mf: FileWithMetadata, **kwargs: ty.Any
 ) -> ty.Mapping[str, ty.Any]:
     with open(mf) as f:
         metadata = f.read()
     dct = dict(ln.split(":") for ln in metadata.splitlines())
-    if selected_keys:
-        dct = {k: v for k, v in dct.items() if k in selected_keys}
     return dct
 
 
