@@ -21,7 +21,7 @@ from .utils import (
     matching_source,
     import_extras_module,
 )
-from .decorators import mtime_cached_property, classproperty
+from .decorators import mtime_cached_property, classproperty, VALIDATED_PROPERTY_FLAG
 from .typing import FspathsInputType, CryptoMethod, PathType
 from .sampling import SampleFileGenerator
 from .identification import (
@@ -158,7 +158,7 @@ class FileSet(DataType):
 
     def _validate_properties(self) -> None:
         # Check required properties don't raise errors
-        for prop_name in self.required_properties():
+        for prop_name in self.validated_properties():
             getattr(self, prop_name)
 
     def __eq__(self, other: object) -> bool:
@@ -280,7 +280,7 @@ class FileSet(DataType):
     def unconstrained(cls) -> bool:
         """Whether the file-format is unconstrained by extension, magic number or another
         constraint"""
-        return not list(cls.required_properties())
+        return not list(cls.validated_properties())
 
     @classproperty
     def possible_exts(cls) -> ty.List[ty.Optional[str]]:
@@ -326,7 +326,7 @@ class FileSet(DataType):
         raise NotImplementedError
 
     @classmethod
-    def required_properties(cls) -> ty.Tuple[str, ...]:
+    def validated_properties(cls) -> ty.Tuple[str, ...]:
         """Find all properties required to treat file-set as being in the format specified
         by the class
 
@@ -336,42 +336,30 @@ class FileSet(DataType):
             a tuple containing all the properties names defined outside of core and
             generic classes
         """
-        required_props = cls.__dict__.get("_required_props")
-        if required_props is not None:
+        if required_props := cls.__dict__.get("_required_props"):
             assert isinstance(required_props, tuple) and all(
                 isinstance(p, str) for p in required_props
             )
             return required_props  # return cached value
-        required_props = set()
-        for base in cls.__mro__:
-            mod_name = base.__module__
-            mod_parts = mod_name.split(".")
-            if mod_name.startswith("fileformats"):
-                subpkg = mod_parts[1]
-            elif mod_name.split(".")[-1].startswith("test_"):
-                subpkg = None
-            else:
+        fileset_props = dir(FileSet)
+        required_props = []
+        for attr_name in dir(cls):
+            if attr_name in fileset_props:
                 continue
-            if subpkg in ("core", "generic") and mod_parts[-1] != "mixin":
-                base_name = base.__name__
-                if base_name == "FsObject":
-                    required_props.add("fspath")
-                elif base_name in ("Directory", "TypedSet"):
-                    required_props.add("_validate_contents")
-            else:
-                required_props.update(
-                    name
-                    for name, attr in base.__dict__.items()
-                    if (not name.startswith("__") and isinstance(attr, property))
-                )
-        required_props = tuple(required_props)
-        cls._required_props = required_props
-        return required_props
+            attr = getattr(cls, attr_name)
+            if isinstance(attr, property):
+                try:
+                    attr.fget.__annotations__[VALIDATED_PROPERTY_FLAG]
+                except KeyError:
+                    pass
+                else:
+                    required_props.append(attr_name)
+        return tuple(required_props)
 
     def required_paths(self) -> ty.FrozenSet[Path]:
         """Returns all fspaths that are required for the format"""
         required = set()
-        for prop_name in self.required_properties():
+        for prop_name in self.validated_properties():
             prop = getattr(self, prop_name)
             paths = []
             if hasattr(prop, "required_paths"):
@@ -403,7 +391,7 @@ class FileSet(DataType):
             a fileset that is nested within the broader fileset
         """
         nested = []
-        for prop_name in sorted(self.required_properties()):
+        for prop_name in sorted(self.validated_properties()):
             prop = getattr(self, prop_name)
             if isinstance(prop, FileSet):
                 nested.append(prop)

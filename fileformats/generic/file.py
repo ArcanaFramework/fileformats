@@ -6,7 +6,11 @@ from fileformats.core.exceptions import (
     FormatMismatchError,
     UnconstrainedExtensionException,
 )
-from fileformats.core.decorators import classproperty, mtime_cached_property
+from fileformats.core.decorators import (
+    validated_property,
+    classproperty,
+    mtime_cached_property,
+)
 from .fsobject import FsObject
 
 
@@ -15,7 +19,7 @@ class File(FsObject):
 
     binary = True
 
-    @property
+    @validated_property
     def fspath(self) -> Path:
         fspath = self.select_by_ext()
         if not fspath:

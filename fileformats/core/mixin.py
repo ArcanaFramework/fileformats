@@ -5,7 +5,7 @@ import logging
 from .datatype import DataType
 import fileformats.core
 from .utils import describe_task, matching_source
-from .decorators import classproperty
+from .decorators import validated_property, classproperty
 from .identification import to_mime_format_name
 from .converter_helpers import SubtypeVar, ConverterSpec
 from .classifier import Classifier
@@ -40,7 +40,7 @@ class WithMagicNumber:
     binary: bool
     magic_number: ty.Union[str, bytes]
 
-    @property
+    @validated_property
     def _check_magic_number(self) -> None:
         if self.binary and isinstance(self.magic_number, str):
             try:
@@ -93,7 +93,7 @@ class WithMagicVersion:
     magic_pattern_offset = 0
     magic_pattern_maxlength: ty.Optional[int] = None
 
-    @property
+    @validated_property
     def version(self) -> ty.Union[str, ty.Tuple[str, ...]]:
         read_length = (
             self.magic_pattern_maxlength
@@ -179,7 +179,7 @@ class WithSeparateHeader(WithAdjacentFiles):
     def nested_types(cls) -> ty.Tuple[ty.Type[Classifier], ...]:
         return (cls.header_type,)
 
-    @property
+    @validated_property
     def header(self) -> "fileformats.core.FileSet":
         return self.header_type(self.select_by_ext(self.header_type))  # type: ignore[attr-defined]
 
@@ -213,7 +213,7 @@ class WithSideCars(WithAdjacentFiles):
     primary_type: ty.Type["fileformats.core.FileSet"]
     side_car_types: ty.Tuple[ty.Type["fileformats.core.FileSet"], ...]
 
-    @property
+    @validated_property
     def side_cars(self) -> ty.Tuple["fileformats.core.FileSet", ...]:
         return tuple(tp(self.select_by_ext(tp)) for tp in self.side_car_types)  # type: ignore[attr-defined]
 

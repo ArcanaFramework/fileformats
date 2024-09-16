@@ -1,5 +1,5 @@
 import typing as ty
-from fileformats.core.fileset import FileSet
+from fileformats.core import FileSet, validated_property
 from functools import cached_property
 from fileformats.core.exceptions import (
     FormatMismatchError,
@@ -24,7 +24,7 @@ class TypedSet(FileSet):
                     continue
         return contnts
 
-    @property
+    @validated_property
     def _validate_contents(self) -> None:
         if not self.content_types:
             return

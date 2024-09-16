@@ -1,7 +1,11 @@
 import typing as ty
 from pathlib import Path
 from fileformats.core.exceptions import FormatMismatchError
-from fileformats.core.decorators import classproperty, mtime_cached_property
+from fileformats.core.decorators import (
+    validated_property,
+    classproperty,
+    mtime_cached_property,
+)
 from .fsobject import FsObject
 from fileformats.core.fileset import FileSet, FILE_CHUNK_LEN_DEFAULT
 from fileformats.core.mixin import WithClassifiers
@@ -14,7 +18,7 @@ class Directory(FsObject):
 
     content_types: ty.Tuple[ty.Type[FileSet], ...] = ()
 
-    @property
+    @validated_property
     def fspath(self) -> Path:
         # fspaths are checked for existence with the exception of mock classes
         dirs = [p for p in self.fspaths if not p.is_file()]
@@ -68,7 +72,7 @@ class Directory(FsObject):
     def is_file(self) -> bool:
         return False
 
-    @property
+    @validated_property
     def _validate_contents(self) -> None:
         if not self.content_types:
             return
