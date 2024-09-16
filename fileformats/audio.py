@@ -6,7 +6,6 @@ from fileformats.core.mixin import WithMagicNumber
 
 class Audio(BinaryFile):
     "Base class for audio file formats"
-    binary = True
     iana_mime: ty.Optional[str] = None
 
 
