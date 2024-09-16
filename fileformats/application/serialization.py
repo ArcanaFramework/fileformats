@@ -3,7 +3,7 @@ import typing as ty
 from fileformats.core.typing import TypeAlias
 from pathlib import Path
 from fileformats.core import DataType, FileSet, extra_implementation
-from fileformats.core.mixin import WithClassifiers
+from fileformats.core.mixin import WithClassifier
 from ..generic import UnicodeFile
 from fileformats.core.exceptions import FormatMismatchError
 from fileformats.core import SampleFileGenerator
@@ -31,13 +31,12 @@ class InformalSchema(Schema):
     "Not actually a strict schema, just a set of conventions on how to structure the serialization"
 
 
-class TextSerialization(WithClassifiers, UnicodeFile):
+class TextSerialization(WithClassifier, UnicodeFile):
     "Base class for text-based hierarchical data-serialization formats, e.g. JSON, YAML"
 
     # Classifiers class attrs
     classifiers_attr_name: ty.Optional[str] = "schema"
     schema: ty.Optional[ty.Type[Schema]] = None
-    multiple_classifiers: bool = False
     allowed_classifiers: ty.Tuple[ty.Type[Schema], ...] = (Schema,)
     generically_classifiable: bool = True
 

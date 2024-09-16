@@ -5,7 +5,6 @@ from fileformats.core.mixin import WithClassifiers
 class SubpackageClassified(WithClassifiers, DataType):
     classifiers_attr_name = "classifiers"
     classifiers = ()
-    multiple_classifiers = True
     allowed_classifiers = (Classifier,)
     generically_classifiable = False
 

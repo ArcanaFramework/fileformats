@@ -8,7 +8,7 @@ data, so the classes in this module are provided to support these use cases.
 import decimal
 import typing as ty
 from fileformats.core import Field
-from fileformats.core.mixin import WithClassifiers
+from fileformats.core.mixin import WithClassifier
 from fileformats.core.exceptions import FormatMismatchError
 
 ValueType = ty.TypeVar("ValueType")
@@ -177,13 +177,12 @@ ItemType = ty.TypeVar("ItemType", decimal.Decimal, int, float, bool)
 
 
 class Array(
-    WithClassifiers,
+    WithClassifier,
     Field[ty.Tuple[ItemType, ...], ty.Tuple[ItemType, ...]],
     ty.Sequence[ItemType],
 ):
     # WithClassifiers class attrs
     classifiers_attr_name: str = "item_type"
-    multiple_classifiers: bool = False
     allowed_classifiers: ty.Tuple[
         ty.Type[Singular[ty.Tuple[ItemType, ...], ty.Tuple[ItemType, ...]]]
     ] = (Singular,)

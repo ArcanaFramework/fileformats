@@ -267,13 +267,9 @@ class WithClassifiers:
         which is either ``()`` if ``multiple_classifiers`` is true and ``None`` otherwise
     <classifiers-attr-name> : tuple[type, ...] or None, optional
         pass a default value to the attribute referenced by 'classifiers_attr_name'
-    multiple_classifiers : bool, optional
-        whether or not multiple content types are permitted for the container type, True
     allowed_classifiers : tuple[type,...], optional
         the allowable types (+ subclasses) for the content types. If None all types
         are allowed
-    ordered_classifiers : bool, optional
-        whether the order of the content types is important or not, by default false
     genericly_classified : bool, optional
         whether the class can be classified by classifiers in any namespace (true) or just the
         namespace it belongs to (false). If true, then the namespace of the genericly
@@ -716,3 +712,13 @@ class WithClassifiers:
         return (
             unclassified + "[" + ", ".join(t.type_name for t in cls.classifiers) + "]"
         )
+
+
+class WithClassifier(WithClassifiers):
+
+    multiple_classifiers = False
+
+
+class WithOrderedClassifiers(WithClassifiers):
+
+    ordered_classifiers = True
