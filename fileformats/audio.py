@@ -1,13 +1,10 @@
 from .core import __version__  # noqa
-import typing as ty
-from fileformats.generic import File
+from fileformats.generic import BinaryFile
 from fileformats.core.mixin import WithMagicNumber
 
 
-class Audio(File):
+class Audio(BinaryFile):
     "Base class for audio file formats"
-    binary = True
-    iana_mime: ty.Optional[str] = None
 
 
 # Compressed formats

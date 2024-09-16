@@ -97,32 +97,16 @@ class DataType(Classifier, metaclass=ABCMeta):
     @classproperty
     def mime_type(cls) -> str:
         """Generates a MIME type identifier from a format class (i.e. an identifier
-        for a non-MIME class in the MIME"""
+        for a non-MIME class in the MIME."""
         raise FileFormatsError(f"MIME type not defined for {cls} class")
 
     @classproperty
     def mime_like(cls) -> str:
-        """Generates a "MIME-like" identifier from a format class (i.e.
-        an identifier for a non-MIME class in the MIME style), e.g.
-
-            fileformats.text.Plain to "text/plain"
-
-        and
-
-            fileformats.image.TiffFx to "image/tiff-fx"
-
-        Parameters
-        ----------
-        klass : type(FileSet)
-            FileSet subclass
-        iana_mime : bool
-            whether to use standardised IANA format or a more relaxed type format corresponding
-            to the fileformats extension the type belongs to
-
-        Returns
-        -------
-        type
-            the corresponding file format class
+        """Generates a "MIME-like" identifier from a format class. The fileformats
+        package namespace forms a superset of IANA MIME registries. Formats with
+        official MIME types will return their MIME type, while extension formats will
+        return a MIME-like identifier, e.g. "text/plain" for fileformats.text.Plain.
+        and "medimage/nifti" for fileformats.medimage.Nifti.
         """
         return f"{cls.namespace}/{to_mime_format_name(cls.__name__)}"  # type: ignore
 

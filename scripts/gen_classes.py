@@ -51,7 +51,7 @@ def generated_classes(
             desc = "\n\n".join(p for p in (applications, additional_info, todo) if p)
             desc = re.sub(r"\s\s\s+\n?", r"\n    ", desc)
 
-            bases = "WithMagicNumber, File" if magic_number else "File"
+            bases = "WithMagicNumber, BinaryFile" if magic_number else "File"
 
             code = f"""
 class {class_name}({bases}):

@@ -1,9 +1,13 @@
 import typing as ty
 import attrs
 from fileformats.core import DataType, FileSet
-from fileformats.generic import File
+from fileformats.generic import UnicodeFile
 from fileformats.field import Singular
-from fileformats.core.mixin import WithClassifiers
+from fileformats.core.mixin import (
+    WithClassifiers,
+    WithOrderedClassifiers,
+    WithClassifier,
+)
 
 
 class FileClassifier(DataType):
@@ -30,7 +34,7 @@ class E(C):
     pass
 
 
-class F(WithClassifiers, File):
+class F(WithClassifiers, UnicodeFile):
     classifiers_attr_name = "content_types"
     content_types = ()
     ext = ".f"
@@ -40,7 +44,7 @@ class G(F):
     ext = ".g"
 
 
-class H(WithClassifiers, File):
+class H(WithClassifiers, UnicodeFile):
     classifiers_attr_name = "content_types"
     content_types = ()
     ext = ".h"
@@ -52,32 +56,29 @@ class J(H):
     ext = ".j"
 
 
-class K(WithClassifiers, File):
+class K(WithOrderedClassifiers, UnicodeFile):
 
     ext = ".k"
     classifiers_attr_name = "new_classifiers_attr"
     new_classifiers_attr = ()
-    ordered_classifiers = True
 
 
-class L(WithClassifiers, File):
+class L(WithOrderedClassifiers, UnicodeFile):
 
     ext = ".l"
     classifiers_attr_name = "new_classifiers_attr"
     new_classifiers_attr = ()
-    ordered_classifiers = True
 
 
-class M(WithClassifiers, File):
+class M(WithClassifier, UnicodeFile):
     classifiers_attr_name = "content_types"
     content_types: ty.Optional[
         ty.Tuple[ty.Type[FileSet], ...]
     ] = None  # Should be None not ()
     ext = ".m"
-    multiple_classifiers = False
 
 
-class N(WithClassifiers, File):
+class N(WithClassifiers, UnicodeFile):
     classifiers_attr_name = "content_types"
     content_types: ty.Optional[ty.Tuple[ty.Type[FileSet], ...]] = ()
     ext = ".n"
@@ -90,21 +91,20 @@ class TestField(Singular[ty.Any, str]):
     primitive = str
 
 
-class P(WithClassifiers, File):
+class P(WithClassifiers, UnicodeFile):
     ext = ".p"
     classifiers_attr_name = "content_types"
     content_types = ()
 
 
-class Q(WithClassifiers, File):
+class Q(WithClassifiers, UnicodeFile):
     ext = ".z"
     classifiers_attr_name = "new_classifiers_attr"
     # MISSING default value for "new_classifiers_attr"
 
 
-class R(WithClassifiers, File):
+class R(WithOrderedClassifiers, UnicodeFile):
 
     ext = ".r"
     classifiers_attr_name = "new_classifiers_attr"
     new_classifiers_attr = ()
-    ordered_classifiers = True

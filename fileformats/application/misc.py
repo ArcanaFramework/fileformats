@@ -1,5 +1,5 @@
 import typing as ty
-from fileformats.generic import File
+from fileformats.generic import BinaryFile, File
 from fileformats.core.mixin import WithMagicNumber
 from .serialization import Xml, Json
 
@@ -7,7 +7,7 @@ from .serialization import Xml, Json
 class _1dInterleavedParityfec(File):
     """Multimedia applications that want to improve resiliency against packet loss by sending redundant data in addition to the source media."""
 
-    iana_mime: ty.Optional[str] = "application/1d-interleaved-parityfec"
+    iana_mime = "application/1d-interleaved-parityfec"
     ext: ty.Optional[str] = None
 
 
@@ -382,7 +382,7 @@ class AutomationmlAmlx__Zip(File):
     ext = ".amlx"
 
 
-class BacnetXdd__Zip(WithMagicNumber, File):
+class BacnetXdd__Zip(WithMagicNumber, BinaryFile):
     """"""
 
     iana_mime = "application/bacnet-xdd+zip"
@@ -939,7 +939,7 @@ class EdiX12(File):
     ext = None
 
 
-class Efi(WithMagicNumber, File):
+class Efi(WithMagicNumber, BinaryFile):
     """EFI compliant firmware, boot loaders, and network boot programs (NBPs) utilizing UEFI HTTP Boot.
 
     TODO: The first two octets are the ASCII Characters "M" and "Z" ("MZ" at offset 0) -
@@ -1083,7 +1083,7 @@ class Eshop(File):
     ext = None
 
 
-class Exi(WithMagicNumber, File):
+class Exi(WithMagicNumber, BinaryFile):
     """No known applications currently use this media type.
 
     TODO: The first four octets may be hexadecimal 24 45 58 49 ("$EXI"). The first
@@ -1124,7 +1124,7 @@ class Fastsoap(File):
     ext = None
 
 
-class Fdf(WithMagicNumber, File):
+class Fdf(WithMagicNumber, BinaryFile):
     """
 
     TODO: "%FDF-" followed by the FDF
@@ -1157,7 +1157,7 @@ class Fhir__Xml(Xml):
     ext = None
 
 
-class Fits(WithMagicNumber, File):
+class Fits(WithMagicNumber, BinaryFile):
     """There are many astronomical image viewing and data reduction
 
     A FITS file described with the media type "application/fits" SHOULD conform to the published standards for FITS files as determined by convention and agreement within the international FITS community. No other constraints are placed on the content of a file described as "application/fits".  A FITS file described with the media type "application/fits" may have an arbitrary number of conforming extension header and data units (XHDUs) that follow its mandatory primary header and data unit (PHDU). The XHDUs may be one of the standard types ("IMAGE", "TABLE", and "BINTABLE") or any other type that satisfies the "Requirements for Conforming Extensions" (section 4.4.1 of [NOST]). The PHDU or any "IMAGE" XHDU may contain zero to 999 dimensions with zero or more pixels along each dimension.  The PHDU may use the random groups convention, in which the dimension of the first axis is zero and the keywords GROUPS, PCOUNT and GCOUNT appear in the header. NAXIS1=0 and GROUPS=T is the signature of random groups; see section 7 of the Definition of FITS paper [NOST].
@@ -1208,7 +1208,7 @@ class Geo__JsonSeq(File):
     ext = None
 
 
-class Geopackage__Sqlite3(WithMagicNumber, File):
+class Geopackage__Sqlite3(WithMagicNumber, BinaryFile):
     """"""
 
     iana_mime = "application/geopackage+sqlite3"
@@ -1238,7 +1238,7 @@ class Gml__Xml(Xml):
     ext = ".gml"
 
 
-class Gzip(WithMagicNumber, File):
+class Gzip(WithMagicNumber, BinaryFile):
     """anywhere data size is an issue"""
 
     iana_mime = "application/gzip"
@@ -1399,7 +1399,7 @@ class Its__Xml(Xml):
     ext = ".its"
 
 
-class JavaArchive(WithMagicNumber, File):
+class JavaArchive(WithMagicNumber, BinaryFile):
     """"""
 
     iana_mime = "application/java-archive"
@@ -1579,7 +1579,7 @@ class Lostsync__Xml(Xml):
     ext = ".lostsyncxml"
 
 
-class Lpf__Zip(WithMagicNumber, File):
+class Lpf__Zip(WithMagicNumber, BinaryFile):
     """This media type is intended to
     be used by multiple interoperable applications for the
     distribution and consumption of ebooks, audiobooks, digital visual
@@ -1746,7 +1746,7 @@ class MbmsUserServiceDescription__Xml(Xml):
     ext = None
 
 
-class Mbox(WithMagicNumber, File):
+class Mbox(WithMagicNumber, BinaryFile):
     """hundreds of messaging products make use of the mbox database format, in one form or another.
 
     TODO: mbox database files can be recognized by having a leading character
@@ -2123,7 +2123,7 @@ class OebpsPackage__Xml(Xml):
     ext = ".opf"
 
 
-class Ogg(WithMagicNumber, File):
+class Ogg(WithMagicNumber, BinaryFile):
     """"""
 
     iana_mime = "application/ogg"
@@ -2153,7 +2153,7 @@ class Oscore(File):
     ext = None
 
 
-class Oxps(WithMagicNumber, File):
+class Oxps(WithMagicNumber, BinaryFile):
     """The application/oxps MIME type can be used to identify CSTA XML (ECMA-388) instance documents. No published applications or print drivers currently use OpenXPS. The intent is for any application or driver that can currently produce/consume Microsoft XPS to also adopt OpenXPS. Examples of such applications would include"""
 
     iana_mime = "application/oxps"
@@ -2208,7 +2208,7 @@ class PatchOpsError__Xml(Xml):
     ext = ".xer"
 
 
-class Pdf(WithMagicNumber, File):
+class Pdf(WithMagicNumber, BinaryFile):
     """See Section 6 of  RFC-hardy-pdf-mime-05."""
 
     iana_mime = "application/pdf"
@@ -2670,7 +2670,7 @@ class RpkiUpdown(File):
     ext = None
 
 
-class Rtf(WithMagicNumber, File):
+class Rtf(WithMagicNumber, BinaryFile):
     """"""
 
     iana_mime = "application/rtf"
@@ -3118,7 +3118,7 @@ class Stix__Json(Json):
     ext = ".stix"
 
 
-class Swid__Cbor(WithMagicNumber, File):
+class Swid__Cbor(WithMagicNumber, BinaryFile):
     """The type is used by software asset management systems and vulnerability assessment systems and is used in applications that use remote integrity verification."""
 
     iana_mime = "application/swid+cbor"
@@ -3340,7 +3340,7 @@ class TveTrigger(File):
     ext = None
 
 
-class Tzif(WithMagicNumber, File):
+class Tzif(WithMagicNumber, BinaryFile):
     """This media type is designed
     for widespread use by applications that need to use or exchange
     time zone information, such as the Time Zone Information Compiler
@@ -3352,7 +3352,7 @@ class Tzif(WithMagicNumber, File):
     magic_number = "545a6966"
 
 
-class TzifLeap(WithMagicNumber, File):
+class TzifLeap(WithMagicNumber, BinaryFile):
     """This media type is designed
     for widespread use by applications that need to use or exchange
     time zone information, such as the Time Zone Information Compiler
@@ -3446,7 +3446,7 @@ class VqRtcpxr(File):
     ext = None
 
 
-class Wasm(WithMagicNumber, File):
+class Wasm(WithMagicNumber, BinaryFile):
     """"""
 
     iana_mime = "application/wasm"
@@ -3484,7 +3484,7 @@ class WhoisppResponse(File):
     ext = None
 
 
-class Widget(WithMagicNumber, File):
+class Widget(WithMagicNumber, BinaryFile):
     """User agents that claim conformance to this specification."""
 
     iana_mime = "application/widget"
@@ -3782,7 +3782,7 @@ class Yin__Xml(Xml):
     ext = ".yin"
 
 
-class Zlib(WithMagicNumber, File):
+class Zlib(WithMagicNumber, BinaryFile):
     """anywhere data size is an issue
 
     TODO: first byte is usually 0x78 but can also be 0x08, 0x18, 0x28, 0x38, 0x48,
@@ -3794,7 +3794,7 @@ class Zlib(WithMagicNumber, File):
     magic_number = "78"
 
 
-class Zstd(WithMagicNumber, File):
+class Zstd(WithMagicNumber, BinaryFile):
     """anywhere data size is an
     issue"""
 

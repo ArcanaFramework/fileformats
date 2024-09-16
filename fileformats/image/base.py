@@ -1,7 +1,5 @@
-from fileformats.generic import File
+from fileformats.core import FileSet
 
 
-# General image formats
-class Image(File):
-    # iana_mime = None
-    pass
+class Image(FileSet):
+    ...  # noqa: E701

@@ -1,25 +1,21 @@
-from fileformats.generic import File
+from fileformats.generic import UnicodeFile
 
 
-class Foo(File):
+class Foo(UnicodeFile):
 
     ext = ".foo"
-    binary = False
 
 
-class Bar(File):
+class Bar(UnicodeFile):
 
     ext = ".bar"
-    binary = False
 
 
-class Baz(File):
+class Baz(UnicodeFile):
 
     ext = ".baz"
-    binary = False
 
 
-class Qux(File):
+class Qux(UnicodeFile):
 
     ext = ".qux"
-    binary = False

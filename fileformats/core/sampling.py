@@ -86,10 +86,7 @@ class SampleFileGenerator:
             file_type = type(file_type)
         fspath = self.generate_fspath(file_type, fname_stem=fname_stem, relpath=relpath)
         fspath.parent.mkdir(parents=True, exist_ok=True)
-        try:
-            is_binary = file_type.binary  # type: ignore
-        except AttributeError:
-            is_binary = False
+        is_binary: bool = getattr(file_type, "binary", False)
         if not contents:
             contents = (
                 bytes(random.choices(list(range(256)), k=fill))

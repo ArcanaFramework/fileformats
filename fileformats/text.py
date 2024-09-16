@@ -1,58 +1,56 @@
-from .core import __version__  # noqa
-import typing as ty
+from .core import __version__
 from fileformats.core.mixin import WithMagicNumber
-from fileformats.generic import File
+from fileformats.generic import UnicodeFile, BinaryFile, File
 
 
 class Text(File):
-    # iana_mime = None
-    binary = False
+    """Base class for text files"""
 
 
 # General formats
-class Plain(Text):
-    iana_mime: ty.Optional[str] = "text/plain"
+class Plain(Text, UnicodeFile):
+    iana_mime = "text/plain"
 
 
-class TextFile(Text):
+class TextFile(Text, UnicodeFile):
     ext = ".txt"
 
 
-class Csv(Text):
+class Csv(Text, UnicodeFile):
     ext = ".csv"
     iana_mime = "text/csv"
 
 
-class Tsv(Text):
+class Tsv(Text, UnicodeFile):
     ext = ".tsv"
     iana_mime = "text/tab-separated-values"
 
 
-class Html(Text):
+class Html(Text, UnicodeFile):
     ext = ".html"
     alternate_exts = (".htm",)
     iana_mime = "text/html"
 
 
-class Markdown(Text):
+class Markdown(Text, UnicodeFile):
     iana_mime = "text/markdown"
     ext = ".md"
     alternate_exts = (".markdown",)
 
 
-class RestructedText(Text):
+class RestructedText(Text, UnicodeFile):
     ext = ".rst"
     iana_mime = "text/x-rst"
 
 
-class _1d_interleaved_parityfec(Text):
+class _1d_interleaved_parityfec(Text, UnicodeFile):
     """"""
 
     iana_mime = "text/1d-interleaved-parityfec"
     ext = None
 
 
-class CacheManifest(WithMagicNumber, File):
+class CacheManifest(WithMagicNumber, Text, BinaryFile):
     """"""
 
     iana_mime = "text/cache-manifest"
@@ -61,7 +59,7 @@ class CacheManifest(WithMagicNumber, File):
     magic_number = b"CACHE MANIFEST"
 
 
-class Calendar(Text):
+class Calendar(Text, UnicodeFile):
     """This media type is designed
     for widespread use by Internet calendaring and scheduling
     applications.  In addition, applications in the workflow and
@@ -74,42 +72,42 @@ class Calendar(Text):
     alternate_exts = (".ifb",)
 
 
-class Cql(Text):
+class Cql(Text, UnicodeFile):
     """"""
 
     iana_mime = "text/cql"
     ext = ".CQL"
 
 
-class CqlExpression(Text):
+class CqlExpression(Text, UnicodeFile):
     """"""
 
     iana_mime = "text/cql-expression"
     ext = None
 
 
-class CqlIdentifier(Text):
+class CqlIdentifier(Text, UnicodeFile):
     """"""
 
     iana_mime = "text/cql-identifier"
     ext = None
 
 
-class Css(Text):
+class Css(Text, UnicodeFile):
     """"""
 
     iana_mime = "text/css"
     ext = ".css"
 
 
-class CsvSchema(Text):
+class CsvSchema(Text, UnicodeFile):
     """"""
 
     iana_mime = "text/csv-schema"
     ext = None
 
 
-class Dns(Text):
+class Dns(Text, UnicodeFile):
     """DNS-related software, including software storing and using certificates stored in DNS."""
 
     iana_mime = "text/dns"
@@ -117,28 +115,28 @@ class Dns(Text):
     alternate_exts = (".zone", None)
 
 
-class Encaprtp(Text):
+class Encaprtp(Text, UnicodeFile):
     """"""
 
     iana_mime = "text/encaprtp"
     ext = None
 
 
-class Fhirpath(Text):
+class Fhirpath(Text, UnicodeFile):
     """"""
 
     iana_mime = "text/fhirpath"
     ext = None
 
 
-class Flexfec(Text):
+class Flexfec(Text, UnicodeFile):
     """Multimedia applications that want to improve resiliency against packet loss by sending redundant data in addition to the source media."""
 
     iana_mime = "text/flexfec"
     ext = None
 
 
-class Fwdred(Text):
+class Fwdred(Text, UnicodeFile):
     """It is expected that real-time audio/video, text streaming, and
     conferencing tools/applications that want protection against
     losses of a large number of consecutive frames will be interested
@@ -148,7 +146,7 @@ class Fwdred(Text):
     ext = None
 
 
-class Gff3(Text):
+class Gff3(Text, UnicodeFile):
     """
 
     TODO: Although no byte sequences can be counted on
@@ -160,21 +158,21 @@ class Gff3(Text):
     ext = ".gff3"
 
 
-class GrammarRefList(Text):
+class GrammarRefList(Text, UnicodeFile):
     """MRCPv2 clients and servers"""
 
     iana_mime = "text/grammar-ref-list"
     ext = None
 
 
-class Hl7v2(Text):
+class Hl7v2(Text, UnicodeFile):
     """"""
 
     iana_mime = "text/hl7v2"
     ext = None
 
 
-class Javascript(Text):
+class Javascript(Text, UnicodeFile):
     """Script interpreters as
     discussed in RFC 9239."""
 
@@ -183,21 +181,21 @@ class Javascript(Text):
     alternate_exts = (".mjs",)
 
 
-class JcrCnd(Text):
+class JcrCnd(Text, UnicodeFile):
     """Used by content repositories that implement the Content Repository For Java API (JCR)"""
 
     iana_mime = "text/jcr-cnd"
     ext = ".cnd"
 
 
-class Mizar(Text):
+class Mizar(Text, UnicodeFile):
     """"""
 
     iana_mime = "text/mizar"
     ext = ".miz"
 
 
-class N3(Text):
+class N3(Text, UnicodeFile):
     """
 
     TODO: Notation3 documents may have the strings '@prefix' or '@base' (case dependent) near the
@@ -207,7 +205,7 @@ class N3(Text):
     ext = ".n3"
 
 
-class Parameters(Text):
+class Parameters(Text, UnicodeFile):
     """Applications that use RTSP
     and have additional parameters they like to read and set using the
     RTSP GET_PARAMETER and SET_PARAMETER methods."""
@@ -216,14 +214,14 @@ class Parameters(Text):
     ext = None
 
 
-class Parityfec(Text):
+class Parityfec(Text, UnicodeFile):
     """"""
 
     iana_mime = "text/parityfec"
     ext = None
 
 
-class ProvenanceNotation(Text):
+class ProvenanceNotation(Text, UnicodeFile):
     """
 
     TODO: PROV-N documents may have the strings 'document' near the beginning of the document.
@@ -233,7 +231,7 @@ class ProvenanceNotation(Text):
     ext = ".provn"
 
 
-class Prs_Fallenstein_Rst(Text):
+class Prs_Fallenstein_Rst(Text, UnicodeFile):
     """"""
 
     iana_mime = "text/prs.fallenstein.rst"
@@ -241,7 +239,7 @@ class Prs_Fallenstein_Rst(Text):
     alternate_exts = (".rst",)
 
 
-class Prs_Lines_Tag(Text):
+class Prs_Lines_Tag(Text, UnicodeFile):
     """
 
     TODO: All tag data streams start Tag-xxx-version - where xxx is the particular tag type.
@@ -252,70 +250,70 @@ class Prs_Lines_Tag(Text):
     alternate_exts = (None,)
 
 
-class Prs_Prop_Logic(Text):
+class Prs_Prop_Logic(Text, UnicodeFile):
     """"""
 
     iana_mime = "text/prs.prop.logic"
     ext = ".txt"
 
 
-class Raptorfec(Text):
+class Raptorfec(Text, UnicodeFile):
     """Real-time multimedia applications like video streaming, audio streaming, and video conferencing."""
 
     iana_mime = "text/raptorfec"
     ext = None
 
 
-class Red(Text):
+class Red(Text, UnicodeFile):
     """"""
 
     iana_mime = "text/RED"
     ext = None
 
 
-class Rfc822_headers(Text):
+class Rfc822_headers(Text, UnicodeFile):
     """"""
 
     iana_mime = "text/rfc822-headers"
     ext = None
 
 
-class RichText(Text):
+class RichText(Text, UnicodeFile):
     """"""
 
     iana_mime = "text/rtf"
     ext = ".rtf"
 
 
-class RtpEncAescm128(Text):
+class RtpEncAescm128(Text, UnicodeFile):
     """"""
 
     iana_mime = "text/rtp-enc-aescm128"
     ext = None
 
 
-class Rtploopback(Text):
+class Rtploopback(Text, UnicodeFile):
     """"""
 
     iana_mime = "text/rtploopback"
     ext = None
 
 
-class Rtx(Text):
+class Rtx(Text, UnicodeFile):
     """"""
 
     iana_mime = "text/rtx"
     ext = None
 
 
-class Sgml(Text):
+class Sgml(Text, UnicodeFile):
     """"""
 
     iana_mime = "text/SGML"
     ext = None
 
 
-class Shaclc(Text):
+class Shaclc(Text, UnicodeFile):
     """An implementations of SHACLC
     is part of the TopQuadrant SHACL API
 
@@ -329,14 +327,14 @@ class Shaclc(Text):
     alternate_exts = (".shc",)
 
 
-class Shex(Text):
+class Shex(Text, UnicodeFile):
     """"""
 
     iana_mime = "text/shex"
     ext = ".shex"
 
 
-class Spdx(Text):
+class Spdx(Text, UnicodeFile):
     """The "charset" parameter is not used for the
     defined subtype because the charset information is transported
     inside the payload."""
@@ -345,14 +343,14 @@ class Spdx(Text):
     ext = ".spdx"
 
 
-class Strings(Text):
+class Strings(Text, UnicodeFile):
     """"""
 
     iana_mime = "text/strings"
     ext = None
 
 
-class T140(Text):
+class T140(Text, UnicodeFile):
     """This type is only defined for transfer via
     RTP."""
 
@@ -360,14 +358,14 @@ class T140(Text):
     ext = None
 
 
-class Troff(Text):
+class Troff(Text, UnicodeFile):
     """"""
 
     iana_mime = "text/troff"
     ext = None
 
 
-class Turtle(Text):
+class Turtle(Text, UnicodeFile):
     """
 
     TODO: Turtle documents may have the strings '@prefix' or '@base' (case dependent) near the
@@ -377,14 +375,14 @@ class Turtle(Text):
     ext = ".ttl"
 
 
-class Ulpfec(Text):
+class Ulpfec(Text, UnicodeFile):
     """Multimedia applications that seek to improve resiliency to loss by sending additional data with the media stream."""
 
     iana_mime = "text/ulpfec"
     ext = None
 
 
-class UriList(Text):
+class UriList(Text, UnicodeFile):
     """"""
 
     iana_mime = "text/uri-list"
@@ -392,7 +390,7 @@ class UriList(Text):
     alternate_exts = (".uri",)
 
 
-class Vcard(Text):
+class Vcard(Text, UnicodeFile):
     """They are numerous, diverse,
     and include mail user agents, instant messaging clients, address
     book applications, directory servers, and customer relationship
@@ -403,7 +401,7 @@ class Vcard(Text):
     alternate_exts = (".vcard",)
 
 
-class Vtt(Text):
+class Vtt(Text, UnicodeFile):
     """Web browsers and other video
     players.
 
@@ -416,14 +414,14 @@ class Vtt(Text):
     ext = ".vtt"
 
 
-class Wgsl(Text):
+class Wgsl(Text, UnicodeFile):
     """"""
 
     iana_mime = "text/wgsl"
     ext = ".wgsl"
 
 
-class XmlExternalParsedEntity(Text):
+class XmlExternalParsedEntity(Text, UnicodeFile):
     """"""
 
     iana_mime = "text/xml-external-parsed-entity"
@@ -439,6 +437,7 @@ from fileformats.application import (  # noqa
 
 
 __all__ = [
+    "__version__",
     "Text",
     "Plain",
     "TextFile",

@@ -17,8 +17,6 @@ from .fsobject import FsObject
 class File(FsObject):
     """Generic file type"""
 
-    binary = True
-
     @validated_property
     def fspath(self) -> Path:
         fspath = self.select_by_ext()
@@ -97,8 +95,6 @@ class File(FsObject):
         newline: ty.Optional[str] = None,
     ) -> ty.Union[ty.IO[str], ty.IO[bytes]]:
         """Open a I/O stream to the file"""
-        if self.binary and "b" not in mode:
-            mode += "b"
         return self.fspath.open(
             mode=mode,
             buffering=buffering,
@@ -143,9 +139,68 @@ class File(FsObject):
     def read_bytes(self) -> bytes:
         return self.fspath.read_bytes()
 
+
+class UnicodeFile(File):
+
+    binary = False
+
+    def open(
+        self,
+        mode: str = "r",
+        buffering: int = -1,
+        encoding: ty.Optional[str] = None,
+        errors: ty.Optional[str] = None,
+        newline: ty.Optional[str] = None,
+    ) -> ty.IO[str]:
+        """Open a I/O stream to the file"""
+        if mode.endswith("b"):
+            raise ValueError(
+                f"Cannot open text file with binary mode '{mode}'. If you need to do this "
+                "access the underlying path directly, e.g. my_file.fspath.open(mode='rb')"
+            )
+        io: ty.IO[str] = super().open(  # type: ignore[assignment]
+            mode=mode,
+            buffering=buffering,
+            encoding=encoding,
+            errors=errors,
+            newline=newline,
+        )
+        return io
+
+    def read_contents(self, size: ty.Optional[int] = None, offset: int = 0) -> str:
+        contents: str = super().read_contents(size=size, offset=offset)  # type: ignore[assignment]
+        return contents
+
     def read_text(
         self, encoding: ty.Optional[str] = None, errors: ty.Optional[str] = None
     ) -> str:
-        if self.binary:
-            raise FormatMismatchError(f"Cannot read text from binary filetype {self}")
         return self.fspath.read_text(encoding=encoding, errors=errors)
+
+
+class BinaryFile(File):
+
+    binary = True
+
+    def open(
+        self,
+        mode: str = "r",
+        buffering: int = -1,
+        encoding: ty.Optional[str] = None,
+        errors: ty.Optional[str] = None,
+        newline: ty.Optional[str] = None,
+    ) -> ty.IO[bytes]:
+        """Open a I/O stream to the file"""
+        if not mode.endswith("b"):
+            mode += "b"
+        io: ty.IO[bytes] = super().open(  # type: ignore[assignment]
+            mode=mode,
+            buffering=buffering,
+            encoding=encoding,
+            errors=errors,
+            newline=newline,
+        )
+        return io
+
+    def read_contents(self, size: ty.Optional[int] = None, offset: int = 0) -> bytes:
+        contents: bytes = super().read_contents(size=size, offset=offset)  # type: ignore[assignment]
+        return contents

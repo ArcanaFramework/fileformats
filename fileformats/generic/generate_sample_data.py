@@ -28,7 +28,7 @@ def file_generate_sample_data(
     generator: SampleFileGenerator,
 ) -> ty.List[Path]:
     contents = None
-    if file.binary:
+    if getattr(file, "binary", False):
         if hasattr(file, "magic_number"):
             offset = getattr(file, "magic_number_offset", 0)
             contents = os.urandom(offset)

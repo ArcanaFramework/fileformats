@@ -1,11 +1,10 @@
-from fileformats.core import Classifier, DataType
+from fileformats.core import Classifier, DataType, __version__
 from fileformats.core.mixin import WithClassifiers
 
 
 class SubpackageClassified(WithClassifiers, DataType):
     classifiers_attr_name = "classifiers"
     classifiers = ()
-    multiple_classifiers = True
     allowed_classifiers = (Classifier,)
     generically_classifiable = False
 
@@ -20,3 +19,6 @@ class Zeta(Classifier):
 
 class Theta(Classifier):
     pass
+
+
+__all__ = ["SubpackageClassified", "Psi", "Zeta", "Theta", "__version__"]

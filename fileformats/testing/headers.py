@@ -1,29 +1,25 @@
-from fileformats.generic import File
+from fileformats.generic import UnicodeFile, BinaryFile
 from fileformats.application import Json
 from fileformats.core.mixin import WithSideCars, WithSeparateHeader, WithMagicNumber
 
 
-class YFile(File):
+class YFile(UnicodeFile):
     ext = ".y"
-    binary = False
 
 
-class ZFile(File):
+class ZFile(UnicodeFile):
     ext = ".z"
-    binary = False
 
 
-class Xyz(WithSideCars, File):
+class Xyz(WithSideCars, UnicodeFile):
 
     ext = ".x"
-    binary = False
     side_car_types = (YFile, ZFile)
 
 
-class MyFormat(File):
+class MyFormat(UnicodeFile):
 
     ext = ".my"
-    binary = False
 
 
 class MyFormatGz(MyFormat):
@@ -36,12 +32,12 @@ class MyFormatX(WithSideCars, MyFormat):
     side_car_types = (Json,)
 
 
-class MyBinaryFormat(WithMagicNumber, File):
+class MyBinaryFormat(WithMagicNumber, UnicodeFile):
     ext = ".my"
     magic_number = b"MYFORMAT"
 
 
-class MyHeader(File):
+class MyHeader(UnicodeFile):
     ext = ".myhdr"
 
 
@@ -49,29 +45,26 @@ class MyBinaryFormatX(WithSeparateHeader, MyFormat):
     header_type = MyHeader
 
 
-class MyOtherBinaryFormatX(WithMagicNumber, WithSeparateHeader, File):
+class MyOtherBinaryFormatX(WithMagicNumber, WithSeparateHeader, BinaryFile):
     magic_number = b"MYFORMAT"
     ext = ".my"
     header_type = MyHeader
 
 
-class YourFormat(File):
+class YourFormat(UnicodeFile):
 
     ext = ".yr"
-    binary = False
 
 
-class SeparateHeader(File):
+class SeparateHeader(UnicodeFile):
 
     ext = ".hdr"
-    binary = False
 
 
-class ImageWithHeader(WithSeparateHeader, File):
+class ImageWithHeader(WithSeparateHeader, UnicodeFile):
 
     ext = ".img"
     header_type = SeparateHeader
-    binary = False
 
 
 class MyFormatGzX(MyFormatX, MyFormatGz):
@@ -79,7 +72,7 @@ class MyFormatGzX(MyFormatX, MyFormatGz):
     pass
 
 
-class EncodedText(File):
+class EncodedText(UnicodeFile):
     """A text file where the characters ASCII codes are shifted on conversion
     from text
     """

@@ -4,6 +4,7 @@ from fileformats.core import validated_property
 from fileformats.core.typing import TypeAlias
 from fileformats.core.mixin import WithMagicNumber
 from fileformats.core.exceptions import FormatMismatchError
+from fileformats.generic import BinaryFile
 from .base import Image
 
 if ty.TYPE_CHECKING:
@@ -15,9 +16,8 @@ DataArrayType: TypeAlias = (
 )  # In Python < 3.9 this is probmematic "numpy.typing.NDArray[typing.Union[numpy.floating[typing.Any], numpy.integer[typing.Any]]]"
 
 
-class RasterImage(Image):
+class RasterImage(Image, BinaryFile):
     # iana_mime = None
-    pass
     binary = True
 
 
