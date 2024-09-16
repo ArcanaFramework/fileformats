@@ -1,12 +1,12 @@
 import typing as ty
 from conftest import write_test_file
-from fileformats.generic import File
+from fileformats.generic import BinaryFile, UnicodeFile
 from fileformats.core import validated_property
 from fileformats.core.mixin import WithMagicNumber, WithSeparateHeader, WithSideCars
 from fileformats.core.exceptions import FormatMismatchError
 
 
-class FileWithMagicNumber(WithMagicNumber, File):
+class FileWithMagicNumber(WithMagicNumber, BinaryFile):
 
     ext = ".magic"
     binary = True
@@ -31,23 +31,21 @@ def test_magic_fail(work_dir):
     assert not FileWithMagicNumber.matches(fspath)
 
 
-class Header(File):
+class Header(UnicodeFile):
 
     ext = ".hdr"
-    binary = False
 
     def load(self):
         return dict(ln.split(":") for ln in self.contents.splitlines())
 
 
-class FileWithSeparateHeader(WithSeparateHeader, File):
+class FileWithSeparateHeader(WithSeparateHeader, UnicodeFile):
 
     ext = ".img"
     header_type = Header
 
     image_type_key = "image-type"
     image_type = "sample-image-type"
-    binary = False
 
     @validated_property
     def _check_image_type(self):
@@ -98,7 +96,7 @@ def test_with_separate_header_fail2(work_dir):
     assert not FileWithSeparateHeader.matches([fspath, hdr_fspath])
 
 
-class ImageWithInlineHeader(File):
+class ImageWithInlineHeader(BinaryFile):
 
     ext = ".img"
     binary = True

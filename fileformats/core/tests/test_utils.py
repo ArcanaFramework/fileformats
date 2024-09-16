@@ -5,17 +5,17 @@ import shutil
 import time
 import pytest
 from fileformats.core import FileSet, validated_property
-from fileformats.generic import File, Directory, FsObject
+from fileformats.generic import File, BinaryFile, Directory, FsObject
 from fileformats.core.mixin import WithSeparateHeader
 from fileformats.core.exceptions import UnsatisfiableCopyModeError
 from conftest import write_test_file
 
 
-class Mario(File):
+class Mario(BinaryFile):
     ext = ".mario"
 
 
-class Luigi(WithSeparateHeader, File):
+class Luigi(WithSeparateHeader, BinaryFile):
     ext = ".luigi"
     header_type = Mario
 

@@ -2,10 +2,10 @@ import typing as ty
 import pytest
 import time
 from fileformats.core import FileSet, extra_implementation
-from fileformats.generic import File
+from fileformats.generic import BinaryFile
 
 
-class FileWithMetadata(File):
+class FileWithMetadata(BinaryFile):
     ext = ".mf"
 
 

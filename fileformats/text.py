@@ -1,10 +1,10 @@
 from .core import __version__  # noqa
 import typing as ty
 from fileformats.core.mixin import WithMagicNumber
-from fileformats.generic import File
+from fileformats.generic import UnicodeFile, BinaryFile
 
 
-class Text(File):
+class Text(UnicodeFile):
     # iana_mime = None
     binary = False
 
@@ -52,7 +52,7 @@ class _1d_interleaved_parityfec(Text):
     ext = None
 
 
-class CacheManifest(WithMagicNumber, File):
+class CacheManifest(WithMagicNumber, BinaryFile):
     """"""
 
     iana_mime = "text/cache-manifest"

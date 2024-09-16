@@ -4,10 +4,10 @@ from fileformats.core.decorators import (
     mtime_cached_property,
     enough_time_has_elapsed_given_mtime_resolution,
 )
-from fileformats.generic import File
+from fileformats.generic import UnicodeFile
 
 
-class MtimeTestFile(File):
+class MtimeTestFile(UnicodeFile):
 
     flag: int
 

@@ -1,8 +1,8 @@
-from fileformats.generic import File
+from fileformats.generic import BinaryFile
 from fileformats.core.mixin import WithMagicNumber
 
 
-class Dicom(WithMagicNumber, File):
+class Dicom(WithMagicNumber, BinaryFile):
 
     iana_mime = "application/dicom"
     magic_number = b"DICM"

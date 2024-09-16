@@ -1,5 +1,5 @@
 from fileformats.core import Classifier
-from fileformats.generic import File
+from fileformats.generic import UnicodeFile
 from fileformats.core.mixin import WithClassifiers
 
 
@@ -35,7 +35,7 @@ class Z(Y):
     pass
 
 
-class Classified(WithClassifiers, File):
+class Classified(WithClassifiers, UnicodeFile):
     classifiers_attr_name = "classifiers"
     classifiers = ()
     exclusive_classifiers = (CategoryA, CategoryB)

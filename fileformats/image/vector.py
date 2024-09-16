@@ -1,9 +1,9 @@
-from .base import Image
+from fileformats.generic import UnicodeFile
 from fileformats.application import InformalSchema, Xml
+from .base import Image
 
 
-class VectorImage(Image):
-    # iana_mime = None
+class VectorImage(Image, UnicodeFile):
     pass
 
 

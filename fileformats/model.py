@@ -1,9 +1,9 @@
 from .core import __version__  # noqa
 from .core.mixin import WithMagicNumber
-from fileformats.generic import File
+from fileformats.generic import BinaryFile
 
 
-class Model(File):
+class Model(BinaryFile):
 
     # iana_mime = None
     pass
@@ -65,7 +65,7 @@ class Obj(Model):
     ext = ".obj"
 
 
-class Prc(WithMagicNumber, File):
+class Prc(WithMagicNumber, BinaryFile):
     """"""
 
     iana_mime = "model/prc"
@@ -109,7 +109,7 @@ class Stl(Model):
     ext = ".stl"
 
 
-class U3d(WithMagicNumber, File):
+class U3d(WithMagicNumber, BinaryFile):
     """"""
 
     iana_mime = "model/u3d"
@@ -117,7 +117,7 @@ class U3d(WithMagicNumber, File):
     magic_number = "55334400"
 
 
-class X3d_vrml(WithMagicNumber, File):
+class X3d_vrml(WithMagicNumber, BinaryFile):
     """"""
 
     iana_mime = "model/x3d-vrml"

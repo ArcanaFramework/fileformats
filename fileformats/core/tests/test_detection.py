@@ -1,5 +1,5 @@
 import pytest
-from fileformats.generic import File, Directory, DirectoryOf
+from fileformats.generic import File, BinaryFile, UnicodeFile, Directory, DirectoryOf
 from fileformats.core.exceptions import FormatMismatchError
 from fileformats.core.mixin import WithSideCars
 from conftest import write_test_file
@@ -53,7 +53,7 @@ def test_dynamic_dir_fail(work_dir):
     assert not DirectoryOf[TestFile].matches(fspath)
 
 
-class TestFile(File):
+class TestFile(BinaryFile):
 
     ext = ".foo"
 
@@ -110,7 +110,7 @@ def test_dir_contents_fail(work_dir):
     assert not TestDir.matches(fspath)
 
 
-class DoubleExtFileFormat(File):
+class DoubleExtFileFormat(BinaryFile):
 
     ext = ".foo.bar"
 
@@ -163,7 +163,7 @@ def test_nested_directories_fail2(work_dir):
     assert not NestedDirFormat.matches(fspath)
 
 
-# class FileWithSideCars(File):
+# class FileWithSideCars(BinaryFile):
 
 #     ext = ".foo"
 
@@ -215,7 +215,7 @@ def test_nested_directories_fail2(work_dir):
 #     assert not FileWithSideCars.matches(fspath)
 
 
-class Bar(File):
+class Bar(UnicodeFile):
 
     ext = ".bar"
 

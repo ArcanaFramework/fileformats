@@ -245,7 +245,7 @@ class WithClassifiers:
     ``Array[Integer]`` for an array containing integers, or DicomDir[T1w, Brain] for a
     T1-weighted MRI scan of the brain in DICOM format.
 
-        class MyFormatWithClassifiers(WithClassifiers, File):
+        class MyFormatWithClassifiers(WithClassifiers, BinaryFile):
 
             ext = ".myf
 

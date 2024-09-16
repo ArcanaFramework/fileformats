@@ -3,7 +3,7 @@ import platform
 import pytest
 import typing as ty
 from fileformats.core import validated_property
-from fileformats.generic import File
+from fileformats.generic import File, UnicodeFile, BinaryFile
 from fileformats.field import Integer, Boolean, Decimal, Array, Text
 from fileformats.testing import Foo
 from fileformats.core.exceptions import FormatMismatchError
@@ -13,10 +13,10 @@ from conftest import write_test_file
 def test_init_args(work_dir):
     fspath = work_dir / "test.txt"
     write_test_file(fspath)
-    File([fspath])
+    UnicodeFile([fspath])
 
 
-class TestFile(File):
+class TestFile(UnicodeFile):
 
     ext = ".tst"
 
@@ -126,10 +126,9 @@ def test_python_hash_array():
     assert hash(b) != hash(a)
 
 
-class ImageWithInlineHeader(File):
+class ImageWithInlineHeader(BinaryFile):
 
     ext = ".img"
-    binary = True
 
     header_separator = b"---END HEADER---"
 

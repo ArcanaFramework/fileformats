@@ -1,10 +1,10 @@
-from fileformats.generic import File
+from fileformats.generic import BinaryFile
 from .archive import Zip
 from fileformats.core.mixin import WithMagicNumber
 
 
 # Document formats
-class Document(File):
+class Document(BinaryFile):
     # iana_mime = None
     pass
 

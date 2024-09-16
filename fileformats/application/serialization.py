@@ -4,12 +4,12 @@ from fileformats.core.typing import TypeAlias
 from pathlib import Path
 from fileformats.core import DataType, FileSet, extra_implementation
 from fileformats.core.mixin import WithClassifiers
-from ..generic import File
+from ..generic import UnicodeFile
 from fileformats.core.exceptions import FormatMismatchError
 from fileformats.core import SampleFileGenerator
 
 
-LoadedSerialization: TypeAlias = ty.Union[ty.Dict[str, ty.Any], ty.List[ty.Any]]
+SerializationType: TypeAlias = ty.Union[ty.Dict[str, ty.Any], ty.List[ty.Any]]
 
 
 class Schema(DataType):
@@ -31,7 +31,7 @@ class InformalSchema(Schema):
     "Not actually a strict schema, just a set of conventions on how to structure the serialization"
 
 
-class DataSerialization(WithClassifiers, File):
+class TextSerialization(WithClassifiers, UnicodeFile):
     "Base class for text-based hierarchical data-serialization formats, e.g. JSON, YAML"
 
     # Classifiers class attrs
@@ -40,41 +40,28 @@ class DataSerialization(WithClassifiers, File):
     multiple_classifiers: bool = False
     allowed_classifiers: ty.Tuple[ty.Type[Schema], ...] = (Schema,)
     generically_classifiable: bool = True
-    binary: bool = False
 
     iana_mime: ty.Optional[str] = None
 
 
-class Xml(DataSerialization):
+class Xml(TextSerialization):
     ext: ty.Optional[str] = ".xml"
     allowed_classifiers = (XmlSchema, InformalSchema)
 
 
-class Json(DataSerialization):
+class Json(TextSerialization):
     ext: ty.Optional[str] = ".json"
     allowed_classifiers = (JsonSchema, InformalSchema)
 
-    def load(self) -> LoadedSerialization:
-        try:
-            with open(self.fspath) as f:
-                dct: ty.Dict[str, ty.Any] = json.load(f)
-        except json.JSONDecodeError as e:
-            raise FormatMismatchError(
-                f"'{self.fspath}' is not a valid JSON file"
-            ) from e
-        return dct
-
-    def save(self, data: LoadedSerialization) -> None:
-        with open(self.fspath, "w") as f:
-            json.dump(data, f)
+    # TODO: add validation mechanisms to check class
 
 
-class Yaml(DataSerialization):
+class Yaml(TextSerialization):
     ext = ".yaml"
     alternate_exts = (".yml",)
 
 
-class Toml(DataSerialization):
+class Toml(TextSerialization):
     ext = ".toml"
 
 
@@ -116,3 +103,19 @@ d:
 """
         )
     return [yml_file]
+
+
+@extra_implementation(FileSet.load)
+def load(jsn: Json) -> SerializationType:
+    try:
+        with jsn.open() as f:
+            dct: ty.Dict[str, ty.Any] = json.load(f)
+    except json.JSONDecodeError as e:
+        raise FormatMismatchError(f"'{jsn.fspath}' is not a valid JSON file") from e
+    return dct
+
+
+@extra_implementation(FileSet.save)
+def save(jsn: Json, data: SerializationType) -> None:
+    with jsn.open("w") as f:
+        json.dump(data, f)
