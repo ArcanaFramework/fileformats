@@ -9,7 +9,7 @@ if ty.TYPE_CHECKING:
     import numpy.typing  # noqa: F401
 
 
-DataArrayType: TypeAlias = "numpy.typing.NDArray[ty.Union[numpy.floating[typing.Any], numpy.integer[typing.Any]]]"
+DataArrayType: TypeAlias = "numpy.typing.NDArray[typing.Union[numpy.floating[typing.Any], numpy.integer[typing.Any]]]"
 
 
 class RasterImage(Image):

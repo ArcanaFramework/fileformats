@@ -1,4 +1,6 @@
 import imageio
+import numpy  # noqa: F401
+import typing  # noqa: F401
 from fileformats.core import extra_implementation
 from fileformats.image.raster import RasterImage, DataArrayType
 
