@@ -35,6 +35,6 @@ repos:
             --strict,
             --install-types,
             --non-interactive,
-            --no-warn-unused-ignores,
           ]
         exclude: tests
+        additional_dependencies: [pytest]
