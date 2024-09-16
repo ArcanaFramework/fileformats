@@ -7,7 +7,7 @@ from .serialization import Xml, Json
 class _1dInterleavedParityfec(File):
     """Multimedia applications that want to improve resiliency against packet loss by sending redundant data in addition to the source media."""
 
-    iana_mime: ty.Optional[str] = "application/1d-interleaved-parityfec"
+    iana_mime = "application/1d-interleaved-parityfec"
     ext: ty.Optional[str] = None
 
 

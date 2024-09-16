@@ -40,8 +40,6 @@ class TextSerialization(WithClassifier, UnicodeFile):
     allowed_classifiers: ty.Tuple[ty.Type[Schema], ...] = (Schema,)
     generically_classifiable: bool = True
 
-    iana_mime: ty.Optional[str] = None
-
 
 class Xml(TextSerialization):
     ext: ty.Optional[str] = ".xml"

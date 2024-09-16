@@ -1,16 +1,15 @@
-from .core import __version__  # noqa
-import typing as ty
+from .core import __version__
 from fileformats.core.mixin import WithMagicNumber
-from fileformats.generic import UnicodeFile, BinaryFile
+from fileformats.generic import UnicodeFile, BinaryFile, File
 
 
-class Text:
+class Text(File):
     """Base class for text files"""
 
 
 # General formats
 class Plain(Text, UnicodeFile):
-    iana_mime: ty.Optional[str] = "text/plain"
+    iana_mime = "text/plain"
 
 
 class TextFile(Text, UnicodeFile):
@@ -438,6 +437,7 @@ from fileformats.application import (  # noqa
 
 
 __all__ = [
+    "__version__",
     "Text",
     "Plain",
     "TextFile",

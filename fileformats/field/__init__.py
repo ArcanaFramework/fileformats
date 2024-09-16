@@ -7,7 +7,7 @@ data, so the classes in this module are provided to support these use cases.
 
 import decimal
 import typing as ty
-from fileformats.core import Field
+from fileformats.core import Field, __version__  # noqa: F401
 from fileformats.core.mixin import WithClassifier
 from fileformats.core.exceptions import FormatMismatchError
 
@@ -246,11 +246,11 @@ class Array(
 
     @ty.overload
     def __getitem__(self, index: int) -> ItemType:
-        ...
+        ...  # noqa: E704
 
     @ty.overload
     def __getitem__(self, slice: slice) -> ty.Sequence[ItemType]:
-        ...
+        ...  # noqa: E704
 
     def __getitem__(self, key: ty.Any) -> ty.Any:
         return self.value[key]

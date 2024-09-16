@@ -80,14 +80,14 @@ class FileSet(DataType):
     is_fileset = True
 
     # File extensions associated with file format
-    ext: ty.Union[str, None] = None
+    ext: ty.Optional[str] = None
     alternate_exts: ty.Tuple[ty.Optional[str], ...] = ()
 
     # to be overridden in subclasses
     # Explicitly set the Internet Assigned Numbers Authority (https://iana_mime.org) MIME
     # type to None for any base classes that should not correspond to a MIME or MIME-like
     # type.
-    iana_mime: ty.Optional[str] = None
+    iana_mime = ""
 
     # Member attributes
     fspaths: ty.FrozenSet[Path]
@@ -262,14 +262,12 @@ class FileSet(DataType):
         str
             the MIME type corresponding to the class
         """
-        try:
-            mime_type = cls.__dict__["iana_mime"]
-            assert isinstance(mime_type, str)
+        mime_type = cls.__dict__.get("iana_mime", "")
+        assert isinstance(mime_type, str)
+        if mime_type:
             return mime_type
-        except KeyError:
-            assert isinstance(cls, type)
-            format_name = to_mime_format_name(cls.__name__)
-            return f"application/x-{format_name}"
+        format_name = to_mime_format_name(cls.__name__)  # type: ignore[attr-defined]
+        return f"application/x-{format_name}"
 
     @classproperty
     def strext(cls) -> str:
@@ -713,9 +711,9 @@ class FileSet(DataType):
         """a dictionary containing all formats by their IANA MIME type (if applicable)"""
         if cls._formats_by_iana_mime is None:
             cls._formats_by_iana_mime = {
-                f.iana_mime: f  # type: ignore[misc]
+                f.iana_mime: f
                 for f in FileSet.all_formats
-                if f.__dict__.get("iana_mime") is not None
+                if f.__dict__.get("iana_mime", "")
             }
         return cls._formats_by_iana_mime
 
@@ -731,7 +729,7 @@ class FileSet(DataType):
                         (
                             (to_mime_format_name(f.__name__), f)
                             for f in FileSet.all_formats
-                            if f.__dict__.get("iana_mime") is None
+                            if not f.__dict__.get("iana_mime", "")
                         ),
                         key=itemgetter(0),
                     ),

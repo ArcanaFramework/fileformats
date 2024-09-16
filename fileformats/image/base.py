@@ -1,3 +1,5 @@
-# General image formats
-class Image:
-    pass
+from fileformats.core import FileSet
+
+
+class Image(FileSet):
+    ...  # noqa: E701

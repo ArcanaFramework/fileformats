@@ -1,12 +1,11 @@
-from .core import __version__  # noqa
+from .core import __version__
 from .core.mixin import WithMagicNumber
-from fileformats.generic import BinaryFile
+from fileformats.generic import BinaryFile, File
+from fileformats.application import Json, Xml
 
 
-class Model(BinaryFile):
-
-    # iana_mime = None
-    pass
+class Model(File):
+    ...  # noqa: E701
 
 
 class _3mf(Model):
@@ -23,14 +22,14 @@ class E57(Model):
     ext = None
 
 
-class GltfBinary(Model):
+class GltfBinary(Model, BinaryFile):
     """"""
 
     iana_mime = "model/gltf-binary"
     ext = None
 
 
-class Gltf__Json(Model):
+class Gltf__Json(Model, Json):
     """"""
 
     iana_mime = "model/gltf+json"
@@ -132,7 +131,7 @@ class X3d__Fastinfoset(Model):
     ext = ".x3db"
 
 
-class X3d__Xml(Model):
+class X3d__Xml(Model, Xml):
     """"""
 
     iana_mime = "model/x3d+xml"
@@ -140,6 +139,7 @@ class X3d__Xml(Model):
 
 
 __all__ = [
+    "__version__",
     "Model",
     "_3mf",
     "E57",

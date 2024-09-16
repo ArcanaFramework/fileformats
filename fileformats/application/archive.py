@@ -7,7 +7,6 @@ from fileformats.core.mixin import WithMagicNumber
 
 class Archive(BinaryFile):
     "Base class for compressed archives"
-    binary = True
     archived_type: ty.Optional[ty.Type[FileSet]] = None
 
 

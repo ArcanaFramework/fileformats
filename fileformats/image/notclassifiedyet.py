@@ -22,21 +22,21 @@ class Apng(WithMagicNumber, BinaryFile, Image):
     magic_number = "89504e470d0a1a0a"
 
 
-class Avci(Image):
+class Avci(Image, BinaryFile):
     """"""
 
     iana_mime = "image/avci"
     ext = ".avci"
 
 
-class Avcs(Image):
+class Avcs(Image, BinaryFile):
     """"""
 
     iana_mime = "image/avcs"
     ext = ".avcs"
 
 
-class Avif(Image):
+class Avif(Image, BinaryFile):
     """"""
 
     iana_mime = "image/avif"
@@ -44,14 +44,14 @@ class Avif(Image):
     alternative_exts = (".heif", ".heifs", ".hif")
 
 
-class Cgm(Image):
+class Cgm(Image, BinaryFile):
     """"""
 
     iana_mime = "image/cgm"
     ext = None
 
 
-class DicomRle(Image):
+class DicomRle(Image, BinaryFile):
     """"""
 
     iana_mime = "image/dicom-rle"
@@ -69,7 +69,7 @@ class Dpx(WithMagicNumber, BinaryFile, Image):
     magic_number = "53445058"
 
 
-class Emf(Image):
+class Emf(Image, BinaryFile):
     """Office productivity applications; clip art applications; desktop
     publishing applications; some web browsers (e.g., Internet
     Explorer).
@@ -119,49 +119,49 @@ class Fits(WithMagicNumber, BinaryFile, Image):
     magic_number = b"SIMPLE = T"
 
 
-class G3fax(Image):
+class G3fax(Image, BinaryFile):
     """"""
 
     iana_mime = "image/g3fax"
     ext: ty.Optional[str] = None
 
 
-class Heic(Image):
+class Heic(Image, BinaryFile):
     """"""
 
     iana_mime = "image/heic"
     ext = ".heic"
 
 
-class HeicSequence(Image):
+class HeicSequence(Image, BinaryFile):
     """"""
 
     iana_mime = "image/heic-sequence"
     ext = ".heics"
 
 
-class Heif(Image):
+class Heif(Image, BinaryFile):
     """"""
 
     iana_mime = "image/heif"
     ext = ".heif"
 
 
-class HeifSequence(Image):
+class HeifSequence(Image, BinaryFile):
     """"""
 
     iana_mime = "image/heif-sequence"
     ext = ".heifs"
 
 
-class Hej2k(Image):
+class Hej2k(Image, BinaryFile):
     """"""
 
     iana_mime = "image/hej2k"
     ext = ".hej2"
 
 
-class Hsj2(Image):
+class Hsj2(Image, BinaryFile):
     """"""
 
     iana_mime = "image/hsj2"
@@ -177,7 +177,7 @@ class J2c(WithMagicNumber, BinaryFile, Image):
     magic_number = "ff4fff51"
 
 
-class Jls(Image):
+class Jls(Image, BinaryFile):
     """"""
 
     iana_mime = "image/jls"
@@ -193,7 +193,7 @@ class Jp2(WithMagicNumber, BinaryFile, Image):
     magic_number = "0000000c6a5020200d0a870a"
 
 
-class Jph(Image):
+class Jph(Image, BinaryFile):
     """
 
     TODO: See Section 4.4 of RFC 3745"""
@@ -247,14 +247,14 @@ class Jxr(WithMagicNumber, BinaryFile, Image):
     magic_number = "4949bc"
 
 
-class Jxra(Image):
+class Jxra(Image, BinaryFile):
     """"""
 
     iana_mime = "image/jxrA"
     ext = ".jxra"
 
 
-class Jxrs(Image):
+class Jxrs(Image, BinaryFile):
     """"""
 
     iana_mime = "image/jxrS"
@@ -277,14 +277,14 @@ class Jxsc(WithMagicNumber, BinaryFile, Image):
     magic_number = "ff10ff50"
 
 
-class Jxsi(Image):
+class Jxsi(Image, BinaryFile):
     """"""
 
     iana_mime = "image/jxsi"
     ext = ".jxsi"
 
 
-class Jxss(Image):
+class Jxss(Image, BinaryFile):
     """"""
 
     iana_mime = "image/jxss"
@@ -309,14 +309,14 @@ class Ktx2(WithMagicNumber, BinaryFile, Image):
     magic_number = "ab4b5458203230bb0d0a1a0a"
 
 
-class Naplps(Image):
+class Naplps(Image, BinaryFile):
     """"""
 
     iana_mime = "image/naplps"
     ext = None
 
 
-class Prs_Btif(Image):
+class Prs_Btif(Image, BinaryFile):
     """
 
     TODO: Since BTIF files are an extension of TIFF 6.0, the magic numbers
@@ -330,7 +330,7 @@ class Prs_Btif(Image):
     alternative_exts = (".btf",)
 
 
-class Prs_Pti(Image):
+class Prs_Pti(Image, BinaryFile):
     """"""
 
     iana_mime = "image/prs.pti"
@@ -345,7 +345,7 @@ class PwgRaster(WithMagicNumber, BinaryFile, Image):
     magic_number = "52615332"
 
 
-class Svg__Xml(Image):
+class Svg__Xml(Image, BinaryFile):
     """SVG is used by Web browsers, often in conjunction with HTML; by mobile phones and
     digital cameras, as a format for interchange of graphical assets in desk top publishing,
     for industrial process visualization, display signage, and many other applications
@@ -359,14 +359,14 @@ class Svg__Xml(Image):
     ext = ".svg"
 
 
-class T38(Image):
+class T38(Image, BinaryFile):
     """"""
 
     iana_mime = "image/t38"
     ext = ".T38"
 
 
-class TiffFx(Image):
+class TiffFx(Image, BinaryFile):
     """"""
 
     iana_mime = "image/tiff-fx"
