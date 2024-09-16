@@ -1,40 +1,23 @@
-from pathlib import Path
-from fileformats.core.typing import Self, TypeAlias
+from fileformats.core.typing import TypeAlias
+import typing  # noqa: F401
 import typing as ty
 from fileformats.core.mixin import WithMagicNumber
-from fileformats.core import extra
 from fileformats.core.exceptions import FormatMismatchError
 from .base import Image
 
-# if ty.TYPE_CHECKING:
-#     import numpy.typing
-#     import numpy as np
+if ty.TYPE_CHECKING:
+    import numpy.typing  # noqa: F401
 
 
 DataArrayType: TypeAlias = (
     ty.Any
-)  # "numpy.typing.NDArray[ty.Union[np.floating, np.integer]]"
+)  # In Python < 3.9 this is probmematic "numpy.typing.NDArray[typing.Union[numpy.floating[typing.Any], numpy.integer[typing.Any]]]"
 
 
 class RasterImage(Image):
     # iana_mime = None
     pass
     binary = True
-
-    @extra
-    def read_data(self) -> DataArrayType:
-        ...
-
-    @extra
-    def write_data(self, data_array: DataArrayType) -> None:
-        ...
-
-    @classmethod
-    def save_new(cls, fspath: Path, data_array: DataArrayType) -> Self:
-        # We have to use a mock object as the data file hasn't been written yet
-        mock = cls.mock(fspath)
-        mock.write_data(data_array)
-        return cls(fspath)
 
 
 class Bitmap(WithMagicNumber, RasterImage):

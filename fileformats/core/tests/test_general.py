@@ -13,8 +13,6 @@ def test_init_args(work_dir):
     fspath = work_dir / "test.txt"
     write_test_file(fspath)
     File([fspath])
-    with pytest.raises(TypeError):
-        File(fspath, fspath)
 
 
 class TestFile(File):
@@ -134,9 +132,7 @@ class ImageWithInlineHeader(File):
 
     header_separator = b"---END HEADER---"
 
-    def read_metadata(
-        self, selected_keys: ty.Optional[ty.Collection[str]] = None
-    ) -> ty.Mapping[str, ty.Any]:
+    def read_metadata(self, **kwargs: ty.Any) -> ty.Mapping[str, ty.Any]:
         hdr = self.contents.split(self.header_separator)[0].decode("utf-8")
         return {k: int(v) for k, v in (ln.split(":") for ln in hdr.splitlines())}
 

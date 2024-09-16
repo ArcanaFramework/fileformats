@@ -37,4 +37,4 @@ repos:
             --non-interactive,
           ]
         exclude: tests
-        additional_dependencies: [pytest]
+        additional_dependencies: [pytest, attrs, imageio]

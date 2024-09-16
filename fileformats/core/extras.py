@@ -33,7 +33,7 @@ def extra(method: ExtraMethod) -> "ExtraMethod":
         try:
             return dispatch_method(obj, *args, **kwargs)
         except NotImplementedError:
-            msg = f"No implementation for '{method.__name__}' extra for {cls.__name__} types"
+            msg = f"No implementation for {method.__name__!r} extra for {cls.__name__} types"
             for xtra in extras:
                 if not xtra.imported:
                     try:
@@ -72,25 +72,56 @@ def extra_implementation(
     def decorator(implementation: ExtraImplementation) -> ExtraImplementation:
         msig = inspect.signature(method)
         fsig = inspect.signature(implementation)
+        msig_args = list(msig.parameters.values())[1:]
+        fsig_args = list(fsig.parameters.values())[1:]
+        differences = []
 
         def type_match(a: ty.Union[str, type], b: ty.Union[str, type]) -> bool:
-            return isinstance(a, str) or isinstance(b, str) or a == b
-
-        differences = []
-        for i, (mparam, fparam) in enumerate(
-            zip_longest(
-                list(msig.parameters.values())[1:], list(fsig.parameters.values())[1:]
+            return (
+                a is ty.Any  # type: ignore[comparison-overlap]
+                or a == b
+                or inspect.isclass(a)
+                and inspect.isclass(b)
+                and issubclass(b, a)
             )
-        ):
+
+        mhas_kwargs = msig_args and msig_args[-1].kind == inspect.Parameter.VAR_KEYWORD
+        fhas_kwargs = fsig_args and fsig_args[-1].kind == inspect.Parameter.VAR_KEYWORD
+        if mhas_kwargs:
+            mkwargs = msig_args.pop()
+            if fhas_kwargs:
+                fkwargs = fsig_args.pop()
+                mkwargs_type = mkwargs.annotation
+                fkwargs_type = fkwargs.annotation
+                if not type_match(mkwargs_type, fkwargs_type):
+                    differences.append(
+                        f"Type of keyword args: {mkwargs_type!r} vs {fkwargs_type!r}"
+                    )
+                    if isinstance(mkwargs_type, str) and not isinstance(
+                        fkwargs_type, str
+                    ):
+                        differences.append(
+                            "Note that the type of keyword args is annotated using a "
+                            "string so the implementing method also needs to be a "
+                            f'string, i.e. "{mkwargs_type}" instead of {fkwargs_type}'
+                        )
+            else:
+                differences.append("variable keywords vs non-variable keywords")
+        elif fhas_kwargs:
+            differences.append("non-variable keywords vs variable keywords")
+            fsig_args.pop()
+
+        for i, (mparam, fparam) in enumerate(zip_longest(msig_args, fsig_args)):
             if mparam is None:
-                differences.append(
-                    f"found additional argument, '{fparam.name}', at position {i}"
-                )
+                if not mhas_kwargs:
+                    differences.append(
+                        f"found additional argument, {fparam.name!r}, at position {i}"
+                    )
                 continue
             if fparam is None:
                 if mparam.default is mparam.empty:
                     differences.append(
-                        f"override missing required argument '{mparam.name}'"
+                        f"override missing required argument {mparam.name!r}"
                     )
                 continue
             mname = mparam.name
@@ -99,18 +130,33 @@ def extra_implementation(
             ftype = fparam.annotation
             if mname != fname:
                 differences.append(
-                    f"name of parameter at position {i}: {mname} vs {fname}"
+                    f"name of parameter at position {i}: {mname!r} vs {fname!r}"
                 )
             elif not type_match(mtype, ftype):
-                differences.append(f"Type of '{mname}' arg: {mtype} vs {ftype}")
+                differences.append(f"Type of {mname!r} arg: {mtype!r} vs {ftype!r}")
+                if isinstance(mtype, str) and not isinstance(ftype, str):
+                    differences.append(
+                        f"Note that the type of {mname!r} is annotated using a string so the "
+                        "implementing method also needs to be a string, i.e. "
+                        f'"{ftype}" instead of {ftype}'
+                    )
         if not type_match(msig.return_annotation, fsig.return_annotation):
             differences.append(
-                f"return type: {msig.return_annotation} vs {fsig.return_annotation}"
+                f"return type: {msig.return_annotation!r} vs {fsig.return_annotation!r}"
             )
+            if isinstance(msig.return_annotation, str) and not isinstance(
+                fsig.return_annotation, str
+            ):
+                differences.append(
+                    "Note that the return type of is annotated using a string so the "
+                    "implementing method also needs to be a string, i.e. "
+                    f'"{fsig.return_annotation}" instead of {fsig.return_annotation}'
+                )
+
         if differences:
             raise TypeError(
-                f"Arguments differ between the signature of the "
-                f"decorated method {method} and the registered override {implementation}:\n"
+                f"Arguments differ between the signature of the extras hook method "
+                f"{method} and the implementing function {implementation}:\n"
                 + "\n".join(differences)
             )
         dispatch_method.register(implementation)

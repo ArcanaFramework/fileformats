@@ -183,12 +183,8 @@ class WithSeparateHeader(WithAdjacentFiles):
     def header(self) -> "fileformats.core.FileSet":
         return self.header_type(self.select_by_ext(self.header_type))  # type: ignore[attr-defined]
 
-    def read_metadata(
-        self, selected_keys: ty.Optional[ty.Collection[str]] = None
-    ) -> ty.Mapping[str, ty.Any]:
-        header: ty.Dict[str, ty.Any] = self.header.load()  # type: ignore[attr-defined]
-        if selected_keys:
-            header = {k: v for k, v in header.items() if k in selected_keys}
+    def read_metadata(self, **kwargs: ty.Any) -> ty.Mapping[str, ty.Any]:
+        header: ty.Dict[str, ty.Any] = self.header.load()
         return header
 
 
@@ -221,18 +217,20 @@ class WithSideCars(WithAdjacentFiles):
     def side_cars(self) -> ty.Tuple["fileformats.core.FileSet", ...]:
         return tuple(tp(self.select_by_ext(tp)) for tp in self.side_car_types)  # type: ignore[attr-defined]
 
-    def read_metadata(
-        self, selected_keys: ty.Optional[ty.Collection[str]] = None
-    ) -> ty.Mapping[str, ty.Any]:
-        metadata: ty.Dict[str, ty.Any] = dict(self.primary_type.read_metadata(self, selected_keys=selected_keys))  # type: ignore[arg-type]
+    def read_metadata(self, **kwargs: ty.Any) -> ty.Mapping[str, ty.Any]:
+        metadata: ty.Dict[str, ty.Any] = dict(self.primary_type.read_metadata(self, **kwargs))  # type: ignore[arg-type]
         for side_car in self.side_cars:
             try:
-                side_car_metadata: ty.Dict[str, ty.Any] = side_car.load()  # type: ignore[attr-defined]
+                side_car_metadata: ty.Dict[str, ty.Any] = side_car.load()
             except AttributeError:
                 continue
-            else:
-                side_car_class_name: str = to_mime_format_name(type(side_car).__name__)
-                metadata[side_car_class_name] = side_car_metadata
+            if not isinstance(side_car_metadata, dict):
+                raise TypeError(
+                    f"`load` method of side-car type {type(side_car)} must return a "
+                    f"dictionary, not {type(side_car_metadata)!r}"
+                )
+            side_car_class_name: str = to_mime_format_name(type(side_car).__name__)
+            metadata[side_car_class_name] = side_car_metadata
         return metadata
 
     @classproperty

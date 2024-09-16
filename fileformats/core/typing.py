@@ -1,5 +1,5 @@
-import typing as ty
 import sys
+import typing as ty
 from pathlib import Path
 
 if sys.version_info[:2] < (3, 11):
