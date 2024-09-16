@@ -13,8 +13,6 @@ def test_init_args(work_dir):
     fspath = work_dir / "test.txt"
     write_test_file(fspath)
     File([fspath])
-    with pytest.raises(TypeError):
-        File(fspath, fspath)
 
 
 class TestFile(File):

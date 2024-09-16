@@ -5,7 +5,7 @@ from itertools import zip_longest
 import functools
 import urllib.error
 import fileformats.core
-from fileformats.core.typing import TypeAlias, eval_type
+from fileformats.core.typing import TypeAlias
 from .datatype import DataType
 from .converter_helpers import ConverterWrapper, ConverterSpec, SubtypeVar
 from .exceptions import FormatConversionError, FileFormatsExtrasError
@@ -77,14 +77,6 @@ def extra_implementation(
         differences = []
 
         def type_match(a: ty.Union[str, type], b: ty.Union[str, type]) -> bool:
-            try:
-                a = eval_type(a)
-            except ValueError:
-                pass
-            try:
-                b = eval_type(b)
-            except ValueError:
-                pass
             return (
                 a == b or inspect.isclass(a) and inspect.isclass(b) and issubclass(b, a)
             )
@@ -101,6 +93,14 @@ def extra_implementation(
                     differences.append(
                         f"Type of keyword args: {mkwargs_type!r} vs {fkwargs_type!r}"
                     )
+                    if isinstance(mkwargs_type, str) and not isinstance(
+                        fkwargs_type, str
+                    ):
+                        differences.append(
+                            "Note that the type of keyword args is annotated using a "
+                            "string so the implementing method also needs to be a "
+                            f'string, i.e. "{mkwargs_type}" instead of {fkwargs_type}'
+                        )
             else:
                 differences.append("variable keywords vs non-variable keywords")
         elif fhas_kwargs:
@@ -109,7 +109,7 @@ def extra_implementation(
 
         for i, (mparam, fparam) in enumerate(zip_longest(msig_args, fsig_args)):
             if mparam is None:
-                if not mkwargs:
+                if not mhas_kwargs:
                     differences.append(
                         f"found additional argument, {fparam.name!r}, at position {i}"
                     )
@@ -130,14 +130,29 @@ def extra_implementation(
                 )
             elif not type_match(mtype, ftype):
                 differences.append(f"Type of {mname!r} arg: {mtype!r} vs {ftype!r}")
+                if isinstance(mtype, str) and not isinstance(ftype, str):
+                    differences.append(
+                        f"Note that the type of {mname!r} is annotated using a string so the "
+                        "implementing method also needs to be a string, i.e. "
+                        f'"{ftype}" instead of {ftype}'
+                    )
         if not type_match(msig.return_annotation, fsig.return_annotation):
             differences.append(
                 f"return type: {msig.return_annotation!r} vs {fsig.return_annotation!r}"
             )
+            if isinstance(msig.return_annotation, str) and not isinstance(
+                fsig.return_annotation, str
+            ):
+                differences.append(
+                    "Note that the return type of is annotated using a string so the "
+                    "implementing method also needs to be a string, i.e. "
+                    f'"{fsig.return_annotation}" instead of {fsig.return_annotation}'
+                )
+
         if differences:
             raise TypeError(
-                f"Arguments differ between the signature of the "
-                f"decorated method {method} and the implementing function {implementation}:\n"
+                f"Arguments differ between the signature of the extras hook method "
+                f"{method} and the implementing function {implementation}:\n"
                 + "\n".join(differences)
             )
         dispatch_method.register(implementation)

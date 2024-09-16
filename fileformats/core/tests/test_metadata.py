@@ -11,11 +11,15 @@ class FileWithMetadata(File):
 
 @extra_implementation(FileSet.read_metadata)
 def aformat_read_metadata(
-    mf: FileWithMetadata, **kwargs: ty.Any
+    mf: FileWithMetadata,
+    selected_keys: ty.Optional[ty.Collection[str]] = None,
+    **kwargs: ty.Any,
 ) -> ty.Mapping[str, ty.Any]:
     with open(mf) as f:
         metadata = f.read()
     dct = dict(ln.split(":") for ln in metadata.splitlines())
+    if selected_keys:
+        dct = {k: v for k, v in dct.items() if k in selected_keys}
     return dct
 
 
@@ -42,7 +46,7 @@ def test_metadata(file_with_metadata_fspath):
 
 def test_select_metadata(file_with_metadata_fspath):
     file_with_metadata = FileWithMetadata(
-        file_with_metadata_fspath, metadata_keys=["a", "b", "c"]
+        file_with_metadata_fspath, selected_keys=["a", "b", "c"]
     )
     assert file_with_metadata.metadata["a"] == "1"
     assert sorted(file_with_metadata.metadata) == ["a", "b", "c"]
