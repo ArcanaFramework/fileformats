@@ -78,7 +78,11 @@ def extra_implementation(
 
         def type_match(a: ty.Union[str, type], b: ty.Union[str, type]) -> bool:
             return (
-                a == b or inspect.isclass(a) and inspect.isclass(b) and issubclass(b, a)
+                a is ty.Any  # type: ignore[comparison-overlap]
+                or a == b
+                or inspect.isclass(a)
+                and inspect.isclass(b)
+                and issubclass(b, a)
             )
 
         mhas_kwargs = msig_args and msig_args[-1].kind == inspect.Parameter.VAR_KEYWORD

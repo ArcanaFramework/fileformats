@@ -1,8 +1,8 @@
 import json
 import typing as ty
-from fileformats.core.typing import Self, TypeAlias
+from fileformats.core.typing import TypeAlias
 from pathlib import Path
-from fileformats.core import extra, DataType, FileSet, extra_implementation
+from fileformats.core import DataType, FileSet, extra_implementation
 from fileformats.core.mixin import WithClassifiers
 from ..generic import File
 from fileformats.core.exceptions import FormatMismatchError
@@ -43,23 +43,6 @@ class DataSerialization(WithClassifiers, File):
     binary: bool = False
 
     iana_mime: ty.Optional[str] = None
-
-    @extra
-    def load(self) -> LoadedSerialization:
-        """Load the contents of the file into a dictionary"""
-        raise NotImplementedError
-
-    @extra
-    def save(self, data: LoadedSerialization) -> None:
-        """Serialise a dictionary to a new file"""
-        raise NotImplementedError
-
-    @classmethod
-    def save_new(cls, fspath: ty.Union[str, Path], data: LoadedSerialization) -> Self:
-        # We have to use a mock object as the data file hasn't been written yet
-        mock = cls.mock(fspath)
-        mock.save(data)
-        return cls(fspath)
 
 
 class Xml(DataSerialization):

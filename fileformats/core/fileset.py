@@ -178,6 +178,52 @@ class FileSet(DataType):
     def __repr__(self) -> str:
         return f"{self.type_name}('" + "', '".join(str(p) for p in self.fspaths) + "')"
 
+    @extra
+    def load(self) -> ty.Any:
+        """Load the contents of the file into an object of type that make sense for the
+        datat type
+
+        Returns
+        -------
+        Any
+            the data loaded from the file in an type to the format
+        """
+
+    @extra
+    def save(self, data: ty.Any) -> None:
+        """Load new contents from a format-specific object
+
+        Parameters
+        ----------
+        data: Any
+            the data to be saved to the file in a type that matches the one loaded by
+            the `load` method
+        """
+
+    @classmethod
+    def new(cls, fspath: ty.Union[str, Path], data: ty.Any) -> Self:
+        """Create a new file-set object with the given data saved to the file
+
+        Parameters
+        ----------
+        fspath: str | Path
+            the file-system path to save the data to. Additional paths should be
+            able to be inferred from this path
+        data: Any
+            the data to be saved to the file in a type that matches the one loaded by
+            the `load` method
+
+        Returns
+        -------
+        FileSet
+            a new file-set object with the given data saved to the file
+        """
+        # We have to use a mock object as the data file hasn't been written yet so can't
+        # be validated
+        mock = cls.mock(fspath)
+        mock.save(data)
+        return cls(fspath)
+
     @property
     def parent(self) -> Path:
         "A common parent directory for all the top-level paths in the file-set"

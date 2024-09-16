@@ -186,7 +186,7 @@ class WithSeparateHeader(WithAdjacentFiles):
     def read_metadata(
         self, selected_keys: ty.Optional[ty.Collection[str]] = None
     ) -> ty.Mapping[str, ty.Any]:
-        header: ty.Dict[str, ty.Any] = self.header.load()  # type: ignore[attr-defined]
+        header: ty.Dict[str, ty.Any] = self.header.load()
         if selected_keys:
             header = {k: v for k, v in header.items() if k in selected_keys}
         return header
@@ -227,12 +227,16 @@ class WithSideCars(WithAdjacentFiles):
         metadata: ty.Dict[str, ty.Any] = dict(self.primary_type.read_metadata(self, selected_keys=selected_keys))  # type: ignore[arg-type]
         for side_car in self.side_cars:
             try:
-                side_car_metadata: ty.Dict[str, ty.Any] = side_car.load()  # type: ignore[attr-defined]
+                side_car_metadata: ty.Dict[str, ty.Any] = side_car.load()
             except AttributeError:
                 continue
-            else:
-                side_car_class_name: str = to_mime_format_name(type(side_car).__name__)
-                metadata[side_car_class_name] = side_car_metadata
+            if not isinstance(side_car_metadata, dict):
+                raise TypeError(
+                    f"`load` method of side-car type {type(side_car)} must return a "
+                    f"dictionary, not {type(side_car_metadata)!r}"
+                )
+            side_car_class_name: str = to_mime_format_name(type(side_car).__name__)
+            metadata[side_car_class_name] = side_car_metadata
         return metadata
 
     @classproperty
