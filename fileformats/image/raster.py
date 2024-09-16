@@ -1,17 +1,15 @@
 from fileformats.core.typing import TypeAlias
+import typing  # noqa: F401
 import typing as ty
 from fileformats.core.mixin import WithMagicNumber
 from fileformats.core.exceptions import FormatMismatchError
 from .base import Image
 
-# if ty.TYPE_CHECKING:
-#     import numpy.typing
-#     import numpy as np
+if ty.TYPE_CHECKING:
+    import numpy.typing  # noqa: F401
 
 
-DataArrayType: TypeAlias = (
-    ty.Any
-)  # "numpy.typing.NDArray[ty.Union[np.floating, np.integer]]"
+DataArrayType: TypeAlias = "numpy.typing.NDArray[ty.Union[numpy.floating[typing.Any], numpy.integer[typing.Any]]]"
 
 
 class RasterImage(Image):
