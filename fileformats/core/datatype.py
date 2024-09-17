@@ -25,6 +25,10 @@ from .classifier import Classifier
 
 
 class DataType(Classifier, metaclass=ABCMeta):
+    """
+    Base class for all file formats and fields.
+    """
+
     is_fileset = False
     is_field = False
     nested_types: ty.Tuple[ty.Type[Classifier], ...] = ()

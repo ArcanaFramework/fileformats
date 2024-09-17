@@ -16,7 +16,7 @@ Application
 .. autoclass:: fileformats.application.JsonSchema
 .. autoclass:: fileformats.application.XmlSchema
 .. autoclass:: fileformats.application.InformalSchema
-.. autoclass:: fileformats.application.DataSerialization
+.. autoclass:: fileformats.application.TextSerialization
 .. autoclass:: fileformats.application.Xml
 .. autoclass:: fileformats.application.Json
 .. autoclass:: fileformats.application.Yaml
