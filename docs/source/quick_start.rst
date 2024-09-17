@@ -106,5 +106,5 @@ the metadata can be accessed as a dictionary attribute.
 
 .. note::
    Only a small fraction of formats have extra functionality added in the main package.
-   Extra functionality is only planned to be implemented as required. See the :ref:`Developer guide`
+   Extra functionality is only planned to be implemented as required. See the :ref:`Extras`
    for information on how to implement new file formats, converters and extra functionality.

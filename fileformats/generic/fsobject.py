@@ -23,6 +23,9 @@ class FsObject(FileSet, os.PathLike):  # type: ignore
         return next(iter(self.fspaths))
 
     def __str__(self) -> str:
+        """Renders the file path as a string so it can be used in templating e.g.
+        ``f'cp {fs_object} /tmp'``
+        """
         return str(self.fspath)
 
     def __fspath__(self) -> str:

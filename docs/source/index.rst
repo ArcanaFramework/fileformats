@@ -40,12 +40,12 @@ framework, such as `fileformats-medimage <https://pypi.org/project/fileformats-m
 for medical imaging data, and `fileformats-datascience <https://pypi.org/project/fileformats-datascience>`__
 for formats commonly found in datascience. These extension packages are understandably
 not comprehensive, but expected to grow as new use cases are found and new formats added
-(see :ref:`Developer Guide`).
+(see :ref:`Extensions`).
 
 The main *FileFormats* and its extension packages don't have any external dependencies.
 Extra functionality that requires external dependencies, such as libraries to read and
-write the file data, are implemented in separate **extras** packages (see
-`fileformats-extras <https://pypi.org/project/fileformats-extras/>`__,
+write the file data, are implemented in separate **extras** packages (see :ref:`Extras`),
+e.g. `fileformats-extras <https://pypi.org/project/fileformats-extras/>`__,
 `fileformats-medimage-extras <https://pypi.org/project/fileformats-medimage-extras/>`__),
 to keep the base packages for format detection and file handling extremely
 light-weight.
@@ -82,8 +82,8 @@ and likewise for the extension packages
     $ python3 -m pip install fileformats-medimage-extras fileformats-datascience-extras
 
 .. note::
-   See the :ref:`Developer Guide` for instructions on how to implement your own extensions
-   and extras.
+   See the :ref:`Extensions` and :ref:`Extras` for instructions on how to implement your
+   own extensions and extras, respectively.
 
 
 License
@@ -105,26 +105,31 @@ This work is licensed under a
     detection
     file_handling
     mime
-    extras
+    read_write
     typing
-    developer
+    api
 
 .. toctree::
    :maxdepth: 2
-   :caption: Reference
+   :caption: Available Types
    :hidden:
 
-   reference/core.rst
-   reference/generic.rst
-   reference/field.rst
-   reference/application.rst
-   reference/audio.rst
-   reference/image.rst
-   reference/model.rst
-   reference/text.rst
-   reference/video.rst
-   reference/datascience.rst
-   reference/medimage.rst
+   reference/application
+   reference/audio
+   reference/image
+   reference/model
+   reference/text
+   reference/video
+   reference/datascience
+   reference/medimage
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Developer Guide
+   :hidden:
+
+   developer/extensions
+   developer/extras
 
 
 .. _Pydra: https://pydra.readthedocs.io
