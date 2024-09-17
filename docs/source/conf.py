@@ -258,6 +258,12 @@ latex_documents = [
     (master_doc, "fileformats.tex", "FileFormats Documentation", author, "manual"),
 ]
 
+# Autodoc settings
+autodoc_default_options = {
+    "undoc-members": True,
+    "show-inheritance": True,
+}
+
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
 # latex_logo = None
