@@ -48,7 +48,7 @@ class Dicom(WithMagicNumber, BinaryFile):
             except AttributeError:
                 key = None
             if not key:
-                key = elem.tag.json_key
+                key = elem.tag.json_key  # type: ignore[attr-defined]
             if key not in omit:
                 value = elem.value  # type: ignore[attr-defined]
                 if isinstance(value, pydicom.multival.MultiValue):
