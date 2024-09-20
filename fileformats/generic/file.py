@@ -106,7 +106,7 @@ class File(FsObject):
     def read_contents(
         self, size: ty.Optional[int] = None, offset: int = 0
     ) -> ty.Union[str, bytes]:
-        with self.open("rb") as f:
+        with self.open("rb" if getattr(self, "binary", True) else "r") as f:
             if offset:
                 f.seek(offset, (io.SEEK_SET if offset >= 0 else io.SEEK_END))
             contents = f.read(size) if size else f.read()
