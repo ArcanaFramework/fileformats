@@ -6,7 +6,7 @@ def test_sample_directory():
     assert isinstance(Directory.sample(), Directory)
 
 
-def test_sample_directory_containing():
+def test_sample_directory_of():
     sample = DirectoryOf[MyFormatGz].sample()
     assert isinstance(sample, DirectoryOf[MyFormatGz])
     assert all(isinstance(c, MyFormatGz) for c in sample.contents)
