@@ -442,7 +442,9 @@ class WithClassifiers:
             class_attrs[cls.classifiers_attr_name] = (
                 classifiers_tuple if cls.multiple_classifiers else classifiers_tuple[0]
             )
-            classifier_names = [t.__name__ for t in classifiers_tuple]
+            classifier_names = [
+                get_optional_type(t).__name__ for t in classifiers_tuple
+            ]
             if not cls.ordered_classifiers:
                 classifier_names.sort()
             classified = type(
