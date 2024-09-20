@@ -67,10 +67,10 @@ def test_repr():
 
 
 def test_set_repr_trunc():
-    a = Path("/a/path")
-    b = Path("/b/path")
-    c = Path("/c/path")
-    d = Path("/d/path")
+    a = Path("/a/path").absolute()
+    b = Path("/b/path").absolute()
+    c = Path("/c/path").absolute()
+    d = Path("/d/path").absolute()
     assert (
         repr(SetOf[File].mock(a, b, c, d)) == f"SetOf[File]('{a}', '{b}', '{c}', ...)"
     )
