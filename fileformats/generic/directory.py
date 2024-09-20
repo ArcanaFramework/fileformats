@@ -110,4 +110,5 @@ class DirectoryOf(WithClassifiers, TypedDirectory):  # type: ignore[misc]
     # WithClassifiers-required class attrs
     classifiers_attr_name = "content_types"
     allowed_classifiers = (FileSet,)
+    allow_optional_classifiers = True
     generically_classifiable = True

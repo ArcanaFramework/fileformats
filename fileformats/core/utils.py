@@ -11,6 +11,7 @@ import pkgutil
 from contextlib import contextmanager
 from .typing import FspathsInputType
 import fileformats.core
+from fileformats.core.exceptions import FormatDefinitionError
 
 if ty.TYPE_CHECKING:
     import pydra.engine.core
@@ -228,3 +229,39 @@ def import_extras_module(klass: ty.Type["fileformats.core.DataType"]) -> ExtrasM
     else:
         extras_imported = True
     return ExtrasModule(extras_imported, extras_pkg, extras_pypi)
+
+
+TypeType = ty.TypeVar("TypeType", bound=ty.Type[ty.Any])
+
+
+def get_optional_type(
+    type_: ty.Union[TypeType, ty.Type[ty.Optional[TypeType]]], allowed: bool = True
+) -> TypeType:
+    """Checks if a type is an Optional type
+
+    Parameters
+    ----------
+    type_ : ty.Type
+        the type to check
+    allowed : bool
+        whether Optional types are allowed or not
+
+    Returns
+    -------
+    bool
+        whether the type is an Optional type or not
+    """
+    if ty.get_origin(type_) is None:
+        return type_  # type: ignore[return-value]
+    if not allowed:
+        raise FormatDefinitionError(
+            f"Optional types are not allowed in content_type definitions ({type_}) "
+            "in this context"
+        )
+    args = ty.get_args(type_)
+    if len(args) != 2 and None in ty.get_args(type_):
+        raise FormatDefinitionError(
+            "Only Optional types are allowed in content_type definitions, "
+            f"not {type_}"
+        )
+    return args[0] if args[0] is not None else args[1]  # type: ignore[no-any-return]

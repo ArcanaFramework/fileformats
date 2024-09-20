@@ -3,7 +3,8 @@ from pathlib import Path
 from abc import ABCMeta, abstractproperty
 from fileformats.core import FileSet, validated_property, mtime_cached_property
 from fileformats.core.decorators import classproperty
-from fileformats.core.exceptions import FormatDefinitionError, FormatMismatchError
+from fileformats.core.exceptions import FormatMismatchError
+from fileformats.core.utils import get_optional_type
 
 
 class TypedCollection(FileSet, metaclass=ABCMeta):
@@ -50,16 +51,7 @@ class TypedCollection(FileSet, metaclass=ABCMeta):
     def potential_content_types(cls) -> ty.Tuple[ty.Type[FileSet], ...]:
         content_types: ty.List[ty.Type[FileSet]] = []
         for content_type in cls.content_types:  # type: ignore[assignment]
-            if ty.get_origin(content_type) is ty.Union:
-                args = ty.get_args(content_type)
-                if not len(args) == 2 and None not in args:
-                    raise FormatDefinitionError(
-                        "Only Optional types are allowed in content_type definitions, "
-                        f"not {content_type}"
-                    )
-                content_types.append(args[0] if args[0] is not None else args[1])
-            else:
-                content_types.append(content_type)  # type: ignore[arg-type]
+            content_types.append(get_optional_type(content_type))  # type: ignore[arg-type]
         return tuple(content_types)
 
     @classproperty

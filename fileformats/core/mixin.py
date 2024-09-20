@@ -4,7 +4,7 @@ import typing as ty
 import logging
 from .datatype import DataType
 import fileformats.core
-from .utils import describe_task, matching_source
+from .utils import describe_task, matching_source, get_optional_type
 from .decorators import validated_property, classproperty
 from .identification import to_mime_format_name
 from .converter_helpers import SubtypeVar, ConverterSpec
@@ -292,6 +292,7 @@ class WithClassifiers:
     # Default values for class attrs
     multiple_classifiers = True
     allowed_classifiers: ty.Optional[ty.Tuple[ty.Type[Classifier], ...]] = None
+    allow_optional_classifiers = False
     exclusive_classifiers: ty.Tuple[ty.Type[Classifier], ...] = ()
     ordered_classifiers = False
     generically_classifiable = False
@@ -320,7 +321,9 @@ class WithClassifiers:
     ) -> ty.FrozenSet[ty.Type[SubtypeVar]]:
         if classifiers is None:
             classifiers = cls.classifiers if cls.is_classified else ()
-        return frozenset(t for t in classifiers if issubclass(t, SubtypeVar))
+        return frozenset(
+            t for t in classifiers if issubclass(get_optional_type(t), SubtypeVar)  # type: ignore[misc]
+        )
 
     @classmethod
     def non_wildcard_classifiers(
@@ -329,7 +332,9 @@ class WithClassifiers:
         if classifiers is None:
             classifiers = cls.classifiers if cls.is_classified else ()
         assert classifiers is not None
-        return frozenset(q for q in classifiers if not issubclass(q, SubtypeVar))
+        return frozenset(
+            q for q in classifiers if not issubclass(get_optional_type(q), SubtypeVar)
+        )
 
     @classmethod
     def __class_getitem__(
@@ -341,11 +346,15 @@ class WithClassifiers:
             classifiers_tuple = tuple(classifiers)
         else:
             classifiers_tuple = (classifiers,)
+        classifiers_to_check = tuple(
+            get_optional_type(c, cls.allow_optional_classifiers)
+            for c in classifiers_tuple
+        )
 
         if cls.allowed_classifiers:
             not_allowed = [
                 q
-                for q in classifiers_tuple
+                for q in classifiers_to_check
                 if not any(issubclass(q, t) for t in cls.allowed_classifiers)
             ]
             if not_allowed:
@@ -357,15 +366,17 @@ class WithClassifiers:
         if cls.multiple_classifiers:
             if not cls.ordered_classifiers:
                 # Check for duplicate classifiers in the multiple list
-                if len(classifiers_tuple) > 1:
+                if len(classifiers_to_check) > 1:
                     # Sort the classifiers into categories and ensure that there aren't more
                     # than one type for each category. Otherwise, if the classifier doesn't
                     # belong to a category, check to see that there aren't multiple sub-classes
                     # in the classifier set
                     repetitions: ty.Dict[
                         ty.Type[Classifier], ty.List[ty.Type[Classifier]]
-                    ] = {c: [] for c in cls.exclusive_classifiers + classifiers_tuple}
-                    for classifier in classifiers_tuple:
+                    ] = {
+                        c: [] for c in cls.exclusive_classifiers + classifiers_to_check
+                    }
+                    for classifier in classifiers_to_check:
                         for exc_classifier in repetitions:
                             if issubclass(classifier, exc_classifier):
                                 repetitions[exc_classifier].append(classifier)
@@ -381,7 +392,10 @@ class WithClassifiers:
                             )
                         )
                 classifiers_tuple = tuple(
-                    sorted(set(classifiers_tuple), key=lambda x: x.__name__)
+                    sorted(
+                        set(classifiers_tuple),
+                        key=lambda x: get_optional_type(x).__name__,
+                    )
                 )
         else:
             if len(classifiers_tuple) > 1:
