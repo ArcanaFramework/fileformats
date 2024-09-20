@@ -44,7 +44,7 @@ class Dicom(WithMagicNumber, BinaryFile):
         dct: ty.Dict[str, ty.Any] = {}
         for elem in dcm.values():
             try:
-                key = elem.keyword
+                key = elem.keyword  # type: ignore[union-attr]
             except AttributeError:
                 key = None
             if not key:

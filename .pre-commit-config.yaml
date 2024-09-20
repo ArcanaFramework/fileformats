@@ -30,11 +30,6 @@ repos:
     rev: v1.11.2
     hooks:
       - id: mypy
-        args:
-          [
-            --strict,
-            --install-types,
-            --non-interactive,
-          ]
+        args: [--strict, --install-types, --non-interactive]
         exclude: tests
-        additional_dependencies: [pytest, attrs, imageio]
+        additional_dependencies: [pytest, attrs, imageio, pydicom]
