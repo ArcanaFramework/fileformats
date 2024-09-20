@@ -22,7 +22,7 @@ def foo_bar_converter():
     @pydra.mark.task  # type: ignore[misc]
     @pydra.mark.annotate({"return": {"out_file": Bar}})  # type: ignore[misc]
     def foo_bar_converter_(in_file: Foo):
-        return Bar(write_test_file(work_dir / "bar.bar", in_file.contents))
+        return Bar(write_test_file(work_dir / "bar.bar", in_file.raw_contents))
 
     return foo_bar_converter_
 
@@ -36,7 +36,7 @@ def baz_bar_converter():
     @pydra.mark.annotate({"return": {"out": Bar}})  # type: ignore[misc]
     def baz_bar_converter_(in_file: Baz):
         assert in_file
-        return Bar(write_test_file(work_dir / "bar.bar", in_file.contents))
+        return Bar(write_test_file(work_dir / "bar.bar", in_file.raw_contents))
 
     return baz_bar_converter_
 

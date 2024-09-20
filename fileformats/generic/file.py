@@ -83,7 +83,7 @@ class File(FsObject):
         return Path(new_path).with_suffix(suffix)
 
     @mtime_cached_property
-    def contents(self) -> ty.Union[str, bytes]:
+    def raw_contents(self) -> ty.Union[str, bytes]:
         return self.read_contents()
 
     def open(

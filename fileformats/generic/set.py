@@ -1,9 +1,6 @@
 import typing as ty
 from fileformats.core import FileSet, validated_property
 from functools import cached_property
-from fileformats.core.exceptions import (
-    FormatMismatchError,
-)
 from fileformats.core.mixin import WithClassifiers
 
 
@@ -26,32 +23,16 @@ class TypedSet(FileSet):
         return f"{self.type_name}({paths_repr})"
 
     @cached_property
-    def contents(self) -> ty.List[FileSet]:
+    def contents(self) -> ty.List[FileSet]:  # type: ignore[override]
         contnts = []
         for content_type in self.content_types:
             for p in self.fspaths:
-                try:
-                    contnts.append(content_type([p], **self._metadata_kwargs))
-                except FormatMismatchError:
-                    continue
+                contnts.append(content_type([p], **self._metadata_kwargs))
         return contnts
 
     @validated_property
     def _validate_contents(self) -> None:
-        if not self.content_types:
-            return
-        not_found = set(self.content_types)
-        for fspath in self.fspaths:
-            for content_type in list(not_found):
-                if content_type.matches(fspath):
-                    not_found.remove(content_type)
-                    if not not_found:
-                        return
-        assert not_found
-        raise FormatMismatchError(
-            f"Did not find the required content types, {not_found}, within the "
-            f"given list {self.fspaths}"
-        )
+        self.contents
 
 
 class SetOf(WithClassifiers, TypedSet):

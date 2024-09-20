@@ -179,9 +179,14 @@ class FileSet(DataType):
         return f"{self.type_name}('" + "', '".join(str(p) for p in self.fspaths) + "')"
 
     @extra
-    def load(self) -> ty.Any:
+    def load(self, **kwargs: ty.Any) -> ty.Any:
         """Load the contents of the file into an object of type that make sense for the
         datat type
+
+        Parameters
+        ----------
+        **kwargs : Any
+            any format-specific keyword arguments to pass to the loader
 
         Returns
         -------
@@ -190,7 +195,7 @@ class FileSet(DataType):
         """
 
     @extra
-    def save(self, data: ty.Any) -> None:
+    def save(self, data: ty.Any, **kwargs: ty.Any) -> None:
         """Load new contents from a format-specific object
 
         Parameters
@@ -198,10 +203,12 @@ class FileSet(DataType):
         data: Any
             the data to be saved to the file in a type that matches the one loaded by
             the `load` method
+        **kwargs : Any
+            any format-specific keyword arguments to pass to the saver
         """
 
     @classmethod
-    def new(cls, fspath: ty.Union[str, Path], data: ty.Any) -> Self:
+    def new(cls, fspath: ty.Union[str, Path], data: ty.Any, **kwargs: ty.Any) -> Self:
         """Create a new file-set object with the given data saved to the file
 
         Parameters
@@ -212,6 +219,8 @@ class FileSet(DataType):
         data: Any
             the data to be saved to the file in a type that matches the one loaded by
             the `load` method
+        **kwargs : Any
+            any format-specific keyword arguments to pass to the saver
 
         Returns
         -------
@@ -221,7 +230,7 @@ class FileSet(DataType):
         # We have to use a mock object as the data file hasn't been written yet so can't
         # be validated
         mock = cls.mock(fspath)
-        mock.save(data)
+        mock.save(data, **kwargs)
         return cls(fspath)
 
     @property
@@ -306,6 +315,12 @@ class FileSet(DataType):
         except FileFormatsExtrasError:
             metadata = {}
         return metadata
+
+    @mtime_cached_property
+    def contents(self) -> ty.Any:
+        """The contents of the file-set, will be an object of a type that makes sense
+        for the format, as loaded by the `load` method"""
+        return self.load()
 
     @extra
     def read_metadata(self, **kwargs: ty.Any) -> ty.Mapping[str, ty.Any]:
