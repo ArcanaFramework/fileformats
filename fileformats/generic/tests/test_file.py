@@ -1,6 +1,6 @@
 import pytest
 from fileformats.generic import FsObject, File
-from fileformats.testing import Magic, Foo, MyFormatX
+from fileformats.testing import Magic, MagicVersion, Foo, MyFormatX
 
 
 def test_sample_fsobject():
@@ -27,4 +27,4 @@ def test_sample_magic():
     reason="generate_sample_data for WithMagicVersion file types is not implemented yet"
 )
 def test_sample_magic_version():
-    assert isinstance(Magic.sample(), Magic)
+    assert isinstance(MagicVersion.sample(), MagicVersion)
