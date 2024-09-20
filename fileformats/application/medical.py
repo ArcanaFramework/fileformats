@@ -44,13 +44,13 @@ class Dicom(WithMagicNumber, BinaryFile):
         dct: ty.Dict[str, ty.Any] = {}
         for elem in dcm.values():
             try:
-                key = elem.keyword  # type: ignore[union-attr]
+                key = elem.keyword  # type: ignore[union-attr, attr-defined]
             except AttributeError:
                 key = None
             if not key:
                 key = elem.tag.json_key
             if key not in omit:
-                value = elem.value
+                value = elem.value  # type: ignore[attr-defined]
                 if isinstance(value, pydicom.multival.MultiValue):
                     value = [str(v) for v in value]
                 elif isinstance(value, pydicom.uid.UID):
