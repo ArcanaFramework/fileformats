@@ -86,7 +86,7 @@ the :class:`.WithSeparateHeader` mixin.
         ext = ".hdr"
 
         def load(self):
-            return dict(ln.split(":") for ln in self.contents.splitlines())
+            return dict(ln.split(":") for ln in self.raw_contents.splitlines())
 
     class MyFormatWithHeader(WithSeparateHeader, File):
         ext = ".myh"

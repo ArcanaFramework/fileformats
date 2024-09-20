@@ -46,6 +46,7 @@ dev = [
     "fileformats[test]",
     "mypy >=1.5.1",
     "pydata-sphinx-theme >=0.13",
+    "pydicom",                    # for typing
 ]
 test = [
     "mypy >=1.5.1",

@@ -42,7 +42,7 @@ class WithMagicNumber:
 
     @validated_property
     def _check_magic_number(self) -> None:
-        if self.binary and isinstance(self.magic_number, str):
+        if getattr(self, "binary", True) and isinstance(self.magic_number, str):
             try:
                 magic_bytes = bytes.fromhex(self.magic_number)
             except ValueError:
@@ -58,7 +58,7 @@ class WithMagicNumber:
         if read_magic_number != magic_bytes:
             read_magic: ty.Union[str, bytes]
             ref_magic: ty.Union[str, bytes]
-            if self.binary and isinstance(self.magic_number, str):
+            if getattr(self, "binary", True) and isinstance(self.magic_number, str):
                 read_magic = '"' + bytes.hex(read_magic_number) + '"'
                 ref_magic = '"' + self.magic_number + '"'
             else:

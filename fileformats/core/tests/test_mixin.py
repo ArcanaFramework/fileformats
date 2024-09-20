@@ -36,7 +36,7 @@ class Header(UnicodeFile):
     ext = ".hdr"
 
     def load(self):
-        return dict(ln.split(":") for ln in self.contents.splitlines())
+        return dict(ln.split(":") for ln in self.raw_contents.splitlines())
 
 
 class FileWithSeparateHeader(WithSeparateHeader, UnicodeFile):
@@ -107,7 +107,7 @@ class ImageWithInlineHeader(BinaryFile):
     header_separator = b"---END HEADER---"
 
     def read_metadata(self, **kwargs: ty.Any) -> ty.Mapping[str, ty.Any]:
-        hdr = self.contents.split(self.header_separator)[0].decode("utf-8")
+        hdr = self.raw_contents.split(self.header_separator)[0].decode("utf-8")
         return dict(ln.split(":") for ln in hdr.splitlines())
 
 

@@ -4,7 +4,7 @@ import tempfile
 import yaml
 import pydra.mark
 import pydra.engine.specs
-from fileformats.core import converter, extra_implementation
+from fileformats.core import FileSet, converter, extra_implementation
 from fileformats.application import TextSerialization, Json, Yaml
 from fileformats.application.serialization import SerializationType
 
@@ -27,14 +27,18 @@ def convert_data_serialization(
     return output_format.new(output_path, dct)
 
 
-@extra_implementation(TextSerialization.load)
-def yaml_load(yml: Yaml) -> SerializationType:
+@extra_implementation(FileSet.load)
+def yaml_load(yml: Yaml, **kwargs: ty.Any) -> SerializationType:
     with open(yml.fspath) as f:
         data = yaml.load(f, Loader=yaml.Loader)
     return data  # type: ignore[no-any-return]
 
 
-@extra_implementation(TextSerialization.save)
-def yaml_save(yml: Yaml, data: SerializationType) -> None:
+@extra_implementation(FileSet.save)
+def yaml_save(
+    yml: Yaml,
+    data: SerializationType,
+    **kwargs: ty.Any,
+) -> None:
     with open(yml.fspath, "w") as f:
-        yaml.dump(data, f)
+        yaml.dump(data, f, **kwargs)

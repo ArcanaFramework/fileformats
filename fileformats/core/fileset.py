@@ -68,10 +68,10 @@ class FileSet(DataType):
     metadata : dict[str, Any]
         metadata associated with the file-set, typically lazily loaded via `read_metadata`
         extra hook but can be provided directly at the time of instantiation
-    **metadata_keys : ty.Any
-        Any keyword arguments to be passed through to the read_metadata function when
-        loading metadata to fill the `metadata` property. Provided
-        to allow for selective loading of metadata fields for performance reasons.
+    **load_kwargs : ty.Any
+        Any keyword arguments to be passed through to `read_metadata` and `load`
+        implementations when loading metadata and data to fill the `metadata` and `contents`
+        properties respectively.
     """
 
     # Class attributes
@@ -92,16 +92,16 @@ class FileSet(DataType):
     # Member attributes
     fspaths: ty.FrozenSet[Path]
     _explicit_metadata: ty.Optional[ty.Mapping[str, ty.Any]]
-    _metadata_kwargs: ty.Dict[str, ty.Any]
+    _load_kwargs: ty.Dict[str, ty.Any]
 
     def __init__(
         self,
         *fspaths: FspathsInputType,
         metadata: ty.Optional[ty.Dict[str, ty.Any]] = None,
-        **metadata_kwargs: ty.Any,
+        **load_kwargs: ty.Any,
     ):
         self._explicit_metadata = metadata
-        self._metadata_kwargs = metadata_kwargs
+        self._load_kwargs = load_kwargs
         self._validate_class()
         self.fspaths = frozenset(
             itertools.chain(*(fspaths_converter(p) for p in fspaths))
@@ -145,7 +145,7 @@ class FileSet(DataType):
         if (
             not module_name.startswith("fileformats")
             and not isinstance(self, MockMixin)
-            and not module_name.split(".")[-1].startswith("test_")
+            and "test" not in module_name
         ):
             raise FormatDefinitionError(
                 f"FileSet class {type(self).__name__} should be defined in the "
@@ -179,9 +179,14 @@ class FileSet(DataType):
         return f"{self.type_name}('" + "', '".join(str(p) for p in self.fspaths) + "')"
 
     @extra
-    def load(self) -> ty.Any:
+    def load(self, **kwargs: ty.Any) -> ty.Any:
         """Load the contents of the file into an object of type that make sense for the
         datat type
+
+        Parameters
+        ----------
+        **kwargs : Any
+            any format-specific keyword arguments to pass to the loader
 
         Returns
         -------
@@ -190,7 +195,7 @@ class FileSet(DataType):
         """
 
     @extra
-    def save(self, data: ty.Any) -> None:
+    def save(self, data: ty.Any, **kwargs: ty.Any) -> None:
         """Load new contents from a format-specific object
 
         Parameters
@@ -198,10 +203,12 @@ class FileSet(DataType):
         data: Any
             the data to be saved to the file in a type that matches the one loaded by
             the `load` method
+        **kwargs : Any
+            any format-specific keyword arguments to pass to the saver
         """
 
     @classmethod
-    def new(cls, fspath: ty.Union[str, Path], data: ty.Any) -> Self:
+    def new(cls, fspath: ty.Union[str, Path], data: ty.Any, **kwargs: ty.Any) -> Self:
         """Create a new file-set object with the given data saved to the file
 
         Parameters
@@ -212,6 +219,8 @@ class FileSet(DataType):
         data: Any
             the data to be saved to the file in a type that matches the one loaded by
             the `load` method
+        **kwargs : Any
+            any format-specific keyword arguments to pass to the saver
 
         Returns
         -------
@@ -221,7 +230,7 @@ class FileSet(DataType):
         # We have to use a mock object as the data file hasn't been written yet so can't
         # be validated
         mock = cls.mock(fspath)
-        mock.save(data)
+        mock.save(data, **kwargs)
         return cls(fspath)
 
     @property
@@ -297,7 +306,7 @@ class FileSet(DataType):
         if self._explicit_metadata is not None:
             return self._explicit_metadata
         try:
-            metadata = self.read_metadata(**self._metadata_kwargs)
+            metadata = self.read_metadata(**self._load_kwargs)
         except FileFormatsExtrasPkgUninstalledError:
             raise
         except FileFormatsExtrasPkgNotCheckedError as e:
@@ -306,6 +315,12 @@ class FileSet(DataType):
         except FileFormatsExtrasError:
             metadata = {}
         return metadata
+
+    @mtime_cached_property
+    def contents(self) -> ty.Any:
+        """The contents of the file-set, will be an object of a type that makes sense
+        for the format, as loaded by the `load` method"""
+        return self.load()
 
     @extra
     def read_metadata(self, **kwargs: ty.Any) -> ty.Mapping[str, ty.Any]:
@@ -1033,9 +1048,13 @@ class FileSet(DataType):
         try:
             obj = cls(fspaths)
         except FormatMismatchError as e:
+            try:
+                mime_like = cls.mime_like
+            except FormatDefinitionError:
+                mime_like = cls.__module__ + "." + cls.__name__
             raise NotImplementedError(
                 f"File paths generated by override of Fileset.generate_sample_data() "
-                f"({fspaths}) do not match '{cls.mime_like}' file type. A more specific "
+                f"({fspaths}) do not match '{mime_like}' file type. A more specific "
                 f"implementation is required. Reason:\n\n{e}"
             )
         return obj
@@ -1195,7 +1214,7 @@ class FileSet(DataType):
 
     @classmethod
     def from_paths(
-        cls, fspaths: ty.Iterable[Path], common_ok: bool = False
+        cls, fspaths: ty.Iterable[Path], common_ok: bool = False, **kwargs: ty.Any
     ) -> ty.Tuple[ty.Set[Self], ty.Set[Path]]:
         """Finds all instances of the fileset class that can be constructed from a
         collection of file-system paths.
@@ -1207,6 +1226,8 @@ class FileSet(DataType):
         common_ok : bool
             whether secondary file-system paths can be shared between multiple instances
             of the returned filesets
+        **kwargs: Any
+            additional keyword arguments to pass to the file
 
         Returns
         -------
@@ -1220,7 +1241,7 @@ class FileSet(DataType):
         remaining = set(fspaths)
         for fspath in fspaths:
             try:
-                fileset = cls(fspath)
+                fileset = cls(fspath, **kwargs)
             except FormatMismatchError:
                 continue
             else:

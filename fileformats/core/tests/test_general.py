@@ -133,7 +133,7 @@ class ImageWithInlineHeader(BinaryFile):
     header_separator = b"---END HEADER---"
 
     def read_metadata(self, **kwargs: ty.Any) -> ty.Mapping[str, ty.Any]:
-        hdr = self.contents.split(self.header_separator)[0].decode("utf-8")
+        hdr = self.raw_contents.split(self.header_separator)[0].decode("utf-8")
         return {k: int(v) for k, v in (ln.split(":") for ln in hdr.splitlines())}
 
 
