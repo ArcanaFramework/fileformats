@@ -3,13 +3,13 @@ from pathlib import Path
 from fileformats.core.exceptions import FormatMismatchError
 from fileformats.core.decorators import (
     validated_property,
-    classproperty,
     mtime_cached_property,
 )
 from .fsobject import FsObject
 from fileformats.core.fileset import FileSet, FILE_CHUNK_LEN_DEFAULT
 from fileformats.core.mixin import WithClassifiers
 from fileformats.core.typing import CryptoMethod
+from fileformats.core.collection import TypedCollection
 from .file import File
 
 
@@ -67,6 +67,10 @@ class Directory(FsObject):
             ignore_hidden_dirs=ignore_hidden_dirs,
         )
 
+    @property
+    def content_fspaths(self) -> ty.Iterable[Path]:
+        return self.fspath.iterdir()
+
     # Duck-type Path methods
 
     def __div__(self, other: ty.Union[str, Path]) -> Path:
@@ -85,7 +89,7 @@ class Directory(FsObject):
         return self.fspath.iterdir()
 
 
-class TypedDirectory(Directory):
+class TypedDirectory(TypedCollection, Directory):  # type: ignore[misc]
     """Directory that must contain a specific set of content types. Only files that match
     the content types will be considered as contents in the `contents` property.
 
@@ -95,46 +99,16 @@ class TypedDirectory(Directory):
         the content types that are expected to be found within the directory
     """
 
-    @mtime_cached_property
-    def contents(self) -> ty.List[FileSet]:
-        contnts = []
-        for content_type in self.content_types:
-            assert content_type
-            for p in self.fspath.iterdir():
-                try:
-                    contnts.append(content_type([p], **self._load_kwargs))
-                except FormatMismatchError:
-                    continue
-        return contnts
-
-    @classproperty
-    def unconstrained(cls) -> bool:
-        """Whether the file-format is unconstrained by extension, magic number or another
-        constraint"""
-        return super().unconstrained and not cls.content_types
-
-    @validated_property
-    def _validate_contents(self) -> None:
-        if not self.content_types:
-            return
-        not_found = set(self.content_types)
-        for fspath in self.fspath.iterdir():
-            for content_type in list(not_found):
-                if content_type.matches(fspath):
-                    not_found.remove(content_type)
-                    if not not_found:
-                        return
-        assert not_found
-        raise FormatMismatchError(
-            f"Did not find the required content types, {not_found}, within the "
-            f"directory {self.fspath} of {self}"
-        )
+    @property
+    def content_fspaths(self) -> ty.Iterable[Path]:
+        return self.fspath.iterdir()
 
 
-class DirectoryOf(WithClassifiers, TypedDirectory):
+class DirectoryOf(WithClassifiers, TypedDirectory):  # type: ignore[misc]
     """Generic directory classified by the formats of its contents"""
 
     # WithClassifiers-required class attrs
     classifiers_attr_name = "content_types"
     allowed_classifiers = (FileSet,)
+    allow_optional_classifiers = True
     generically_classifiable = True

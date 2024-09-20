@@ -69,7 +69,7 @@ def directory_containing_generate_sample_data(
 ) -> ty.List[Path]:
     a_dir = generator.generate_fspath(TypedDirectory)
     a_dir.mkdir()
-    for tp in directory.content_types:
+    for tp in directory.potential_content_types:
         tp.sample_data(generator.child(dest_dir=a_dir))
     return [a_dir]
 
@@ -81,6 +81,9 @@ def set_of_sample_data(
 ) -> ty.List[Path]:
     return list(
         itertools.chain(
-            *(tp.sample_data(generator.child()) for tp in set_of.content_types)
+            *(
+                tp.sample_data(generator.child())
+                for tp in set_of.potential_content_types
+            )
         )
     )
