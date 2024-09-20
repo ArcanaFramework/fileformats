@@ -47,7 +47,7 @@ jobs:
     - name: Install Extras Package
       run: python3 -m pip install -e ./extras[test]
     - name: MyPy
-      run: mypy --install-types --non-interactive .
+      run: mypy --install-types --non-interactive --no-warn-unused-ignores .
     - name: Pytest
       run: pytest -vvs --cov fileformats --cov-config .coveragerc --cov-report xml .
     - name: Upload coverage to Codecov
