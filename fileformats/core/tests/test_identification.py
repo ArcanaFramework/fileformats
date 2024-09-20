@@ -1,6 +1,7 @@
 from collections import Counter
 import itertools
 import typing as ty
+from pathlib import Path
 import pytest
 from fileformats.core import (
     find_matching,
@@ -9,6 +10,7 @@ from fileformats.core import (
     from_paths,
     FileSet,
 )
+from fileformats.generic import File, SetOf
 from fileformats.core.exceptions import FormatRecognitionError
 from fileformats.testing import Foo, Bar
 from fileformats.application import Json, Yaml, Zip
@@ -62,6 +64,16 @@ def test_official_mime_fail():
 def test_repr():
     for frmt in FileSet.all_formats:
         assert repr(frmt.mock("/a/path")).startswith(f"{frmt.__name__}(")
+
+
+def test_set_repr_trunc():
+    a = Path("/a/path").absolute()
+    b = Path("/b/path").absolute()
+    c = Path("/c/path").absolute()
+    d = Path("/d/path").absolute()
+    assert (
+        repr(SetOf[File].mock(a, b, c, d)) == f"SetOf[File]('{a}', '{b}', '{c}', ...)"
+    )
 
 
 def test_from_paths(tmp_path):

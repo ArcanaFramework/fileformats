@@ -13,6 +13,18 @@ class TypedSet(FileSet):
 
     content_types: ty.Tuple[ty.Type[FileSet], ...] = ()
 
+    MAX_REPR_PATHS = 3
+
+    def __repr__(self) -> str:
+        paths_repr = (
+            "'"
+            + "', '".join(str(p) for p in sorted(self.fspaths)[: self.MAX_REPR_PATHS])
+            + "'"
+        )
+        if len(self.fspaths) > self.MAX_REPR_PATHS:
+            paths_repr += ", ..."
+        return f"{self.type_name}({paths_repr})"
+
     @cached_property
     def contents(self) -> ty.List[FileSet]:
         contnts = []

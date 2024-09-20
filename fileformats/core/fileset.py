@@ -1737,12 +1737,15 @@ class MockMixin:
 
     @classproperty
     def type_name(cls) -> str:
-        class_name: str = cls.__name__  # type: ignore
-        assert class_name.endswith("Mock")
-        return class_name[: -len("Mock")]
+        return cls.mocked.type_name
 
     def __bytes_repr__(self, cache: ty.Dict[str, ty.Any]) -> ty.Iterable[bytes]:
         yield from (str(fspath).encode() for fspath in self.fspaths)
+
+    @classproperty
+    def mocked(cls) -> FileSet:
+        """The "true" class that the mocked class is based on"""
+        return next(c for c in cls.__mro__ if not issubclass(c, MockMixin))  # type: ignore[no-any-return, attr-defined]
 
     @classproperty
     def namespace(cls) -> str:
