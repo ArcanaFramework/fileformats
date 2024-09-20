@@ -27,7 +27,17 @@ class Dicom(WithMagicNumber, BinaryFile):
             The pydicom Dataset to convert.
         omit : Collection[str], optional
             A collection of keys to omit from the dictionary, by default ("PixelData",)
+
+        Returns
+        -------
+        Dict[str, Any]
+            The dictionary representation of the pydicom Dataset
         """
+        import pydicom.dataset
+        import pydicom.valuerep
+        import pydicom.multival
+        import pydicom.uid
+
         # Ensure that all keys are loaded before creating dictionary otherwise the keywords
         # will not be set in the elem
         [getattr(dcm, attr, None) for attr in dir(dcm)]
@@ -40,5 +50,21 @@ class Dicom(WithMagicNumber, BinaryFile):
             if not key:
                 key = elem.tag.json_key
             if key not in omit:
-                dct[key] = elem.value
+                value = elem.value
+                if isinstance(value, pydicom.multival.MultiValue):
+                    value = [str(v) for v in value]
+                elif isinstance(value, pydicom.uid.UID):
+                    value = str(value)
+                elif isinstance(value, bytes):
+                    value = value.decode(errors="ignore")
+                elif isinstance(value, pydicom.dataset.Dataset):
+                    value = cls.pydicom_to_dict(value, omit)
+                elif isinstance(value, pydicom.valuerep.IS):
+                    value = int(value)
+                elif isinstance(value, pydicom.valuerep.DSfloat):
+                    value = float(value)
+                # Can be handy to be able to access family_name and given_name separately
+                # elif isinstance(value, pydicom.valuerep.PersonName):
+                #     value = str(value)
+                dct[key] = value
         return dct

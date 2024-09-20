@@ -30,11 +30,15 @@ def convert_data_serialization(
 @extra_implementation(FileSet.load)
 def yaml_load(yml: Yaml, **kwargs: ty.Any) -> SerializationType:
     with open(yml.fspath) as f:
-        data = yaml.load(f, Loader=yaml.Loader, **kwargs)
+        data = yaml.load(f, Loader=yaml.Loader)
     return data  # type: ignore[no-any-return]
 
 
 @extra_implementation(FileSet.save)
-def yaml_save(yml: Yaml, data: SerializationType, **kwargs: ty.Any) -> None:
+def yaml_save(
+    yml: Yaml,
+    data: SerializationType,
+    **kwargs: ty.Any,
+) -> None:
     with open(yml.fspath, "w") as f:
         yaml.dump(data, f, **kwargs)

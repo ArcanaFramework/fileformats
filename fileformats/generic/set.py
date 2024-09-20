@@ -27,7 +27,7 @@ class TypedSet(FileSet):
         contnts = []
         for content_type in self.content_types:
             for p in self.fspaths:
-                contnts.append(content_type([p], **self._metadata_kwargs))
+                contnts.append(content_type([p], **self._load_kwargs))
         return contnts
 
     @validated_property

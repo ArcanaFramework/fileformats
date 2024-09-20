@@ -102,7 +102,7 @@ class TypedDirectory(Directory):
             assert content_type
             for p in self.fspath.iterdir():
                 try:
-                    contnts.append(content_type([p], **self._metadata_kwargs))
+                    contnts.append(content_type([p], **self._load_kwargs))
                 except FormatMismatchError:
                     continue
         return contnts

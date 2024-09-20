@@ -8,7 +8,7 @@ from fileformats.image.raster import RasterImage, DataArrayType
 
 @extra_implementation(FileSet.load)
 def read_raster_data(image: RasterImage, **kwargs: ty.Any) -> DataArrayType:
-    return imageio.imread(image.fspath, **kwargs)  # type: ignore
+    return imageio.imread(image.fspath)  # type: ignore
 
 
 @extra_implementation(FileSet.save)
