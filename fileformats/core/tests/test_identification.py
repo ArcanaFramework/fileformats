@@ -1,6 +1,7 @@
 from collections import Counter
 import itertools
 import typing as ty
+from pathlib import Path
 import pytest
 from fileformats.core import (
     find_matching,
@@ -66,9 +67,12 @@ def test_repr():
 
 
 def test_set_repr_trunc():
+    a = Path("/a/path")
+    b = Path("/b/path")
+    c = Path("/c/path")
+    d = Path("/d/path")
     assert (
-        repr(SetOf[File].mock("/a/path", "/b/path", "/c/path", "/d/path"))
-        == "SetOf[File]('/a/path', '/b/path', '/c/path', ...)"
+        repr(SetOf[File].mock(a, b, c, d)) == f"SetOf[File]('{a}', '{b}', '{c}', ...)"
     )
 
 
