@@ -34,9 +34,11 @@ def test_directory_optional_contents(tmp_path):
 
     optional_dir = DirectoryOf[MyFormatGz, ty.Optional[YourFormat]](sample_dir)
     assert optional_dir.contents == [my_format]
+
     your_format = YourFormat.sample(dest_dir=tmp_path)
     optional_dir = DirectoryOf[MyFormatGz, ty.Optional[YourFormat]](sample_dir)
     assert optional_dir.contents == [my_format, your_format]
+
     required_dir = DirectoryOf[MyFormatGz, YourFormat](sample_dir)
     assert required_dir.contents == [my_format, your_format]
 
@@ -47,15 +49,24 @@ def test_set_optional_contents():
 
     sample_set = SetOf[MyFormatGz, YourFormat](my_format, your_format)
     assert sample_set.contents == [my_format, your_format]
-    with pytest.raises(
-        FormatMismatchError, match="are not used by any of the contents of "
-    ):
-        SetOf[MyFormatGz](my_format, your_format)
+    assert set(sample_set.required_paths()) == {my_format.fspath, your_format.fspath}
+
+    sample_set = SetOf[MyFormatGz](my_format, your_format)
+    assert list(sample_set.required_paths()) == [my_format.fspath]
+
     with pytest.raises(
         FormatMismatchError, match="Did not find the required content types"
     ):
         SetOf[MyFormatGz, YourFormat](my_format)
+
     sample_set = SetOf[MyFormatGz, ty.Optional[YourFormat]](my_format)
     assert sample_set.contents == [my_format]
+    assert list(sample_set.required_paths()) == [my_format.fspath]
+
     sample_set = SetOf[MyFormatGz, ty.Optional[YourFormat]](my_format, your_format)
     assert sample_set.contents == [my_format, your_format]
+    assert set(sample_set.required_paths()) == {my_format.fspath, your_format.fspath}
+
+    sample_set = SetOf[ty.Optional[MyFormatGz]](my_format)
+    assert sample_set.contents == [my_format]
+    assert list(sample_set.required_paths()) == [my_format.fspath]

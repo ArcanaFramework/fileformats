@@ -1,10 +1,9 @@
 import typing as ty
 import itertools
 from pathlib import Path
-from fileformats.core import FileSet, validated_property
+from fileformats.core import FileSet
 from fileformats.core.mixin import WithClassifiers
 from fileformats.core.collection import TypedCollection
-from fileformats.core.exceptions import FormatMismatchError
 
 
 class TypedSet(TypedCollection):
@@ -27,16 +26,8 @@ class TypedSet(TypedCollection):
             paths_repr += ", ..."
         return f"{self.type_name}({paths_repr})"
 
-    @validated_property
-    def _all_paths_used(self) -> None:
-        all_contents_paths = set(itertools.chain(*(c.fspaths for c in self.contents)))
-        missing = self.fspaths - all_contents_paths
-        if missing:
-            contents_str = "\n".join(repr(c) for c in self.contents)
-            raise FormatMismatchError(
-                f"Paths {[str(p) for p in missing]} are not used by any of the "
-                f"contents of {self.type_name}:\n{contents_str}"
-            )
+    def required_paths(self) -> ty.FrozenSet[Path]:
+        return frozenset(itertools.chain(*(c.required_paths() for c in self.contents)))
 
 
 class SetOf(WithClassifiers, TypedSet):  # type: ignore[misc]
