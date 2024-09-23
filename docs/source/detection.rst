@@ -37,8 +37,8 @@ To check whether a format matches without attempting to initialise the object us
         ...
 
 
-Directories are classified by the contents of the files within them, via the
-``content_types`` class attribute, e.g.
+Formats that consists of directories with specific nested file formats within them can
+be defined using the ``TypedDirectory`` with ``content_types`` class attribute, e.g.
 
 .. code-block:: python
 
@@ -48,7 +48,7 @@ Directories are classified by the contents of the files within them, via the
         magic_number = b"DICM"
         magic_number_offset = 128
 
-    class  DicomDir(Directory):
+    class  DicomDir(TypedDirectory):
         content_types = (Dicom,)
 
 
@@ -71,7 +71,30 @@ despite the presence of the ``.DS_Store`` directory and the ``catalog.xml`` file
     ├── 1024.dcm
     └── catalog.xml
 
-In addition to statically defining `Directory` formats such as the Dicom example above,
+The file-sets contained within the directory can be accessed via the ``contents`` attribute
+
+.. code-block:: python
+
+    dicom_dir = DicomDir("dicom-directory")
+    for dicom_file in dicom_dir.contents:
+        assert isinstance(dicom_file, Dicom)
+
+For types with optional content types, the ``content_types`` attribute can be set to
+an "optional", i.e. ``Xml | None``, and the ``contents`` attribute will include these
+optional types in addition to the required types
+
+
+.. code-block:: python
+
+    class CatalogedDicomDir(TypedDirectory):
+        content_types = (Dicom, Xml | None)
+
+    dicom_dir = DicomDir("dicom-directory")
+    for dicom_file in dicom_dir.contents:
+        assert isinstance(dicom_file, (Dicom, Xml))
+
+
+In addition to statically defining `TypedDirectory` formats such as the Dicom example above,
 dynamic directory types can be created on the fly by providing the content types as
 "classifier" arguments to the `DirectoryOf[]` class (see :ref:`Classifiers`),
 e.g.
