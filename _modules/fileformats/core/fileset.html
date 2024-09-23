@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 -->
-        <title>fileformats.core.fileset - FileFormats v0.13.0</title>
+        <title>fileformats.core.fileset - FileFormats v0.14.0</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d8449d71" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
@@ -171,7 +171,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">FileFormats v0.13.0</div></a>
+      <a href="../../../index.html"><div class="brand">FileFormats v0.14.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -198,7 +198,7 @@
     <img class="sidebar-logo" src="../../../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.13.0</span>
+  <span class="sidebar-brand-text">FileFormats v0.14.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -211,15 +211,12 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../detection.html">Detection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../file_handling.html">File handling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mime.html">MIME types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../extras.html">Read, write and convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../read_write.html">Read, write and convert</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../typing.html">Typing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../developer.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<p class="caption" role="heading"><span class="caption-text">Available Types</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../reference/core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../reference/generic.html">Generic</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../reference/field.html">Field</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../reference/application.html">Application</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../reference/audio.html">Audio</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../reference/image.html">Image</a></li>
@@ -228,6 +225,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../reference/video.html">Video</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../reference/datascience.html">Datascience</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../reference/medimage.html">Medimage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer/extensions.html">Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer/extras.html">Extras</a></li>
 </ul>
 
 </div>
@@ -307,6 +309,7 @@
 <span class="kn">from</span> <span class="nn">.datatype</span> <span class="kn">import</span> <span class="n">DataType</span>
 <span class="kn">from</span> <span class="nn">.extras</span> <span class="kn">import</span> <span class="n">extra</span>
 <span class="kn">from</span> <span class="nn">.fs_mount_identifier</span> <span class="kn">import</span> <span class="n">FsMountIdentifier</span>
+<span class="kn">from</span> <span class="nn">.mock</span> <span class="kn">import</span> <span class="n">MockMixin</span>
 
 <span class="k">if</span> <span class="n">ty</span><span class="o">.</span><span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">pydra.engine.task</span> <span class="kn">import</span> <span class="n">TaskBase</span>
@@ -320,7 +323,7 @@
 
 
 <div class="viewcode-block" id="FileSet">
-<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.FileSet">[docs]</a>
+<a class="viewcode-back" href="../../../api.html#fileformats.core.FileSet">[docs]</a>
 <span class="k">class</span> <span class="nc">FileSet</span><span class="p">(</span><span class="n">DataType</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The base class for all format types within the fileformats package. A generic</span>
@@ -335,10 +338,10 @@
 <span class="sd">    metadata : dict[str, Any]</span>
 <span class="sd">        metadata associated with the file-set, typically lazily loaded via `read_metadata`</span>
 <span class="sd">        extra hook but can be provided directly at the time of instantiation</span>
-<span class="sd">    **metadata_keys : ty.Any</span>
-<span class="sd">        Any keyword arguments to be passed through to the read_metadata function when</span>
-<span class="sd">        loading metadata to fill the `metadata` property. Provided</span>
-<span class="sd">        to allow for selective loading of metadata fields for performance reasons.</span>
+<span class="sd">    **load_kwargs : ty.Any</span>
+<span class="sd">        Any keyword arguments to be passed through to `read_metadata` and `load`</span>
+<span class="sd">        implementations when loading metadata and data to fill the `metadata` and `contents`</span>
+<span class="sd">        properties respectively.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># Class attributes</span>
@@ -359,16 +362,16 @@
     <span class="c1"># Member attributes</span>
     <span class="n">fspaths</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">FrozenSet</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span>
     <span class="n">_explicit_metadata</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]]</span>
-    <span class="n">_metadata_kwargs</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span>
+    <span class="n">_load_kwargs</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">fspaths</span><span class="p">:</span> <span class="n">FspathsInputType</span><span class="p">,</span>
         <span class="n">metadata</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">metadata_kwargs</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">load_kwargs</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_explicit_metadata</span> <span class="o">=</span> <span class="n">metadata</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata_kwargs</span> <span class="o">=</span> <span class="n">metadata_kwargs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_load_kwargs</span> <span class="o">=</span> <span class="n">load_kwargs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_validate_class</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fspaths</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span>
             <span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">fspaths_converter</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">fspaths</span><span class="p">))</span>
@@ -412,7 +415,7 @@
         <span class="k">if</span> <span class="p">(</span>
             <span class="ow">not</span> <span class="n">module_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;fileformats&quot;</span><span class="p">)</span>
             <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">MockMixin</span><span class="p">)</span>
-            <span class="ow">and</span> <span class="ow">not</span> <span class="n">module_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;test_&quot;</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="s2">&quot;test&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">module_name</span>
         <span class="p">):</span>
             <span class="k">raise</span> <span class="n">FormatDefinitionError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;FileSet class </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> should be defined in the &quot;</span>
@@ -446,9 +449,14 @@
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="si">}</span><span class="s2">(&#39;&quot;</span> <span class="o">+</span> <span class="s2">&quot;&#39;, &#39;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fspaths</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;&#39;)&quot;</span>
 
     <span class="nd">@extra</span>
-    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Load the contents of the file into an object of type that make sense for the</span>
 <span class="sd">        datat type</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        **kwargs : Any</span>
+<span class="sd">            any format-specific keyword arguments to pass to the loader</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -457,7 +465,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
     <span class="nd">@extra</span>
-    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Load new contents from a format-specific object</span>
 
 <span class="sd">        Parameters</span>
@@ -465,10 +473,12 @@
 <span class="sd">        data: Any</span>
 <span class="sd">            the data to be saved to the file in a type that matches the one loaded by</span>
 <span class="sd">            the `load` method</span>
+<span class="sd">        **kwargs : Any</span>
+<span class="sd">            any format-specific keyword arguments to pass to the saver</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">new</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">fspath</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span> <span class="n">data</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">new</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">fspath</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span> <span class="n">data</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new file-set object with the given data saved to the file</span>
 
 <span class="sd">        Parameters</span>
@@ -479,6 +489,8 @@
 <span class="sd">        data: Any</span>
 <span class="sd">            the data to be saved to the file in a type that matches the one loaded by</span>
 <span class="sd">            the `load` method</span>
+<span class="sd">        **kwargs : Any</span>
+<span class="sd">            any format-specific keyword arguments to pass to the saver</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -488,7 +500,7 @@
         <span class="c1"># We have to use a mock object as the data file hasn&#39;t been written yet so can&#39;t</span>
         <span class="c1"># be validated</span>
         <span class="n">mock</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">mock</span><span class="p">(</span><span class="n">fspath</span><span class="p">)</span>
-        <span class="n">mock</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">mock</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">fspath</span><span class="p">)</span>
 
     <span class="nd">@property</span>
@@ -564,7 +576,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_explicit_metadata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_explicit_metadata</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_metadata</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_metadata_kwargs</span><span class="p">)</span>
+            <span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_metadata</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_load_kwargs</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">FileFormatsExtrasPkgUninstalledError</span><span class="p">:</span>
             <span class="k">raise</span>
         <span class="k">except</span> <span class="n">FileFormatsExtrasPkgNotCheckedError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
@@ -573,6 +585,12 @@
         <span class="k">except</span> <span class="n">FileFormatsExtrasError</span><span class="p">:</span>
             <span class="n">metadata</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">return</span> <span class="n">metadata</span>
+
+    <span class="nd">@mtime_cached_property</span>
+    <span class="k">def</span> <span class="nf">contents</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The contents of the file-set, will be an object of a type that makes sense</span>
+<span class="sd">        for the format, as loaded by the `load` method&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 
     <span class="nd">@extra</span>
     <span class="k">def</span> <span class="nf">read_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
@@ -670,7 +688,7 @@
         <span class="k">return</span> <span class="bp">self</span>
 
 <div class="viewcode-block" id="FileSet.select_by_ext">
-<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.FileSet.select_by_ext">[docs]</a>
+<a class="viewcode-back" href="../../../api.html#fileformats.core.FileSet.select_by_ext">[docs]</a>
     <span class="k">def</span> <span class="nf">select_by_ext</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fileformat</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="s2">&quot;FileSet&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Selects a single path from a set of file-system paths based on the file</span>
 <span class="sd">        extension</span>
@@ -712,7 +730,7 @@
 
 
 <div class="viewcode-block" id="FileSet.matching_exts">
-<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.FileSet.matching_exts">[docs]</a>
+<a class="viewcode-back" href="../../../api.html#fileformats.core.FileSet.matching_exts">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">matching_exts</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -751,7 +769,7 @@
 
 
 <div class="viewcode-block" id="FileSet.convert">
-<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.FileSet.convert">[docs]</a>
+<a class="viewcode-back" href="../../../api.html#fileformats.core.FileSet.convert">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">convert</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -790,7 +808,7 @@
 
 
 <div class="viewcode-block" id="FileSet.get_converter">
-<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.FileSet.get_converter">[docs]</a>
+<a class="viewcode-back" href="../../../api.html#fileformats.core.FileSet.get_converter">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">get_converter</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -923,7 +941,7 @@
         <span class="k">return</span> <span class="n">available</span>
 
 <div class="viewcode-block" id="FileSet.register_converter">
-<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.FileSet.register_converter">[docs]</a>
+<a class="viewcode-back" href="../../../api.html#fileformats.core.FileSet.register_converter">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">register_converter</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -1130,7 +1148,7 @@
                 <span class="k">yield</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">chunk_file</span><span class="p">(</span><span class="n">fspath</span><span class="p">))</span>
 
 <div class="viewcode-block" id="FileSet.hash">
-<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.FileSet.hash">[docs]</a>
+<a class="viewcode-back" href="../../../api.html#fileformats.core.FileSet.hash">[docs]</a>
     <span class="k">def</span> <span class="nf">hash</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">crypto</span><span class="p">:</span> <span class="n">CryptoMethod</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1173,7 +1191,7 @@
 
 
 <div class="viewcode-block" id="FileSet.hash_files">
-<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.FileSet.hash_files">[docs]</a>
+<a class="viewcode-back" href="../../../api.html#fileformats.core.FileSet.hash_files">[docs]</a>
     <span class="k">def</span> <span class="nf">hash_files</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">crypto</span><span class="p">:</span> <span class="n">CryptoMethod</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># s</span>
@@ -1259,7 +1277,7 @@
         <span class="k">return</span> <span class="n">types</span>
 
 <div class="viewcode-block" id="FileSet.mock">
-<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.FileSet.mock">[docs]</a>
+<a class="viewcode-back" href="../../../api.html#fileformats.core.FileSet.mock">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">mock</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">fspaths</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;Self&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return an instance of a mocked sub-class of the file format to be used in</span>
@@ -1290,7 +1308,7 @@
 
 
 <div class="viewcode-block" id="FileSet.sample">
-<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.FileSet.sample">[docs]</a>
+<a class="viewcode-back" href="../../../api.html#fileformats.core.FileSet.sample">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -1326,9 +1344,13 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">obj</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">fspaths</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">FormatMismatchError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">mime_like</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">mime_like</span>
+            <span class="k">except</span> <span class="n">FormatDefinitionError</span><span class="p">:</span>
+                <span class="n">mime_like</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;File paths generated by override of Fileset.generate_sample_data() &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">fspaths</span><span class="si">}</span><span class="s2">) do not match &#39;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">mime_like</span><span class="si">}</span><span class="s2">&#39; file type. A more specific &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">fspaths</span><span class="si">}</span><span class="s2">) do not match &#39;</span><span class="si">{</span><span class="n">mime_like</span><span class="si">}</span><span class="s2">&#39; file type. A more specific &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;implementation is required. Reason:</span><span class="se">\n\n</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">obj</span></div>
@@ -1400,7 +1422,7 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
 
 <div class="viewcode-block" id="FileSet.decomposed_fspaths">
-<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.FileSet.decomposed_fspaths">[docs]</a>
+<a class="viewcode-back" href="../../../api.html#fileformats.core.FileSet.decomposed_fspaths">[docs]</a>
     <span class="k">def</span> <span class="nf">decomposed_fspaths</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">required_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -1491,10 +1513,10 @@
         <span class="k">return</span> <span class="n">fspath</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="n">stem</span><span class="p">,</span> <span class="n">ext</span>
 
 <div class="viewcode-block" id="FileSet.from_paths">
-<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.FileSet.from_paths">[docs]</a>
+<a class="viewcode-back" href="../../../api.html#fileformats.core.FileSet.from_paths">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_paths</span><span class="p">(</span>
-        <span class="bp">cls</span><span class="p">,</span> <span class="n">fspaths</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="n">Path</span><span class="p">],</span> <span class="n">common_ok</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">fspaths</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="n">Path</span><span class="p">],</span> <span class="n">common_ok</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Set</span><span class="p">[</span><span class="n">Self</span><span class="p">],</span> <span class="n">ty</span><span class="o">.</span><span class="n">Set</span><span class="p">[</span><span class="n">Path</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Finds all instances of the fileset class that can be constructed from a</span>
 <span class="sd">        collection of file-system paths.</span>
@@ -1506,6 +1528,8 @@
 <span class="sd">        common_ok : bool</span>
 <span class="sd">            whether secondary file-system paths can be shared between multiple instances</span>
 <span class="sd">            of the returned filesets</span>
+<span class="sd">        **kwargs: Any</span>
+<span class="sd">            additional keyword arguments to pass to the file</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1519,7 +1543,7 @@
         <span class="n">remaining</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">fspaths</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">fspath</span> <span class="ow">in</span> <span class="n">fspaths</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">fileset</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">fspath</span><span class="p">)</span>
+                <span class="n">fileset</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">fspath</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="k">except</span> <span class="n">FormatMismatchError</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="k">else</span><span class="p">:</span>
@@ -1643,7 +1667,7 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
 
 <div class="viewcode-block" id="FileSet.copy">
-<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.FileSet.copy">[docs]</a>
+<a class="viewcode-back" href="../../../api.html#fileformats.core.FileSet.copy">[docs]</a>
     <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">dest_dir</span><span class="p">:</span> <span class="n">PathType</span><span class="p">,</span>
@@ -1816,7 +1840,7 @@
 
 
 <div class="viewcode-block" id="FileSet.move">
-<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.FileSet.move">[docs]</a>
+<a class="viewcode-back" href="../../../api.html#fileformats.core.FileSet.move">[docs]</a>
     <span class="k">def</span> <span class="nf">move</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">dest_dir</span><span class="p">:</span> <span class="n">PathType</span><span class="p">,</span>
@@ -2028,44 +2052,6 @@
     <span class="n">_required_props</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">_valid_class</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
 
-
-
-<span class="k">class</span> <span class="nc">MockMixin</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Strips out validation methods of a class, allowing it to be mocked in a way that</span>
-<span class="sd">    still satisfies type-checking&quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">fspaths</span><span class="p">:</span> <span class="n">FspathsInputType</span><span class="p">,</span>
-        <span class="n">metadata</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span> <span class="nb">bool</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fspaths</span> <span class="o">=</span> <span class="n">fspaths_converter</span><span class="p">(</span><span class="n">fspaths</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span> <span class="o">=</span> <span class="n">metadata</span>
-
-    <span class="nd">@classproperty</span>
-    <span class="k">def</span> <span class="nf">type_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="n">class_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span>  <span class="c1"># type: ignore</span>
-        <span class="k">assert</span> <span class="n">class_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;Mock&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">class_name</span><span class="p">[:</span> <span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="s2">&quot;Mock&quot;</span><span class="p">)]</span>
-
-    <span class="k">def</span> <span class="nf">__bytes_repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cache</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
-        <span class="k">yield from</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">fspath</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span> <span class="k">for</span> <span class="n">fspath</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fspaths</span><span class="p">)</span>
-
-    <span class="nd">@classproperty</span>
-    <span class="k">def</span> <span class="nf">namespace</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The &quot;namespace&quot; the format belongs to under the &quot;fileformats&quot; umbrella</span>
-<span class="sd">        namespace&quot;&quot;&quot;</span>
-        <span class="n">mro</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__mro__</span>  <span class="c1"># type: ignore</span>
-        <span class="k">for</span> <span class="n">base</span> <span class="ow">in</span> <span class="n">mro</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">MockMixin</span><span class="p">):</span>
-                <span class="k">continue</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">base</span><span class="o">.</span><span class="n">namespace</span>  <span class="c1"># type: ignore</span>
-            <span class="k">except</span> <span class="n">FormatDefinitionError</span><span class="p">:</span>
-                <span class="k">pass</span>
-        <span class="k">raise</span> <span class="n">FormatDefinitionError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;None of of the bases classes of </span><span class="si">{</span><span class="bp">cls</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">mro</span><span class="si">}</span><span class="s2">) have a valid namespace&quot;</span>
-        <span class="p">)</span>
 </pre></div>
         </article>
       </div>
@@ -2098,7 +2084,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=d2781cd5"></script>
+</div><script src="../../../_static/documentation_options.js?v=7f6e4f39"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=5fa4622c"></script>

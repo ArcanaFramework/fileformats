@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="#" /><link rel="search" title="Search" href="search.html" />
 
-    <!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 --><title>Index - FileFormats v0.13.0</title>
+    <!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 --><title>Index - FileFormats v0.14.0</title>
 <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d8449d71" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
@@ -170,7 +170,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">FileFormats v0.13.0</div></a>
+      <a href="index.html"><div class="brand">FileFormats v0.14.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -197,7 +197,7 @@
     <img class="sidebar-logo" src="_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.13.0</span>
+  <span class="sidebar-brand-text">FileFormats v0.14.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -210,15 +210,12 @@
 <li class="toctree-l1"><a class="reference internal" href="detection.html">Detection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="file_handling.html">File handling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mime.html">MIME types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="extras.html">Read, write and convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="read_write.html">Read, write and convert</a></li>
 <li class="toctree-l1"><a class="reference internal" href="typing.html">Typing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="developer.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<p class="caption" role="heading"><span class="caption-text">Available Types</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="reference/core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="reference/generic.html">Generic</a></li>
-<li class="toctree-l1"><a class="reference internal" href="reference/field.html">Field</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/application.html">Application</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/audio.html">Audio</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/image.html">Image</a></li>
@@ -227,6 +224,11 @@
 <li class="toctree-l1"><a class="reference internal" href="reference/video.html">Video</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/datascience.html">Datascience</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/medimage.html">Medimage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="developer/extensions.html">Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer/extras.html">Extras</a></li>
 </ul>
 
 </div>
@@ -290,14 +292,14 @@
           <li><a href="reference/video.html#fileformats.video._3gpp">(class in fileformats.video)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="reference/audio.html#fileformats.audio._3gpp2">_3gpp2 (class in fileformats.audio)</a>
 
         <ul>
           <li><a href="reference/video.html#fileformats.video._3gpp2">(class in fileformats.video)</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="reference/video.html#fileformats.video._3gpp_tt">_3gpp_tt (class in fileformats.video)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application._3gpphal__Json">_3gpphal__Json (class in fileformats.application)</a>
@@ -307,6 +309,12 @@
         <li><a href="reference/application.html#fileformats.application._3gppIms__Xml">_3gppIms__Xml (class in fileformats.application)</a>
 </li>
         <li><a href="reference/model.html#fileformats.model._3mf">_3mf (class in fileformats.model)</a>
+</li>
+        <li><a href="api.html#fileformats.generic.Directory.__div__">__div__() (fileformats.generic.Directory method)</a>
+</li>
+        <li><a href="api.html#fileformats.generic.FsObject.__fspath__">__fspath__() (fileformats.generic.FsObject method)</a>
+</li>
+        <li><a href="api.html#fileformats.generic.FsObject.__str__">__str__() (fileformats.generic.FsObject method)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -320,6 +328,8 @@
 </li>
         <li><a href="reference/audio.html#fileformats.audio.Aac">Aac (class in fileformats.audio)</a>
 </li>
+        <li><a href="api.html#fileformats.generic.FsObject.absolute">absolute() (fileformats.generic.FsObject method)</a>
+</li>
         <li><a href="reference/audio.html#fileformats.audio.Ac3">Ac3 (class in fileformats.audio)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.Ace__Cbor">Ace__Cbor (class in fileformats.application)</a>
@@ -332,11 +342,15 @@
 </li>
         <li><a href="reference/application.html#fileformats.application.Activity__Json">Activity__Json (class in fileformats.application)</a>
 </li>
+        <li><a href="api.html#fileformats.generic.File.actual_ext">actual_ext (fileformats.generic.File property)</a>
+</li>
         <li><a href="reference/application.html#fileformats.application.Aif__Cbor">Aif__Cbor (class in fileformats.application)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.Aif__Json">Aif__Json (class in fileformats.application)</a>
 </li>
-        <li><a href="reference/core.html#fileformats.core.FileSet.all_formats">all_formats (fileformats.core.FileSet property)</a>
+        <li><a href="api.html#fileformats.core.FileSet.all_formats">all_formats (fileformats.core.FileSet property)</a>
+</li>
+        <li><a href="api.html#fileformats.core.DataType.all_types">all_types (fileformats.core.DataType property)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.AltoCdni__Json">AltoCdni__Json (class in fileformats.application)</a>
 </li>
@@ -376,10 +390,12 @@
 </li>
         <li><a href="reference/audio.html#fileformats.audio.AmrWb">AmrWb (class in fileformats.audio)</a>
 </li>
-        <li><a href="reference/audio.html#fileformats.audio.AmrWb__">AmrWb__ (class in fileformats.audio)</a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/audio.html#fileformats.audio.AmrWb__">AmrWb__ (class in fileformats.audio)</a>
+</li>
+        <li><a href="api.html#fileformats.generic.FsObject.anchor">anchor (fileformats.generic.FsObject property)</a>
+</li>
         <li><a href="reference/application.html#fileformats.application.AndrewInset">AndrewInset (class in fileformats.application)</a>
 </li>
         <li><a href="reference/image.html#fileformats.image.Apng">Apng (class in fileformats.image)</a>
@@ -390,7 +406,7 @@
 </li>
         <li><a href="reference/application.html#fileformats.application.Archive">Archive (class in fileformats.application)</a>
 </li>
-        <li><a href="reference/field.html#fileformats.field.Array">Array (class in fileformats.field)</a>
+        <li><a href="api.html#fileformats.field.Array">Array (class in fileformats.field)</a>
 </li>
         <li><a href="reference/audio.html#fileformats.audio.Asc">Asc (class in fileformats.audio)</a>
 </li>
@@ -460,13 +476,15 @@
 </li>
         <li><a href="reference/application.html#fileformats.application.Beep__Xml">Beep__Xml (class in fileformats.application)</a>
 </li>
+        <li><a href="api.html#fileformats.generic.BinaryFile">BinaryFile (class in fileformats.generic)</a>
+</li>
         <li><a href="reference/image.html#fileformats.image.Bitmap">Bitmap (class in fileformats.image)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="reference/video.html#fileformats.video.Bmpeg">Bmpeg (class in fileformats.video)</a>
 </li>
-        <li><a href="reference/field.html#fileformats.field.Boolean">Boolean (class in fileformats.field)</a>
+        <li><a href="api.html#fileformats.field.Boolean">Boolean (class in fileformats.field)</a>
 </li>
         <li><a href="reference/video.html#fileformats.video.Bt656">Bt656 (class in fileformats.video)</a>
 </li>
@@ -536,18 +554,20 @@
 </li>
         <li><a href="reference/image.html#fileformats.image.Cgm">Cgm (class in fileformats.image)</a>
 </li>
+        <li><a href="api.html#fileformats.generic.FsObject.chmod">chmod() (fileformats.generic.FsObject method)</a>
+</li>
         <li><a href="reference/application.html#fileformats.application.City__Json">City__Json (class in fileformats.application)</a>
 </li>
-        <li><a href="reference/core.html#fileformats.core.Classifier">Classifier (class in fileformats.core)</a>
+        <li><a href="api.html#fileformats.core.Classifier">Classifier (class in fileformats.core)</a>
 </li>
         <li><a href="reference/audio.html#fileformats.audio.Clearmode">Clearmode (class in fileformats.audio)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.Clr">Clr (class in fileformats.application)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="reference/application.html#fileformats.application.Clue__Xml">Clue__Xml (class in fileformats.application)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="reference/application.html#fileformats.application.ClueInfo__Xml">ClueInfo__Xml (class in fileformats.application)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.Cms">Cms (class in fileformats.application)</a>
@@ -566,9 +586,17 @@
 </li>
         <li><a href="reference/application.html#fileformats.application.ConferenceInfo__Xml">ConferenceInfo__Xml (class in fileformats.application)</a>
 </li>
-        <li><a href="reference/core.html#fileformats.core.FileSet.convert">convert() (fileformats.core.FileSet class method)</a>
+        <li><a href="api.html#fileformats.generic.Directory.contents">contents (fileformats.generic.Directory attribute)</a>
+
+        <ul>
+          <li><a href="api.html#fileformats.generic.File.contents">(fileformats.generic.File attribute)</a>
 </li>
-        <li><a href="reference/core.html#fileformats.core.FileSet.copy">copy() (fileformats.core.FileSet method)</a>
+          <li><a href="api.html#fileformats.generic.TypedSet.contents">(fileformats.generic.TypedSet attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="api.html#fileformats.core.FileSet.convert">convert() (fileformats.core.FileSet class method)</a>
+</li>
+        <li><a href="api.html#fileformats.core.FileSet.copy">copy() (fileformats.core.FileSet method)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.Cose">Cose (class in fileformats.application)</a>
 </li>
@@ -624,7 +652,7 @@
 </li>
         <li><a href="reference/audio.html#fileformats.audio.Dat12">Dat12 (class in fileformats.audio)</a>
 </li>
-        <li><a href="reference/core.html#fileformats.core.DataType">DataType (class in fileformats.core)</a>
+        <li><a href="api.html#fileformats.core.DataType">DataType (class in fileformats.core)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.Davmount__Xml">Davmount__Xml (class in fileformats.application)</a>
 </li>
@@ -634,9 +662,9 @@
 </li>
         <li><a href="reference/application.html#fileformats.application.DecDx">DecDx (class in fileformats.application)</a>
 </li>
-        <li><a href="reference/field.html#fileformats.field.Decimal">Decimal (class in fileformats.field)</a>
+        <li><a href="api.html#fileformats.field.Decimal">Decimal (class in fileformats.field)</a>
 </li>
-        <li><a href="reference/core.html#fileformats.core.FileSet.decomposed_fspaths">decomposed_fspaths() (fileformats.core.FileSet method)</a>
+        <li><a href="api.html#fileformats.core.FileSet.decomposed_fspaths">decomposed_fspaths() (fileformats.core.FileSet method)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.DialogInfo__Xml">DialogInfo__Xml (class in fileformats.application)</a>
 </li>
@@ -650,9 +678,9 @@
 </li>
         <li><a href="reference/application.html#fileformats.application.Dii">Dii (class in fileformats.application)</a>
 </li>
-        <li><a href="reference/generic.html#fileformats.generic.Directory">Directory (class in fileformats.generic)</a>
+        <li><a href="api.html#fileformats.generic.Directory">Directory (class in fileformats.generic)</a>
 </li>
-        <li><a href="reference/generic.html#fileformats.generic.DirectoryOf">DirectoryOf (class in fileformats.generic)</a>
+        <li><a href="api.html#fileformats.generic.DirectoryOf">DirectoryOf (class in fileformats.generic)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.Dit">Dit (class in fileformats.application)</a>
 </li>
@@ -677,6 +705,8 @@
         <li><a href="reference/application.html#fileformats.application.Dpop__Jwt">Dpop__Jwt (class in fileformats.application)</a>
 </li>
         <li><a href="reference/image.html#fileformats.image.Dpx">Dpx (class in fileformats.image)</a>
+</li>
+        <li><a href="api.html#fileformats.generic.FsObject.drive">drive (fileformats.generic.FsObject property)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.Dskpp__Xml">Dskpp__Xml (class in fileformats.application)</a>
 </li>
@@ -802,6 +832,8 @@
 </li>
         <li><a href="reference/application.html#fileformats.application.Exi">Exi (class in fileformats.application)</a>
 </li>
+        <li><a href="api.html#fileformats.generic.FsObject.exists">exists() (fileformats.generic.FsObject method)</a>
+</li>
         <li><a href="reference/application.html#fileformats.application.ExpectCtReport__Json">ExpectCtReport__Json (class in fileformats.application)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.Express">Express (class in fileformats.application)</a>
@@ -830,13 +862,13 @@
 </li>
         <li><a href="reference/text.html#fileformats.text.Fhirpath">Fhirpath (class in fileformats.text)</a>
 </li>
-        <li><a href="reference/core.html#fileformats.core.Field">Field (class in fileformats.core)</a>
+        <li><a href="api.html#fileformats.core.Field">Field (class in fileformats.core)</a>
 </li>
-        <li><a href="reference/generic.html#fileformats.generic.File">File (class in fileformats.generic)</a>
+        <li><a href="api.html#fileformats.generic.File">File (class in fileformats.generic)</a>
 </li>
-        <li><a href="reference/core.html#fileformats.core.FileSet">FileSet (class in fileformats.core)</a>
+        <li><a href="api.html#fileformats.core.FileSet">FileSet (class in fileformats.core)</a>
 </li>
-        <li><a href="reference/core.html#fileformats.core.find_matching">find_matching() (in module fileformats.core)</a>
+        <li><a href="api.html#fileformats.core.find_matching">find_matching() (in module fileformats.core)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.Fits">Fits (class in fileformats.application)</a>
 
@@ -844,8 +876,6 @@
           <li><a href="reference/image.html#fileformats.image.Fits">(class in fileformats.image)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="reference/application.html#fileformats.application.Flexfec">Flexfec (class in fileformats.application)</a>
 
         <ul>
@@ -856,24 +886,34 @@
           <li><a href="reference/video.html#fileformats.video.Flexfec">(class in fileformats.video)</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="reference/application.html#fileformats.application.FrameworkAttributes__Xml">FrameworkAttributes__Xml (class in fileformats.application)</a>
 </li>
-        <li><a href="reference/core.html#fileformats.core.Field.from_mime">from_mime() (fileformats.core.Field class method)</a>
+        <li><a href="api.html#fileformats.core.Field.from_mime">from_mime() (fileformats.core.Field class method)</a>
 
         <ul>
-          <li><a href="reference/core.html#fileformats.core.FileSet.from_mime">(fileformats.core.FileSet class method)</a>
+          <li><a href="api.html#fileformats.core.FileSet.from_mime">(fileformats.core.FileSet class method)</a>
 </li>
-          <li><a href="reference/core.html#fileformats.core.from_mime">(in module fileformats.core)</a>
+          <li><a href="api.html#fileformats.core.from_mime">(in module fileformats.core)</a>
 </li>
         </ul></li>
-        <li><a href="reference/core.html#fileformats.core.FileSet.from_paths">from_paths() (fileformats.core.FileSet class method)</a>
+        <li><a href="api.html#fileformats.core.FileSet.from_paths">from_paths() (fileformats.core.FileSet class method)</a>
 
         <ul>
-          <li><a href="reference/core.html#fileformats.core.from_paths">(in module fileformats.core)</a>
+          <li><a href="api.html#fileformats.core.from_paths">(in module fileformats.core)</a>
 </li>
         </ul></li>
-        <li><a href="reference/generic.html#fileformats.generic.FsObject">FsObject (class in fileformats.generic)</a>
+        <li><a href="api.html#fileformats.core.Field.from_primitive">from_primitive() (fileformats.core.Field class method)</a>
 </li>
+        <li><a href="api.html#fileformats.generic.FsObject">FsObject (class in fileformats.generic)</a>
+</li>
+        <li><a href="api.html#fileformats.generic.Directory.fspath">fspath (fileformats.generic.Directory property)</a>
+
+        <ul>
+          <li><a href="api.html#fileformats.generic.FsObject.fspath">(fileformats.generic.FsObject property)</a>
+</li>
+        </ul></li>
         <li><a href="reference/audio.html#fileformats.audio.Fwdred">Fwdred (class in fileformats.audio)</a>
 
         <ul>
@@ -918,21 +958,27 @@
 </li>
         <li><a href="reference/audio.html#fileformats.audio.G729e">G729e (class in fileformats.audio)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="reference/application.html#fileformats.application.Geo__Json">Geo__Json (class in fileformats.application)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.Geo__JsonSeq">Geo__JsonSeq (class in fileformats.application)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="reference/application.html#fileformats.application.Geopackage__Sqlite3">Geopackage__Sqlite3 (class in fileformats.application)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.Geoxacml__Xml">Geoxacml__Xml (class in fileformats.application)</a>
 </li>
-        <li><a href="reference/core.html#fileformats.core.FileSet.get_converter">get_converter() (fileformats.core.FileSet class method)</a>
+        <li><a href="api.html#fileformats.core.DataType.get_converter">get_converter() (fileformats.core.DataType class method)</a>
+
+        <ul>
+          <li><a href="api.html#fileformats.core.FileSet.get_converter">(fileformats.core.FileSet class method)</a>
 </li>
+        </ul></li>
         <li><a href="reference/text.html#fileformats.text.Gff3">Gff3 (class in fileformats.text)</a>
 </li>
         <li><a href="reference/image.html#fileformats.image.Gif">Gif (class in fileformats.image)</a>
+</li>
+        <li><a href="api.html#fileformats.generic.Directory.glob">glob() (fileformats.generic.Directory method)</a>
 </li>
         <li><a href="reference/model.html#fileformats.model.Gltf__Json">Gltf__Json (class in fileformats.model)</a>
 </li>
@@ -943,6 +989,8 @@
         <li><a href="reference/application.html#fileformats.application.Gml__Xml">Gml__Xml (class in fileformats.application)</a>
 </li>
         <li><a href="reference/text.html#fileformats.text.GrammarRefList">GrammarRefList (class in fileformats.text)</a>
+</li>
+        <li><a href="api.html#fileformats.generic.FsObject.group">group() (fileformats.generic.FsObject method)</a>
 </li>
         <li><a href="reference/audio.html#fileformats.audio.Gsm">Gsm (class in fileformats.audio)</a>
 </li>
@@ -980,9 +1028,9 @@
 </li>
         <li><a href="reference/video.html#fileformats.video.H266">H266 (class in fileformats.video)</a>
 </li>
-        <li><a href="reference/core.html#fileformats.core.FileSet.hash">hash() (fileformats.core.FileSet method)</a>
+        <li><a href="api.html#fileformats.core.FileSet.hash">hash() (fileformats.core.FileSet method)</a>
 </li>
-        <li><a href="reference/core.html#fileformats.core.FileSet.hash_files">hash_files() (fileformats.core.FileSet method)</a>
+        <li><a href="api.html#fileformats.core.FileSet.hash_files">hash_files() (fileformats.core.FileSet method)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
@@ -1042,15 +1090,15 @@
 </li>
         <li><a href="reference/application.html#fileformats.application.Index_Response">Index_Response (class in fileformats.application)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="reference/application.html#fileformats.application.Index_Vnd">Index_Vnd (class in fileformats.application)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="reference/application.html#fileformats.application.InformalSchema">InformalSchema (class in fileformats.application)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.Inkml__Xml">Inkml__Xml (class in fileformats.application)</a>
 </li>
-        <li><a href="reference/field.html#fileformats.field.Integer">Integer (class in fileformats.field)</a>
+        <li><a href="api.html#fileformats.field.Integer">Integer (class in fileformats.field)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.Iotp">Iotp (class in fileformats.application)</a>
 </li>
@@ -1060,9 +1108,15 @@
 </li>
         <li><a href="reference/application.html#fileformats.application.Ipp">Ipp (class in fileformats.application)</a>
 </li>
+        <li><a href="api.html#fileformats.generic.FsObject.is_dir">is_dir() (fileformats.generic.FsObject method)</a>
+</li>
+        <li><a href="api.html#fileformats.generic.FsObject.is_file">is_file() (fileformats.generic.FsObject method)</a>
+</li>
         <li><a href="reference/video.html#fileformats.video.Iso_Segment">Iso_Segment (class in fileformats.video)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.Isup">Isup (class in fileformats.application)</a>
+</li>
+        <li><a href="api.html#fileformats.generic.Directory.iterdir">iterdir() (fileformats.generic.Directory method)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.Its__Xml">Its__Xml (class in fileformats.application)</a>
 </li>
@@ -1089,6 +1143,8 @@
         <li><a href="reference/application.html#fileformats.application.Jf2feed__Json">Jf2feed__Json (class in fileformats.application)</a>
 </li>
         <li><a href="reference/image.html#fileformats.image.Jls">Jls (class in fileformats.image)</a>
+</li>
+        <li><a href="api.html#fileformats.generic.Directory.joinpath">joinpath() (fileformats.generic.Directory method)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.Jose">Jose (class in fileformats.application)</a>
 </li>
@@ -1232,9 +1288,9 @@
 </li>
         <li><a href="reference/text.html#fileformats.text.Markdown">Markdown (class in fileformats.text)</a>
 </li>
-        <li><a href="reference/core.html#fileformats.core.DataType.matches">matches() (fileformats.core.DataType class method)</a>
+        <li><a href="api.html#fileformats.core.DataType.matches">matches() (fileformats.core.DataType class method)</a>
 </li>
-        <li><a href="reference/core.html#fileformats.core.FileSet.matching_exts">matching_exts() (fileformats.core.FileSet class method)</a>
+        <li><a href="api.html#fileformats.core.FileSet.matching_exts">matching_exts() (fileformats.core.FileSet class method)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.Mathematica">Mathematica (class in fileformats.application)</a>
 </li>
@@ -1284,7 +1340,7 @@
 </li>
         <li><a href="reference/application.html#fileformats.application.MergePatch__Json">MergePatch__Json (class in fileformats.application)</a>
 </li>
-        <li><a href="reference/core.html#fileformats.core.FileSet.metadata">metadata (fileformats.core.FileSet attribute)</a>
+        <li><a href="api.html#fileformats.core.FileSet.metadata">metadata (fileformats.core.FileSet attribute)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.Metalink4__Xml">Metalink4__Xml (class in fileformats.application)</a>
 </li>
@@ -1296,18 +1352,18 @@
 </li>
         <li><a href="reference/application.html#fileformats.application.Mikey">Mikey (class in fileformats.application)</a>
 </li>
-        <li><a href="reference/core.html#fileformats.core.DataType.mime_like">mime_like (fileformats.core.DataType property)</a>
+        <li><a href="api.html#fileformats.core.DataType.mime_like">mime_like (fileformats.core.DataType property)</a>
 
         <ul>
-          <li><a href="reference/core.html#fileformats.core.Field.mime_like">(fileformats.core.Field attribute)</a>
+          <li><a href="api.html#fileformats.core.Field.mime_like">(fileformats.core.Field attribute)</a>
 </li>
-          <li><a href="reference/core.html#fileformats.core.FileSet.mime_like">(fileformats.core.FileSet attribute)</a>
+          <li><a href="api.html#fileformats.core.FileSet.mime_like">(fileformats.core.FileSet attribute)</a>
 </li>
         </ul></li>
-        <li><a href="reference/core.html#fileformats.core.DataType.mime_type">mime_type (fileformats.core.DataType property)</a>
+        <li><a href="api.html#fileformats.core.DataType.mime_type">mime_type (fileformats.core.DataType property)</a>
 
         <ul>
-          <li><a href="reference/core.html#fileformats.core.FileSet.mime_type">(fileformats.core.FileSet property)</a>
+          <li><a href="api.html#fileformats.core.FileSet.mime_type">(fileformats.core.FileSet property)</a>
 </li>
         </ul></li>
     </ul></td>
@@ -1326,7 +1382,7 @@
 </li>
         <li><a href="reference/audio.html#fileformats.audio.MobileXmf">MobileXmf (class in fileformats.audio)</a>
 </li>
-        <li><a href="reference/core.html#fileformats.core.FileSet.mock">mock() (fileformats.core.FileSet class method)</a>
+        <li><a href="api.html#fileformats.core.FileSet.mock">mock() (fileformats.core.FileSet class method)</a>
 </li>
         <li><a href="reference/model.html#fileformats.model.Model">Model (class in fileformats.model)</a>
 </li>
@@ -1340,7 +1396,7 @@
 </li>
         <li><a href="reference/application.html#fileformats.application.MossSignature">MossSignature (class in fileformats.application)</a>
 </li>
-        <li><a href="reference/core.html#fileformats.core.FileSet.move">move() (fileformats.core.FileSet method)</a>
+        <li><a href="api.html#fileformats.core.FileSet.move">move() (fileformats.core.FileSet method)</a>
 </li>
         <li><a href="reference/video.html#fileformats.video.Mp1s">Mp1s (class in fileformats.video)</a>
 </li>
@@ -1412,7 +1468,9 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="reference/text.html#fileformats.text.N3">N3 (class in fileformats.text)</a>
 </li>
-        <li><a href="reference/core.html#fileformats.core.Classifier.namespace">namespace (fileformats.core.Classifier property)</a>
+        <li><a href="api.html#fileformats.generic.FsObject.name">name (fileformats.generic.FsObject property)</a>
+</li>
+        <li><a href="api.html#fileformats.core.Classifier.namespace">namespace (fileformats.core.Classifier property)</a>
 </li>
         <li><a href="reference/image.html#fileformats.image.Naplps">Naplps (class in fileformats.image)</a>
 </li>
@@ -1464,8 +1522,6 @@
 </li>
         <li><a href="reference/application.html#fileformats.application.Odx">Odx (class in fileformats.application)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="reference/application.html#fileformats.application.OebpsPackage__Xml">OebpsPackage__Xml (class in fileformats.application)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.Ogg">Ogg (class in fileformats.application)</a>
@@ -1476,13 +1532,25 @@
           <li><a href="reference/video.html#fileformats.video.Ogg">(class in fileformats.video)</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="reference/application.html#fileformats.application.OhttpKeys">OhttpKeys (class in fileformats.application)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.OpcNodeset__Xml">OpcNodeset__Xml (class in fileformats.application)</a>
 </li>
+        <li><a href="api.html#fileformats.generic.BinaryFile.open">open() (fileformats.generic.BinaryFile method)</a>
+
+        <ul>
+          <li><a href="api.html#fileformats.generic.File.open">(fileformats.generic.File method)</a>
+</li>
+          <li><a href="api.html#fileformats.generic.UnicodeFile.open">(fileformats.generic.UnicodeFile method)</a>
+</li>
+        </ul></li>
         <li><a href="reference/audio.html#fileformats.audio.Opus">Opus (class in fileformats.audio)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.Oscore">Oscore (class in fileformats.application)</a>
+</li>
+        <li><a href="api.html#fileformats.generic.FsObject.owner">owner() (fileformats.generic.FsObject method)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.Oxps">Oxps (class in fileformats.application)</a>
 </li>
@@ -1502,6 +1570,10 @@
 </li>
         <li><a href="reference/text.html#fileformats.text.Parameters">Parameters (class in fileformats.text)</a>
 </li>
+        <li><a href="api.html#fileformats.generic.FsObject.parent">parent (fileformats.generic.FsObject property)</a>
+</li>
+        <li><a href="api.html#fileformats.generic.FsObject.parents">parents (fileformats.generic.FsObject property)</a>
+</li>
         <li><a href="reference/application.html#fileformats.application.Parityfec">Parityfec (class in fileformats.application)</a>
 
         <ul>
@@ -1512,6 +1584,8 @@
           <li><a href="reference/video.html#fileformats.video.Parityfec">(class in fileformats.video)</a>
 </li>
         </ul></li>
+        <li><a href="api.html#fileformats.generic.FsObject.parts">parts (fileformats.generic.FsObject property)</a>
+</li>
         <li><a href="reference/application.html#fileformats.application.Passport">Passport (class in fileformats.application)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.PatchOpsError__Xml">PatchOpsError__Xml (class in fileformats.application)</a>
@@ -1560,10 +1634,10 @@
 </li>
         <li><a href="reference/application.html#fileformats.application.Pkixcmp">Pkixcmp (class in fileformats.application)</a>
 </li>
-        <li><a href="reference/application.html#fileformats.application.PkixCrl">PkixCrl (class in fileformats.application)</a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/application.html#fileformats.application.PkixCrl">PkixCrl (class in fileformats.application)</a>
+</li>
         <li><a href="reference/application.html#fileformats.application.PkixPkipath">PkixPkipath (class in fileformats.application)</a>
 </li>
         <li><a href="reference/text.html#fileformats.text.Plain">Plain (class in fileformats.text)</a>
@@ -1576,7 +1650,7 @@
 </li>
         <li><a href="reference/video.html#fileformats.video.Pointer">Pointer (class in fileformats.video)</a>
 </li>
-        <li><a href="reference/core.html#fileformats.core.FileSet.possible_exts">possible_exts (fileformats.core.FileSet property)</a>
+        <li><a href="api.html#fileformats.core.FileSet.possible_exts">possible_exts (fileformats.core.FileSet property)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.Postscript">Postscript (class in fileformats.application)</a>
 </li>
@@ -1674,6 +1748,18 @@
 </li>
         <li><a href="reference/application.html#fileformats.application.Rdf__Xml">Rdf__Xml (class in fileformats.application)</a>
 </li>
+        <li><a href="api.html#fileformats.generic.File.read_bytes">read_bytes() (fileformats.generic.File method)</a>
+</li>
+        <li><a href="api.html#fileformats.generic.BinaryFile.read_contents">read_contents() (fileformats.generic.BinaryFile method)</a>
+
+        <ul>
+          <li><a href="api.html#fileformats.generic.File.read_contents">(fileformats.generic.File method)</a>
+</li>
+          <li><a href="api.html#fileformats.generic.UnicodeFile.read_contents">(fileformats.generic.UnicodeFile method)</a>
+</li>
+        </ul></li>
+        <li><a href="api.html#fileformats.generic.UnicodeFile.read_text">read_text() (fileformats.generic.UnicodeFile method)</a>
+</li>
         <li><a href="reference/audio.html#fileformats.audio.Red">Red (class in fileformats.audio)</a>
 
         <ul>
@@ -1682,7 +1768,7 @@
         </ul></li>
         <li><a href="reference/application.html#fileformats.application.Reginfo__Xml">Reginfo__Xml (class in fileformats.application)</a>
 </li>
-        <li><a href="reference/core.html#fileformats.core.FileSet.register_converter">register_converter() (fileformats.core.FileSet class method)</a>
+        <li><a href="api.html#fileformats.core.FileSet.register_converter">register_converter() (fileformats.core.FileSet class method)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.RelaxNgCompactSyntax">RelaxNgCompactSyntax (class in fileformats.application)</a>
 </li>
@@ -1698,15 +1784,19 @@
 </li>
         <li><a href="reference/application.html#fileformats.application.Rfc__Xml">Rfc__Xml (class in fileformats.application)</a>
 </li>
+        <li><a href="api.html#fileformats.generic.Directory.rglob">rglob() (fileformats.generic.Directory method)</a>
+</li>
         <li><a href="reference/text.html#fileformats.text.RichText">RichText (class in fileformats.text)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="reference/application.html#fileformats.application.Riscos">Riscos (class in fileformats.application)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.Rlmi__Xml">Rlmi__Xml (class in fileformats.application)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="reference/application.html#fileformats.application.RlsServices__Xml">RlsServices__Xml (class in fileformats.application)</a>
+</li>
+        <li><a href="api.html#fileformats.generic.FsObject.root">root (fileformats.generic.FsObject property)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.RouteApd__Xml">RouteApd__Xml (class in fileformats.application)</a>
 </li>
@@ -1770,7 +1860,7 @@
 </li>
         <li><a href="reference/application.html#fileformats.application.Samlmetadata__Xml">Samlmetadata__Xml (class in fileformats.application)</a>
 </li>
-        <li><a href="reference/core.html#fileformats.core.FileSet.sample">sample() (fileformats.core.FileSet class method)</a>
+        <li><a href="api.html#fileformats.core.FileSet.sample">sample() (fileformats.core.FileSet class method)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.Sarif__Json">Sarif__Json (class in fileformats.application)</a>
 </li>
@@ -1804,7 +1894,7 @@
 </li>
         <li><a href="reference/application.html#fileformats.application.Secevent__Jwt">Secevent__Jwt (class in fileformats.application)</a>
 </li>
-        <li><a href="reference/core.html#fileformats.core.FileSet.select_by_ext">select_by_ext() (fileformats.core.FileSet method)</a>
+        <li><a href="api.html#fileformats.core.FileSet.select_by_ext">select_by_ext() (fileformats.core.FileSet method)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.Senml__Cbor">Senml__Cbor (class in fileformats.application)</a>
 </li>
@@ -1832,7 +1922,7 @@
 </li>
         <li><a href="reference/application.html#fileformats.application.SessionInfo">SessionInfo (class in fileformats.application)</a>
 </li>
-        <li><a href="reference/generic.html#fileformats.generic.SetOf">SetOf (class in fileformats.generic)</a>
+        <li><a href="api.html#fileformats.generic.SetOf">SetOf (class in fileformats.generic)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.SetPayment">SetPayment (class in fileformats.application)</a>
 </li>
@@ -1854,14 +1944,14 @@
 </li>
         <li><a href="reference/text.html#fileformats.text.Shex">Shex (class in fileformats.text)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="reference/application.html#fileformats.application.Shf__Xml">Shf__Xml (class in fileformats.application)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.Sieve">Sieve (class in fileformats.application)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.SimpleFilter__Xml">SimpleFilter__Xml (class in fileformats.application)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="reference/application.html#fileformats.application.SimpleMessageSummary">SimpleMessageSummary (class in fileformats.application)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.Simplesymbolcontainer">Simplesymbolcontainer (class in fileformats.application)</a>
@@ -1914,8 +2004,16 @@
 </li>
         <li><a href="reference/application.html#fileformats.application.Ssml__Xml">Ssml__Xml (class in fileformats.application)</a>
 </li>
-        <li><a href="reference/core.html#fileformats.core.FileSet.standard_formats">standard_formats (fileformats.core.FileSet property)</a>
+        <li><a href="api.html#fileformats.core.FileSet.standard_formats">standard_formats (fileformats.core.FileSet property)</a>
 </li>
+        <li><a href="api.html#fileformats.generic.FsObject.stat">stat() (fileformats.generic.FsObject method)</a>
+</li>
+        <li><a href="api.html#fileformats.generic.File.stem">stem (fileformats.generic.File property)</a>
+
+        <ul>
+          <li><a href="api.html#fileformats.generic.FsObject.stem">(fileformats.generic.FsObject property)</a>
+</li>
+        </ul></li>
         <li><a href="reference/model.html#fileformats.model.Step">Step (class in fileformats.model)</a>
 </li>
         <li><a href="reference/model.html#fileformats.model.Step__Xml">Step__Xml (class in fileformats.model)</a>
@@ -1928,11 +2026,15 @@
 </li>
         <li><a href="reference/model.html#fileformats.model.Stl">Stl (class in fileformats.model)</a>
 </li>
-        <li><a href="reference/core.html#fileformats.core.FileSet.strext">strext (fileformats.core.FileSet property)</a>
+        <li><a href="api.html#fileformats.core.FileSet.strext">strext (fileformats.core.FileSet property)</a>
 </li>
         <li><a href="reference/text.html#fileformats.text.Strings">Strings (class in fileformats.text)</a>
 </li>
-        <li><a href="reference/core.html#fileformats.core.DataType.subclasses">subclasses() (fileformats.core.DataType class method)</a>
+        <li><a href="api.html#fileformats.core.DataType.subclasses">subclasses() (fileformats.core.DataType class method)</a>
+</li>
+        <li><a href="api.html#fileformats.generic.FsObject.suffix">suffix (fileformats.generic.FsObject property)</a>
+</li>
+        <li><a href="api.html#fileformats.generic.FsObject.suffixes">suffixes (fileformats.generic.FsObject property)</a>
 </li>
         <li><a href="reference/image.html#fileformats.image.Svg">Svg (class in fileformats.image)</a>
 </li>
@@ -2000,15 +2102,17 @@
 </li>
         <li><a href="reference/application.html#fileformats.application.TetraIsi">TetraIsi (class in fileformats.application)</a>
 </li>
-        <li><a href="reference/field.html#fileformats.field.Text">Text (class in fileformats.field)</a>
+        <li><a href="api.html#fileformats.field.Text">Text (class in fileformats.field)</a>
 
         <ul>
           <li><a href="reference/text.html#fileformats.text.Text">(class in fileformats.text)</a>
 </li>
         </ul></li>
+        <li><a href="reference/text.html#fileformats.text.TextFile">TextFile (class in fileformats.text)</a>
+</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="reference/text.html#fileformats.text.TextFile">TextFile (class in fileformats.text)</a>
+        <li><a href="reference/application.html#fileformats.application.TextSerialization">TextSerialization (class in fileformats.application)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.Thraud__Xml">Thraud__Xml (class in fileformats.application)</a>
 </li>
@@ -2030,7 +2134,9 @@
 </li>
         <li><a href="reference/application.html#fileformats.application.Tnauthlist">Tnauthlist (class in fileformats.application)</a>
 </li>
-        <li><a href="reference/core.html#fileformats.core.to_mime">to_mime() (in module fileformats.core)</a>
+        <li><a href="api.html#fileformats.core.to_mime">to_mime() (in module fileformats.core)</a>
+</li>
+        <li><a href="api.html#fileformats.core.Field.to_primitive">to_primitive() (fileformats.core.Field method)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.TokenIntrospection__Jwt">TokenIntrospection__Jwt (class in fileformats.application)</a>
 </li>
@@ -2054,7 +2160,9 @@
 </li>
         <li><a href="reference/application.html#fileformats.application.TveTrigger">TveTrigger (class in fileformats.application)</a>
 </li>
-        <li><a href="reference/core.html#fileformats.core.Classifier.type_name">type_name (fileformats.core.Classifier property)</a>
+        <li><a href="api.html#fileformats.core.Classifier.type_name">type_name (fileformats.core.Classifier property)</a>
+</li>
+        <li><a href="api.html#fileformats.generic.TypedSet">TypedSet (class in fileformats.generic)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.Tzif">Tzif (class in fileformats.application)</a>
 </li>
@@ -2082,9 +2190,15 @@
           <li><a href="reference/video.html#fileformats.video.Ulpfec">(class in fileformats.video)</a>
 </li>
         </ul></li>
+        <li><a href="api.html#fileformats.core.FileSet.unconstrained">unconstrained (fileformats.core.FileSet property)</a>
+
+        <ul>
+          <li><a href="api.html#fileformats.generic.FsObject.unconstrained">(fileformats.generic.FsObject property)</a>
+</li>
+        </ul></li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="reference/core.html#fileformats.core.FileSet.unconstrained">unconstrained (fileformats.core.FileSet property)</a>
+        <li><a href="api.html#fileformats.generic.UnicodeFile">UnicodeFile (class in fileformats.generic)</a>
 </li>
         <li><a href="reference/application.html#fileformats.application.UrcGrpsheet__Xml">UrcGrpsheet__Xml (class in fileformats.application)</a>
 </li>
@@ -2176,17 +2290,17 @@
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="reference/core.html#fileformats.core.mixin.WithAdjacentFiles">WithAdjacentFiles (class in fileformats.core.mixin)</a>
+        <li><a href="developer/extensions.html#fileformats.core.mixin.WithAdjacentFiles">WithAdjacentFiles (class in fileformats.core.mixin)</a>
 </li>
-        <li><a href="reference/core.html#fileformats.core.mixin.WithClassifiers">WithClassifiers (class in fileformats.core.mixin)</a>
+        <li><a href="developer/extensions.html#fileformats.core.mixin.WithClassifiers">WithClassifiers (class in fileformats.core.mixin)</a>
 </li>
-        <li><a href="reference/core.html#fileformats.core.mixin.WithMagicNumber">WithMagicNumber (class in fileformats.core.mixin)</a>
+        <li><a href="developer/extensions.html#fileformats.core.mixin.WithMagicNumber">WithMagicNumber (class in fileformats.core.mixin)</a>
 </li>
-        <li><a href="reference/core.html#fileformats.core.mixin.WithMagicVersion">WithMagicVersion (class in fileformats.core.mixin)</a>
+        <li><a href="developer/extensions.html#fileformats.core.mixin.WithMagicVersion">WithMagicVersion (class in fileformats.core.mixin)</a>
 </li>
-        <li><a href="reference/core.html#fileformats.core.mixin.WithSeparateHeader">WithSeparateHeader (class in fileformats.core.mixin)</a>
+        <li><a href="developer/extensions.html#fileformats.core.mixin.WithSeparateHeader">WithSeparateHeader (class in fileformats.core.mixin)</a>
 </li>
-        <li><a href="reference/core.html#fileformats.core.mixin.WithSideCars">WithSideCars (class in fileformats.core.mixin)</a>
+        <li><a href="developer/extensions.html#fileformats.core.mixin.WithSideCars">WithSideCars (class in fileformats.core.mixin)</a>
 </li>
         <li><a href="reference/image.html#fileformats.image.Wmf">Wmf (class in fileformats.image)</a>
 </li>
@@ -2348,7 +2462,7 @@
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=d2781cd5"></script>
+</div><script src="_static/documentation_options.js?v=7f6e4f39"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=5fa4622c"></script>

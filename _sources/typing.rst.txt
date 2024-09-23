@@ -84,8 +84,8 @@ directory or independent files, respectively.
         return SetOf[Png](Png.convert(j) for j in directory.contents)
 
 
-Fields
-------
+Non-file "fields"
+-----------------
 
 There are some use cases where input data can contain a mix of file-based and field data.
 Therefore, while not file formats, for convenience *FileFormats* also provides

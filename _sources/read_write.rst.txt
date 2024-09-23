@@ -5,7 +5,7 @@ Read, write and convert
 In addition to the basic features of validation and path handling, it is possible to
 implement methods to interact with the data of file format objects via "extras hooks".
 Such features are added to selected format classes on a needs basis (pull requests
-welcome 😊, see :ref:`Developer Guide`), so are by no means comprehensive, and
+welcome 😊, see :ref:`Extras`), so are by no means comprehensive, and
 are provided "as-is".
 
 Since these features typically rely on a range of external libraries, they are kept in
@@ -38,14 +38,14 @@ Reading and writing
 Several classes in the base fileformats package implement ``load`` and ``save`` methods.
 An advantage of implementing them  in the format class is that objects instantiated from
 them can then be duck-typed in calling functions/methods. For example, both ``Yaml`` and
-``Json`` formats (both inherit from the ``DataSerialization`` type) implement the
+``Json`` formats (both inherit from the ``TextSerialization`` type) implement the
 ``load`` method, which returns a dictionary
 
 .. code-block:: python
 
-    from fileformats.application import DataSerialization  # i.e. JSON or YAML
+    from fileformats.application import TextSerialization  # i.e. JSON or YAML
 
-    def read_serialisation(serialized: DataSerialization) -> dict:
+    def read_serialisation(serialized: TextSerialization) -> dict:
         return serialized.load()
 
 

@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Detection" href="detection.html" /><link rel="prev" title="FileFormats" href="index.html" />
 
     <!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 -->
-        <title>Quick start - FileFormats v0.13.0</title>
+        <title>Quick start - FileFormats v0.14.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d8449d71" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
@@ -172,7 +172,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">FileFormats v0.13.0</div></a>
+      <a href="index.html"><div class="brand">FileFormats v0.14.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -199,7 +199,7 @@
     <img class="sidebar-logo" src="_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.13.0</span>
+  <span class="sidebar-brand-text">FileFormats v0.14.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -212,15 +212,12 @@
 <li class="toctree-l1"><a class="reference internal" href="detection.html">Detection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="file_handling.html">File handling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mime.html">MIME types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="extras.html">Read, write and convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="read_write.html">Read, write and convert</a></li>
 <li class="toctree-l1"><a class="reference internal" href="typing.html">Typing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="developer.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<p class="caption" role="heading"><span class="caption-text">Available Types</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="reference/core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="reference/generic.html">Generic</a></li>
-<li class="toctree-l1"><a class="reference internal" href="reference/field.html">Field</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/application.html">Application</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/audio.html">Audio</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/image.html">Image</a></li>
@@ -229,6 +226,11 @@
 <li class="toctree-l1"><a class="reference internal" href="reference/video.html">Video</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/datascience.html">Datascience</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/medimage.html">Medimage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="developer/extensions.html">Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer/extras.html">Extras</a></li>
 </ul>
 
 </div>
@@ -315,7 +317,7 @@ MIME types.</p>
 <span class="go">fileformats.image.raster.Jpeg</span>
 </pre></div>
 </div>
-<p>To copy or move the files in a <a class="reference internal" href="reference/core.html#fileformats.core.FileSet" title="fileformats.core.FileSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileSet</span></code></a> to a new directory, use the
+<p>To copy or move the files in a <a class="reference internal" href="api.html#fileformats.core.FileSet" title="fileformats.core.FileSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileSet</span></code></a> to a new directory, use the
 <code class="docutils literal notranslate"><span class="pre">copy</span></code> or <code class="docutils literal notranslate"><span class="pre">move</span></code> methods, respectively.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">new_jpeg</span> <span class="o">=</span> <span class="n">jpeg_file</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">dest_dir</span><span class="o">=</span><span class="s2">&quot;/path/to/destination&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">new_jpeg</span><span class="o">.</span><span class="n">fspaths</span>
@@ -332,7 +334,7 @@ file (see <a class="reference internal" href="file_handling.html#copy-mode"><spa
 <span class="go">)  # will fallback to a copy</span>
 </pre></div>
 </div>
-<p>To quickly generate a hash of the file set use the <a class="reference internal" href="reference/core.html#fileformats.core.FileSet.hash" title="fileformats.core.FileSet.hash"><code class="xref py py-meth docutils literal notranslate"><span class="pre">FileSet.hash()</span></code></a> method.</p>
+<p>To quickly generate a hash of the file set use the <a class="reference internal" href="api.html#fileformats.core.FileSet.hash" title="fileformats.core.FileSet.hash"><code class="xref py py-meth docutils literal notranslate"><span class="pre">FileSet.hash()</span></code></a> method.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">jpeg_file</span><span class="o">.</span><span class="n">hash</span><span class="p">()</span>
 <span class="go">&quot;d41d8cd98f00b204e9800998ecf8427e&quot;</span>
 </pre></div>
@@ -356,7 +358,7 @@ the metadata can be accessed as a dictionary attribute.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Only a small fraction of formats have extra functionality added in the main package.
-Extra functionality is only planned to be implemented as required. See the <a class="reference internal" href="developer.html#developer-guide"><span class="std std-ref">Developer Guide</span></a>
+Extra functionality is only planned to be implemented as required. See the <a class="reference internal" href="developer/extras.html#extras"><span class="std std-ref">Extras</span></a>
 for information on how to implement new file formats, converters and extra functionality.</p>
 </div>
 </section>
@@ -410,7 +412,7 @@ for information on how to implement new file formats, converters and extra funct
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=d2781cd5"></script>
+</div><script src="_static/documentation_options.js?v=7f6e4f39"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=5fa4622c"></script>

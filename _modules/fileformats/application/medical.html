@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 -->
-        <title>fileformats.application.medical - FileFormats v0.13.0</title>
+        <title>fileformats.application.medical - FileFormats v0.14.0</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d8449d71" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
@@ -171,7 +171,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">FileFormats v0.13.0</div></a>
+      <a href="../../../index.html"><div class="brand">FileFormats v0.14.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -198,7 +198,7 @@
     <img class="sidebar-logo" src="../../../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.13.0</span>
+  <span class="sidebar-brand-text">FileFormats v0.14.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -211,15 +211,12 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../detection.html">Detection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../file_handling.html">File handling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mime.html">MIME types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../extras.html">Read, write and convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../read_write.html">Read, write and convert</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../typing.html">Typing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../developer.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<p class="caption" role="heading"><span class="caption-text">Available Types</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../reference/core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../reference/generic.html">Generic</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../reference/field.html">Field</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../reference/application.html">Application</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../reference/audio.html">Audio</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../reference/image.html">Image</a></li>
@@ -228,6 +225,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../reference/video.html">Video</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../reference/datascience.html">Datascience</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../reference/medimage.html">Medimage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer/extensions.html">Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer/extras.html">Extras</a></li>
 </ul>
 
 </div>
@@ -263,8 +265,12 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for fileformats.application.medical</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">fileformats.generic</span> <span class="kn">import</span> <span class="n">BinaryFile</span>
+<span></span><span class="kn">import</span> <span class="nn">typing</span> <span class="k">as</span> <span class="nn">ty</span>
+<span class="kn">from</span> <span class="nn">fileformats.generic</span> <span class="kn">import</span> <span class="n">BinaryFile</span>
 <span class="kn">from</span> <span class="nn">fileformats.core.mixin</span> <span class="kn">import</span> <span class="n">WithMagicNumber</span>
+
+<span class="k">if</span> <span class="n">ty</span><span class="o">.</span><span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">pydicom</span>
 
 
 <div class="viewcode-block" id="Dicom">
@@ -276,7 +282,61 @@
     <span class="n">magic_number_offset</span> <span class="o">=</span> <span class="mi">128</span>
     <span class="n">binary</span> <span class="o">=</span> <span class="kc">True</span>
 
-    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.dcm&quot;</span><span class="p">,)</span>  <span class="c1"># dcm is recommended not required</span></div>
+    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.dcm&quot;</span><span class="p">,)</span>  <span class="c1"># dcm is recommended not required</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">pydicom_to_dict</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">dcm</span><span class="p">:</span> <span class="s2">&quot;pydicom.Dataset&quot;</span><span class="p">,</span> <span class="n">omit</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;PixelData&quot;</span><span class="p">,)</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert a pydicom Dataset to a dictionary.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dcm : pydicom.Dataset</span>
+<span class="sd">            The pydicom Dataset to convert.</span>
+<span class="sd">        omit : Collection[str], optional</span>
+<span class="sd">            A collection of keys to omit from the dictionary, by default (&quot;PixelData&quot;,)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Dict[str, Any]</span>
+<span class="sd">            The dictionary representation of the pydicom Dataset</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">pydicom.dataset</span>
+        <span class="kn">import</span> <span class="nn">pydicom.valuerep</span>
+        <span class="kn">import</span> <span class="nn">pydicom.multival</span>
+        <span class="kn">import</span> <span class="nn">pydicom.uid</span>
+
+        <span class="c1"># Ensure that all keys are loaded before creating dictionary otherwise the keywords</span>
+        <span class="c1"># will not be set in the elem</span>
+        <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="n">dcm</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">dcm</span><span class="p">)]</span>
+        <span class="n">dct</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">dcm</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="n">elem</span><span class="o">.</span><span class="n">keyword</span>  <span class="c1"># type: ignore[union-attr, attr-defined]</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">key</span><span class="p">:</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="n">elem</span><span class="o">.</span><span class="n">tag</span><span class="o">.</span><span class="n">json_key</span>  <span class="c1"># type: ignore[attr-defined]</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">omit</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">elem</span><span class="o">.</span><span class="n">value</span>  <span class="c1"># type: ignore[attr-defined]</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">pydicom</span><span class="o">.</span><span class="n">multival</span><span class="o">.</span><span class="n">MultiValue</span><span class="p">):</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">pydicom</span><span class="o">.</span><span class="n">uid</span><span class="o">.</span><span class="n">UID</span><span class="p">):</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">pydicom</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">Dataset</span><span class="p">):</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">pydicom_to_dict</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">omit</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">pydicom</span><span class="o">.</span><span class="n">valuerep</span><span class="o">.</span><span class="n">IS</span><span class="p">):</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">pydicom</span><span class="o">.</span><span class="n">valuerep</span><span class="o">.</span><span class="n">DSfloat</span><span class="p">):</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="c1"># Can be handy to be able to access family_name and given_name separately</span>
+                <span class="c1"># elif isinstance(value, pydicom.valuerep.PersonName):</span>
+                <span class="c1">#     value = str(value)</span>
+                <span class="n">dct</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="n">dct</span></div>
 
 </pre></div>
         </article>
@@ -310,7 +370,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=d2781cd5"></script>
+</div><script src="../../../_static/documentation_options.js?v=7f6e4f39"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=5fa4622c"></script>

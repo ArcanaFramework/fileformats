@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Developer Guide" href="developer.html" /><link rel="prev" title="Read, write and convert" href="extras.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="API" href="api.html" /><link rel="prev" title="Read, write and convert" href="read_write.html" />
 
     <!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 -->
-        <title>Typing - FileFormats v0.13.0</title>
+        <title>Typing - FileFormats v0.14.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d8449d71" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
@@ -172,7 +172,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">FileFormats v0.13.0</div></a>
+      <a href="index.html"><div class="brand">FileFormats v0.14.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -199,7 +199,7 @@
     <img class="sidebar-logo" src="_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.13.0</span>
+  <span class="sidebar-brand-text">FileFormats v0.14.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -212,15 +212,12 @@
 <li class="toctree-l1"><a class="reference internal" href="detection.html">Detection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="file_handling.html">File handling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mime.html">MIME types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="extras.html">Read, write and convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="read_write.html">Read, write and convert</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Typing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="developer.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<p class="caption" role="heading"><span class="caption-text">Available Types</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="reference/core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="reference/generic.html">Generic</a></li>
-<li class="toctree-l1"><a class="reference internal" href="reference/field.html">Field</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/application.html">Application</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/audio.html">Audio</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/image.html">Image</a></li>
@@ -229,6 +226,11 @@
 <li class="toctree-l1"><a class="reference internal" href="reference/video.html">Video</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/datascience.html">Datascience</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/medimage.html">Medimage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="developer/extensions.html">Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer/extras.html">Extras</a></li>
 </ul>
 
 </div>
@@ -279,7 +281,7 @@ to specify the data expected to be contained within them. In some cases, classif
 used as part of the validation process, in others they are just annotations.</p>
 <section id="classifiers">
 <h2>Classifiers<a class="headerlink" href="#classifiers" title="Link to this heading">¶</a></h2>
-<p>Classifiable FileFormats classes (i.e. those that inherit the <a class="reference internal" href="reference/core.html#fileformats.core.mixin.WithClassifiers" title="fileformats.core.mixin.WithClassifiers"><code class="xref py py-class docutils literal notranslate"><span class="pre">WithClassifiers</span></code></a>
+<p>Classifiable FileFormats classes (i.e. those that inherit the <a class="reference internal" href="developer/extensions.html#fileformats.core.mixin.WithClassifiers" title="fileformats.core.mixin.WithClassifiers"><code class="xref py py-class docutils literal notranslate"><span class="pre">WithClassifiers</span></code></a>
 mixin), can be classified using the <code class="docutils literal notranslate"><span class="pre">[]</span></code> class operator. For example, a zip file can
 be classified as containing a PNG image</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.application</span> <span class="kn">import</span> <span class="n">Zip</span>
@@ -331,7 +333,7 @@ they are ordered) and separated by a '.' preceding the '+' separator</p>
 <p>Typically the classifier types need to belong to the same subpackage/registry as the
 main type, but special classes such as <a class="reference internal" href="reference/application.html#fileformats.application.Zip" title="fileformats.application.Zip"><code class="xref py py-class docutils literal notranslate"><span class="pre">application.Zip</span></code></a> and <a class="reference internal" href="reference/application.html#fileformats.application.Gzip" title="fileformats.application.Gzip"><code class="xref py py-class docutils literal notranslate"><span class="pre">application.Gzip</span></code></a>,
 can be classified by any file format type. Other special classifiable types are the
-<a class="reference internal" href="reference/generic.html#fileformats.generic.DirectoryOf" title="fileformats.generic.DirectoryOf"><code class="xref py py-class docutils literal notranslate"><span class="pre">generic.DirectoryOf</span></code></a> and <a class="reference internal" href="reference/generic.html#fileformats.generic.SetOf" title="fileformats.generic.SetOf"><code class="xref py py-class docutils literal notranslate"><span class="pre">generic.SetOf</span></code></a> collection types. These can
+<a class="reference internal" href="api.html#fileformats.generic.DirectoryOf" title="fileformats.generic.DirectoryOf"><code class="xref py py-class docutils literal notranslate"><span class="pre">generic.DirectoryOf</span></code></a> and <a class="reference internal" href="api.html#fileformats.generic.SetOf" title="fileformats.generic.SetOf"><code class="xref py py-class docutils literal notranslate"><span class="pre">generic.SetOf</span></code></a> collection types. These can
 be used to specify that a &quot;file format&quot; contains a collection of file formats within a
 directory or independent files, respectively.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.image</span> <span class="kn">import</span> <span class="n">Jpeg</span><span class="p">,</span> <span class="n">Png</span>
@@ -342,18 +344,18 @@ directory or independent files, respectively.</p>
 </pre></div>
 </div>
 </section>
-<section id="fields">
-<h2>Fields<a class="headerlink" href="#fields" title="Link to this heading">¶</a></h2>
+<section id="non-file-fields">
+<h2>Non-file &quot;fields&quot;<a class="headerlink" href="#non-file-fields" title="Link to this heading">¶</a></h2>
 <p>There are some use cases where input data can contain a mix of file-based and field data.
 Therefore, while not file formats, for convenience <em>FileFormats</em> also provides
 some field datatypes that can be used interchangeably with file format types for some
 use cases, particularly MIME type.</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="reference/field.html#fileformats.field.Integer" title="fileformats.field.Integer"><code class="xref py py-class docutils literal notranslate"><span class="pre">field.Integer</span></code></a></p></li>
-<li><p><a class="reference internal" href="reference/field.html#fileformats.field.Decimal" title="fileformats.field.Decimal"><code class="xref py py-class docutils literal notranslate"><span class="pre">field.Decimal</span></code></a></p></li>
-<li><p><a class="reference internal" href="reference/field.html#fileformats.field.Boolean" title="fileformats.field.Boolean"><code class="xref py py-class docutils literal notranslate"><span class="pre">field.Boolean</span></code></a></p></li>
-<li><p><a class="reference internal" href="reference/field.html#fileformats.field.Text" title="fileformats.field.Text"><code class="xref py py-class docutils literal notranslate"><span class="pre">field.Text</span></code></a></p></li>
-<li><p><a class="reference internal" href="reference/field.html#fileformats.field.Array" title="fileformats.field.Array"><code class="xref py py-class docutils literal notranslate"><span class="pre">field.Array</span></code></a></p></li>
+<li><p><a class="reference internal" href="api.html#fileformats.field.Integer" title="fileformats.field.Integer"><code class="xref py py-class docutils literal notranslate"><span class="pre">field.Integer</span></code></a></p></li>
+<li><p><a class="reference internal" href="api.html#fileformats.field.Decimal" title="fileformats.field.Decimal"><code class="xref py py-class docutils literal notranslate"><span class="pre">field.Decimal</span></code></a></p></li>
+<li><p><a class="reference internal" href="api.html#fileformats.field.Boolean" title="fileformats.field.Boolean"><code class="xref py py-class docutils literal notranslate"><span class="pre">field.Boolean</span></code></a></p></li>
+<li><p><a class="reference internal" href="api.html#fileformats.field.Text" title="fileformats.field.Text"><code class="xref py py-class docutils literal notranslate"><span class="pre">field.Text</span></code></a></p></li>
+<li><p><a class="reference internal" href="api.html#fileformats.field.Array" title="fileformats.field.Array"><code class="xref py py-class docutils literal notranslate"><span class="pre">field.Array</span></code></a></p></li>
 </ul>
 <p>A common feature they share is the ability to convert them to/from mime-like (see <a class="reference internal" href="mime.html#informal-mime-like"><span class="std std-ref">Informal (&quot;MIME-like&quot;)</span></a>)
 strings, e.g. <code class="docutils literal notranslate"><span class="pre">to_mime(Integer)</span> <span class="pre">==</span> <span class="pre">&quot;field/integer&quot;</span></code>.</p>
@@ -365,7 +367,7 @@ strings, e.g. <code class="docutils literal notranslate"><span class="pre">to_mi
 <span class="go">1</span>
 </pre></div>
 </div>
-<p>or the <code class="xref py py-meth docutils literal notranslate"><span class="pre">Field.to_primitive()</span></code> and <code class="xref py py-meth docutils literal notranslate"><span class="pre">Field.from_primitive()</span></code> methods</p>
+<p>or the <a class="reference internal" href="api.html#fileformats.core.Field.to_primitive" title="fileformats.core.Field.to_primitive"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Field.to_primitive()</span></code></a> and <a class="reference internal" href="api.html#fileformats.core.Field.from_primitive" title="fileformats.core.Field.from_primitive"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Field.from_primitive()</span></code></a> methods</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.field</span> <span class="kn">import</span> <span class="n">Field</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">field</span> <span class="o">=</span> <span class="n">Field</span><span class="o">.</span><span class="n">from_primitive</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">repr</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
@@ -374,7 +376,7 @@ strings, e.g. <code class="docutils literal notranslate"><span class="pre">to_mi
 <span class="go">1</span>
 </pre></div>
 </div>
-<p>The items contained within an <a class="reference internal" href="reference/field.html#fileformats.field.Array" title="fileformats.field.Array"><code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code></a> class can be specified using the square
+<p>The items contained within an <a class="reference internal" href="api.html#fileformats.field.Array" title="fileformats.field.Array"><code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code></a> class can be specified using the square
 brackets operator</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.field</span> <span class="kn">import</span> <span class="n">Array</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">Boolean</span>
 
@@ -442,16 +444,16 @@ a subclass</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="developer.html">
+          <a class="next-page" href="api.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Developer Guide</div>
+                <div class="title">API</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="extras.html">
+          <a class="prev-page" href="read_write.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
@@ -494,7 +496,7 @@ a subclass</p>
             <ul>
 <li><a class="reference internal" href="#">Typing</a><ul>
 <li><a class="reference internal" href="#classifiers">Classifiers</a></li>
-<li><a class="reference internal" href="#fields">Fields</a></li>
+<li><a class="reference internal" href="#non-file-fields">Non-file &quot;fields&quot;</a></li>
 <li><a class="reference internal" href="#subclass-hooks">Subclass hooks</a></li>
 </ul>
 </li>
@@ -507,7 +509,7 @@ a subclass</p>
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=d2781cd5"></script>
+</div><script src="_static/documentation_options.js?v=7f6e4f39"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=5fa4622c"></script>

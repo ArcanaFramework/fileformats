@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 -->
-        <title>fileformats.generic.file - FileFormats v0.13.0</title>
+        <title>fileformats.generic.file - FileFormats v0.14.0</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d8449d71" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
@@ -171,7 +171,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">FileFormats v0.13.0</div></a>
+      <a href="../../../index.html"><div class="brand">FileFormats v0.14.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -198,7 +198,7 @@
     <img class="sidebar-logo" src="../../../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.13.0</span>
+  <span class="sidebar-brand-text">FileFormats v0.14.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -211,15 +211,12 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../detection.html">Detection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../file_handling.html">File handling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mime.html">MIME types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../extras.html">Read, write and convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../read_write.html">Read, write and convert</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../typing.html">Typing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../developer.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<p class="caption" role="heading"><span class="caption-text">Available Types</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../reference/core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../reference/generic.html">Generic</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../reference/field.html">Field</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../reference/application.html">Application</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../reference/audio.html">Audio</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../reference/image.html">Image</a></li>
@@ -228,6 +225,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../reference/video.html">Video</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../reference/datascience.html">Datascience</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../reference/medimage.html">Medimage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer/extensions.html">Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer/extras.html">Extras</a></li>
 </ul>
 
 </div>
@@ -280,7 +282,7 @@
 
 
 <div class="viewcode-block" id="File">
-<a class="viewcode-back" href="../../../reference/generic.html#fileformats.generic.File">[docs]</a>
+<a class="viewcode-back" href="../../../api.html#fileformats.generic.File">[docs]</a>
 <span class="k">class</span> <span class="nc">File</span><span class="p">(</span><span class="n">FsObject</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generic file type&quot;&quot;&quot;</span>
 
@@ -350,9 +352,11 @@
         <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="n">suffix</span><span class="p">)</span>
 
     <span class="nd">@mtime_cached_property</span>
-    <span class="k">def</span> <span class="nf">contents</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">raw_contents</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">]:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_contents</span><span class="p">()</span>
 
+<div class="viewcode-block" id="File.open">
+<a class="viewcode-back" href="../../../api.html#fileformats.generic.File.open">[docs]</a>
     <span class="k">def</span> <span class="nf">open</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span>
@@ -368,16 +372,20 @@
             <span class="n">encoding</span><span class="o">=</span><span class="n">encoding</span><span class="p">,</span>
             <span class="n">errors</span><span class="o">=</span><span class="n">errors</span><span class="p">,</span>
             <span class="n">newline</span><span class="o">=</span><span class="n">newline</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="p">)</span></div>
 
+
+<div class="viewcode-block" id="File.read_contents">
+<a class="viewcode-back" href="../../../api.html#fileformats.generic.File.read_contents">[docs]</a>
     <span class="k">def</span> <span class="nf">read_contents</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">]:</span>
-        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">open</span><span class="p">()</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;rb&quot;</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;binary&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">offset</span><span class="p">:</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">SEEK_SET</span> <span class="k">if</span> <span class="n">offset</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">io</span><span class="o">.</span><span class="n">SEEK_END</span><span class="p">))</span>
             <span class="n">contents</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">size</span><span class="p">)</span> <span class="k">if</span> <span class="n">size</span> <span class="k">else</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">contents</span>
+        <span class="k">return</span> <span class="n">contents</span></div>
+
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">actual_ext</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -403,15 +411,22 @@
             <span class="n">stem</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fspath</span><span class="o">.</span><span class="n">name</span>
         <span class="k">return</span> <span class="n">stem</span>
 
+<div class="viewcode-block" id="File.read_bytes">
+<a class="viewcode-back" href="../../../api.html#fileformats.generic.File.read_bytes">[docs]</a>
     <span class="k">def</span> <span class="nf">read_bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fspath</span><span class="o">.</span><span class="n">read_bytes</span><span class="p">()</span></div>
+</div>
 
 
 
+<div class="viewcode-block" id="UnicodeFile">
+<a class="viewcode-back" href="../../../api.html#fileformats.generic.UnicodeFile">[docs]</a>
 <span class="k">class</span> <span class="nc">UnicodeFile</span><span class="p">(</span><span class="n">File</span><span class="p">):</span>
 
     <span class="n">binary</span> <span class="o">=</span> <span class="kc">False</span>
 
+<div class="viewcode-block" id="UnicodeFile.open">
+<a class="viewcode-back" href="../../../api.html#fileformats.generic.UnicodeFile.open">[docs]</a>
     <span class="k">def</span> <span class="nf">open</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span>
@@ -433,22 +448,34 @@
             <span class="n">errors</span><span class="o">=</span><span class="n">errors</span><span class="p">,</span>
             <span class="n">newline</span><span class="o">=</span><span class="n">newline</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="n">io</span>
+        <span class="k">return</span> <span class="n">io</span></div>
 
+
+<div class="viewcode-block" id="UnicodeFile.read_contents">
+<a class="viewcode-back" href="../../../api.html#fileformats.generic.UnicodeFile.read_contents">[docs]</a>
     <span class="k">def</span> <span class="nf">read_contents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">contents</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">read_contents</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="n">offset</span><span class="p">)</span>  <span class="c1"># type: ignore[assignment]</span>
-        <span class="k">return</span> <span class="n">contents</span>
+        <span class="k">return</span> <span class="n">contents</span></div>
 
+
+<div class="viewcode-block" id="UnicodeFile.read_text">
+<a class="viewcode-back" href="../../../api.html#fileformats.generic.UnicodeFile.read_text">[docs]</a>
     <span class="k">def</span> <span class="nf">read_text</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">encoding</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">errors</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fspath</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="n">encoding</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="n">errors</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fspath</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="n">encoding</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="n">errors</span><span class="p">)</span></div>
+</div>
 
 
+
+<div class="viewcode-block" id="BinaryFile">
+<a class="viewcode-back" href="../../../api.html#fileformats.generic.BinaryFile">[docs]</a>
 <span class="k">class</span> <span class="nc">BinaryFile</span><span class="p">(</span><span class="n">File</span><span class="p">):</span>
 
     <span class="n">binary</span> <span class="o">=</span> <span class="kc">True</span>
 
+<div class="viewcode-block" id="BinaryFile.open">
+<a class="viewcode-back" href="../../../api.html#fileformats.generic.BinaryFile.open">[docs]</a>
     <span class="k">def</span> <span class="nf">open</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span>
@@ -467,11 +494,16 @@
             <span class="n">errors</span><span class="o">=</span><span class="n">errors</span><span class="p">,</span>
             <span class="n">newline</span><span class="o">=</span><span class="n">newline</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="n">io</span>
+        <span class="k">return</span> <span class="n">io</span></div>
 
+
+<div class="viewcode-block" id="BinaryFile.read_contents">
+<a class="viewcode-back" href="../../../api.html#fileformats.generic.BinaryFile.read_contents">[docs]</a>
     <span class="k">def</span> <span class="nf">read_contents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="n">contents</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">read_contents</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="n">offset</span><span class="p">)</span>  <span class="c1"># type: ignore[assignment]</span>
-        <span class="k">return</span> <span class="n">contents</span>
+        <span class="k">return</span> <span class="n">contents</span></div>
+</div>
+
 </pre></div>
         </article>
       </div>
@@ -504,7 +536,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=d2781cd5"></script>
+</div><script src="../../../_static/documentation_options.js?v=7f6e4f39"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=5fa4622c"></script>

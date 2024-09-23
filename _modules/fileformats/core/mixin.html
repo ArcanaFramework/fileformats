@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 -->
-        <title>fileformats.core.mixin - FileFormats v0.13.0</title>
+        <title>fileformats.core.mixin - FileFormats v0.14.0</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d8449d71" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
@@ -171,7 +171,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">FileFormats v0.13.0</div></a>
+      <a href="../../../index.html"><div class="brand">FileFormats v0.14.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -198,7 +198,7 @@
     <img class="sidebar-logo" src="../../../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.13.0</span>
+  <span class="sidebar-brand-text">FileFormats v0.14.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -211,15 +211,12 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../detection.html">Detection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../file_handling.html">File handling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mime.html">MIME types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../extras.html">Read, write and convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../read_write.html">Read, write and convert</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../typing.html">Typing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../developer.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<p class="caption" role="heading"><span class="caption-text">Available Types</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../reference/core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../reference/generic.html">Generic</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../reference/field.html">Field</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../reference/application.html">Application</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../reference/audio.html">Audio</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../reference/image.html">Image</a></li>
@@ -228,6 +225,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../reference/video.html">Video</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../reference/datascience.html">Datascience</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../reference/medimage.html">Medimage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer/extensions.html">Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer/extras.html">Extras</a></li>
 </ul>
 
 </div>
@@ -269,7 +271,7 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">.datatype</span> <span class="kn">import</span> <span class="n">DataType</span>
 <span class="kn">import</span> <span class="nn">fileformats.core</span>
-<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">describe_task</span><span class="p">,</span> <span class="n">matching_source</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">describe_task</span><span class="p">,</span> <span class="n">matching_source</span><span class="p">,</span> <span class="n">get_optional_type</span>
 <span class="kn">from</span> <span class="nn">.decorators</span> <span class="kn">import</span> <span class="n">validated_property</span><span class="p">,</span> <span class="n">classproperty</span>
 <span class="kn">from</span> <span class="nn">.identification</span> <span class="kn">import</span> <span class="n">to_mime_format_name</span>
 <span class="kn">from</span> <span class="nn">.converter_helpers</span> <span class="kn">import</span> <span class="n">SubtypeVar</span><span class="p">,</span> <span class="n">ConverterSpec</span>
@@ -285,7 +287,7 @@
 
 
 <div class="viewcode-block" id="WithMagicNumber">
-<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.mixin.WithMagicNumber">[docs]</a>
+<a class="viewcode-back" href="../../../developer/extensions.html#fileformats.core.mixin.WithMagicNumber">[docs]</a>
 <span class="k">class</span> <span class="nc">WithMagicNumber</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Mixin class for Files with magic numbers at the start of their</span>
 <span class="sd">    contents.</span>
@@ -309,7 +311,7 @@
 
     <span class="nd">@validated_property</span>
     <span class="k">def</span> <span class="nf">_check_magic_number</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">binary</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">magic_number</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;binary&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">magic_number</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">magic_bytes</span> <span class="o">=</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">magic_number</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
@@ -325,7 +327,7 @@
         <span class="k">if</span> <span class="n">read_magic_number</span> <span class="o">!=</span> <span class="n">magic_bytes</span><span class="p">:</span>
             <span class="n">read_magic</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">]</span>
             <span class="n">ref_magic</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">]</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">binary</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">magic_number</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;binary&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">magic_number</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                 <span class="n">read_magic</span> <span class="o">=</span> <span class="s1">&#39;&quot;&#39;</span> <span class="o">+</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">hex</span><span class="p">(</span><span class="n">read_magic_number</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span>
                 <span class="n">ref_magic</span> <span class="o">=</span> <span class="s1">&#39;&quot;&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">magic_number</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span>
             <span class="k">else</span><span class="p">:</span>
@@ -340,7 +342,7 @@
 
 
 <div class="viewcode-block" id="WithMagicVersion">
-<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.mixin.WithMagicVersion">[docs]</a>
+<a class="viewcode-back" href="../../../developer/extensions.html#fileformats.core.mixin.WithMagicVersion">[docs]</a>
 <span class="k">class</span> <span class="nc">WithMagicVersion</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Mixin class for Files with version numbers embedded within &quot;magic numbers&quot;</span>
 <span class="sd">    the start of their contents.</span>
@@ -390,7 +392,7 @@
 
 
 <div class="viewcode-block" id="WithAdjacentFiles">
-<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.mixin.WithAdjacentFiles">[docs]</a>
+<a class="viewcode-back" href="../../../developer/extensions.html#fileformats.core.mixin.WithAdjacentFiles">[docs]</a>
 <span class="k">class</span> <span class="nc">WithAdjacentFiles</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    If only the main fspath is provided to the __init__ of the class, this mixin</span>
@@ -431,7 +433,7 @@
 
 
 <div class="viewcode-block" id="WithSeparateHeader">
-<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.mixin.WithSeparateHeader">[docs]</a>
+<a class="viewcode-back" href="../../../developer/extensions.html#fileformats.core.mixin.WithSeparateHeader">[docs]</a>
 <span class="k">class</span> <span class="nc">WithSeparateHeader</span><span class="p">(</span><span class="n">WithAdjacentFiles</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Mixin class for Files with metadata stored in separate header files (typically</span>
 <span class="sd">    with the same file stem but differing extension)</span>
@@ -466,7 +468,7 @@
 
 
 <div class="viewcode-block" id="WithSideCars">
-<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.mixin.WithSideCars">[docs]</a>
+<a class="viewcode-back" href="../../../developer/extensions.html#fileformats.core.mixin.WithSideCars">[docs]</a>
 <span class="k">class</span> <span class="nc">WithSideCars</span><span class="p">(</span><span class="n">WithAdjacentFiles</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Mixin class for Files with a &quot;side-car&quot; file that augments the inline metadata</span>
 <span class="sd">    (typically with the same file stem but differing extension).</span>
@@ -519,7 +521,7 @@
 
 
 <div class="viewcode-block" id="WithClassifiers">
-<a class="viewcode-back" href="../../../reference/core.html#fileformats.core.mixin.WithClassifiers">[docs]</a>
+<a class="viewcode-back" href="../../../developer/extensions.html#fileformats.core.mixin.WithClassifiers">[docs]</a>
 <span class="k">class</span> <span class="nc">WithClassifiers</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Mixin class for adding the ability to qualify the format class to designate the</span>
 <span class="sd">    type of information stored within the format, e.g. ``DirectoryOf[Png, Gif]`` for a</span>
@@ -574,6 +576,7 @@
     <span class="c1"># Default values for class attrs</span>
     <span class="n">multiple_classifiers</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">allowed_classifiers</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">Classifier</span><span class="p">],</span> <span class="o">...</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">allow_optional_classifiers</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">exclusive_classifiers</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">Classifier</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">()</span>
     <span class="n">ordered_classifiers</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">generically_classifiable</span> <span class="o">=</span> <span class="kc">False</span>
@@ -602,7 +605,9 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">FrozenSet</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">SubtypeVar</span><span class="p">]]:</span>
         <span class="k">if</span> <span class="n">classifiers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">classifiers</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">classifiers</span> <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">is_classified</span> <span class="k">else</span> <span class="p">()</span>
-        <span class="k">return</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">classifiers</span> <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">SubtypeVar</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">frozenset</span><span class="p">(</span>
+            <span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">classifiers</span> <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">get_optional_type</span><span class="p">(</span><span class="n">t</span><span class="p">),</span> <span class="n">SubtypeVar</span><span class="p">)</span>  <span class="c1"># type: ignore[misc]</span>
+        <span class="p">)</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">non_wildcard_classifiers</span><span class="p">(</span>
@@ -611,7 +616,9 @@
         <span class="k">if</span> <span class="n">classifiers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">classifiers</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">classifiers</span> <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">is_classified</span> <span class="k">else</span> <span class="p">()</span>
         <span class="k">assert</span> <span class="n">classifiers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="k">return</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">q</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">classifiers</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">SubtypeVar</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">frozenset</span><span class="p">(</span>
+            <span class="n">q</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">classifiers</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">get_optional_type</span><span class="p">(</span><span class="n">q</span><span class="p">),</span> <span class="n">SubtypeVar</span><span class="p">)</span>
+        <span class="p">)</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">__class_getitem__</span><span class="p">(</span>
@@ -623,11 +630,15 @@
             <span class="n">classifiers_tuple</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">classifiers</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">classifiers_tuple</span> <span class="o">=</span> <span class="p">(</span><span class="n">classifiers</span><span class="p">,)</span>
+        <span class="n">classifiers_to_check</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+            <span class="n">get_optional_type</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">allow_optional_classifiers</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">classifiers_tuple</span>
+        <span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">allowed_classifiers</span><span class="p">:</span>
             <span class="n">not_allowed</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="n">q</span>
-                <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">classifiers_tuple</span>
+                <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">classifiers_to_check</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="nb">issubclass</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">allowed_classifiers</span><span class="p">)</span>
             <span class="p">]</span>
             <span class="k">if</span> <span class="n">not_allowed</span><span class="p">:</span>
@@ -639,15 +650,17 @@
         <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">multiple_classifiers</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">ordered_classifiers</span><span class="p">:</span>
                 <span class="c1"># Check for duplicate classifiers in the multiple list</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">classifiers_tuple</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">classifiers_to_check</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="c1"># Sort the classifiers into categories and ensure that there aren&#39;t more</span>
                     <span class="c1"># than one type for each category. Otherwise, if the classifier doesn&#39;t</span>
                     <span class="c1"># belong to a category, check to see that there aren&#39;t multiple sub-classes</span>
                     <span class="c1"># in the classifier set</span>
                     <span class="n">repetitions</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span>
                         <span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">Classifier</span><span class="p">],</span> <span class="n">ty</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">Classifier</span><span class="p">]]</span>
-                    <span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">c</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">exclusive_classifiers</span> <span class="o">+</span> <span class="n">classifiers_tuple</span><span class="p">}</span>
-                    <span class="k">for</span> <span class="n">classifier</span> <span class="ow">in</span> <span class="n">classifiers_tuple</span><span class="p">:</span>
+                    <span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="n">c</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">exclusive_classifiers</span> <span class="o">+</span> <span class="n">classifiers_to_check</span>
+                    <span class="p">}</span>
+                    <span class="k">for</span> <span class="n">classifier</span> <span class="ow">in</span> <span class="n">classifiers_to_check</span><span class="p">:</span>
                         <span class="k">for</span> <span class="n">exc_classifier</span> <span class="ow">in</span> <span class="n">repetitions</span><span class="p">:</span>
                             <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">classifier</span><span class="p">,</span> <span class="n">exc_classifier</span><span class="p">):</span>
                                 <span class="n">repetitions</span><span class="p">[</span><span class="n">exc_classifier</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">classifier</span><span class="p">)</span>
@@ -663,7 +676,10 @@
                             <span class="p">)</span>
                         <span class="p">)</span>
                 <span class="n">classifiers_tuple</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
-                    <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">classifiers_tuple</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+                    <span class="nb">sorted</span><span class="p">(</span>
+                        <span class="nb">set</span><span class="p">(</span><span class="n">classifiers_tuple</span><span class="p">),</span>
+                        <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">get_optional_type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                    <span class="p">)</span>
                 <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">classifiers_tuple</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
@@ -710,7 +726,9 @@
             <span class="n">class_attrs</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">classifiers_attr_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">classifiers_tuple</span> <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">multiple_classifiers</span> <span class="k">else</span> <span class="n">classifiers_tuple</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="p">)</span>
-            <span class="n">classifier_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">classifiers_tuple</span><span class="p">]</span>
+            <span class="n">classifier_names</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">get_optional_type</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">classifiers_tuple</span>
+            <span class="p">]</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">ordered_classifiers</span><span class="p">:</span>
                 <span class="n">classifier_names</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
             <span class="n">classified</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span>
@@ -1037,7 +1055,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=d2781cd5"></script>
+</div><script src="../../../_static/documentation_options.js?v=7f6e4f39"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=5fa4622c"></script>

@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Typing" href="typing.html" /><link rel="prev" title="MIME types" href="mime.html" />
 
     <!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 -->
-        <title>Read, write and convert - FileFormats v0.13.0</title>
+        <title>Read, write and convert - FileFormats v0.14.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d8449d71" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
@@ -172,7 +172,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">FileFormats v0.13.0</div></a>
+      <a href="index.html"><div class="brand">FileFormats v0.14.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -199,7 +199,7 @@
     <img class="sidebar-logo" src="_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.13.0</span>
+  <span class="sidebar-brand-text">FileFormats v0.14.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -214,13 +214,10 @@
 <li class="toctree-l1"><a class="reference internal" href="mime.html">MIME types</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Read, write and convert</a></li>
 <li class="toctree-l1"><a class="reference internal" href="typing.html">Typing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="developer.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<p class="caption" role="heading"><span class="caption-text">Available Types</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="reference/core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="reference/generic.html">Generic</a></li>
-<li class="toctree-l1"><a class="reference internal" href="reference/field.html">Field</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/application.html">Application</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/audio.html">Audio</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/image.html">Image</a></li>
@@ -229,6 +226,11 @@
 <li class="toctree-l1"><a class="reference internal" href="reference/video.html">Video</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/datascience.html">Datascience</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/medimage.html">Medimage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="developer/extensions.html">Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer/extras.html">Extras</a></li>
 </ul>
 
 </div>
@@ -249,7 +251,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="_sources/extras.rst.txt" title="View this page">
+  <a class="muted-link" href="_sources/read_write.rst.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -274,7 +276,7 @@
 <p>In addition to the basic features of validation and path handling, it is possible to
 implement methods to interact with the data of file format objects via &quot;extras hooks&quot;.
 Such features are added to selected format classes on a needs basis (pull requests
-welcome 😊, see <a class="reference internal" href="developer.html#developer-guide"><span class="std std-ref">Developer Guide</span></a>), so are by no means comprehensive, and
+welcome 😊, see <a class="reference internal" href="developer/extras.html#extras"><span class="std std-ref">Extras</span></a>), so are by no means comprehensive, and
 are provided &quot;as-is&quot;.</p>
 <p>Since these features typically rely on a range of external libraries, they are kept in
 separate <em>extras</em> packages (e.g.
@@ -299,11 +301,11 @@ information read from the primary file.</p>
 <p>Several classes in the base fileformats package implement <code class="docutils literal notranslate"><span class="pre">load</span></code> and <code class="docutils literal notranslate"><span class="pre">save</span></code> methods.
 An advantage of implementing them  in the format class is that objects instantiated from
 them can then be duck-typed in calling functions/methods. For example, both <code class="docutils literal notranslate"><span class="pre">Yaml</span></code> and
-<code class="docutils literal notranslate"><span class="pre">Json</span></code> formats (both inherit from the <code class="docutils literal notranslate"><span class="pre">DataSerialization</span></code> type) implement the
+<code class="docutils literal notranslate"><span class="pre">Json</span></code> formats (both inherit from the <code class="docutils literal notranslate"><span class="pre">TextSerialization</span></code> type) implement the
 <code class="docutils literal notranslate"><span class="pre">load</span></code> method, which returns a dictionary</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.application</span> <span class="kn">import</span> <span class="n">DataSerialization</span>  <span class="c1"># i.e. JSON or YAML</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.application</span> <span class="kn">import</span> <span class="n">TextSerialization</span>  <span class="c1"># i.e. JSON or YAML</span>
 
-<span class="k">def</span> <span class="nf">read_serialisation</span><span class="p">(</span><span class="n">serialized</span><span class="p">:</span> <span class="n">DataSerialization</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">read_serialisation</span><span class="p">(</span><span class="n">serialized</span><span class="p">:</span> <span class="n">TextSerialization</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">serialized</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -414,7 +416,7 @@ classmethod</p>
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=d2781cd5"></script>
+</div><script src="_static/documentation_options.js?v=7f6e4f39"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=5fa4622c"></script>

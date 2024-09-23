@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="File handling" href="file_handling.html" /><link rel="prev" title="Quick start" href="quick_start.html" />
 
     <!-- Generated with Sphinx 8.0.2 and Furo 2024.08.06 -->
-        <title>Detection - FileFormats v0.13.0</title>
+        <title>Detection - FileFormats v0.14.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d8449d71" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
@@ -172,7 +172,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">FileFormats v0.13.0</div></a>
+      <a href="index.html"><div class="brand">FileFormats v0.14.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -199,7 +199,7 @@
     <img class="sidebar-logo" src="_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.13.0</span>
+  <span class="sidebar-brand-text">FileFormats v0.14.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -212,15 +212,12 @@
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Detection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="file_handling.html">File handling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mime.html">MIME types</a></li>
-<li class="toctree-l1"><a class="reference internal" href="extras.html">Read, write and convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="read_write.html">Read, write and convert</a></li>
 <li class="toctree-l1"><a class="reference internal" href="typing.html">Typing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="developer.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<p class="caption" role="heading"><span class="caption-text">Available Types</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="reference/core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="reference/generic.html">Generic</a></li>
-<li class="toctree-l1"><a class="reference internal" href="reference/field.html">Field</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/application.html">Application</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/audio.html">Audio</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/image.html">Image</a></li>
@@ -229,6 +226,11 @@
 <li class="toctree-l1"><a class="reference internal" href="reference/video.html">Video</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/datascience.html">Datascience</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/medimage.html">Medimage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="developer/extensions.html">Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer/extras.html">Extras</a></li>
 </ul>
 
 </div>
@@ -298,15 +300,15 @@ and magic number if applicable</p>
     <span class="o">...</span>
 </pre></div>
 </div>
-<p>Directories are classified by the contents of the files within them, via the
-<code class="docutils literal notranslate"><span class="pre">content_types</span></code> class attribute, e.g.</p>
+<p>Formats that consists of directories with specific nested file formats within them can
+be defined using the <code class="docutils literal notranslate"><span class="pre">TypedDirectory</span></code> with <code class="docutils literal notranslate"><span class="pre">content_types</span></code> class attribute, e.g.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.generic</span> <span class="kn">import</span> <span class="n">File</span><span class="p">,</span> <span class="n">Directory</span>
 
 <span class="k">class</span> <span class="nc">Dicom</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
     <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;DICM&quot;</span>
     <span class="n">magic_number_offset</span> <span class="o">=</span> <span class="mi">128</span>
 
-<span class="k">class</span>  <span class="nc">DicomDir</span><span class="p">(</span><span class="n">Directory</span><span class="p">):</span>
+<span class="k">class</span>  <span class="nc">DicomDir</span><span class="p">(</span><span class="n">TypedDirectory</span><span class="p">):</span>
     <span class="n">content_types</span> <span class="o">=</span> <span class="p">(</span><span class="n">Dicom</span><span class="p">,)</span>
 </pre></div>
 </div>
@@ -327,7 +329,24 @@ despite the presence of the <code class="docutils literal notranslate"><span cla
 └── catalog.xml
 </pre></div>
 </div>
-<p>In addition to statically defining <cite>Directory</cite> formats such as the Dicom example above,
+<p>The file-sets contained within the directory can be accessed via the <code class="docutils literal notranslate"><span class="pre">contents</span></code> attribute</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dicom_dir</span> <span class="o">=</span> <span class="n">DicomDir</span><span class="p">(</span><span class="s2">&quot;dicom-directory&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">dicom_file</span> <span class="ow">in</span> <span class="n">dicom_dir</span><span class="o">.</span><span class="n">contents</span><span class="p">:</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dicom_file</span><span class="p">,</span> <span class="n">Dicom</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For types with optional content types, the <code class="docutils literal notranslate"><span class="pre">content_types</span></code> attribute can be set to
+an &quot;optional&quot;, i.e. <code class="docutils literal notranslate"><span class="pre">Xml</span> <span class="pre">|</span> <span class="pre">None</span></code>, and the <code class="docutils literal notranslate"><span class="pre">contents</span></code> attribute will include these
+optional types in addition to the required types</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">CatalogedDicomDir</span><span class="p">(</span><span class="n">TypedDirectory</span><span class="p">):</span>
+    <span class="n">content_types</span> <span class="o">=</span> <span class="p">(</span><span class="n">Dicom</span><span class="p">,</span> <span class="n">Xml</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span>
+
+<span class="n">dicom_dir</span> <span class="o">=</span> <span class="n">DicomDir</span><span class="p">(</span><span class="s2">&quot;dicom-directory&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">dicom_file</span> <span class="ow">in</span> <span class="n">dicom_dir</span><span class="o">.</span><span class="n">contents</span><span class="p">:</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dicom_file</span><span class="p">,</span> <span class="p">(</span><span class="n">Dicom</span><span class="p">,</span> <span class="n">Xml</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>In addition to statically defining <cite>TypedDirectory</cite> formats such as the Dicom example above,
 dynamic directory types can be created on the fly by providing the content types as
 &quot;classifier&quot; arguments to the <cite>DirectoryOf[]</cite> class (see <a class="reference internal" href="typing.html#classifiers"><span class="std std-ref">Classifiers</span></a>),
 e.g.</p>
@@ -447,7 +466,7 @@ it is advisable to also provide a list of candidate formats</p>
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=d2781cd5"></script>
+</div><script src="_static/documentation_options.js?v=7f6e4f39"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=5fa4622c"></script>
