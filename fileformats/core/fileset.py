@@ -1610,7 +1610,8 @@ class FileSet(DataType):
                     )
             shutil.move(str(fspath), new_path)
             new_paths.append(new_path)
-        return type(self)(new_paths)
+        self.fspaths = frozenset(new_paths)
+        return self
 
     def _fspaths_to_copy(
         self,
