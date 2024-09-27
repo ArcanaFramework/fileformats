@@ -1,11 +1,16 @@
+import sys
 import typing as ty
 from pathlib import Path
-from typing_extensions import TypeAlias
 import pydicom.tag
 from fileformats.core import FileSet, extra_implementation
 from fileformats.application import Dicom
 import medimages4tests.dummy.dicom.mri.t1w.siemens.skyra.syngo_d13c
 from fileformats.core import SampleFileGenerator
+
+if sys.version_info <= (3, 11):
+    from typing_extensions import TypeAlias
+else:
+    from typing import TypeAlias
 
 TagListType: TypeAlias = ty.Union[
     ty.List[int],
