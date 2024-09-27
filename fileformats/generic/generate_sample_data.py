@@ -27,15 +27,20 @@ def file_generate_sample_data(
     file: File,
     generator: SampleFileGenerator,
 ) -> ty.List[Path]:
-    contents = None
+    contents = os.urandom(FILE_FILL_LENGTH)
     if getattr(file, "binary", False):
         if hasattr(file, "magic_number"):
+            if isinstance(file.magic_number, str):
+                magic_number = bytes.fromhex(file.magic_number)
+            else:
+                magic_number = file.magic_number
             offset = getattr(file, "magic_number_offset", 0)
-            contents = os.urandom(offset)
-            magic_number = getattr(file, "magic_number", b"")
-            if isinstance(magic_number, str):
-                magic_number = bytes.fromhex(magic_number)
-            contents += magic_number
+            if offset < 0:
+                postamble = os.urandom(-(len(magic_number) + offset))
+                contents += magic_number + postamble
+            else:
+                preamble = os.urandom(offset)
+                contents = preamble + magic_number + contents
         elif hasattr(file, "magic_pattern"):
             raise NotImplementedError(
                 "Sampling of magic version file types is not implemented yet"
