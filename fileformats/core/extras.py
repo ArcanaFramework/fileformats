@@ -1,16 +1,21 @@
+import sys
 import importlib
 import typing as ty
 import inspect
 from itertools import zip_longest
 import functools
 import urllib.error
-from typing_extensions import Self
 import fileformats.core
 from fileformats.core.typing import TypeAlias
 from .datatype import DataType
 from .converter_helpers import ConverterWrapper, ConverterSpec, SubtypeVar
 from .exceptions import FormatConversionError, FileFormatsExtrasError
 from .utils import import_extras_module, check_package_exists_on_pypi, add_exc_note
+
+if sys.version_info < (3, 11):
+    from typing_extensions import Self
+else:
+    from typing import Self
 
 if ty.TYPE_CHECKING:
     from pydra.engine.core import TaskBase
