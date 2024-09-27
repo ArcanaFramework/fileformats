@@ -1,3 +1,4 @@
+import sys
 import importlib
 import typing as ty
 import inspect
@@ -10,6 +11,11 @@ from .datatype import DataType
 from .converter_helpers import ConverterWrapper, ConverterSpec, SubtypeVar
 from .exceptions import FormatConversionError, FileFormatsExtrasError
 from .utils import import_extras_module, check_package_exists_on_pypi, add_exc_note
+
+if sys.version_info < (3, 11):
+    from typing_extensions import Self
+else:
+    from typing import Self
 
 if ty.TYPE_CHECKING:
     from pydra.engine.core import TaskBase
@@ -74,15 +80,28 @@ def extra_implementation(
         fsig = inspect.signature(implementation)
         msig_args = list(msig.parameters.values())[1:]
         fsig_args = list(fsig.parameters.values())[1:]
+        dispatched_type = list(fsig.parameters.values())[0].annotation
         differences = []
 
-        def type_match(a: ty.Union[str, type], b: ty.Union[str, type]) -> bool:
+        def type_match(mtype: ty.Union[str, type], ftype: ty.Union[str, type]) -> bool:
+            """Check if the types match between the method and function annotations,
+            allowing for string annotations and `Self`
+
+            Parameters
+            ----------
+            mtype : Union[str, type]
+                the type of the method argument
+            ftype : Union[str, type]
+                the type of the function argument
+            """
             return (
-                a is ty.Any  # type: ignore[comparison-overlap]
-                or a == b
-                or inspect.isclass(a)
-                and inspect.isclass(b)
-                and issubclass(b, a)
+                mtype is ty.Any  # type: ignore[comparison-overlap]
+                or mtype == ftype
+                or inspect.isclass(ftype)
+                and (
+                    (inspect.isclass(mtype) and issubclass(ftype, mtype))
+                    or (mtype is Self and issubclass(ftype, dispatched_type))  # type: ignore[comparison-overlap, arg-type]
+                )
             )
 
         mhas_kwargs = msig_args and msig_args[-1].kind == inspect.Parameter.VAR_KEYWORD

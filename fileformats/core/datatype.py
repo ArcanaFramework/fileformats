@@ -253,6 +253,10 @@ class DataType(Classifier, metaclass=ABCMeta):
                         f"Did not find '{class_name}' class in fileformats.{namespace} "
                         f"corresponding to MIME, or MIME-like, type {mime_string}"
                     ) from None
+        if not issubclass(klass, cls):
+            raise FormatRecognitionError(
+                f"Class '{klass}' does not inherit from '{cls}'"
+            )
         return klass
 
     @classproperty

@@ -67,3 +67,6 @@ class TypedCollection(FileSet, metaclass=ABCMeta):
         """Whether the file-format is unconstrained by extension, magic number or another
         constraint"""
         return super().unconstrained and not cls.content_types
+
+    def __len__(self) -> int:
+        return len(self.contents)

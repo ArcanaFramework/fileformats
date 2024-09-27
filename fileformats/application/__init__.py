@@ -515,7 +515,7 @@ from .misc import (
     Zlib,
     Zstd,
 )
-from ..text import Javascript
+from fileformats.text import Javascript
 
 __all__ = [
     "__version__",

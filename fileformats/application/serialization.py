@@ -4,7 +4,7 @@ from fileformats.core.typing import TypeAlias
 from pathlib import Path
 from fileformats.core import DataType, FileSet, extra_implementation
 from fileformats.core.mixin import WithClassifier
-from ..generic import UnicodeFile
+from fileformats.generic import UnicodeFile
 from fileformats.core.exceptions import FormatMismatchError
 from fileformats.core import SampleFileGenerator
 
