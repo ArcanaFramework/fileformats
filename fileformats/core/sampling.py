@@ -6,6 +6,9 @@ import typing as ty
 import fileformats.core
 
 
+FILE_FILL_LENGTH_DEFAULT = 256
+
+
 class SampleFileGenerator:
     """Generates sample files. Designed to be used within generate_sample_data overrides
 
@@ -48,6 +51,14 @@ class SampleFileGenerator:
     def rng(self) -> random.Random:
         return random.Random(self.seed)
 
+    def generate_contents(
+        self, binary: bool, fill: int = FILE_FILL_LENGTH_DEFAULT
+    ) -> ty.Union[str, bytes]:
+        if binary:
+            return bytes(self.rng.choices(list(range(256)), k=fill))
+        else:
+            return "".join(self.rng.choices(string.printable, k=fill))
+
     def generate(
         self,
         file_type: ty.Union[
@@ -88,14 +99,12 @@ class SampleFileGenerator:
         fspath.parent.mkdir(parents=True, exist_ok=True)
         is_binary: bool = getattr(file_type, "binary", False)
         if not contents:
-            contents = (
-                bytes(random.choices(list(range(256)), k=fill))
-                if is_binary
-                else "".join(random.choices(string.printable, k=fill))
+            contents = self.generate_contents(
+                is_binary, fill if fill else FILE_FILL_LENGTH_DEFAULT
             )
         else:
             contents_type = bytes if is_binary else str
-            if not isinstance(contents, bytes):
+            if not isinstance(contents, contents_type):
                 raise TypeError(
                     f"contents must be {contents_type} for {file_type} files, "
                     f"not {type(contents)}"
