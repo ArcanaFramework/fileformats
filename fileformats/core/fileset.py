@@ -194,6 +194,7 @@ class FileSet(DataType):
         Any
             the data loaded from the file in an type to the format
         """
+        raise NotImplementedError
 
     @extra
     def save(self, data: ty.Any, **kwargs: ty.Any) -> None:
@@ -207,6 +208,7 @@ class FileSet(DataType):
         **kwargs : Any
             any format-specific keyword arguments to pass to the saver
         """
+        raise NotImplementedError
 
     @classmethod
     def new(cls, fspath: ty.Union[str, Path], data: ty.Any, **kwargs: ty.Any) -> Self:
