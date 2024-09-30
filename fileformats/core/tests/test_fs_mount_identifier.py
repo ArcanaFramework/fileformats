@@ -324,7 +324,7 @@ def test_copy_constraints(tmp_path):
             mode=copy_modes,
         )
 
-        assert new_ext4_file.contents == ext4_file.contents
+        assert new_ext4_file.raw_contents == ext4_file.raw_contents
         assert os.path.islink(new_ext4_file)
 
         # Symlinks not supported on CIFS
@@ -332,7 +332,7 @@ def test_copy_constraints(tmp_path):
             cifs_mnt / "dest",
             mode=copy_modes,
         )
-        assert new_cifs_file.contents == cifs_file.contents
+        assert new_cifs_file.raw_contents == cifs_file.raw_contents
         assert not os.path.islink(new_cifs_file)
         assert os.stat(new_cifs_file).st_ino == os.stat(cifs_file).st_ino  # Hardlink
 
@@ -340,7 +340,7 @@ def test_copy_constraints(tmp_path):
         new_ext4_file2 = ext4_file.copy(
             ext4_mnt2 / "dest", mode=File.CopyMode.copy | File.CopyMode.hardlink
         )
-        assert new_ext4_file2.contents == ext4_file.contents
+        assert new_ext4_file2.raw_contents == ext4_file.raw_contents
         assert not os.path.islink(new_ext4_file2)
         assert (
             os.stat(ext4_file).st_ino != os.stat(new_ext4_file2).st_ino
@@ -351,7 +351,7 @@ def test_copy_constraints(tmp_path):
             cifs_mnt / "dest",
             mode=copy_modes,
         )
-        assert ext4_file_on_cifs.contents == ext4_file.contents
+        assert ext4_file_on_cifs.raw_contents == ext4_file.raw_contents
         assert not os.path.islink(ext4_file_on_cifs)
         assert (
             os.stat(ext4_file).st_ino != os.stat(ext4_file_on_cifs).st_ino
