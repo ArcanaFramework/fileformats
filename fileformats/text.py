@@ -12,7 +12,7 @@ class Plain(Text, UnicodeFile):
     iana_mime = "text/plain"
 
 
-class TextFile(Text, UnicodeFile):
+class TextFile(Plain, UnicodeFile):
     ext = ".txt"
 
 

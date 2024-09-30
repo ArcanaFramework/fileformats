@@ -1,21 +1,21 @@
-from fileformats.generic import UnicodeFile
+from fileformats.text import Plain
 
 
-class Foo(UnicodeFile):
+class Foo(Plain):
 
     ext = ".foo"
 
 
-class Bar(UnicodeFile):
+class Bar(Plain):
 
     ext = ".bar"
 
 
-class Baz(UnicodeFile):
+class Baz(Plain):
 
     ext = ".baz"
 
 
-class Qux(UnicodeFile):
+class Qux(Plain):
 
     ext = ".qux"

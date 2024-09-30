@@ -126,7 +126,9 @@ class Decimal(Singular[decimal.Decimal, float], ScalarMixin[decimal.Decimal, flo
         if isinstance(value, Decimal):
             self.value = value.value
         try:
-            self.value = decimal.Decimal(value)
+            self.value = (
+                value.value if isinstance(value, Decimal) else decimal.Decimal(value)
+            )
         except decimal.InvalidOperation as e:
             raise FormatMismatchError(str(e)) from None
 
