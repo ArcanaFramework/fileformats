@@ -182,6 +182,12 @@ class ExtrasModule:
         self.pkg = pkg
         self.pypi = pypi
 
+    def __repr__(self) -> str:
+        return (
+            f"{type(self).__name__}(pkg={self.pkg}, pypi={self.pypi}, "
+            f"imported={self.imported})"
+        )
+
 
 def import_extras_module(klass: ty.Type["fileformats.core.DataType"]) -> ExtrasModule:
     """Attempt to load extras module corresponding to the provided class's module

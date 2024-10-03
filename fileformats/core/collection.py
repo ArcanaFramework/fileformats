@@ -44,7 +44,8 @@ class TypedCollection(FileSet, metaclass=ABCMeta):
                         return
         assert not_found
         raise FormatMismatchError(
-            f"Did not find the required content types, {not_found}, in {self}"
+            f"Did not find the required content types, {not_found}, in {self}, paths: "
+            f"{[str(p) for p in self.content_fspaths]}"
         )
 
     @classproperty
