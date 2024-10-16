@@ -101,6 +101,8 @@ class FileSet(DataType):
         metadata: ty.Optional[ty.Dict[str, ty.Any]] = None,
         **load_kwargs: ty.Any,
     ):
+        if not fspaths:
+            raise ValueError("No file-system paths provided to FileSet")
         self._explicit_metadata = metadata
         self._load_kwargs = load_kwargs
         self._validate_class()
@@ -800,7 +802,7 @@ class FileSet(DataType):
         rel_path: str
             relative path to either 'relative_to' arg or common base path for each file
             in the file set
-        byte_iter : Generator[bytes]
+        byte_iter : Generator[bytes, None, None]
             an iterator over the bytes contents of the file, chunked into 'chunk_len'
             chunks
         """
