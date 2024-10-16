@@ -161,7 +161,7 @@ class WithSeparateHeader(WithAdjacentFiles):
     with the same file stem but differing extension)
 
     Note that WithSeparateHeader must come before the primary type in the method-resolution
-    order of the class so it can override the '__attrs_post_init__' method, e.g.
+    order of the class
 
         class MyFileFormatWithSeparateHeader(WithSeparateHeader, MyFileFormat):
 
@@ -193,8 +193,7 @@ class WithSideCars(WithAdjacentFiles):
     (typically with the same file stem but differing extension).
 
     Note that WithSideCars must come before the primary type in the method-resolution
-    order of the class so it can override the '__attrs_post_init__' and 'read_metadata'
-    methods, e.g.
+    order of the class methods, e.g.
 
         class MyFileFormatWithSideCars(WithSideCars, MyFileFormat):
 

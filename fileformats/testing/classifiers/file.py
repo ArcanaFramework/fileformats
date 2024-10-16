@@ -1,5 +1,4 @@
 import typing as ty
-import attrs
 from fileformats.core import DataType, FileSet
 from fileformats.generic import UnicodeFile
 from fileformats.field import Singular
@@ -84,7 +83,6 @@ class N(WithClassifiers, UnicodeFile):
     ext = ".n"
 
 
-@attrs.define
 class TestField(Singular[ty.Any, str]):
 
     value: ty.Any
