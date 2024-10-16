@@ -23,13 +23,19 @@ repos:
         args:
           - --ignore-words=.codespell-ignorewords
   - repo: https://github.com/PyCQA/flake8
-    rev: 4.0.1
+    rev: 7.0.0
     hooks:
       - id: flake8
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.11.2
     hooks:
       - id: mypy
-        args: [--strict, --install-types, --non-interactive, --no-warn-unused-ignores]
+        args:
+          [
+            --strict,
+            --install-types,
+            --non-interactive,
+            --no-warn-unused-ignores,
+          ]
         exclude: tests
         additional_dependencies: [pytest, attrs, imageio, pydicom]
