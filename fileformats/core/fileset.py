@@ -893,7 +893,7 @@ class FileSet(DataType):
         """
         if crypto is None:
             crypto = hashlib.sha256
-        crytpo_obj = crypto()
+        crypto_obj = crypto()
         for path, bytes_iter in self.byte_chunks(
             mtime=mtime,
             chunk_len=chunk_len,
@@ -901,10 +901,10 @@ class FileSet(DataType):
             ignore_hidden_files=ignore_hidden_files,
             ignore_hidden_dirs=ignore_hidden_dirs,
         ):
-            crytpo_obj.update(path.encode())
+            crypto_obj.update(path.encode())
             for bytes_str in bytes_iter:
-                crytpo_obj.update(bytes_str)
-        digest: str = crytpo_obj.hexdigest()
+                crypto_obj.update(bytes_str)
+        digest: str = crypto_obj.hexdigest()
         return digest
 
     def hash_files(
