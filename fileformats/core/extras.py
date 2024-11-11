@@ -216,9 +216,6 @@ def converter(
     **converter_kwargs
         keyword arguments passed on to the converter task
     """
-    # Note if explicit value for out_file isn't provided note it so we can also try
-    # "out"
-    from pydra.engine.helpers import make_klass
 
     try:
         import attrs
@@ -239,12 +236,12 @@ def converter(
         source: FormatType
         target: FormatType
         if source_format is None:
-            inputs_dict = attrs.fields_dict(type(task.inputs))
+            inputs_dict = attrs.fields_dict(type(task.interface))
             source = inputs_dict[in_file].type
         else:
             source = source_format
         if target_format is None:
-            outputs_dict = attrs.fields_dict(make_klass(task.output_spec))
+            outputs_dict = attrs.fields_dict(task.interface.Outputs)
             try:
                 target = outputs_dict[out_file].type
             except KeyError:
