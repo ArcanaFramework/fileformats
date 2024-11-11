@@ -134,6 +134,11 @@ class DataType(Classifier, metaclass=ABCMeta):
         -------
         type
             the corresponding file format class
+
+        Raises
+        ------
+        FormatRecognitionError
+            if the MIME string does not correspond to a valid file format class
         """
         try:
             namespace, format_name = mime_string.split("/")
