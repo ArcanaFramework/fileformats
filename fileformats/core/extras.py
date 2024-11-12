@@ -231,17 +231,15 @@ def converter(
         task_spec: ty.Type["TaskBase"],
     ) -> ty.Union[ty.Type["TaskBase"], ConverterWrapper]:
         out_file_local = out_file
-        if source_format is None or target_format is None:
-            task = task_spec()
         source: FormatType
         target: FormatType
         if source_format is None:
-            inputs_dict = attrs.fields_dict(type(task.interface))
+            inputs_dict = attrs.fields_dict(task_spec)
             source = inputs_dict[in_file].type
         else:
             source = source_format
         if target_format is None:
-            outputs_dict = attrs.fields_dict(task.interface.Outputs)
+            outputs_dict = attrs.fields_dict(task_spec.Outputs)
             try:
                 target = outputs_dict[out_file].type
             except KeyError:
