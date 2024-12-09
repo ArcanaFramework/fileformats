@@ -1,4 +1,4 @@
-from fileformats.core import __version__
+from fileformats.core import __version__, FileSet
 from .fsobject import FsObject
 from .file import File, BinaryFile, UnicodeFile
 from .directory import Directory, TypedDirectory, DirectoryOf
@@ -8,6 +8,7 @@ from . import generate_sample_data  # noqa: F401
 
 __all__ = [
     "__version__",
+    "FileSet",
     "FsObject",
     "File",
     "Directory",
