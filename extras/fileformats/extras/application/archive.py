@@ -6,8 +6,7 @@ import tarfile
 import zipfile
 from pathlib import Path
 import attrs
-import pydra.mark
-import pydra.engine.specs
+from pydra import design
 from fileformats.generic import FsObject
 from fileformats.core.utils import set_cwd
 from fileformats.core.typing import PathType
@@ -60,12 +59,7 @@ FilterMethodType = ty.Any
 @converter(
     source_format=Compressed, target_format=TarGzip[Compressed], compression="gz"  # type: ignore[misc]
 )
-@pydra.mark.task  # type: ignore[misc]
-@pydra.mark.annotate(  # type: ignore[misc]
-    {
-        "return": {"out_file": Path},
-    }
-)
+@design.python.define(outputs={"out_file": Path})  # type: ignore[misc]
 def create_tar(
     in_file: FsObject,
     out_file: ty.Optional[Path] = None,
@@ -114,8 +108,7 @@ def create_tar(
 @converter(source_format=TarGzip, target_format=FsObject)
 @converter(source_format=Tar[Compressed], target_format=Compressed)  # type: ignore[misc]
 @converter(source_format=TarGzip[Compressed], target_format=Compressed)  # type: ignore[misc]
-@pydra.mark.task  # type: ignore[misc]
-@pydra.mark.annotate({"return": {"out_file": Path}})  # type: ignore[misc]
+@design.python.define(outputs={"out_file": Path})  # type: ignore[misc]
 def extract_tar(
     in_file: FsObject,
     extract_dir: Path,
@@ -146,12 +139,7 @@ def extract_tar(
 
 @converter(source_format=FsObject, target_format=Zip)
 @converter(source_format=Compressed, target_format=Zip[Compressed])  # type: ignore[misc]
-@pydra.mark.task  # type: ignore[misc]
-@pydra.mark.annotate(  # type: ignore[misc]
-    {
-        "return": {"out_file": Zip},
-    }
-)
+@design.python.define(outputs={"out_file": Zip})  # type: ignore[misc]
 def create_zip(
     in_file: FsObject,
     out_file: Path,
@@ -208,8 +196,7 @@ def create_zip(
 
 @converter(source_format=Zip, target_format=FsObject)
 @converter(source_format=Zip[Compressed], target_format=Compressed)  # type: ignore[misc]
-@pydra.mark.task  # type: ignore[misc]
-@pydra.mark.annotate({"return": {"out_file": Path}})  # type: ignore[misc]
+@design.python.define(outputs={"out_file": Path})  # type: ignore[misc]
 def extract_zip(in_file: Zip, extract_dir: Path) -> Path:
 
     if extract_dir is attrs.NOTHING:  # type: ignore[comparison-overlap]

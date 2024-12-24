@@ -1,7 +1,7 @@
 import tempfile
 from pathlib import Path
 import typing as ty
-import pydra.mark
+from pydra.design import python
 from fileformats.core import converter, FileSet
 from fileformats.generic import DirectoryOf, SetOf, TypedDirectory, TypedSet
 
@@ -9,16 +9,14 @@ T = FileSet.type_var("T")
 
 
 @converter(target_format=SetOf[T], source_format=DirectoryOf[T])  # type: ignore[misc]
-@pydra.mark.task  # type: ignore[misc]
-@pydra.mark.annotate({"return": {"out_file": TypedSet}})  # type: ignore[misc]
+@python.define(outputs={"out_file": TypedSet})  # type: ignore[misc]
 def list_dir_contents(in_file: TypedDirectory) -> TypedSet:
     classified_set: ty.Type[TypedSet] = SetOf.__class_getitem__(*in_file.content_types)  # type: ignore[assignment, arg-type]
     return classified_set(in_file.contents)
 
 
 @converter(target_format=DirectoryOf[T], source_format=SetOf[T])  # type: ignore[misc]
-@pydra.mark.annotate({"return": {"out_file": TypedDirectory}})  # type: ignore[misc]
-@pydra.mark.task  # type: ignore[misc]
+@python.define(outputs={"out_file": TypedDirectory})  # type: ignore[misc]
 def put_contents_in_dir(
     in_file: TypedSet,
     out_dir: ty.Optional[Path] = None,

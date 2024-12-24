@@ -88,7 +88,6 @@ class DataType(Classifier, metaclass=ABCMeta):
     def get_converter(
         cls,
         source_format: ty.Type[DataType],
-        name: str = "converter",
         **kwargs: ty.Any,
     ) -> ty.Union[None]:
         if issubclass(source_format, cls):

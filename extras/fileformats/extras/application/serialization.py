@@ -2,8 +2,7 @@ from pathlib import Path
 import typing as ty
 import tempfile
 import yaml
-import pydra.mark
-import pydra.engine.specs
+from pydra.design import python
 from fileformats.core import FileSet, converter, extra_implementation
 from fileformats.application import TextSerialization, Json, Yaml
 from fileformats.application.serialization import SerializationType
@@ -11,8 +10,7 @@ from fileformats.application.serialization import SerializationType
 
 @converter(target_format=Json, output_format=Json)
 @converter(target_format=Yaml, output_format=Yaml)
-@pydra.mark.task  # type: ignore[misc]
-@pydra.mark.annotate({"return": {"out_file": TextSerialization}})  # type: ignore[misc]
+@python.define(outputs={"out_file": TextSerialization})  # type: ignore[misc]
 def convert_data_serialization(
     in_file: TextSerialization,
     output_format: ty.Type[TextSerialization],

@@ -4,7 +4,7 @@ import typing as ty
 import logging
 from .datatype import DataType
 import fileformats.core
-from .utils import describe_task, matching_source, get_optional_type
+from .utils import matching_source, get_optional_type
 from .decorators import validated_property, classproperty
 from .identification import to_mime_format_name
 from .converter_helpers import SubtypeVar, ConverterSpec
@@ -665,7 +665,7 @@ class WithClassifiers:
                     ):
                         logger.warning(
                             "Ignoring duplicate registrations of the same converter %s",
-                            describe_task(converter_spec.task),
+                            converter_spec.task,
                         )
                         return  # actually the same task but just imported twice for some reason
                     prev_unclassified = prev.unclassified
@@ -673,8 +673,8 @@ class WithClassifiers:
                     raise FormatDefinitionError(
                         f"Cannot register converter from {prev_unclassified} "
                         f"to {unclassified} with non-wildcard classifiers "
-                        f"{list(prev.non_wildcard_classifiers())}, {describe_task(converter_spec.task)}, "
-                        f"because there is already one registered, {describe_task(prev_spec.task)}"
+                        f"{list(prev.non_wildcard_classifiers())}, {converter_spec.task}, "
+                        f"because there is already one registered, {prev_spec.task}"
                     )
             converters_dict = cls.unclassified.get_converters_dict()  # type: ignore[attr-defined]
             converter_spec.classifiers = cls.classifiers

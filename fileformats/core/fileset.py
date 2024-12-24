@@ -17,7 +17,6 @@ import logging
 from fileformats.core.typing import Self
 from .utils import (
     fspaths_converter,
-    describe_task,
     matching_source,
     import_extras_module,
 )
@@ -502,7 +501,6 @@ class FileSet(DataType):
         cls,
         fileset: "FileSet",
         plugin: str = "serial",
-        task_name: ty.Optional[str] = None,
         **kwargs: ty.Any,
     ) -> Self:
         """Convert a given file-set into the format specified by the class
@@ -523,10 +521,8 @@ class FileSet(DataType):
         FileSet
             the file-set converted into the type of the current class
         """
-        if task_name is None:
-            task_name = f"{type(fileset).__name__}_to_{cls.__name__}_{id(fileset)}"
         # Make unique, yet somewhat recognisable task name
-        task = cls.get_converter(source_format=type(fileset), name=task_name, **kwargs)
+        task = cls.get_converter(source_format=type(fileset), **kwargs)
         result = task(in_file=fileset, plugin=plugin)
         out_file = result.output.out_file
         if not isinstance(out_file, cls):
@@ -537,7 +533,6 @@ class FileSet(DataType):
     def get_converter(
         cls,
         source_format: ty.Type[DataType],
-        name: str = "converter",
         **kwargs: ty.Any,
     ) -> "TaskBase":
         """Get a converter that converts from the source format type
@@ -586,9 +581,7 @@ class FileSet(DataType):
                 if all(a == available_converters[0] for a in available_converters[1:]):
                     available_converters = [available_converters[0]]
                 else:
-                    available_str = "\n".join(
-                        describe_task(a.task) for a in available_converters
-                    )
+                    available_str = "\n".join(str(a.task) for a in available_converters)
                     raise FormatConversionError(
                         f"Ambiguous converters found between '{cls.mime_like}' and "
                         f"'{source_format.mime_like}':\n{available_str}"
@@ -615,7 +608,7 @@ class FileSet(DataType):
             conv_kwargs.update(kwargs)
         else:
             conv_kwargs = converter_spec.args
-        return converter_spec.task(name=name, **conv_kwargs)
+        return converter_spec.task(**conv_kwargs)
 
     @classmethod
     def get_converters_dict(
@@ -698,13 +691,13 @@ class FileSet(DataType):
             ):
                 logger.warning(
                     "Ignoring duplicate registrations of the same converter %s",
-                    describe_task(converter_spec.task),
+                    converter_spec.task,
                 )
                 return  # actually the same task but just imported twice for some reason
             raise FormatConversionError(
                 f"Cannot register converter from {source_format.__name__} "
-                f"to {cls.__name__}, {describe_task(converter_spec.task)}, because there is already "
-                f"one registered from {describe_task(prev_spec.task)}:"
+                f"to {cls.__name__}, {converter_spec.task}, because there is already "
+                f"one registered from {prev_spec.task}:"
                 f"\n\n{inspect.getsource(converter_spec.task)}\n\n"
                 f"and{inspect.getsource(prev_spec.task)}\n\n"
             )
@@ -1045,6 +1038,12 @@ class FileSet(DataType):
         """
         if not dest_dir:
             dest_dir = Path(tempfile.mkdtemp())
+        else:
+            dest_dir = Path(dest_dir)
+        # If the dest dir is actually the destination path
+        if not stem and cls.ext and cls.matching_exts([dest_dir], [cls.ext]):
+            dest_dir = dest_dir.parent
+            stem = dest_dir.name
         # Need to use mock to get an instance in order to use the singledispatch-based
         # extra decorator
         fspaths = cls.sample_data(

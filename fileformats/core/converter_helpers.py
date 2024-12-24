@@ -1,7 +1,7 @@
 from abc import ABCMeta
 import typing as ty
 import logging
-from .utils import describe_task, matching_source
+from .utils import matching_source
 from .exceptions import FormatDefinitionError
 from .classifier import Classifier
 from .datatype import DataType
@@ -167,14 +167,14 @@ class SubtypeVar:
             ):
                 logger.warning(
                     "Ignoring duplicate registrations of the same converter %s",
-                    describe_task(converter_spec.task),
+                    converter_spec.task,
                 )
                 return  # actually the same task but just imported twice for some reason
             generic_type = tuple(prev_spec.task.wildcard_classifiers())[0]  # type: ignore
             raise FormatDefinitionError(
                 f"Cannot register converter from {source_format} to the generic type "
-                f"'{generic_type}', {describe_task(converter_spec.task)} "
-                f"because there is already one registered, {describe_task(prev_spec.task)}"
+                f"'{generic_type}', {converter_spec.task} "
+                f"because there is already one registered, {prev_spec.task}"
             )
 
         cls.converters[source_format] = converter_spec  # type: ignore
