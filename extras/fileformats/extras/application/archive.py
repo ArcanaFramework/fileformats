@@ -19,7 +19,7 @@ TAR_COMPRESSION_TYPES = ["", "gz", "bz2", "xz"]
 TAR_COMPRESSION_ANNOT = (
     str,
     {
-        "help_string": (
+        "help": (
             "The type of compression applied to tar file, "
             "', '".join(TAR_COMPRESSION_TYPES)
         ),
@@ -30,7 +30,7 @@ TAR_COMPRESSION_ANNOT = (
 ZIP_COMPRESSION_ANNOT = (
     int,
     {
-        "help_string": (
+        "help": (
             "The type of compression applied to zip file, "
             "see https://docs.python.org/3/library/zipfile.html#zipfile.ZIP_DEFLATED "
             "for valid compression types"

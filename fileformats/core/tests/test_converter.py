@@ -46,9 +46,9 @@ def FooQuxConverter():
     @shell.define
     class FooQuxConverter_:
 
-        in_file: File = shell.arg(help_string="the input file", argstr="")
+        in_file: File = shell.arg(help="the input file", argstr="")
         out_file: Path = shell.arg(
-            help_string="output file name",
+            help="output file name",
             argstr="",
             position=-1,
             output_file_template="out.qux",
@@ -56,7 +56,7 @@ def FooQuxConverter():
         executable = "cp"
 
         class Outputs:
-            out_file: File = shell.outarg(help_string="output file")
+            out_file: File = shell.outarg(help="output file")
 
     return FooQuxConverter_
 
