@@ -47,16 +47,15 @@ def FooQuxConverter():
     class FooQuxConverter_:
 
         in_file: File = shell.arg(help="the input file", argstr="")
-        out_file: Path = shell.arg(
-            help="output file name",
-            argstr="",
-            position=-1,
-            output_file_template="out.qux",
-        )
         executable = "cp"
 
         class Outputs:
-            out_file: File = shell.outarg(help="output file")
+            out_file: File = shell.outarg(
+                help="output file",
+                argstr="",
+                position=-1,
+                output_file_template="out.qux",
+            )
 
     return FooQuxConverter_
 
