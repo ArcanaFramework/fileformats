@@ -1265,10 +1265,10 @@ class FileSet(DataType):
         --------------------------------------
         leave
             simply leave the files where they are (i.e. do nothing)
-        symlink
-            symlink the files into the destination directory
         hardlink
             hardlink the files into the destination directory
+        symlink
+            symlink the files into the destination directory
         copy
             duplicate (actually copy) the files into the destination directory
 
@@ -1277,7 +1277,7 @@ class FileSet(DataType):
         link
             use either linking method (preferring symbolic)
         link_or_copy
-            use either link method or copy (preferring sym, hard, then copy)
+            use either link method or copy (preferring hard, sym, then copy)
         symlink_or_copy
             "  symbolic "   "         "
         hardlink_or_copy
@@ -1295,30 +1295,27 @@ class FileSet(DataType):
         # Bases
 
         leave = 0b0001
-        symlink = 0b0010
-        hardlink = 0b0100
+        hardlink = 0b0010
+        symlink = 0b0100
         copy = 0b1000
 
         # Common combinations
-
         link = 0b0110
         link_or_copy = 0b1110
-        symlink_or_copy = 0b1010
-        hardlink_or_copy = 0b1100
+        hardlink_or_copy = 0b1010
+        symlink_or_copy = 0b1100
 
         # Masks
-
         any = 0b1111
         none = 0b0000
 
         # All other combinations (typically the result of bit-masking)
-
         leave_or_copy = 0b1001
-        leave_or_symlink = 0b0011
-        leave_or_hardlink = 0b0101
+        leave_or_hardlink = 0b0011
+        leave_or_symlink = 0b0101
         leave_or_link = 0b0111
-        leave_or_symlink_or_copy = 0b1011
-        leave_or_hardlink_or_copy = 0b1101
+        leave_or_hardlink_or_copy = 0b1011
+        leave_or_symlink_or_copy = 0b1101
 
         def __xor__(self, other: "FileSet.CopyMode") -> "FileSet.CopyMode":
             return type(self)(self.value ^ other.value)
