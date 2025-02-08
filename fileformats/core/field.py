@@ -39,7 +39,7 @@ class Field(ty.Generic[ValueType, PrimitiveType], DataType):
     def __repr__(self) -> str:
         return f"{self.type_name}({str(self)})"
 
-    @classproperty
+    @classproperty  # type: ignore[arg-type]
     def all_fields(
         cls,
     ) -> ty.List[ty.Type["Field[ty.Any, ty.Any]"]]:

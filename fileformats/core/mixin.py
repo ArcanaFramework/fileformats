@@ -7,7 +7,7 @@ import fileformats.core
 from .utils import matching_source, get_optional_type
 from .decorators import validated_property, classproperty
 from .identification import to_mime_format_name
-from .converter_helpers import SubtypeVar, ConverterSpec
+from .converter_helpers import SubtypeVar, Converter
 from .classifier import Classifier
 from .exceptions import (
     FormatMismatchError,
@@ -17,6 +17,8 @@ from .exceptions import (
 
 
 logger = logging.getLogger("fileformats")
+
+T = ty.TypeVar("T")
 
 
 class WithMagicNumber:
@@ -175,7 +177,7 @@ class WithSeparateHeader(WithAdjacentFiles):
 
     header_type: ty.Type["fileformats.core.FileSet"]
 
-    @classproperty
+    @classproperty  # type: ignore[arg-type]
     def nested_types(cls) -> ty.Tuple[ty.Type[Classifier], ...]:
         return (cls.header_type,)
 
@@ -232,7 +234,7 @@ class WithSideCars(WithAdjacentFiles):
             metadata[side_car_class_name] = side_car_metadata
         return metadata
 
-    @classproperty
+    @classproperty  # type: ignore[arg-type]
     def nested_types(cls) -> ty.Tuple[ty.Type[Classifier], ...]:
         return cls.side_car_types
 
@@ -306,11 +308,11 @@ class WithClassifiers:
                 )
         return validated
 
-    @classproperty
+    @classproperty  # type: ignore[arg-type]
     def is_classified(cls) -> bool:
         return "unclassified" in cls.__dict__
 
-    @classproperty
+    @classproperty  # type: ignore[arg-type]
     def nested_types(cls) -> ty.Tuple[ty.Type[Classifier], ...]:
         return cls.classifiers
 
@@ -456,7 +458,7 @@ class WithClassifiers:
         return classified
 
     @classmethod
-    def get_converter_specs(cls, source_format: type) -> ty.List[ConverterSpec]:
+    def get_converter_defs(cls, source_format: type) -> ty.List[Converter]:
         """Search the registered converters to find an appropriate task and associated
         key-word args to perform the conversion between source and target formats
 
@@ -468,7 +470,7 @@ class WithClassifiers:
         from fileformats.core import FileSet
 
         # Try to see if a converter has been defined to the exact type
-        available_converters: ty.List[ConverterSpec] = super().get_converter_specs(  # type: ignore[misc]
+        available_converters: ty.List[Converter] = super().get_converter_defs(  # type: ignore[misc]
             source_format
         )
         # Failing that, see if there is a generic conversion between the container type
@@ -560,9 +562,7 @@ class WithClassifiers:
                     else:
                         wildcard_match = False
                     if wildcard_match:
-                        available_converters.append(
-                            ConverterSpec(converter.task, converter.args)
-                        )
+                        available_converters.append(converter)
         return available_converters
 
     @classmethod
@@ -603,7 +603,7 @@ class WithClassifiers:
     def register_converter(
         cls,
         source_format: ty.Type["fileformats.core.FileSet"],
-        converter_spec: ConverterSpec,
+        converter: Converter[T],
     ) -> None:
         """Registers a converter task within a class attribute. Called by the @fileformats.converter
         decorator.
@@ -659,13 +659,13 @@ class WithClassifiers:
                     # task, task_kwargs = converter_spec
                     # prev_task, prev_kwargs, prev_classifiers = prev_tuple
                     if (
-                        matching_source(converter_spec.task, prev_spec.task)
-                        and converter_spec.args == prev_spec.args
+                        matching_source(converter.task_def, prev_spec.task)
+                        and converter.args == prev_spec.args
                         and cls.classifiers == prev_spec.classifiers
                     ):
                         logger.warning(
                             "Ignoring duplicate registrations of the same converter %s",
-                            converter_spec.task,
+                            converter.task_def,
                         )
                         return  # actually the same task but just imported twice for some reason
                     prev_unclassified = prev.unclassified
@@ -673,16 +673,16 @@ class WithClassifiers:
                     raise FormatDefinitionError(
                         f"Cannot register converter from {prev_unclassified} "
                         f"to {unclassified} with non-wildcard classifiers "
-                        f"{list(prev.non_wildcard_classifiers())}, {converter_spec.task}, "
+                        f"{list(prev.non_wildcard_classifiers())}, {converter.task_def}, "
                         f"because there is already one registered, {prev_spec.task}"
                     )
             converters_dict = cls.unclassified.get_converters_dict()  # type: ignore[attr-defined]
-            converter_spec.classifiers = cls.classifiers
-            converters_dict[source_format] = converter_spec
+            converter.classifiers = cls.classifiers
+            converters_dict[source_format] = converter
         else:
-            super().register_converter(source_format, converter_spec)  # type: ignore[misc]
+            super().register_converter(source_format, converter)  # type: ignore[misc]
 
-    @classproperty
+    @classproperty  # type: ignore[arg-type]
     def namespace(cls) -> ty.Optional[str]:
         """The "namespace" the format belongs to under the "fileformats" umbrella
         namespace"""
@@ -717,7 +717,7 @@ class WithClassifiers:
                 namespace = None
         return namespace
 
-    @classproperty
+    @classproperty  # type: ignore[arg-type]
     def type_name(cls) -> str:
         """Name of type including classifiers to be used in __repr__"""
         unclassified: str

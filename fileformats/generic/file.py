@@ -33,7 +33,7 @@ class File(FsObject):
             )
         return fspath
 
-    @classproperty
+    @classproperty  # type: ignore[arg-type]
     def unconstrained(cls) -> bool:
         """Whether the file-format is unconstrained by extension, magic number or another
         constraint"""

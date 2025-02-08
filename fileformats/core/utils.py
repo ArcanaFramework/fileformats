@@ -115,30 +115,6 @@ def add_exc_note(e: Exception, note: str) -> Exception:
     return e
 
 
-# def task: "pydra.engine.task.TaskBase" -> str:
-#     """Returns the name of a Pydra task and where it was defined for debugging purposes
-
-#     Parameters
-#     ----------
-#     task : pydra.engine.core.TaskBase
-#         the task to describe
-#     """
-#     from fileformats.core.converter_helpers import ConverterWrapper
-
-#     if isinstance(task, ConverterWrapper):
-#         task = task.task_spec
-#     if inspect.isfunction(task):
-#         import cloudpickle
-
-#         try:
-#             task = cloudpickle.loads(task().inputs._func)
-#         except Exception as e:
-#             return f"{task} (Failed to load task function: {e})"
-#     src_file = inspect.getsourcefile(task)
-#     src_line = inspect.getsourcelines(task)[-1]
-#     return f"{task} (defined at line {src_line} of {src_file})"
-
-
 def matching_source(
     task1: ty.Callable[..., ty.Any], task2: ty.Callable[..., ty.Any]
 ) -> bool:

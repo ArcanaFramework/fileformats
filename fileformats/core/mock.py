@@ -24,19 +24,19 @@ class MockMixin:
         self.fspaths = fspaths_converter(fspaths)
         self._metadata = metadata
 
-    @classproperty
+    @classproperty  # type: ignore[arg-type]
     def type_name(cls) -> str:
         return cls.mocked.type_name
 
     def __bytes_repr__(self, cache: ty.Dict[str, ty.Any]) -> ty.Iterable[bytes]:
         yield from (str(fspath).encode() for fspath in self.fspaths)
 
-    @classproperty
+    @classproperty  # type: ignore[arg-type]
     def mocked(cls) -> "FileSet":
         """The "true" class that the mocked class is based on"""
         return next(c for c in cls.__mro__ if not issubclass(c, MockMixin))  # type: ignore[no-any-return, attr-defined]
 
-    @classproperty
+    @classproperty  # type: ignore[arg-type]
     def namespace(cls) -> str:
         """The "namespace" the format belongs to under the "fileformats" umbrella
         namespace"""

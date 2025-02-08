@@ -1,57 +1,18 @@
 from abc import ABCMeta
 import typing as ty
 import logging
-from .utils import matching_source
 from .exceptions import FormatDefinitionError
 from .classifier import Classifier
 from .datatype import DataType
 
 if ty.TYPE_CHECKING:
-    from pydra.engine.task import TaskBase
-    from pydra.engine import Workflow
+    from pydra.engine.specs import TaskDef
     import fileformats.core
     from . import mixin
 
 logger = logging.getLogger("fileformats")
 
-TaskGenerator = ty.Callable[..., "TaskBase"]
-
-
-class ConverterWrapper:
-    """Wraps a converter task in a workflow so that the in_file and out_file names can
-    be mapped onto their standardised names, "in_file" and "out_file" if necessary
-    """
-
-    task_spec: TaskGenerator
-    in_file: str
-    out_file: str
-
-    def __init__(
-        self,
-        task_spec: TaskGenerator,
-        in_file: str,
-        out_file: str,
-    ):
-        self.task_spec = task_spec
-        self.in_file = in_file
-        self.out_file = out_file
-
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.task_spec}, {self.in_file}, {self.out_file})"
-
-    def __call__(self, name: ty.Optional[str] = None, **kwargs: ty.Any) -> "Workflow":
-        from pydra.engine import Workflow
-
-        if name is None:
-            name = f"{self.task_spec.__name__}_wrapper"
-        wf = Workflow(name=name, input_spec=["in_file"])
-        task_kwargs = {self.in_file: wf.lzin.in_file}
-        task_kwargs.update(kwargs)
-        wf.add(self.task_spec(name="task", **task_kwargs))
-        wf.set_output([("out_file", getattr(wf.task.lzout, self.out_file))])
-        return wf
-
-
+T = ty.TypeVar("T")
 DT = ty.TypeVar("DT", bound=DataType)
 
 
@@ -67,7 +28,7 @@ class SubtypeVar:
         ...
     """
 
-    converters: ty.Dict[ty.Type["fileformats.core.FileSet"], "ConverterSpec"] = {}
+    converters: ty.Dict[ty.Type["fileformats.core.FileSet"], "Converter"] = {}
 
     @classmethod
     def new(cls, name: str, klass: type) -> "SubtypeVar":
@@ -94,12 +55,12 @@ class SubtypeVar:
         return type.__subclasscheck__(cls, subclass)
 
     @classmethod
-    def get_converter_specs(
+    def get_converter_defs(
         cls, source_format: ty.Type["mixin.WithClassifiers"], target_format: type
-    ) -> ty.List["ConverterSpec"]:
+    ) -> ty.List["Converter[T]"]:
         # check to see whether there are converters from a base class of the source
         # format
-        available_converters: ty.List[ConverterSpec] = []
+        available_converters: ty.List[Converter[T]] = []
         # assert isinstance(source_format, WithClassifiers)
         if source_format.is_classified:
             for template_source_format, converter in cls.converters.items():
@@ -122,7 +83,7 @@ class SubtypeVar:
     def register_converter(
         cls,
         source_format: ty.Type["mixin.WithClassifiers"],
-        converter_spec: "ConverterSpec",
+        converter: "Converter[T]",
     ) -> None:
         """Registers a converter task within a class attribute. Called by the
         @fileformats.core.converter decorator.
@@ -158,50 +119,53 @@ class SubtypeVar:
         ]
         assert len(prev_registered) <= 1
         if prev_registered:
-            prev_spec = cls.converters[prev_registered[0]]
+            prev_def = cls.converters[prev_registered[0]]
             # task, task_kwargs, _ = converter_spec
             # prev_task, prev_kwargs = prev_tuple
-            if (
-                matching_source(converter_spec.task, prev_spec.task)
-                and converter_spec.args == prev_spec.args
-            ):
+            if converter.task_def == prev_def.task_def:
                 logger.warning(
                     "Ignoring duplicate registrations of the same converter %s",
-                    converter_spec.task,
+                    converter.task_def,
                 )
                 return  # actually the same task but just imported twice for some reason
-            generic_type = tuple(prev_spec.task.wildcard_classifiers())[0]  # type: ignore
+            generic_type = tuple(prev_def.task_def.wildcard_classifiers())[0]  # type: ignore
             raise FormatDefinitionError(
                 f"Cannot register converter from {source_format} to the generic type "
-                f"'{generic_type}', {converter_spec.task} "
-                f"because there is already one registered, {prev_spec.task}"
+                f"'{generic_type}', {converter.task_def} "
+                f"because there is already one registered, {prev_def.task_def}"
             )
 
-        cls.converters[source_format] = converter_spec  # type: ignore
+        cls.converters[source_format] = converter  # type: ignore
 
 
-class ConverterSpec:
+class Converter(ty.Generic[T]):
     """Specification of a converter task, including the task callable, its arguments and
     the classifiers"""
 
-    task: ty.Union[ty.Callable[..., "TaskBase"], ConverterWrapper]
-    args: ty.Dict[str, ty.Any]
+    task_def: "TaskDef[T]"
     classifiers: ty.Tuple[ty.Type[Classifier], ...]
+    in_file: str
+    out_file: str
 
     def __init__(
         self,
-        task: ty.Union[ty.Callable[..., "TaskBase"], ConverterWrapper],
-        args: ty.Dict[str, ty.Any],
+        task_def: "TaskDef[T]",
         classifiers: ty.Tuple[ty.Type[Classifier], ...] = (),
+        in_file: str = "in_file",
+        out_file: str = "out_file",
     ):
-        self.task = task
-        self.args = args
+        self.task_def = task_def
         self.classifiers = classifiers
+        self.in_file = in_file
+        self.out_file = out_file
 
     def __eq__(self, other: object) -> bool:
+        from pydra.utils.hash import hash_function
+
         return (
-            isinstance(other, ConverterSpec)
-            and matching_source(self.task, other.task)
-            and self.args == other.args
-            and self.classifiers == other.classifiers
+            isinstance(other, Converter)
+            and self.task_def == other.task_def
+            and hash_function(self.classifiers) == hash_function(other.classifiers)
+            and self.in_file == other.in_file
+            and self.out_file == other.out_file
         )

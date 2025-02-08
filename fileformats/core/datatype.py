@@ -35,7 +35,7 @@ class DataType(Classifier, metaclass=ABCMeta):
     # Store converters registered by @converter decorator that convert to FileSet
     # NB: each class will have its own version of this dictionary
     converters: ty.Dict[
-        ty.Type["DataType"], "fileformats.core.converter_helpers.ConverterSpec"
+        ty.Type["DataType"], "fileformats.core.converter_helpers.Converter"
     ] = {}
 
     @classmethod
@@ -66,7 +66,7 @@ class DataType(Classifier, metaclass=ABCMeta):
         else:
             return True
 
-    @classproperty
+    @classproperty  # type: ignore[arg-type]
     def all_types(self) -> ty.Iterator[ty.Type[DataType]]:
         return itertools.chain(FileSet.all_formats, Field.all_fields)
 
@@ -97,13 +97,13 @@ class DataType(Classifier, metaclass=ABCMeta):
                 f"Cannot converter between '{cls.mime_like}' and '{source_format.mime_like}'"
             )
 
-    @classproperty
+    @classproperty  # type: ignore[arg-type]
     def mime_type(cls) -> str:
         """Generates a MIME type identifier from a format class (i.e. an identifier
         for a non-MIME class in the MIME."""
         raise FileFormatsError(f"MIME type not defined for {cls} class")
 
-    @classproperty
+    @classproperty  # type: ignore[arg-type]
     def mime_like(cls) -> str:
         """Generates a "MIME-like" identifier from a format class. The fileformats
         package namespace forms a superset of IANA MIME registries. Formats with
@@ -263,7 +263,7 @@ class DataType(Classifier, metaclass=ABCMeta):
             )
         return klass
 
-    @classproperty
+    @classproperty  # type: ignore[arg-type]
     def generically_classifiable_by_name(cls) -> ty.Dict[str, ty.Type[DataType]]:
         if cls._generically_classifiable_by_name is None:
             cls._generically_classifiable_by_name = {

@@ -26,7 +26,9 @@ def test_files(files_dir: Path, file_names: ty.List[str]) -> ty.List[Path]:
 
 def test_list_dir_contents(files_dir: Path, test_files: ty.List[Path]) -> None:
     text_set = SetOf[TextFile].convert(DirectoryOf[TextFile](files_dir))  # type: ignore[misc]
-    assert sorted(t.fspath for t in text_set.contents) == test_files
+    assert sorted(t.name for t in text_set.contents) == sorted(
+        f.name for f in test_files
+    )
 
 
 def test_put_contents_in_dir(
