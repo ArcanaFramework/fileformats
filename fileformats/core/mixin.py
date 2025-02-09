@@ -4,7 +4,7 @@ import typing as ty
 import logging
 from .datatype import DataType
 import fileformats.core
-from .utils import matching_source, get_optional_type
+from .utils import get_optional_type
 from .decorators import validated_property, classproperty
 from .identification import to_mime_format_name
 from .converter_helpers import SubtypeVar, Converter
@@ -458,7 +458,7 @@ class WithClassifiers:
         return classified
 
     @classmethod
-    def get_converter_defs(cls, source_format: type) -> ty.List[Converter]:
+    def get_converter_defs(cls, source_format: type) -> ty.List[Converter[ty.Any]]:
         """Search the registered converters to find an appropriate task and associated
         key-word args to perform the conversion between source and target formats
 
@@ -470,7 +470,7 @@ class WithClassifiers:
         from fileformats.core import FileSet
 
         # Try to see if a converter has been defined to the exact type
-        available_converters: ty.List[Converter] = super().get_converter_defs(  # type: ignore[misc]
+        available_converters: ty.List[Converter[ty.Any]] = super().get_converter_defs(  # type: ignore[misc, type-arg]
             source_format
         )
         # Failing that, see if there is a generic conversion between the container type
@@ -655,14 +655,10 @@ class WithClassifiers:
                 assert len(prev_registered) <= 1
                 prev = prev_registered[0] if prev_registered else None
                 if prev:
-                    prev_spec = cls.converters[prev]  # type: ignore[attr-defined]
+                    prev_converter = cls.converters[prev]  # type: ignore[attr-defined]
                     # task, task_kwargs = converter_spec
                     # prev_task, prev_kwargs, prev_classifiers = prev_tuple
-                    if (
-                        matching_source(converter.task_def, prev_spec.task)
-                        and converter.args == prev_spec.args
-                        and cls.classifiers == prev_spec.classifiers
-                    ):
+                    if converter == prev_converter:
                         logger.warning(
                             "Ignoring duplicate registrations of the same converter %s",
                             converter.task_def,
@@ -674,7 +670,7 @@ class WithClassifiers:
                         f"Cannot register converter from {prev_unclassified} "
                         f"to {unclassified} with non-wildcard classifiers "
                         f"{list(prev.non_wildcard_classifiers())}, {converter.task_def}, "
-                        f"because there is already one registered, {prev_spec.task}"
+                        f"because there is already one registered, {prev_converter.task}"
                     )
             converters_dict = cls.unclassified.get_converters_dict()  # type: ignore[attr-defined]
             converter.classifiers = cls.classifiers

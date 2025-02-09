@@ -28,7 +28,7 @@ class SubtypeVar:
         ...
     """
 
-    converters: ty.Dict[ty.Type["fileformats.core.FileSet"], "Converter"] = {}
+    converters: ty.Dict[ty.Type["fileformats.core.FileSet"], "Converter[ty.Any]"] = {}
 
     @classmethod
     def new(cls, name: str, klass: type) -> "SubtypeVar":

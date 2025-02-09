@@ -26,7 +26,7 @@ class MockMixin:
 
     @classproperty  # type: ignore[arg-type]
     def type_name(cls) -> str:
-        return cls.mocked.type_name
+        return cls.mocked.type_name  # type: ignore[no-any-return]
 
     def __bytes_repr__(self, cache: ty.Dict[str, ty.Any]) -> ty.Iterable[bytes]:
         yield from (str(fspath).encode() for fspath in self.fspaths)

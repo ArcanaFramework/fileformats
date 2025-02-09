@@ -5,7 +5,6 @@ import tempfile
 import tarfile
 import zipfile
 from pathlib import Path
-import attrs
 from pydra.design import python
 from fileformats.generic import FsObject
 from fileformats.core.utils import set_cwd
@@ -53,8 +52,8 @@ FilterMethodType = ty.Any
 # ]
 
 
-@converter(source_format=FsObject, target_format=Tar)
-@converter(source_format=FsObject, target_format=TarGzip, compression="gz")
+@converter(source_format=FsObject, target_format=Tar)  # type: ignore[misc]
+@converter(source_format=FsObject, target_format=TarGzip, compression="gz")  # type: ignore[misc]
 @converter(source_format=Compressed, target_format=Tar[Compressed])  # type: ignore[misc]
 @converter(
     source_format=Compressed, target_format=TarGzip[Compressed], compression="gz"  # type: ignore[misc]
@@ -104,8 +103,8 @@ def create_tar(
     return Path(out_file)
 
 
-@converter(source_format=Tar, target_format=FsObject)
-@converter(source_format=TarGzip, target_format=FsObject)
+@converter(source_format=Tar, target_format=FsObject)  # type: ignore[misc]
+@converter(source_format=TarGzip, target_format=FsObject)  # type: ignore[misc]
 @converter(source_format=Tar[Compressed], target_format=Compressed)  # type: ignore[misc]
 @converter(source_format=TarGzip[Compressed], target_format=Compressed)  # type: ignore[misc]
 @python.define(outputs={"out_file": Path})  # type: ignore[misc]
@@ -137,7 +136,7 @@ def extract_tar(
     return extracted[0]
 
 
-@converter(source_format=FsObject, target_format=Zip)
+@converter(source_format=FsObject, target_format=Zip)  # type: ignore[misc]
 @converter(source_format=Compressed, target_format=Zip[Compressed])  # type: ignore[misc]
 @python.define(outputs={"out_file": Zip})  # type: ignore[misc]
 def create_zip(
@@ -194,7 +193,7 @@ def create_zip(
     return Zip(out_file)
 
 
-@converter(source_format=Zip, target_format=FsObject)
+@converter(source_format=Zip, target_format=FsObject)  # type: ignore[misc]
 @converter(source_format=Zip[Compressed], target_format=Compressed)  # type: ignore[misc]
 @python.define(outputs={"out_file": Path})  # type: ignore[misc]
 def extract_zip(in_file: Zip, extract_dir: ty.Optional[Path] = None) -> Path:

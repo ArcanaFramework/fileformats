@@ -56,7 +56,9 @@ class Field(ty.Generic[ValueType, PrimitiveType], DataType):
     @classmethod
     def from_primitive(cls, dtype: type) -> ty.Type[Field[ty.Any, ty.Any]]:
         try:
-            datatype = next(iter(f for f in cls.all_fields if f.primitive is dtype))
+            datatype: ty.Type[Field[ty.Any, ty.Any]] = next(
+                iter(f for f in cls.all_fields if f.primitive is dtype)
+            )
         except StopIteration as e:
             field_types_str = ", ".join(t.__name__ for t in cls.all_fields)
             raise FormatMismatchError(

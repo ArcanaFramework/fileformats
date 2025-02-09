@@ -1,4 +1,3 @@
-import sys
 import typing as ty
 from pathlib import Path
 import time
@@ -76,7 +75,7 @@ def validated_property(meth: ty.Callable[..., PropReturn]) -> PropReturn:
 
 
 class classproperty(object):  # type: ignore[no-redef]  # noqa
-    def __init__(self, f: ty.Callable[[ty.Type[ty.Any]], ty.Any]):
+    def __init__(self, f: ty.Callable[[ty.Any], ty.Any]):
         self.f = f
 
     def __get__(self, obj: ty.Any, owner: ty.Any) -> ty.Any:

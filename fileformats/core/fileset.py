@@ -501,7 +501,7 @@ class FileSet(DataType):
     def convert(
         cls,
         fileset: "FileSet",
-        worker: str | None = None,
+        worker: ty.Optional[str] = None,
         **kwargs: ty.Any,
     ) -> Self:
         """Convert a given file-set into the format specified by the class
@@ -622,14 +622,14 @@ class FileSet(DataType):
     @classmethod
     def get_converters_dict(
         cls, klass: ty.Optional[ty.Type[DataType]] = None
-    ) -> ty.Dict[ty.Type[DataType], "Converter"]:
+    ) -> ty.Dict[ty.Type[DataType], "Converter[ty.Any]"]:
         # Only access converters to the specific class, not superclasses (which may not
         # be able to convert to the specific type)
         if klass is None:
             klass = cls
         # import related extras module for the target class
         import_extras_module(klass)
-        converters_dict: ty.Dict[ty.Type[DataType], "Converter"]
+        converters_dict: ty.Dict[ty.Type[DataType], "Converter[ty.Any]"]
         try:
             converters_dict = klass.__dict__["converters"]
         except KeyError:
@@ -637,7 +637,7 @@ class FileSet(DataType):
         return converters_dict
 
     @classmethod
-    def get_converter_defs(cls, source_format: type) -> ty.List["Converter"]:
+    def get_converter_defs(cls, source_format: type) -> ty.List["Converter[ty.Any]"]:
         """Search the registered converters to find any matches and return list of
         task and associated key-word args to perform the conversion between source and
         target formats

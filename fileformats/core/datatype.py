@@ -31,11 +31,15 @@ class DataType(Classifier, metaclass=ABCMeta):
 
     is_fileset = False
     is_field = False
-    nested_types: ty.Tuple[ty.Type[Classifier], ...] = ()
+
+    @classproperty
+    def nested_types(cls) -> ty.Tuple[ty.Type[Classifier], ...]:
+        return ()
+
     # Store converters registered by @converter decorator that convert to FileSet
     # NB: each class will have its own version of this dictionary
     converters: ty.Dict[
-        ty.Type["DataType"], "fileformats.core.converter_helpers.Converter"
+        ty.Type["DataType"], "fileformats.core.converter_helpers.Converter[ty.Any]"  # type: ignore[type-arg]
     ] = {}
 
     @classmethod
@@ -149,7 +153,7 @@ class DataType(Classifier, metaclass=ABCMeta):
             namespace = namespace.replace("-", "_")
         # Attempt to load file type using their `iana_mime` attribute
         try:
-            return FileSet.formats_by_iana_mime[mime_string]
+            return FileSet.formats_by_iana_mime[mime_string]  # type: ignore[no-any-return]
         except KeyError:
             pass
         if namespace == "application" and format_name.startswith("x-"):

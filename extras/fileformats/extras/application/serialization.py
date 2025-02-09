@@ -8,8 +8,8 @@ from fileformats.application import TextSerialization, Json, Yaml
 from fileformats.application.serialization import SerializationType
 
 
-@converter(target_format=Json, output_format=Json)
-@converter(target_format=Yaml, output_format=Yaml)
+@converter(target_format=Json, output_format=Json)  # type: ignore[misc]
+@converter(target_format=Yaml, output_format=Yaml)  # type: ignore[misc]
 @python.define(outputs={"out_file": TextSerialization})  # type: ignore[misc]
 def convert_data_serialization(
     in_file: TextSerialization,

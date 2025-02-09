@@ -190,13 +190,15 @@ FormatType: TypeAlias = ty.Union[ty.Type["fileformats.core.FileSet"], SubtypeVar
 
 
 def converter(
-    task_type: "ty.Type[TaskDef[T]] | None" = None,
+    task_type: ty.Optional[ty.Type[TaskDef[T]]] = None,
     source_format: FormatType = None,
     target_format: FormatType = None,
     in_file: str = "in_file",
     out_file: str = "out_file",
     **converter_kwargs: ty.Any,
-) -> "ty.Type[TaskDef[T]]":
+) -> ty.Union[
+    ty.Type[TaskDef[T]], ty.Callable[[ty.Type[TaskDef[T]]], ty.Type[TaskDef[T]]]
+]:
     """Decorator that registers a task as a converter between a source and target format
     pair
 
@@ -229,8 +231,8 @@ def converter(
         raise e
 
     def decorator(
-        task_type: ty.Type["TaskDef"],
-    ) -> Converter[T]:
+        task_type: ty.Type[TaskDef[T]],
+    ) -> ty.Type[TaskDef[T]]:
         out_file_local = out_file
         source: FormatType
         target: FormatType
@@ -272,6 +274,6 @@ def converter(
                 task_type(**converter_kwargs), in_file=in_file, out_file=out_file_local
             ),
         )
-        return task_type  # type: ignore[return-value]
+        return task_type
 
-    return decorator if task_type is None else decorator(task_type)  # type: ignore[return-value]
+    return decorator if task_type is None else decorator(task_type)
