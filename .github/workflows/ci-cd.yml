@@ -42,8 +42,6 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Update build tools
       run: python3 -m pip install --upgrade pip
-    - name: Install dev version of Pydra
-      run: pip install
     - name: Install Package
       run: python3 -m pip install -e .[test]
     - name: Install Extras Package
