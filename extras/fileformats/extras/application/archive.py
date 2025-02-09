@@ -96,7 +96,9 @@ def create_tar(
         format=format,
         ignore_zeros=ignore_zeros,
         encoding=encoding,
-    ) as tfile, set_cwd(base_dir):
+    ) as tfile, set_cwd(
+        base_dir
+    ):  # type: ignore[call-overload]
         for fspath in in_file.fspaths:
             tfile.add(relative_path(fspath, base_dir), filter=filter)
 
@@ -125,7 +127,7 @@ def extract_tar(
     if not compression_type:
         compression_type = ""
 
-    with tarfile.open(name=in_file, mode=f"r:{compression_type}") as tfile:
+    with tarfile.open(name=in_file, mode=f"r:{compression_type}") as tfile:  # type: ignore[call-overload]
         tfile.extractall(path=extract_dir)
 
     extracted = [extract_dir / f for f in os.listdir(extract_dir)]
