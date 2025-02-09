@@ -59,6 +59,9 @@ version-file = "fileformats/extras/core/_version.py"
 [tool.hatch.build.targets.wheel]
 packages = ["fileformats"]
 
+[tool.hatch.metadata]
+allow-direct-references = true
+
 [tool.black]
 target-version = ['py38']
 exclude = "fileformats/extras/core/_version.py"
