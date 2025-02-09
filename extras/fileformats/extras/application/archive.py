@@ -90,15 +90,13 @@ def create_tar(
 
     out_file = out_file.absolute()
 
-    with tarfile.open(
+    with tarfile.open(  # type: ignore[call-overload]
         name=out_file,
         mode=f"w:{compression}",
         format=format,
         ignore_zeros=ignore_zeros,
         encoding=encoding,
-    ) as tfile, set_cwd(
-        base_dir
-    ):  # type: ignore[call-overload]
+    ) as tfile, set_cwd(base_dir):
         for fspath in in_file.fspaths:
             tfile.add(relative_path(fspath, base_dir), filter=filter)
 
