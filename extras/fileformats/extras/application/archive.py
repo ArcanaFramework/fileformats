@@ -91,7 +91,7 @@ def create_tar(
     out_file = out_file.absolute()
 
     with tarfile.open(
-        out_file,
+        name=out_file,
         mode=f"w:{compression}",
         format=format,
         ignore_zeros=ignore_zeros,
@@ -125,7 +125,7 @@ def extract_tar(
     if not compression_type:
         compression_type = ""
 
-    with tarfile.open(in_file, mode=f"r:{compression_type}") as tfile:
+    with tarfile.open(name=in_file, mode=f"r:{compression_type}") as tfile:
         tfile.extractall(path=extract_dir)
 
     extracted = [extract_dir / f for f in os.listdir(extract_dir)]
