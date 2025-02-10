@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
-        <title>fileformats.image.raster - FileFormats v0.14.4</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d8449d71" />
+        <title>fileformats.image.raster - FileFormats v0.15a0</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=beddf052" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -171,7 +171,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">FileFormats v0.14.4</div></a>
+      <a href="../../../index.html"><div class="brand">FileFormats v0.15a0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -198,7 +198,7 @@
     <img class="sidebar-logo" src="../../../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.14.4</span>
+  <span class="sidebar-brand-text">FileFormats v0.15a0</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -265,17 +265,17 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for fileformats.image.raster</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">typing</span>  <span class="c1"># noqa: F401</span>
-<span class="kn">import</span> <span class="nn">typing</span> <span class="k">as</span> <span class="nn">ty</span>
-<span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">validated_property</span>
-<span class="kn">from</span> <span class="nn">fileformats.core.typing</span> <span class="kn">import</span> <span class="n">TypeAlias</span>
-<span class="kn">from</span> <span class="nn">fileformats.core.mixin</span> <span class="kn">import</span> <span class="n">WithMagicNumber</span>
-<span class="kn">from</span> <span class="nn">fileformats.core.exceptions</span> <span class="kn">import</span> <span class="n">FormatMismatchError</span>
-<span class="kn">from</span> <span class="nn">fileformats.generic</span> <span class="kn">import</span> <span class="n">BinaryFile</span>
-<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">Image</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">typing</span>  <span class="c1"># noqa: F401</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ty</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">validated_property</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.core.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeAlias</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.core.mixin</span><span class="w"> </span><span class="kn">import</span> <span class="n">WithMagicNumber</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.core.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">FormatMismatchError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.generic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BinaryFile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
 
 <span class="k">if</span> <span class="n">ty</span><span class="o">.</span><span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">numpy.typing</span>  <span class="c1"># noqa: F401</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">numpy.typing</span>  <span class="c1"># noqa: F401</span>
 
 
 <span class="n">DataArrayType</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="p">(</span>
@@ -285,7 +285,7 @@
 
 <div class="viewcode-block" id="RasterImage">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.RasterImage">[docs]</a>
-<span class="k">class</span> <span class="nc">RasterImage</span><span class="p">(</span><span class="n">Image</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RasterImage</span><span class="p">(</span><span class="n">Image</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
     <span class="c1"># iana_mime = None</span>
     <span class="n">binary</span> <span class="o">=</span> <span class="kc">True</span></div>
 
@@ -293,7 +293,7 @@
 
 <div class="viewcode-block" id="Bitmap">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Bitmap">[docs]</a>
-<span class="k">class</span> <span class="nc">Bitmap</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">RasterImage</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Bitmap</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">RasterImage</span><span class="p">):</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.bmp&quot;</span>
     <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;BM&quot;</span>
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/bmp&quot;</span>
@@ -303,7 +303,7 @@
 
 <div class="viewcode-block" id="Gif">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Gif">[docs]</a>
-<span class="k">class</span> <span class="nc">Gif</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">RasterImage</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Gif</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">RasterImage</span><span class="p">):</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.gif&quot;</span>
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/gif&quot;</span>
     <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;GIF8&quot;</span></div>
@@ -312,7 +312,7 @@
 
 <div class="viewcode-block" id="Png">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Png">[docs]</a>
-<span class="k">class</span> <span class="nc">Png</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">RasterImage</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Png</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">RasterImage</span><span class="p">):</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.png&quot;</span>
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/png&quot;</span>
     <span class="n">magic_number</span> <span class="o">=</span> <span class="s2">&quot;89504E470D0A1A0A&quot;</span></div>
@@ -321,7 +321,7 @@
 
 <div class="viewcode-block" id="Jpeg">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Jpeg">[docs]</a>
-<span class="k">class</span> <span class="nc">Jpeg</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">RasterImage</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Jpeg</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">RasterImage</span><span class="p">):</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.jpg&quot;</span>
     <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.jpeg&quot;</span><span class="p">,</span> <span class="s2">&quot;.jpe&quot;</span><span class="p">,</span> <span class="s2">&quot;.jfif&quot;</span><span class="p">,</span> <span class="s2">&quot;.jif&quot;</span><span class="p">)</span>
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/jpeg&quot;</span>
@@ -331,7 +331,7 @@
 
 <div class="viewcode-block" id="Tiff">
 <a class="viewcode-back" href="../../../reference/image.html#fileformats.image.Tiff">[docs]</a>
-<span class="k">class</span> <span class="nc">Tiff</span><span class="p">(</span><span class="n">RasterImage</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Tiff</span><span class="p">(</span><span class="n">RasterImage</span><span class="p">):</span>
 
     <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.tiff&quot;</span>
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/tiff&quot;</span>
@@ -340,7 +340,7 @@
     <span class="n">magic_number_be</span> <span class="o">=</span> <span class="s2">&quot;4D4D002A&quot;</span>
 
     <span class="nd">@validated_property</span>
-    <span class="k">def</span> <span class="nf">endianness</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">endianness</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">read_magic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_contents</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">magic_number_le</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">read_magic</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">read_magic</span> <span class="o">==</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">magic_number_le</span><span class="p">):</span>
@@ -368,7 +368,7 @@
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2024, Thomas G. Close
+                Copyright &#169; 2025, Thomas G. Close
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
@@ -388,7 +388,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=6ff71792"></script>
+</div><script src="../../../_static/documentation_options.js?v=3a38afaa"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=5fa4622c"></script>

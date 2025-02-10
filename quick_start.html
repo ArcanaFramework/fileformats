@@ -6,8 +6,8 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Detection" href="detection.html" /><link rel="prev" title="FileFormats" href="index.html" />
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
-        <title>Quick start - FileFormats v0.14.4</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d8449d71" />
+        <title>Quick start - FileFormats v0.15a0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=beddf052" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -172,7 +172,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">FileFormats v0.14.4</div></a>
+      <a href="index.html"><div class="brand">FileFormats v0.15a0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -199,7 +199,7 @@
     <img class="sidebar-logo" src="_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.14.4</span>
+  <span class="sidebar-brand-text">FileFormats v0.15a0</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -275,7 +275,7 @@
 <h1>Quick start<a class="headerlink" href="#quick-start" title="Link to this heading">¶</a></h1>
 <p>Validate the format of a file, in this case a JPEG image, by passing the file path(s) to the
 corresponding FileFormat, <a class="reference internal" href="reference/image.html#fileformats.image.Jpeg" title="fileformats.image.Jpeg"><code class="xref py py-class docutils literal notranslate"><span class="pre">fileformats.image.Jpeg</span></code></a>,</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.image</span> <span class="kn">import</span> <span class="n">Jpeg</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.image</span><span class="w"> </span><span class="kn">import</span> <span class="n">Jpeg</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">jpeg_file</span> <span class="o">=</span> <span class="n">Jpeg</span><span class="p">(</span><span class="s2">&quot;/path/to/an-image.jpeg&quot;</span><span class="p">)</span>  <span class="c1"># check exist., file ext. and magic num.</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">jpeg_file</span><span class="p">)</span>  <span class="c1"># returns the file path</span>
 <span class="go">&quot;/path/to/an-image.jpeg</span>
@@ -297,13 +297,13 @@ or <code class="docutils literal notranslate"><span class="pre">pathlib.Path</sp
 </pre></div>
 </div>
 <p>or in string templates, e.g.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">subprocess</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cp </span><span class="si">{</span><span class="n">jpeg_file</span><span class="si">}</span><span class="s2"> new-dest.jpeg&quot;</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>You can use the <code class="docutils literal notranslate"><span class="pre">find_matching</span></code> method to detect the format that matches a given file,
 or set of files.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">find_matching</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_matching</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">find_matching</span><span class="p">(</span><span class="s2">&quot;/path/to/an-image.jpeg&quot;</span><span class="p">)</span>
 <span class="go">[fileformats.image.raster.Jpeg]</span>
 </pre></div>
@@ -341,7 +341,7 @@ file (see <a class="reference internal" href="file_handling.html#copy-mode"><spa
 </div>
 <p>For selected pairs of formats converter methods have been implement that can be used to
 convert between equivalent formats, e.g. to convert a JPEG image to a PNG format.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.image</span> <span class="kn">import</span> <span class="n">Png</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.image</span><span class="w"> </span><span class="kn">import</span> <span class="n">Png</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">png_file</span> <span class="o">=</span> <span class="n">Png</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">jpeg_file</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">repr</span><span class="p">(</span><span class="n">png_file</span><span class="p">)</span>
 <span class="go">Png(&quot;/path/to/an-image.png&quot;)</span>
@@ -349,7 +349,7 @@ convert between equivalent formats, e.g. to convert a JPEG image to a PNG format
 </div>
 <p>For some select formats there are also methods to read metadata, in which case
 the metadata can be accessed as a dictionary attribute.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.application</span> <span class="kn">import</span> <span class="n">Dicom</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.application</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dicom</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dcm</span> <span class="o">=</span> <span class="n">Dicom</span><span class="p">(</span><span class="s2">&quot;/path/to/dicom-file.dcm&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dcm</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;SeriesDescription&quot;</span><span class="p">]</span>
 <span class="go">&quot;t1_mprage_sag_p2_iso_1&quot;</span>
@@ -392,7 +392,7 @@ for information on how to implement new file formats, converters and extra funct
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2024, Thomas G. Close
+                Copyright &#169; 2025, Thomas G. Close
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
@@ -412,7 +412,7 @@ for information on how to implement new file formats, converters and extra funct
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=6ff71792"></script>
+</div><script src="_static/documentation_options.js?v=3a38afaa"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=5fa4622c"></script>

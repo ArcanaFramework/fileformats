@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
-        <title>fileformats.core.mixin - FileFormats v0.14.4</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d8449d71" />
+        <title>fileformats.core.mixin - FileFormats v0.15a0</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=beddf052" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -171,7 +171,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">FileFormats v0.14.4</div></a>
+      <a href="../../../index.html"><div class="brand">FileFormats v0.15a0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -198,7 +198,7 @@
     <img class="sidebar-logo" src="../../../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.14.4</span>
+  <span class="sidebar-brand-text">FileFormats v0.15a0</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -265,18 +265,18 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for fileformats.core.mixin</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">typing</span> <span class="k">as</span> <span class="nn">ty</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">.datatype</span> <span class="kn">import</span> <span class="n">DataType</span>
-<span class="kn">import</span> <span class="nn">fileformats.core</span>
-<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">describe_task</span><span class="p">,</span> <span class="n">matching_source</span><span class="p">,</span> <span class="n">get_optional_type</span>
-<span class="kn">from</span> <span class="nn">.decorators</span> <span class="kn">import</span> <span class="n">validated_property</span><span class="p">,</span> <span class="n">classproperty</span>
-<span class="kn">from</span> <span class="nn">.identification</span> <span class="kn">import</span> <span class="n">to_mime_format_name</span>
-<span class="kn">from</span> <span class="nn">.converter_helpers</span> <span class="kn">import</span> <span class="n">SubtypeVar</span><span class="p">,</span> <span class="n">ConverterSpec</span>
-<span class="kn">from</span> <span class="nn">.classifier</span> <span class="kn">import</span> <span class="n">Classifier</span>
-<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="p">(</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ty</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.datatype</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataType</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">fileformats.core</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_optional_type</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">validated_property</span><span class="p">,</span> <span class="n">classproperty</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.identification</span><span class="w"> </span><span class="kn">import</span> <span class="n">to_mime_format_name</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.converter_helpers</span><span class="w"> </span><span class="kn">import</span> <span class="n">SubtypeVar</span><span class="p">,</span> <span class="n">Converter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.classifier</span><span class="w"> </span><span class="kn">import</span> <span class="n">Classifier</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">FormatMismatchError</span><span class="p">,</span>
     <span class="n">FormatRecognitionError</span><span class="p">,</span>
     <span class="n">FormatDefinitionError</span><span class="p">,</span>
@@ -285,10 +285,12 @@
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;fileformats&quot;</span><span class="p">)</span>
 
+<span class="n">T</span> <span class="o">=</span> <span class="n">ty</span><span class="o">.</span><span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
+
 
 <div class="viewcode-block" id="WithMagicNumber">
 <a class="viewcode-back" href="../../../developer/extensions.html#fileformats.core.mixin.WithMagicNumber">[docs]</a>
-<span class="k">class</span> <span class="nc">WithMagicNumber</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">WithMagicNumber</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Mixin class for Files with magic numbers at the start of their</span>
 <span class="sd">    contents.</span>
 
@@ -310,7 +312,7 @@
     <span class="n">magic_number</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">]</span>
 
     <span class="nd">@validated_property</span>
-    <span class="k">def</span> <span class="nf">_check_magic_number</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_magic_number</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;binary&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">magic_number</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">magic_bytes</span> <span class="o">=</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">magic_number</span><span class="p">)</span>
@@ -343,7 +345,7 @@
 
 <div class="viewcode-block" id="WithMagicVersion">
 <a class="viewcode-back" href="../../../developer/extensions.html#fileformats.core.mixin.WithMagicVersion">[docs]</a>
-<span class="k">class</span> <span class="nc">WithMagicVersion</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">WithMagicVersion</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Mixin class for Files with version numbers embedded within &quot;magic numbers&quot;</span>
 <span class="sd">    the start of their contents.</span>
 
@@ -366,7 +368,7 @@
     <span class="n">magic_pattern_maxlength</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@validated_property</span>
-    <span class="k">def</span> <span class="nf">version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
         <span class="n">read_length</span> <span class="o">=</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">magic_pattern_maxlength</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">magic_pattern_maxlength</span>
@@ -393,7 +395,7 @@
 
 <div class="viewcode-block" id="WithAdjacentFiles">
 <a class="viewcode-back" href="../../../developer/extensions.html#fileformats.core.mixin.WithAdjacentFiles">[docs]</a>
-<span class="k">class</span> <span class="nc">WithAdjacentFiles</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">WithAdjacentFiles</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    If only the main fspath is provided to the __init__ of the class, this mixin</span>
 <span class="sd">    automatically includes any &quot;adjacent files&quot;, i.e. any files with the same stem but</span>
@@ -409,7 +411,7 @@
 
     <span class="n">fspaths</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">FrozenSet</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">_additional_fspaths</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_additional_fspaths</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fspaths</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">fspaths</span> <span class="o">|=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_adjacent_files</span><span class="p">()</span>
             <span class="n">trim</span> <span class="o">=</span> <span class="kc">True</span>
@@ -418,7 +420,7 @@
         <span class="k">if</span> <span class="n">trim</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">trim_paths</span><span class="p">()</span>  <span class="c1"># type: ignore[attr-defined]</span>
 
-    <span class="k">def</span> <span class="nf">get_adjacent_files</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Set</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_adjacent_files</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Set</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
         <span class="n">stem</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stem</span>  <span class="c1"># type: ignore[attr-defined]</span>
         <span class="n">adjacents</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">sibling</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fspath</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">iterdir</span><span class="p">():</span>  <span class="c1"># type: ignore[attr-defined]</span>
@@ -434,12 +436,12 @@
 
 <div class="viewcode-block" id="WithSeparateHeader">
 <a class="viewcode-back" href="../../../developer/extensions.html#fileformats.core.mixin.WithSeparateHeader">[docs]</a>
-<span class="k">class</span> <span class="nc">WithSeparateHeader</span><span class="p">(</span><span class="n">WithAdjacentFiles</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">WithSeparateHeader</span><span class="p">(</span><span class="n">WithAdjacentFiles</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Mixin class for Files with metadata stored in separate header files (typically</span>
 <span class="sd">    with the same file stem but differing extension)</span>
 
 <span class="sd">    Note that WithSeparateHeader must come before the primary type in the method-resolution</span>
-<span class="sd">    order of the class so it can override the &#39;__attrs_post_init__&#39; method, e.g.</span>
+<span class="sd">    order of the class</span>
 
 <span class="sd">        class MyFileFormatWithSeparateHeader(WithSeparateHeader, MyFileFormat):</span>
 
@@ -453,15 +455,15 @@
 
     <span class="n">header_type</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="s2">&quot;fileformats.core.FileSet&quot;</span><span class="p">]</span>
 
-    <span class="nd">@classproperty</span>
-    <span class="k">def</span> <span class="nf">nested_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">Classifier</span><span class="p">],</span> <span class="o">...</span><span class="p">]:</span>
+    <span class="nd">@classproperty</span>  <span class="c1"># type: ignore[arg-type]</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">nested_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">Classifier</span><span class="p">],</span> <span class="o">...</span><span class="p">]:</span>
         <span class="k">return</span> <span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">header_type</span><span class="p">,)</span>
 
     <span class="nd">@validated_property</span>
-    <span class="k">def</span> <span class="nf">header</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;fileformats.core.FileSet&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">header</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;fileformats.core.FileSet&quot;</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">header_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">select_by_ext</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header_type</span><span class="p">))</span>  <span class="c1"># type: ignore[attr-defined]</span>
 
-    <span class="k">def</span> <span class="nf">read_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">read_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
         <span class="n">header</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">header</span></div>
 
@@ -469,13 +471,12 @@
 
 <div class="viewcode-block" id="WithSideCars">
 <a class="viewcode-back" href="../../../developer/extensions.html#fileformats.core.mixin.WithSideCars">[docs]</a>
-<span class="k">class</span> <span class="nc">WithSideCars</span><span class="p">(</span><span class="n">WithAdjacentFiles</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">WithSideCars</span><span class="p">(</span><span class="n">WithAdjacentFiles</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Mixin class for Files with a &quot;side-car&quot; file that augments the inline metadata</span>
 <span class="sd">    (typically with the same file stem but differing extension).</span>
 
 <span class="sd">    Note that WithSideCars must come before the primary type in the method-resolution</span>
-<span class="sd">    order of the class so it can override the &#39;__attrs_post_init__&#39; and &#39;read_metadata&#39;</span>
-<span class="sd">    methods, e.g.</span>
+<span class="sd">    order of the class methods, e.g.</span>
 
 <span class="sd">        class MyFileFormatWithSideCars(WithSideCars, MyFileFormat):</span>
 
@@ -495,10 +496,10 @@
     <span class="n">side_car_types</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="s2">&quot;fileformats.core.FileSet&quot;</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span>
 
     <span class="nd">@validated_property</span>
-    <span class="k">def</span> <span class="nf">side_cars</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="s2">&quot;fileformats.core.FileSet&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">side_cars</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="s2">&quot;fileformats.core.FileSet&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
         <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">tp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">select_by_ext</span><span class="p">(</span><span class="n">tp</span><span class="p">))</span> <span class="k">for</span> <span class="n">tp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">side_car_types</span><span class="p">)</span>  <span class="c1"># type: ignore[attr-defined]</span>
 
-    <span class="k">def</span> <span class="nf">read_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">read_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
         <span class="n">metadata</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_type</span><span class="o">.</span><span class="n">read_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>  <span class="c1"># type: ignore[arg-type]</span>
         <span class="k">for</span> <span class="n">side_car</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">side_cars</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
@@ -514,15 +515,15 @@
             <span class="n">metadata</span><span class="p">[</span><span class="n">side_car_class_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">side_car_metadata</span>
         <span class="k">return</span> <span class="n">metadata</span>
 
-    <span class="nd">@classproperty</span>
-    <span class="k">def</span> <span class="nf">nested_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">Classifier</span><span class="p">],</span> <span class="o">...</span><span class="p">]:</span>
+    <span class="nd">@classproperty</span>  <span class="c1"># type: ignore[arg-type]</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">nested_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">Classifier</span><span class="p">],</span> <span class="o">...</span><span class="p">]:</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">side_car_types</span></div>
 
 
 
 <div class="viewcode-block" id="WithClassifiers">
 <a class="viewcode-back" href="../../../developer/extensions.html#fileformats.core.mixin.WithClassifiers">[docs]</a>
-<span class="k">class</span> <span class="nc">WithClassifiers</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">WithClassifiers</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Mixin class for adding the ability to qualify the format class to designate the</span>
 <span class="sd">    type of information stored within the format, e.g. ``DirectoryOf[Png, Gif]`` for a</span>
 <span class="sd">    directory containing PNG and GIF files, ``Zip[DataFile]`` for a zipped data file,</span>
@@ -581,7 +582,7 @@
     <span class="n">ordered_classifiers</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">generically_classifiable</span> <span class="o">=</span> <span class="kc">False</span>
 
-    <span class="k">def</span> <span class="nf">_validate_class</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_class</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
         <span class="n">validated</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_validate_class</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
         <span class="k">if</span> <span class="n">validated</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wildcard_classifiers</span><span class="p">():</span>
@@ -591,16 +592,16 @@
                 <span class="p">)</span>
         <span class="k">return</span> <span class="n">validated</span>
 
-    <span class="nd">@classproperty</span>
-    <span class="k">def</span> <span class="nf">is_classified</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="nd">@classproperty</span>  <span class="c1"># type: ignore[arg-type]</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_classified</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">return</span> <span class="s2">&quot;unclassified&quot;</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span>
 
-    <span class="nd">@classproperty</span>
-    <span class="k">def</span> <span class="nf">nested_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">Classifier</span><span class="p">],</span> <span class="o">...</span><span class="p">]:</span>
+    <span class="nd">@classproperty</span>  <span class="c1"># type: ignore[arg-type]</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">nested_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">Classifier</span><span class="p">],</span> <span class="o">...</span><span class="p">]:</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">classifiers</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">wildcard_classifiers</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wildcard_classifiers</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">classifiers</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Sequence</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">Classifier</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">FrozenSet</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">SubtypeVar</span><span class="p">]]:</span>
         <span class="k">if</span> <span class="n">classifiers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -610,7 +611,7 @@
         <span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">non_wildcard_classifiers</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">non_wildcard_classifiers</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">classifiers</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Collection</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">Classifier</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">FrozenSet</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">Classifier</span><span class="p">]]:</span>
         <span class="k">if</span> <span class="n">classifiers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -621,7 +622,7 @@
         <span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">__class_getitem__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__class_getitem__</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">classifiers</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Collection</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">Classifier</span><span class="p">]],</span> <span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">Classifier</span><span class="p">]],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">DataType</span><span class="p">]:</span>
@@ -741,7 +742,7 @@
         <span class="k">return</span> <span class="n">classified</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_converter_specs</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">source_format</span><span class="p">:</span> <span class="nb">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">ConverterSpec</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_converter_defs</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">source_format</span><span class="p">:</span> <span class="nb">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">Converter</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Search the registered converters to find an appropriate task and associated</span>
 <span class="sd">        key-word args to perform the conversion between source and target formats</span>
 
@@ -750,10 +751,10 @@
 <span class="sd">        source_format : type(FileSet)</span>
 <span class="sd">            the source format to convert from</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">FileSet</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileSet</span>
 
         <span class="c1"># Try to see if a converter has been defined to the exact type</span>
-        <span class="n">available_converters</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">ConverterSpec</span><span class="p">]</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_converter_specs</span><span class="p">(</span>  <span class="c1"># type: ignore[misc]</span>
+        <span class="n">available_converters</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">Converter</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_converter_defs</span><span class="p">(</span>  <span class="c1"># type: ignore[misc, type-arg]</span>
             <span class="n">source_format</span>
         <span class="p">)</span>
         <span class="c1"># Failing that, see if there is a generic conversion between the container type</span>
@@ -845,13 +846,11 @@
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">wildcard_match</span> <span class="o">=</span> <span class="kc">False</span>
                     <span class="k">if</span> <span class="n">wildcard_match</span><span class="p">:</span>
-                        <span class="n">available_converters</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                            <span class="n">ConverterSpec</span><span class="p">(</span><span class="n">converter</span><span class="o">.</span><span class="n">task</span><span class="p">,</span> <span class="n">converter</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
-                        <span class="p">)</span>
+                        <span class="n">available_converters</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">converter</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">available_converters</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">__subclasshook__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">subclass</span><span class="p">:</span> <span class="nb">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__subclasshook__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">subclass</span><span class="p">:</span> <span class="nb">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Overload the behaviour of &#39;issubclass&#39; so that classified classes are considered</span>
 <span class="sd">        to be subclasses of each other if they contain a super-set of classifiers&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">type</span><span class="o">.</span><span class="fm">__subclasscheck__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">subclass</span><span class="p">):</span>
@@ -885,10 +884,10 @@
         <span class="k">return</span> <span class="n">is_subclass</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">register_converter</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">register_converter</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">source_format</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="s2">&quot;fileformats.core.FileSet&quot;</span><span class="p">],</span>
-        <span class="n">converter_spec</span><span class="p">:</span> <span class="n">ConverterSpec</span><span class="p">,</span>
+        <span class="n">converter</span><span class="p">:</span> <span class="n">Converter</span><span class="p">[</span><span class="n">T</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Registers a converter task within a class attribute. Called by the @fileformats.converter</span>
 <span class="sd">        decorator.</span>
@@ -940,17 +939,13 @@
                 <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">prev_registered</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span>
                 <span class="n">prev</span> <span class="o">=</span> <span class="n">prev_registered</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">prev_registered</span> <span class="k">else</span> <span class="kc">None</span>
                 <span class="k">if</span> <span class="n">prev</span><span class="p">:</span>
-                    <span class="n">prev_spec</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">converters</span><span class="p">[</span><span class="n">prev</span><span class="p">]</span>  <span class="c1"># type: ignore[attr-defined]</span>
+                    <span class="n">prev_converter</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">converters</span><span class="p">[</span><span class="n">prev</span><span class="p">]</span>  <span class="c1"># type: ignore[attr-defined]</span>
                     <span class="c1"># task, task_kwargs = converter_spec</span>
                     <span class="c1"># prev_task, prev_kwargs, prev_classifiers = prev_tuple</span>
-                    <span class="k">if</span> <span class="p">(</span>
-                        <span class="n">matching_source</span><span class="p">(</span><span class="n">converter_spec</span><span class="o">.</span><span class="n">task</span><span class="p">,</span> <span class="n">prev_spec</span><span class="o">.</span><span class="n">task</span><span class="p">)</span>
-                        <span class="ow">and</span> <span class="n">converter_spec</span><span class="o">.</span><span class="n">args</span> <span class="o">==</span> <span class="n">prev_spec</span><span class="o">.</span><span class="n">args</span>
-                        <span class="ow">and</span> <span class="bp">cls</span><span class="o">.</span><span class="n">classifiers</span> <span class="o">==</span> <span class="n">prev_spec</span><span class="o">.</span><span class="n">classifiers</span>
-                    <span class="p">):</span>
+                    <span class="k">if</span> <span class="n">converter</span> <span class="o">==</span> <span class="n">prev_converter</span><span class="p">:</span>
                         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                             <span class="s2">&quot;Ignoring duplicate registrations of the same converter </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
-                            <span class="n">describe_task</span><span class="p">(</span><span class="n">converter_spec</span><span class="o">.</span><span class="n">task</span><span class="p">),</span>
+                            <span class="n">converter</span><span class="o">.</span><span class="n">task_def</span><span class="p">,</span>
                         <span class="p">)</span>
                         <span class="k">return</span>  <span class="c1"># actually the same task but just imported twice for some reason</span>
                     <span class="n">prev_unclassified</span> <span class="o">=</span> <span class="n">prev</span><span class="o">.</span><span class="n">unclassified</span>
@@ -958,17 +953,17 @@
                     <span class="k">raise</span> <span class="n">FormatDefinitionError</span><span class="p">(</span>
                         <span class="sa">f</span><span class="s2">&quot;Cannot register converter from </span><span class="si">{</span><span class="n">prev_unclassified</span><span class="si">}</span><span class="s2"> &quot;</span>
                         <span class="sa">f</span><span class="s2">&quot;to </span><span class="si">{</span><span class="n">unclassified</span><span class="si">}</span><span class="s2"> with non-wildcard classifiers &quot;</span>
-                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">prev</span><span class="o">.</span><span class="n">non_wildcard_classifiers</span><span class="p">())</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">describe_task</span><span class="p">(</span><span class="n">converter_spec</span><span class="o">.</span><span class="n">task</span><span class="p">)</span><span class="si">}</span><span class="s2">, &quot;</span>
-                        <span class="sa">f</span><span class="s2">&quot;because there is already one registered, </span><span class="si">{</span><span class="n">describe_task</span><span class="p">(</span><span class="n">prev_spec</span><span class="o">.</span><span class="n">task</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">prev</span><span class="o">.</span><span class="n">non_wildcard_classifiers</span><span class="p">())</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">converter</span><span class="o">.</span><span class="n">task_def</span><span class="si">}</span><span class="s2">, &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;because there is already one registered, </span><span class="si">{</span><span class="n">prev_converter</span><span class="o">.</span><span class="n">task</span><span class="si">}</span><span class="s2">&quot;</span>
                     <span class="p">)</span>
             <span class="n">converters_dict</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">unclassified</span><span class="o">.</span><span class="n">get_converters_dict</span><span class="p">()</span>  <span class="c1"># type: ignore[attr-defined]</span>
-            <span class="n">converter_spec</span><span class="o">.</span><span class="n">classifiers</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">classifiers</span>
-            <span class="n">converters_dict</span><span class="p">[</span><span class="n">source_format</span><span class="p">]</span> <span class="o">=</span> <span class="n">converter_spec</span>
+            <span class="n">converter</span><span class="o">.</span><span class="n">classifiers</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">classifiers</span>
+            <span class="n">converters_dict</span><span class="p">[</span><span class="n">source_format</span><span class="p">]</span> <span class="o">=</span> <span class="n">converter</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">register_converter</span><span class="p">(</span><span class="n">source_format</span><span class="p">,</span> <span class="n">converter_spec</span><span class="p">)</span>  <span class="c1"># type: ignore[misc]</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">register_converter</span><span class="p">(</span><span class="n">source_format</span><span class="p">,</span> <span class="n">converter</span><span class="p">)</span>  <span class="c1"># type: ignore[misc]</span>
 
-    <span class="nd">@classproperty</span>
-    <span class="k">def</span> <span class="nf">namespace</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="nd">@classproperty</span>  <span class="c1"># type: ignore[arg-type]</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">namespace</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The &quot;namespace&quot; the format belongs to under the &quot;fileformats&quot; umbrella</span>
 <span class="sd">        namespace&quot;&quot;&quot;</span>
         <span class="n">namespace</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
@@ -1002,8 +997,8 @@
                 <span class="n">namespace</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="n">namespace</span>
 
-    <span class="nd">@classproperty</span>
-    <span class="k">def</span> <span class="nf">type_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="nd">@classproperty</span>  <span class="c1"># type: ignore[arg-type]</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">type_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Name of type including classifiers to be used in __repr__&quot;&quot;&quot;</span>
         <span class="n">unclassified</span><span class="p">:</span> <span class="nb">str</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">is_classified</span><span class="p">:</span>
@@ -1015,12 +1010,12 @@
 
 
 
-<span class="k">class</span> <span class="nc">WithClassifier</span><span class="p">(</span><span class="n">WithClassifiers</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">WithClassifier</span><span class="p">(</span><span class="n">WithClassifiers</span><span class="p">):</span>
 
     <span class="n">multiple_classifiers</span> <span class="o">=</span> <span class="kc">False</span>
 
 
-<span class="k">class</span> <span class="nc">WithOrderedClassifiers</span><span class="p">(</span><span class="n">WithClassifiers</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">WithOrderedClassifiers</span><span class="p">(</span><span class="n">WithClassifiers</span><span class="p">):</span>
 
     <span class="n">ordered_classifiers</span> <span class="o">=</span> <span class="kc">True</span>
 </pre></div>
@@ -1035,7 +1030,7 @@
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2024, Thomas G. Close
+                Copyright &#169; 2025, Thomas G. Close
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
@@ -1055,7 +1050,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=6ff71792"></script>
+</div><script src="../../../_static/documentation_options.js?v=3a38afaa"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=5fa4622c"></script>

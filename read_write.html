@@ -6,8 +6,8 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Typing" href="typing.html" /><link rel="prev" title="MIME types" href="mime.html" />
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
-        <title>Read, write and convert - FileFormats v0.14.4</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d8449d71" />
+        <title>Read, write and convert - FileFormats v0.15a0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=beddf052" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -172,7 +172,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">FileFormats v0.14.4</div></a>
+      <a href="index.html"><div class="brand">FileFormats v0.15a0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -199,7 +199,7 @@
     <img class="sidebar-logo" src="_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.14.4</span>
+  <span class="sidebar-brand-text">FileFormats v0.15a0</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -303,9 +303,9 @@ An advantage of implementing them  in the format class is that objects instantia
 them can then be duck-typed in calling functions/methods. For example, both <code class="docutils literal notranslate"><span class="pre">Yaml</span></code> and
 <code class="docutils literal notranslate"><span class="pre">Json</span></code> formats (both inherit from the <code class="docutils literal notranslate"><span class="pre">TextSerialization</span></code> type) implement the
 <code class="docutils literal notranslate"><span class="pre">load</span></code> method, which returns a dictionary</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.application</span> <span class="kn">import</span> <span class="n">TextSerialization</span>  <span class="c1"># i.e. JSON or YAML</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.application</span><span class="w"> </span><span class="kn">import</span> <span class="n">TextSerialization</span>  <span class="c1"># i.e. JSON or YAML</span>
 
-<span class="k">def</span> <span class="nf">read_serialisation</span><span class="p">(</span><span class="n">serialized</span><span class="p">:</span> <span class="n">TextSerialization</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_serialisation</span><span class="p">(</span><span class="n">serialized</span><span class="p">:</span> <span class="n">TextSerialization</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">serialized</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -315,8 +315,8 @@ them can then be duck-typed in calling functions/methods. For example, both <cod
 <p>Several conversion methods are available between equivalent file-formats in the standard
 classes. For example, archive types such as <code class="docutils literal notranslate"><span class="pre">Zip</span></code> can be converted into and generic
 file/directories using the <code class="docutils literal notranslate"><span class="pre">convert</span></code> classmethod of the target format to convert to</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.application</span> <span class="kn">import</span> <span class="n">Zip</span>
-<span class="kn">from</span> <span class="nn">fileformats.generic</span> <span class="kn">import</span> <span class="n">Directory</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.application</span><span class="w"> </span><span class="kn">import</span> <span class="n">Zip</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.generic</span><span class="w"> </span><span class="kn">import</span> <span class="n">Directory</span>
 
 <span class="c1"># Example round trip from directory to zip file</span>
 <span class="n">zip_file</span> <span class="o">=</span> <span class="n">Zip</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">Directory</span><span class="p">(</span><span class="s2">&quot;/path/to/a/directory&quot;</span><span class="p">))</span>
@@ -326,9 +326,9 @@ file/directories using the <code class="docutils literal notranslate"><span clas
 <p>The converters are implemented in the <a class="reference external" href="https://pydra.readthedocs.io">Pydra</a> dataflow framework, and can be linked into
 wider <a class="reference external" href="https://pydra.readthedocs.io">Pydra</a> workflows by accessing the underlying converter task with the <code class="docutils literal notranslate"><span class="pre">get_converter</span></code>
 classmethod</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pydra</span>
-<span class="kn">from</span> <span class="nn">pydra.tasks.mypackage</span> <span class="kn">import</span> <span class="n">MyTask</span>
-<span class="kn">from</span> <span class="nn">fileformats.image</span> <span class="kn">import</span> <span class="n">Gif</span><span class="p">,</span> <span class="n">Png</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pydra</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydra.tasks.mypackage</span><span class="w"> </span><span class="kn">import</span> <span class="n">MyTask</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.image</span><span class="w"> </span><span class="kn">import</span> <span class="n">Gif</span><span class="p">,</span> <span class="n">Png</span>
 
 <span class="n">wf</span> <span class="o">=</span> <span class="n">pydra</span><span class="o">.</span><span class="n">Workflow</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;a_workflow&quot;</span><span class="p">,</span> <span class="n">input_spec</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;in_gif&quot;</span><span class="p">])</span>
 <span class="n">wf</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
@@ -375,7 +375,7 @@ classmethod</p>
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2024, Thomas G. Close
+                Copyright &#169; 2025, Thomas G. Close
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
@@ -416,7 +416,7 @@ classmethod</p>
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=6ff71792"></script>
+</div><script src="_static/documentation_options.js?v=3a38afaa"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=5fa4622c"></script>

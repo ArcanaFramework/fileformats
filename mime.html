@@ -6,8 +6,8 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Read, write and convert" href="read_write.html" /><link rel="prev" title="File handling" href="file_handling.html" />
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
-        <title>MIME types - FileFormats v0.14.4</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d8449d71" />
+        <title>MIME types - FileFormats v0.15a0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=beddf052" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -172,7 +172,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">FileFormats v0.14.4</div></a>
+      <a href="index.html"><div class="brand">FileFormats v0.15a0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -199,7 +199,7 @@
     <img class="sidebar-logo" src="_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.14.4</span>
+  <span class="sidebar-brand-text">FileFormats v0.15a0</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -285,8 +285,8 @@ Format class can be converted to and from MIME type strings using the <code clas
 <code class="docutils literal notranslate"><span class="pre">from_mime</span></code> functions. If the the <code class="docutils literal notranslate"><span class="pre">iana_mime</span></code> attribute
 is present in the type class, it should correspond to a formally recognised MIME type
 by the , e.g.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">to_mime</span><span class="p">,</span> <span class="n">from_mime</span>
-<span class="kn">from</span> <span class="nn">fileformats.application</span> <span class="kn">import</span> <span class="n">MswordX</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">to_mime</span><span class="p">,</span> <span class="n">from_mime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.application</span><span class="w"> </span><span class="kn">import</span> <span class="n">MswordX</span>
 
 <span class="n">Loaded</span> <span class="o">=</span> <span class="n">from_mime</span><span class="p">(</span><span class="s2">&quot;application/vnd.openxmlformats-officedocument.wordprocessingml.document&quot;</span><span class="p">)</span>
 <span class="k">assert</span> <span class="n">Loaded</span> <span class="ow">is</span> <span class="n">MswordX</span>
@@ -322,8 +322,8 @@ required to just use the <em>FileFormats</em> namespace inplace for the &quot;re
 file-type instead of the generic &quot;application/x-&quot; prefix (it also helps to improve
 readability). This is dubbed the &quot;MIME-like&quot; string, and is accessed via the
 <code class="docutils literal notranslate"><span class="pre">mime_like</span></code> class-property.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.datascience</span> <span class="kn">import</span> <span class="n">Hdf5</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fileformats.medimage</span> <span class="kn">import</span> <span class="n">Nifti1</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.datascience</span><span class="w"> </span><span class="kn">import</span> <span class="n">Hdf5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.medimage</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nifti1</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Hdf5</span><span class="o">.</span><span class="n">mime_like</span>
 <span class="go">&quot;datascience/hdf5&quot;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Nifti1</span><span class="o">.</span><span class="n">mime_like</span>
@@ -332,8 +332,8 @@ readability). This is dubbed the &quot;MIME-like&quot; string, and is accessed v
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">from_mime</span></code> function will resolve both official MIME-type and MIME-like
 strings, so it is possible to roundtrip from both.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">to_mime</span><span class="p">,</span> <span class="n">from_mime</span>
-<span class="kn">from</span> <span class="nn">from</span> <span class="n">fileformats</span><span class="o">.</span><span class="n">medimage</span> <span class="kn">import</span> <span class="nn">DicomSeries</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">to_mime</span><span class="p">,</span> <span class="n">from_mime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">from</span> <span class="n">fileformats</span><span class="o">.</span><span class="n">medimage</span> <span class="kn">import</span><span class="w"> </span><span class="nn">DicomSeries</span>
 
 <span class="c1"># Using official-style MIME string</span>
 <span class="n">mime_type</span> <span class="o">=</span> <span class="n">DicomSeries</span><span class="o">.</span><span class="n">mime_type</span>
@@ -378,7 +378,7 @@ strings, so it is possible to roundtrip from both.</p>
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2024, Thomas G. Close
+                Copyright &#169; 2025, Thomas G. Close
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
@@ -418,7 +418,7 @@ strings, so it is possible to roundtrip from both.</p>
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=6ff71792"></script>
+</div><script src="_static/documentation_options.js?v=3a38afaa"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=5fa4622c"></script>

@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
-        <title>fileformats.video - FileFormats v0.14.4</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d8449d71" />
+        <title>fileformats.video - FileFormats v0.15a0</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=beddf052" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -171,7 +171,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">FileFormats v0.14.4</div></a>
+      <a href="../../index.html"><div class="brand">FileFormats v0.15a0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -198,7 +198,7 @@
     <img class="sidebar-logo" src="../../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.14.4</span>
+  <span class="sidebar-brand-text">FileFormats v0.15a0</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -265,14 +265,14 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for fileformats.video</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">.core</span> <span class="kn">import</span> <span class="n">__version__</span>  <span class="c1"># noqa</span>
-<span class="kn">from</span> <span class="nn">.core.mixin</span> <span class="kn">import</span> <span class="n">WithMagicNumber</span>
-<span class="kn">from</span> <span class="nn">fileformats.generic</span> <span class="kn">import</span> <span class="n">BinaryFile</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">__version__</span>  <span class="c1"># noqa</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.core.mixin</span><span class="w"> </span><span class="kn">import</span> <span class="n">WithMagicNumber</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.generic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BinaryFile</span>
 
 
 <div class="viewcode-block" id="Video">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Video">[docs]</a>
-<span class="k">class</span> <span class="nc">Video</span><span class="p">(</span><span class="n">BinaryFile</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Video</span><span class="p">(</span><span class="n">BinaryFile</span><span class="p">):</span>
     <span class="s2">&quot;Base class for audio file formats&quot;</span>
     <span class="n">binary</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="c1"># iana_mime = None</span>
@@ -282,7 +282,7 @@
 
 <div class="viewcode-block" id="Mp4">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Mp4">[docs]</a>
-<span class="k">class</span> <span class="nc">Mp4</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Mp4</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/mp4&quot;</span>
@@ -293,7 +293,7 @@
 
 <div class="viewcode-block" id="Webm">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Webm">[docs]</a>
-<span class="k">class</span> <span class="nc">Webm</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Webm</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.webm&quot;</span>
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/webm&quot;</span></div>
 
@@ -301,7 +301,7 @@
 
 <div class="viewcode-block" id="Quicktime">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Quicktime">[docs]</a>
-<span class="k">class</span> <span class="nc">Quicktime</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Quicktime</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.mov&quot;</span>
     <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.qt&quot;</span><span class="p">,)</span>
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/quicktime&quot;</span></div>
@@ -310,7 +310,7 @@
 
 <div class="viewcode-block" id="Ogg">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Ogg">[docs]</a>
-<span class="k">class</span> <span class="nc">Ogg</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Ogg</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/ogg&quot;</span>
@@ -321,7 +321,7 @@
 
 <div class="viewcode-block" id="_1d_interleaved_parityfec">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video._1d_interleaved_parityfec">[docs]</a>
-<span class="k">class</span> <span class="nc">_1d_interleaved_parityfec</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_1d_interleaved_parityfec</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/1d-interleaved-parityfec&quot;</span>
@@ -331,7 +331,7 @@
 
 <div class="viewcode-block" id="_3gpp">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video._3gpp">[docs]</a>
-<span class="k">class</span> <span class="nc">_3gpp</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_3gpp</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    TODO: None.  However, the file-type box</span>
@@ -347,7 +347,7 @@
 
 <div class="viewcode-block" id="_3gpp2">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video._3gpp2">[docs]</a>
-<span class="k">class</span> <span class="nc">_3gpp2</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_3gpp2</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Multi-media</span>
 
 <span class="sd">    TODO: the file-type box must occur first in the file</span>
@@ -360,7 +360,7 @@
 
 <div class="viewcode-block" id="_3gpp_tt">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video._3gpp_tt">[docs]</a>
-<span class="k">class</span> <span class="nc">_3gpp_tt</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_3gpp_tt</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/3gpp-tt&quot;</span>
@@ -370,7 +370,7 @@
 
 <div class="viewcode-block" id="Av1">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Av1">[docs]</a>
-<span class="k">class</span> <span class="nc">Av1</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Av1</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/AV1&quot;</span>
@@ -380,7 +380,7 @@
 
 <div class="viewcode-block" id="Bmpeg">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Bmpeg">[docs]</a>
-<span class="k">class</span> <span class="nc">Bmpeg</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Bmpeg</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/BMPEG&quot;</span>
@@ -390,7 +390,7 @@
 
 <div class="viewcode-block" id="Bt656">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Bt656">[docs]</a>
-<span class="k">class</span> <span class="nc">Bt656</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Bt656</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/BT656&quot;</span>
@@ -400,7 +400,7 @@
 
 <div class="viewcode-block" id="Celb">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Celb">[docs]</a>
-<span class="k">class</span> <span class="nc">Celb</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Celb</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/CelB&quot;</span>
@@ -410,7 +410,7 @@
 
 <div class="viewcode-block" id="Dv">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Dv">[docs]</a>
-<span class="k">class</span> <span class="nc">Dv</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Dv</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Audio and video streaming and</span>
 <span class="sd">    conferencing tools.&quot;&quot;&quot;</span>
 
@@ -421,7 +421,7 @@
 
 <div class="viewcode-block" id="Encaprtp">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Encaprtp">[docs]</a>
-<span class="k">class</span> <span class="nc">Encaprtp</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Encaprtp</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/encaprtp&quot;</span>
@@ -431,7 +431,7 @@
 
 <div class="viewcode-block" id="Example">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Example">[docs]</a>
-<span class="k">class</span> <span class="nc">Example</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Example</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/example&quot;</span>
@@ -441,7 +441,7 @@
 
 <div class="viewcode-block" id="Ffv1">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Ffv1">[docs]</a>
-<span class="k">class</span> <span class="nc">Ffv1</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Ffv1</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Any application that requires the transport of  lossless video can use this media type. Some examples are, but not limited to, screen  recording, scientific imaging, and digital video preservation.&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/FFV1&quot;</span>
@@ -451,7 +451,7 @@
 
 <div class="viewcode-block" id="Flexfec">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Flexfec">[docs]</a>
-<span class="k">class</span> <span class="nc">Flexfec</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Flexfec</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Multimedia applications that want to improve resiliency against packet loss by sending redundant data in addition to the source media.&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/flexfec&quot;</span>
@@ -461,7 +461,7 @@
 
 <div class="viewcode-block" id="H261">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.H261">[docs]</a>
-<span class="k">class</span> <span class="nc">H261</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">H261</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Audio and video streaming and conferencing applications.&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/H261&quot;</span>
@@ -471,7 +471,7 @@
 
 <div class="viewcode-block" id="H263">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.H263">[docs]</a>
-<span class="k">class</span> <span class="nc">H263</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">H263</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/H263&quot;</span>
@@ -481,7 +481,7 @@
 
 <div class="viewcode-block" id="H263_1998">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.H263_1998">[docs]</a>
-<span class="k">class</span> <span class="nc">H263_1998</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">H263_1998</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/H263-1998&quot;</span>
@@ -491,7 +491,7 @@
 
 <div class="viewcode-block" id="H263_2000">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.H263_2000">[docs]</a>
-<span class="k">class</span> <span class="nc">H263_2000</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">H263_2000</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/H263-2000&quot;</span>
@@ -501,7 +501,7 @@
 
 <div class="viewcode-block" id="H264">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.H264">[docs]</a>
-<span class="k">class</span> <span class="nc">H264</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">H264</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/H264&quot;</span>
@@ -511,7 +511,7 @@
 
 <div class="viewcode-block" id="H264_rcdo">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.H264_rcdo">[docs]</a>
-<span class="k">class</span> <span class="nc">H264_rcdo</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">H264_rcdo</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/H264-RCDO&quot;</span>
@@ -521,7 +521,7 @@
 
 <div class="viewcode-block" id="H264_svc">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.H264_svc">[docs]</a>
-<span class="k">class</span> <span class="nc">H264_svc</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">H264_svc</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/H264-SVC&quot;</span>
@@ -531,7 +531,7 @@
 
 <div class="viewcode-block" id="H265">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.H265">[docs]</a>
-<span class="k">class</span> <span class="nc">H265</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">H265</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/H265&quot;</span>
@@ -541,7 +541,7 @@
 
 <div class="viewcode-block" id="H266">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.H266">[docs]</a>
-<span class="k">class</span> <span class="nc">H266</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">H266</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Any application that relies</span>
 <span class="sd">    on VVC-based video services over RTP&quot;&quot;&quot;</span>
 
@@ -552,7 +552,7 @@
 
 <div class="viewcode-block" id="Iso_Segment">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Iso_Segment">[docs]</a>
-<span class="k">class</span> <span class="nc">Iso_Segment</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Iso_Segment</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/iso.segment&quot;</span>
@@ -562,7 +562,7 @@
 
 <div class="viewcode-block" id="Jpeg">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Jpeg">[docs]</a>
-<span class="k">class</span> <span class="nc">Jpeg</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Jpeg</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/JPEG&quot;</span>
@@ -572,7 +572,7 @@
 
 <div class="viewcode-block" id="Jpeg2000">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Jpeg2000">[docs]</a>
-<span class="k">class</span> <span class="nc">Jpeg2000</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Jpeg2000</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;video streaming and communication&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/jpeg2000&quot;</span>
@@ -582,7 +582,7 @@
 
 <div class="viewcode-block" id="Jxsv">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Jxsv">[docs]</a>
-<span class="k">class</span> <span class="nc">Jxsv</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Jxsv</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Any application that transmits video over RTP (like SMPTE ST</span>
 <span class="sd">    2110).&quot;&quot;&quot;</span>
 
@@ -593,7 +593,7 @@
 
 <div class="viewcode-block" id="Mj2">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Mj2">[docs]</a>
-<span class="k">class</span> <span class="nc">Mj2</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Mj2</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/mj2&quot;</span>
@@ -605,7 +605,7 @@
 
 <div class="viewcode-block" id="Mp1s">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Mp1s">[docs]</a>
-<span class="k">class</span> <span class="nc">Mp1s</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Mp1s</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/MP1S&quot;</span>
@@ -615,7 +615,7 @@
 
 <div class="viewcode-block" id="Mp2p">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Mp2p">[docs]</a>
-<span class="k">class</span> <span class="nc">Mp2p</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Mp2p</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/MP2P&quot;</span>
@@ -625,7 +625,7 @@
 
 <div class="viewcode-block" id="Mp2t">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Mp2t">[docs]</a>
-<span class="k">class</span> <span class="nc">Mp2t</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Mp2t</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/MP2T&quot;</span>
@@ -635,7 +635,7 @@
 
 <div class="viewcode-block" id="Mp4v_es">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Mp4v_es">[docs]</a>
-<span class="k">class</span> <span class="nc">Mp4v_es</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Mp4v_es</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/MP4V-ES&quot;</span>
@@ -645,7 +645,7 @@
 
 <div class="viewcode-block" id="Mpv">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Mpv">[docs]</a>
-<span class="k">class</span> <span class="nc">Mpv</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Mpv</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/MPV&quot;</span>
@@ -655,7 +655,7 @@
 
 <div class="viewcode-block" id="Mpeg4_generic">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Mpeg4_generic">[docs]</a>
-<span class="k">class</span> <span class="nc">Mpeg4_generic</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Mpeg4_generic</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/mpeg4-generic&quot;</span>
@@ -665,7 +665,7 @@
 
 <div class="viewcode-block" id="Nv">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Nv">[docs]</a>
-<span class="k">class</span> <span class="nc">Nv</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Nv</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Audio and video streaming and conferencing tools.&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/nv&quot;</span>
@@ -675,7 +675,7 @@
 
 <div class="viewcode-block" id="Parityfec">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Parityfec">[docs]</a>
-<span class="k">class</span> <span class="nc">Parityfec</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Parityfec</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/parityfec&quot;</span>
@@ -685,7 +685,7 @@
 
 <div class="viewcode-block" id="Pointer">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Pointer">[docs]</a>
-<span class="k">class</span> <span class="nc">Pointer</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Pointer</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/pointer&quot;</span>
@@ -695,7 +695,7 @@
 
 <div class="viewcode-block" id="Raptorfec">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Raptorfec">[docs]</a>
-<span class="k">class</span> <span class="nc">Raptorfec</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Raptorfec</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Real-time multimedia applications like video streaming, audio streaming, and video conferencing.&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/raptorfec&quot;</span>
@@ -705,7 +705,7 @@
 
 <div class="viewcode-block" id="Raw">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Raw">[docs]</a>
-<span class="k">class</span> <span class="nc">Raw</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Raw</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/raw&quot;</span>
@@ -715,7 +715,7 @@
 
 <div class="viewcode-block" id="RtpEncAescm128">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.RtpEncAescm128">[docs]</a>
-<span class="k">class</span> <span class="nc">RtpEncAescm128</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RtpEncAescm128</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/rtp-enc-aescm128&quot;</span>
@@ -725,7 +725,7 @@
 
 <div class="viewcode-block" id="Rtploopback">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Rtploopback">[docs]</a>
-<span class="k">class</span> <span class="nc">Rtploopback</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Rtploopback</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/rtploopback&quot;</span>
@@ -735,7 +735,7 @@
 
 <div class="viewcode-block" id="Rtx">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Rtx">[docs]</a>
-<span class="k">class</span> <span class="nc">Rtx</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Rtx</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/rtx&quot;</span>
@@ -745,7 +745,7 @@
 
 <div class="viewcode-block" id="Scip">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Scip">[docs]</a>
-<span class="k">class</span> <span class="nc">Scip</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Scip</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/scip&quot;</span>
@@ -755,7 +755,7 @@
 
 <div class="viewcode-block" id="Smpte291">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Smpte291">[docs]</a>
-<span class="k">class</span> <span class="nc">Smpte291</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Smpte291</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Devices that stream real-time professional video, especially those that interoperate with legacy serial digital interfaces (SDI).&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/smpte291&quot;</span>
@@ -765,7 +765,7 @@
 
 <div class="viewcode-block" id="Smpte292m">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Smpte292m">[docs]</a>
-<span class="k">class</span> <span class="nc">Smpte292m</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Smpte292m</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/SMPTE292M&quot;</span>
@@ -775,7 +775,7 @@
 
 <div class="viewcode-block" id="Ulpfec">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Ulpfec">[docs]</a>
-<span class="k">class</span> <span class="nc">Ulpfec</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Ulpfec</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Multimedia applications that seek to improve resiliency to loss by sending additional data with the media stream.&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/ulpfec&quot;</span>
@@ -785,7 +785,7 @@
 
 <div class="viewcode-block" id="Vc1">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Vc1">[docs]</a>
-<span class="k">class</span> <span class="nc">Vc1</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Vc1</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Multimedia streaming and conferencing tools.&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/vc1&quot;</span>
@@ -795,7 +795,7 @@
 
 <div class="viewcode-block" id="Vc2">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Vc2">[docs]</a>
-<span class="k">class</span> <span class="nc">Vc2</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Vc2</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Video Communication.&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/vc2&quot;</span>
@@ -805,7 +805,7 @@
 
 <div class="viewcode-block" id="Vp8">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Vp8">[docs]</a>
-<span class="k">class</span> <span class="nc">Vp8</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Vp8</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/VP8&quot;</span>
@@ -815,7 +815,7 @@
 
 <div class="viewcode-block" id="Vp9">
 <a class="viewcode-back" href="../../reference/video.html#fileformats.video.Vp9">[docs]</a>
-<span class="k">class</span> <span class="nc">Vp9</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Vp9</span><span class="p">(</span><span class="n">Video</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
     <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;video/VP9&quot;</span>
@@ -891,7 +891,7 @@
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2024, Thomas G. Close
+                Copyright &#169; 2025, Thomas G. Close
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
@@ -911,7 +911,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=6ff71792"></script>
+</div><script src="../../_static/documentation_options.js?v=3a38afaa"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>

@@ -6,8 +6,8 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="prev" title="Extensions" href="extensions.html" />
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
-        <title>Extras - FileFormats v0.14.4</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d8449d71" />
+        <title>Extras - FileFormats v0.15a0</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=beddf052" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -172,7 +172,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">FileFormats v0.14.4</div></a>
+      <a href="../index.html"><div class="brand">FileFormats v0.15a0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -199,7 +199,7 @@
     <img class="sidebar-logo" src="../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.14.4</span>
+  <span class="sidebar-brand-text">FileFormats v0.15a0</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -294,25 +294,25 @@ however, the extras package associated with formats namespace will be loaded by 
 when a hooked method is accessed.</p>
 <blockquote>
 <div><p>Use the <cite>&#64;extra</cite> decorator on a method in the to define an extras method,</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Self</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Self</span>
 
-<span class="k">class</span> <span class="nc">MyFormat</span><span class="p">(</span><span class="n">File</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyFormat</span><span class="p">(</span><span class="n">File</span><span class="p">):</span>
 
     <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.my&quot;</span>
 
     <span class="nd">@extra</span>
-    <span class="k">def</span> <span class="nf">my_extra_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">save_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">my_extra_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">save_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
         <span class="o">...</span>
 </pre></div>
 </div>
 </div></blockquote>
 <p>and then reference that method in the extras package using the <cite>&#64;extra_implementation</cite></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">some_external_package</span> <span class="kn">import</span> <span class="n">load_my_format</span><span class="p">,</span> <span class="n">save_my_format</span>
-<span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">extra_implementation</span>
-<span class="kn">from</span> <span class="nn">fileformats.mypackage</span> <span class="kn">import</span> <span class="n">MyFormat</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">some_external_package</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_my_format</span><span class="p">,</span> <span class="n">save_my_format</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">extra_implementation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.mypackage</span><span class="w"> </span><span class="kn">import</span> <span class="n">MyFormat</span>
 
 <span class="nd">@extra_implementation</span><span class="p">(</span><span class="n">MyFormat</span><span class="o">.</span><span class="n">my_extra_method</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">my_extra_method</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">my_extra_method</span><span class="p">(</span>
     <span class="n">my_format</span><span class="p">:</span> <span class="n">MyFormat</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">save_path</span><span class="p">:</span> <span class="n">Path</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MyFormat</span><span class="p">:</span>
     <span class="n">data_array</span> <span class="o">=</span> <span class="n">load_my_format</span><span class="p">(</span><span class="n">my_format</span><span class="o">.</span><span class="n">fspath</span><span class="p">)</span>
@@ -328,17 +328,17 @@ the hooked method exactly.</p>
 the hook. Like <cite>functools.singledispacth</cite> (which is used under the hood), the type of
 the first argument (not the type of the class the method is referenced from in the decorated)
 determines which of the overloaded methods is called</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyFormatX</span><span class="p">(</span><span class="n">MyFormat</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MyFormatX</span><span class="p">(</span><span class="n">MyFormat</span><span class="p">):</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.myx&quot;</span>
 
 <span class="nd">@extra_implementation</span><span class="p">(</span><span class="n">MyFormat</span><span class="o">.</span><span class="n">my_extra_method</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">my_extra_method</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">my_extra_method</span><span class="p">(</span>
     <span class="n">my_format</span><span class="p">:</span> <span class="n">MyFormat</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">save_path</span><span class="p">:</span> <span class="n">Path</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MyFormat</span><span class="p">:</span>
     <span class="o">...</span>
 
 <span class="nd">@extra_implementation</span><span class="p">(</span><span class="n">MyFormat</span><span class="o">.</span><span class="n">my_extra_method</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">my_extra_method</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">my_extra_method</span><span class="p">(</span>
     <span class="n">my_format</span><span class="p">:</span> <span class="n">MyFormatX</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">save_path</span><span class="p">:</span> <span class="n">Path</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MyFormatX</span><span class="p">:</span>
     <span class="o">...</span>
@@ -359,16 +359,16 @@ a input to the task named <code class="docutils literal notranslate"><span class
 named <code class="docutils literal notranslate"><span class="pre">out_file</span></code>, and both are format classes, then no arguments need to be passed
 to the converter decorator and the conversion source and target formats are determined
 automatically. For example,</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">import</span> <span class="nn">tempfile</span>
-<span class="kn">import</span> <span class="nn">pydra.mark</span>
-<span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">converter</span>
-<span class="kn">from</span> <span class="nn">.mypackage</span> <span class="kn">import</span> <span class="n">MyFormat</span><span class="p">,</span> <span class="n">MyOtherFormat</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pydra.mark</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">converter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.mypackage</span><span class="w"> </span><span class="kn">import</span> <span class="n">MyFormat</span><span class="p">,</span> <span class="n">MyOtherFormat</span>
 
 
 <span class="nd">@converter</span>
 <span class="nd">@pydra</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">task</span>
-<span class="k">def</span> <span class="nf">convert_my_format</span><span class="p">(</span><span class="n">in_file</span><span class="p">:</span> <span class="n">MyFormat</span><span class="p">,</span> <span class="n">conversion_argument</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MyOtherFormat</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_my_format</span><span class="p">(</span><span class="n">in_file</span><span class="p">:</span> <span class="n">MyFormat</span><span class="p">,</span> <span class="n">conversion_argument</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MyOtherFormat</span><span class="p">:</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">in_file</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
     <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span><span class="s2">&quot;out&quot;</span> <span class="o">+</span> <span class="n">MyOtherFormat</span><span class="o">.</span><span class="n">ext</span><span class="p">)</span>
     <span class="o">...</span> <span class="n">do</span> <span class="n">conversion</span> <span class="o">...</span>
@@ -385,12 +385,12 @@ be available. Converter arguments can be passed as keyword-arguments to the
 task signature, and need to be provided as arguments to the <code class="docutils literal notranslate"><span class="pre">&#64;converter</span></code> decorator
 instead. For example, the converter between raster images using the <code class="docutils literal notranslate"><span class="pre">imageio</span></code> package
 to do a generic conversion between all image types,</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">import</span> <span class="nn">tempfile</span>
-<span class="kn">import</span> <span class="nn">pydra.mark</span>
-<span class="kn">import</span> <span class="nn">pydra.engine.specs</span>
-<span class="kn">from</span> <span class="nn">fileformats.core</span> <span class="kn">import</span> <span class="n">converter</span>
-<span class="kn">from</span> <span class="nn">.raster</span> <span class="kn">import</span> <span class="n">RasterImage</span><span class="p">,</span> <span class="n">Bitmap</span><span class="p">,</span> <span class="n">Gif</span><span class="p">,</span> <span class="n">Jpeg</span><span class="p">,</span> <span class="n">Png</span><span class="p">,</span> <span class="n">Tiff</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pydra.mark</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pydra.engine.specs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">converter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.raster</span><span class="w"> </span><span class="kn">import</span> <span class="n">RasterImage</span><span class="p">,</span> <span class="n">Bitmap</span><span class="p">,</span> <span class="n">Gif</span><span class="p">,</span> <span class="n">Jpeg</span><span class="p">,</span> <span class="n">Png</span><span class="p">,</span> <span class="n">Tiff</span>
 
 
 <span class="nd">@converter</span><span class="p">(</span><span class="n">target_format</span><span class="o">=</span><span class="n">Bitmap</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="n">Bitmap</span><span class="p">)</span>
@@ -400,7 +400,7 @@ to do a generic conversion between all image types,</p>
 <span class="nd">@converter</span><span class="p">(</span><span class="n">target_format</span><span class="o">=</span><span class="n">Tiff</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="n">Tiff</span><span class="p">)</span>
 <span class="nd">@pydra</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">task</span>
 <span class="nd">@pydra</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">annotate</span><span class="p">({</span><span class="s2">&quot;return&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;out_file&quot;</span><span class="p">:</span> <span class="n">RasterImage</span><span class="p">}})</span>
-<span class="k">def</span> <span class="nf">convert_image</span><span class="p">(</span><span class="n">in_file</span><span class="p">:</span> <span class="n">RasterImage</span><span class="p">,</span> <span class="n">output_format</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_image</span><span class="p">(</span><span class="n">in_file</span><span class="p">:</span> <span class="n">RasterImage</span><span class="p">,</span> <span class="n">output_format</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="n">data_array</span> <span class="o">=</span> <span class="n">in_file</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">out_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">out_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">())</span>
@@ -426,8 +426,8 @@ ShellCommandTask classes can be registered by calling the converter method on th
 directly. If required, you can also map the input and output files to <code class="docutils literal notranslate"><span class="pre">in_file</span></code> and
 <code class="docutils literal notranslate"><span class="pre">out_file</span></code> via the converter decorator for any converter task and set appropriate
 input fields</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fileformats.yourpackage</span> <span class="kn">import</span> <span class="n">YourFormat</span><span class="p">,</span> <span class="n">YourOtherFormat</span>
-<span class="kn">from</span> <span class="nn">pydra.tasks.thirdparty</span> <span class="kn">import</span> <span class="n">ThirdPartyShellCmd</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.yourpackage</span><span class="w"> </span><span class="kn">import</span> <span class="n">YourFormat</span><span class="p">,</span> <span class="n">YourOtherFormat</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydra.tasks.thirdparty</span><span class="w"> </span><span class="kn">import</span> <span class="n">ThirdPartyShellCmd</span>
 
 <span class="n">converter</span><span class="p">(</span>
     <span class="n">source_format</span><span class="o">=</span><span class="n">YourFormat</span><span class="p">,</span>
@@ -450,7 +450,7 @@ such as in the <code class="docutils literal notranslate"><span class="pre">mrco
     <span class="n">target_format</span><span class="o">=</span><span class="n">MrtrixImageHeader</span><span class="p">,</span>
     <span class="n">out_ext</span><span class="o">=</span><span class="n">MrtrixImageHeader</span><span class="o">.</span><span class="n">ext</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="k">def</span> <span class="nf">mrconvert</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">out_ext</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mrconvert</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">out_ext</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Initiate an MRConvert task with the output file extension set</span>
 
 <span class="sd">    Parameters</span>
@@ -503,7 +503,7 @@ FormatB.</p>
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2024, Thomas G. Close
+                Copyright &#169; 2025, Thomas G. Close
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
@@ -543,7 +543,7 @@ FormatB.</p>
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=6ff71792"></script>
+</div><script src="../_static/documentation_options.js?v=3a38afaa"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
