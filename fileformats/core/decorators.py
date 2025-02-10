@@ -1,4 +1,3 @@
-import sys
 import typing as ty
 from pathlib import Path
 import time
@@ -62,10 +61,10 @@ class mtime_cached_property:
         return value
 
 
-def classproperty(meth: ty.Callable[..., PropReturn]) -> PropReturn:
-    """Access a @classmethod like a @property."""
-    # mypy doesn't understand class properties yet: https://github.com/python/mypy/issues/2563
-    return classmethod(property(meth))  # type: ignore
+# def classproperty(meth: ty.Callable[..., PropReturn]) -> PropReturn:
+#     """Access a @classmethod like a @property."""
+#     # mypy doesn't understand class properties yet: https://github.com/python/mypy/issues/2563
+#     return classmethod(property(meth))  # type: ignore
 
 
 def validated_property(meth: ty.Callable[..., PropReturn]) -> PropReturn:
@@ -75,14 +74,12 @@ def validated_property(meth: ty.Callable[..., PropReturn]) -> PropReturn:
     return prop  # type: ignore
 
 
-if sys.version_info[:2] < (3, 9):
+class classproperty(object):  # type: ignore[no-redef]  # noqa
+    def __init__(self, f: ty.Callable[[ty.Any], ty.Any]):
+        self.f = f
 
-    class classproperty(object):  # type: ignore[no-redef]  # noqa
-        def __init__(self, f: ty.Callable[[ty.Type[ty.Any]], ty.Any]):
-            self.f = f
-
-        def __get__(self, obj: ty.Any, owner: ty.Any) -> ty.Any:
-            return self.f(owner)
+    def __get__(self, obj: ty.Any, owner: ty.Any) -> ty.Any:
+        return self.f(owner)
 
 
 def enough_time_has_elapsed_given_mtime_resolution(

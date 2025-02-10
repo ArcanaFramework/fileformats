@@ -7,12 +7,12 @@ class Classifier:
     """Base class for all file-format "classifiers", including datatypes and abstract
     types"""
 
-    @classproperty
+    @classproperty  # type: ignore[arg-type]
     def type_name(cls) -> str:
         """Name of type to be used in __repr__. Defined here so it can be overridden"""
         return cls.__name__  # type: ignore
 
-    @classproperty
+    @classproperty  # type: ignore[arg-type]
     def namespace(cls) -> ty.Optional[str]:
         """The "namespace" the format belongs to under the "fileformats" umbrella
         namespace"""

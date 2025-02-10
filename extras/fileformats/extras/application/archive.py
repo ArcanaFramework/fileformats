@@ -5,9 +5,7 @@ import tempfile
 import tarfile
 import zipfile
 from pathlib import Path
-import attrs
-import pydra.mark
-import pydra.engine.specs
+from pydra.design import python
 from fileformats.generic import FsObject
 from fileformats.core.utils import set_cwd
 from fileformats.core.typing import PathType
@@ -20,7 +18,7 @@ TAR_COMPRESSION_TYPES = ["", "gz", "bz2", "xz"]
 TAR_COMPRESSION_ANNOT = (
     str,
     {
-        "help_string": (
+        "help": (
             "The type of compression applied to tar file, "
             "', '".join(TAR_COMPRESSION_TYPES)
         ),
@@ -31,7 +29,7 @@ TAR_COMPRESSION_ANNOT = (
 ZIP_COMPRESSION_ANNOT = (
     int,
     {
-        "help_string": (
+        "help": (
             "The type of compression applied to zip file, "
             "see https://docs.python.org/3/library/zipfile.html#zipfile.ZIP_DEFLATED "
             "for valid compression types"
@@ -54,18 +52,13 @@ FilterMethodType = ty.Any
 # ]
 
 
-@converter(source_format=FsObject, target_format=Tar)
-@converter(source_format=FsObject, target_format=TarGzip, compression="gz")
+@converter(source_format=FsObject, target_format=Tar)  # type: ignore[misc]
+@converter(source_format=FsObject, target_format=TarGzip, compression="gz")  # type: ignore[misc]
 @converter(source_format=Compressed, target_format=Tar[Compressed])  # type: ignore[misc]
 @converter(
     source_format=Compressed, target_format=TarGzip[Compressed], compression="gz"  # type: ignore[misc]
 )
-@pydra.mark.task  # type: ignore[misc]
-@pydra.mark.annotate(  # type: ignore[misc]
-    {
-        "return": {"out_file": Path},
-    }
-)
+@python.define(outputs={"out_file": Path})  # type: ignore[misc]
 def create_tar(
     in_file: FsObject,
     out_file: ty.Optional[Path] = None,
@@ -97,8 +90,8 @@ def create_tar(
 
     out_file = out_file.absolute()
 
-    with tarfile.open(
-        out_file,
+    with tarfile.open(  # type: ignore[call-overload]
+        name=out_file,
         mode=f"w:{compression}",
         format=format,
         ignore_zeros=ignore_zeros,
@@ -110,20 +103,19 @@ def create_tar(
     return Path(out_file)
 
 
-@converter(source_format=Tar, target_format=FsObject)
-@converter(source_format=TarGzip, target_format=FsObject)
+@converter(source_format=Tar, target_format=FsObject)  # type: ignore[misc]
+@converter(source_format=TarGzip, target_format=FsObject)  # type: ignore[misc]
 @converter(source_format=Tar[Compressed], target_format=Compressed)  # type: ignore[misc]
 @converter(source_format=TarGzip[Compressed], target_format=Compressed)  # type: ignore[misc]
-@pydra.mark.task  # type: ignore[misc]
-@pydra.mark.annotate({"return": {"out_file": Path}})  # type: ignore[misc]
+@python.define(outputs={"out_file": Path})  # type: ignore[misc]
 def extract_tar(
     in_file: FsObject,
-    extract_dir: Path,
+    extract_dir: ty.Optional[Path] = None,
     bufsize: int = 10240,
     compression_type: str = "*",
 ) -> Path:
 
-    if extract_dir is attrs.NOTHING:  # type: ignore[comparison-overlap]
+    if extract_dir is None:
         extract_dir = Path(tempfile.mkdtemp())
     else:
         extract_dir = extract_dir.absolute()
@@ -133,7 +125,7 @@ def extract_tar(
     if not compression_type:
         compression_type = ""
 
-    with tarfile.open(in_file, mode=f"r:{compression_type}") as tfile:
+    with tarfile.open(name=in_file, mode=f"r:{compression_type}") as tfile:  # type: ignore[call-overload]
         tfile.extractall(path=extract_dir)
 
     extracted = [extract_dir / f for f in os.listdir(extract_dir)]
@@ -144,18 +136,13 @@ def extract_tar(
     return extracted[0]
 
 
-@converter(source_format=FsObject, target_format=Zip)
+@converter(source_format=FsObject, target_format=Zip)  # type: ignore[misc]
 @converter(source_format=Compressed, target_format=Zip[Compressed])  # type: ignore[misc]
-@pydra.mark.task  # type: ignore[misc]
-@pydra.mark.annotate(  # type: ignore[misc]
-    {
-        "return": {"out_file": Zip},
-    }
-)
+@python.define(outputs={"out_file": Zip})  # type: ignore[misc]
 def create_zip(
     in_file: FsObject,
-    out_file: Path,
-    base_dir: Path,
+    out_file: ty.Optional[Path] = None,
+    base_dir: ty.Optional[Path] = None,
     compression: int = zipfile.ZIP_DEFLATED,
     allowZip64: bool = True,
     compresslevel: ty.Optional[int] = None,
@@ -167,10 +154,10 @@ def create_zip(
             "Can only archive file-sets with single paths currently"
         )
 
-    if out_file is attrs.NOTHING:  # type: ignore[comparison-overlap]
+    if out_file is None:  # type: ignore[comparison-overlap]
         out_file = Path(Path(in_file).name + ".zip")
 
-    if base_dir is attrs.NOTHING:  # type: ignore[comparison-overlap]
+    if base_dir is None:  # type: ignore[comparison-overlap]
         base_dir = Path(in_file).parent
 
     out_file = out_file.absolute()
@@ -206,13 +193,12 @@ def create_zip(
     return Zip(out_file)
 
 
-@converter(source_format=Zip, target_format=FsObject)
+@converter(source_format=Zip, target_format=FsObject)  # type: ignore[misc]
 @converter(source_format=Zip[Compressed], target_format=Compressed)  # type: ignore[misc]
-@pydra.mark.task  # type: ignore[misc]
-@pydra.mark.annotate({"return": {"out_file": Path}})  # type: ignore[misc]
-def extract_zip(in_file: Zip, extract_dir: Path) -> Path:
+@python.define(outputs={"out_file": Path})  # type: ignore[misc]
+def extract_zip(in_file: Zip, extract_dir: ty.Optional[Path] = None) -> Path:
 
-    if extract_dir is attrs.NOTHING:  # type: ignore[comparison-overlap]
+    if extract_dir is None:
         extract_dir = Path(tempfile.mkdtemp())
     else:
         extract_dir = extract_dir.absolute()

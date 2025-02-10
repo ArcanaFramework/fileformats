@@ -91,6 +91,11 @@ def from_mime(
     -------
     datatype : type
         the resolved datatype
+
+    Raises
+    ------
+    FormatRecognitionError
+        if the MIME string does not correspond to a valid file format class
     """
     if mime_str.endswith(LIST_MIME):
         item_mime = mime_str[: -len(LIST_MIME)]

@@ -31,11 +31,15 @@ class DataType(Classifier, metaclass=ABCMeta):
 
     is_fileset = False
     is_field = False
-    nested_types: ty.Tuple[ty.Type[Classifier], ...] = ()
+
+    @classproperty
+    def nested_types(cls) -> ty.Tuple[ty.Type[Classifier], ...]:
+        return ()
+
     # Store converters registered by @converter decorator that convert to FileSet
     # NB: each class will have its own version of this dictionary
     converters: ty.Dict[
-        ty.Type["DataType"], "fileformats.core.converter_helpers.ConverterSpec"
+        ty.Type["DataType"], "fileformats.core.converter_helpers.Converter[ty.Any]"  # type: ignore[type-arg]
     ] = {}
 
     @classmethod
@@ -66,7 +70,7 @@ class DataType(Classifier, metaclass=ABCMeta):
         else:
             return True
 
-    @classproperty
+    @classproperty  # type: ignore[arg-type]
     def all_types(self) -> ty.Iterator[ty.Type[DataType]]:
         return itertools.chain(FileSet.all_formats, Field.all_fields)
 
@@ -88,7 +92,6 @@ class DataType(Classifier, metaclass=ABCMeta):
     def get_converter(
         cls,
         source_format: ty.Type[DataType],
-        name: str = "converter",
         **kwargs: ty.Any,
     ) -> ty.Union[None]:
         if issubclass(source_format, cls):
@@ -98,13 +101,13 @@ class DataType(Classifier, metaclass=ABCMeta):
                 f"Cannot converter between '{cls.mime_like}' and '{source_format.mime_like}'"
             )
 
-    @classproperty
+    @classproperty  # type: ignore[arg-type]
     def mime_type(cls) -> str:
         """Generates a MIME type identifier from a format class (i.e. an identifier
         for a non-MIME class in the MIME."""
         raise FileFormatsError(f"MIME type not defined for {cls} class")
 
-    @classproperty
+    @classproperty  # type: ignore[arg-type]
     def mime_like(cls) -> str:
         """Generates a "MIME-like" identifier from a format class. The fileformats
         package namespace forms a superset of IANA MIME registries. Formats with
@@ -134,6 +137,11 @@ class DataType(Classifier, metaclass=ABCMeta):
         -------
         type
             the corresponding file format class
+
+        Raises
+        ------
+        FormatRecognitionError
+            if the MIME string does not correspond to a valid file format class
         """
         try:
             namespace, format_name = mime_string.split("/")
@@ -145,7 +153,7 @@ class DataType(Classifier, metaclass=ABCMeta):
             namespace = namespace.replace("-", "_")
         # Attempt to load file type using their `iana_mime` attribute
         try:
-            return FileSet.formats_by_iana_mime[mime_string]
+            return FileSet.formats_by_iana_mime[mime_string]  # type: ignore[no-any-return]
         except KeyError:
             pass
         if namespace == "application" and format_name.startswith("x-"):
@@ -259,7 +267,7 @@ class DataType(Classifier, metaclass=ABCMeta):
             )
         return klass
 
-    @classproperty
+    @classproperty  # type: ignore[arg-type]
     def generically_classifiable_by_name(cls) -> ty.Dict[str, ty.Type[DataType]]:
         if cls._generically_classifiable_by_name is None:
             cls._generically_classifiable_by_name = {

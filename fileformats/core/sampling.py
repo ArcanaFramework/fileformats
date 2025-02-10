@@ -34,6 +34,7 @@ class SampleFileGenerator:
         seed: ty.Union[int, str],
         fname_stem: ty.Optional[str] = None,
     ):
+        dest_dir.mkdir(parents=True, exist_ok=True)
         self.dest_dir = dest_dir
         self.seed = seed
         self.fname_stem = (
@@ -151,7 +152,7 @@ class SampleFileGenerator:
             fname = self.fname_stem
         if file_type and file_type.ext:
             fname += file_type.ext
-        fspath = self.dest_dir
+        fspath = Path(self.dest_dir)
         if relpath:
             fspath /= relpath
         return fspath / fname

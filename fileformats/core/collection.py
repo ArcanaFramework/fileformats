@@ -48,14 +48,14 @@ class TypedCollection(FileSet, metaclass=ABCMeta):
             f"{[str(p) for p in self.content_fspaths]}"
         )
 
-    @classproperty
+    @classproperty  # type: ignore[arg-type]
     def potential_content_types(cls) -> ty.Tuple[ty.Type[FileSet], ...]:
         content_types: ty.List[ty.Type[FileSet]] = []
         for content_type in cls.content_types:  # type: ignore[assignment]
             content_types.append(get_optional_type(content_type))  # type: ignore[arg-type]
         return tuple(content_types)
 
-    @classproperty
+    @classproperty  # type: ignore[arg-type]
     def required_content_types(cls) -> ty.Tuple[ty.Type[FileSet], ...]:
         content_types: ty.List[ty.Type[FileSet]] = []
         for content_type in cls.content_types:  # type: ignore[assignment]
@@ -63,7 +63,7 @@ class TypedCollection(FileSet, metaclass=ABCMeta):
                 content_types.append(content_type)  # type: ignore[arg-type]
         return tuple(content_types)
 
-    @classproperty
+    @classproperty  # type: ignore[arg-type]
     def unconstrained(cls) -> bool:
         """Whether the file-format is unconstrained by extension, magic number or another
         constraint"""

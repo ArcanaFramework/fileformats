@@ -49,8 +49,8 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
     "sphinx.ext.autosectionlabel",
-    "sphinxarg.ext",
-    "sphinx_click.ext",
+    "sphinxarg.ext",  # Provided by sphinx-argparse
+    "sphinx_click.ext",  # Provided by sphinx-click
     "numpydoc",
 ]
 

@@ -47,6 +47,10 @@ def file_generate_sample_data(
             raise NotImplementedError(
                 "Sampling of magic version file types is not implemented yet"
             )
+    elif hasattr(file, "magic_number"):
+        raise NotImplementedError(
+            f"Sampling of non-binary magic-number file types ({type(file)}) is not implemented yet"
+        )
     fspaths = [generator.generate(file, contents=contents, fill=FILE_FILL_LENGTH)]
     if hasattr(file, "header_type"):
         fspaths.extend(file.header_type.sample_data(generator))

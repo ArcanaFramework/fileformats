@@ -2,7 +2,8 @@ import tempfile
 import attrs
 from pathlib import Path
 import pytest
-from pydra.engine.specs import File
+from pydra.design import python, shell
+from fileformats.generic import File
 from fileformats.testing import Foo, Bar, Baz, Qux
 from fileformats.core import converter
 from fileformats.core.exceptions import FormatConversionError
@@ -19,8 +20,7 @@ def foo_bar_converter():
     work_dir = Path(tempfile.mkdtemp())
 
     @converter
-    @pydra.mark.task  # type: ignore[misc]
-    @pydra.mark.annotate({"return": {"out_file": Bar}})  # type: ignore[misc]
+    @python.define(outputs={"out_file": Bar})  # type: ignore[misc]
     def foo_bar_converter_(in_file: Foo):
         return Bar(write_test_file(work_dir / "bar.bar", in_file.raw_contents))
 
@@ -32,8 +32,7 @@ def baz_bar_converter():
     work_dir = Path(tempfile.mkdtemp())
 
     @converter(out_file="out")
-    @pydra.mark.task  # type: ignore[misc]
-    @pydra.mark.annotate({"return": {"out": Bar}})  # type: ignore[misc]
+    @python.define(outputs={"out": Bar})  # type: ignore[misc]
     def baz_bar_converter_(in_file: Baz):
         assert in_file
         return Bar(write_test_file(work_dir / "bar.bar", in_file.raw_contents))
@@ -43,53 +42,20 @@ def baz_bar_converter():
 
 @pytest.fixture(scope="session")
 def FooQuxConverter():
-    from pydra.engine import specs
-    from pydra import ShellCommandTask
-
-    input_fields = [
-        (
-            "in_file",
-            File,
-            {
-                "help_string": "the input file",
-                "argstr": "",
-            },
-        ),
-        (
-            "out_file",
-            Path,
-            {
-                "help_string": "output file name",
-                "argstr": "",
-                "position": -1,
-                "output_file_template": "out.qux",
-            },
-        ),
-    ]
-
-    FooQux_input_spec = specs.SpecInfo(
-        name="Input", fields=input_fields, bases=(specs.ShellSpec,)
-    )
-
-    output_fields = [
-        (
-            "out_file",
-            File,
-            {
-                "help_string": "output file",
-            },
-        ),
-    ]
-    FooQux_output_spec = specs.SpecInfo(
-        name="Output", fields=output_fields, bases=(specs.ShellOutSpec,)
-    )
-
     @converter(source_format=Foo, target_format=Qux)
-    class FooQuxConverter_(ShellCommandTask):
+    @shell.define
+    class FooQuxConverter_:
 
-        input_spec = FooQux_input_spec
-        output_spec = FooQux_output_spec
+        in_file: File = shell.arg(help="the input file", argstr="")
         executable = "cp"
+
+        class Outputs:
+            out_file: File = shell.outarg(
+                help="output file",
+                argstr="",
+                position=-1,
+                output_file_template="out.qux",
+            )
 
     return FooQuxConverter_
 

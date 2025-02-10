@@ -37,7 +37,7 @@ class FsObject(FileSet, os.PathLike):  # type: ignore
     def stem(self) -> str:
         return self.fspath.with_suffix("").name
 
-    @classproperty
+    @classproperty  # type: ignore[arg-type]
     def unconstrained(cls) -> bool:
         """Whether the file-format is unconstrained by extension, magic number or another
         constraint"""

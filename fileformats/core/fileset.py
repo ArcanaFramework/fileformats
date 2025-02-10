@@ -1,10 +1,10 @@
 import os
-from copy import copy
 import struct
 from enum import Enum, IntEnum
 from warnings import warn
 import inspect
 import tempfile
+from copy import copy
 from collections import Counter
 import typing as ty
 import shutil
@@ -17,8 +17,6 @@ import logging
 from fileformats.core.typing import Self
 from .utils import (
     fspaths_converter,
-    describe_task,
-    matching_source,
     import_extras_module,
 )
 from .decorators import mtime_cached_property, classproperty, VALIDATED_PROPERTY_FLAG
@@ -45,14 +43,16 @@ from .fs_mount_identifier import FsMountIdentifier
 from .mock import MockMixin
 
 if ty.TYPE_CHECKING:
-    from pydra.engine.task import TaskBase
-    from .converter_helpers import ConverterSpec
+    from pydra.engine.specs import TaskDef, OutputsType
+    from .converter_helpers import Converter
 
 
 FILE_CHUNK_LEN_DEFAULT = 8192
 
 
 logger = logging.getLogger("fileformats")
+
+T = ty.TypeVar("T")
 
 
 class FileSet(DataType):
@@ -260,7 +260,7 @@ class FileSet(DataType):
         """
         return tuple((str(p), p.stat().st_mtime_ns) for p in sorted(self.fspaths))
 
-    @classproperty
+    @classproperty  # type: ignore[arg-type]
     def mime_type(cls) -> str:
         """Generates a MIME type (IANA) identifier from a format class. If an official
         IANA MIME type doesn't exist it will create one in the in the MIME style, e.g.
@@ -283,18 +283,18 @@ class FileSet(DataType):
         format_name = to_mime_format_name(cls.__name__)  # type: ignore[attr-defined]
         return f"application/x-{format_name}"
 
-    @classproperty
+    @classproperty  # type: ignore[arg-type]
     def strext(cls) -> str:
         """Return extension that is guaranteed to be a string (i.e. not None)"""
         return cls.ext if cls.ext is not None else ""
 
-    @classproperty
+    @classproperty  # type: ignore[arg-type]
     def unconstrained(cls) -> bool:
         """Whether the file-format is unconstrained by extension, magic number or another
         constraint"""
         return not list(cls.validated_properties())
 
-    @classproperty
+    @classproperty  # type: ignore[arg-type]
     def possible_exts(cls) -> ty.List[ty.Optional[str]]:
         """All possible extensions of the file format"""
         possible = [cls.ext]
@@ -501,8 +501,7 @@ class FileSet(DataType):
     def convert(
         cls,
         fileset: "FileSet",
-        plugin: str = "serial",
-        task_name: ty.Optional[str] = None,
+        worker: ty.Optional[str] = None,
         **kwargs: ty.Any,
     ) -> Self:
         """Convert a given file-set into the format specified by the class
@@ -523,12 +522,15 @@ class FileSet(DataType):
         FileSet
             the file-set converted into the type of the current class
         """
-        if task_name is None:
-            task_name = f"{type(fileset).__name__}_to_{cls.__name__}_{id(fileset)}"
+        import attrs
+
         # Make unique, yet somewhat recognisable task name
-        task = cls.get_converter(source_format=type(fileset), name=task_name, **kwargs)
-        result = task(in_file=fileset, plugin=plugin)
-        out_file = result.output.out_file
+        task = cls.get_converter(source_format=type(fileset), **kwargs)
+        if task is None:
+            return copy(fileset)  # type: ignore[return-value]
+        task = attrs.evolve(task, in_file=fileset)
+        outputs = task(worker=worker)
+        out_file = outputs.out_file
         if not isinstance(out_file, cls):
             out_file = cls(out_file)
         return out_file  # type: ignore
@@ -537,9 +539,8 @@ class FileSet(DataType):
     def get_converter(
         cls,
         source_format: ty.Type[DataType],
-        name: str = "converter",
         **kwargs: ty.Any,
-    ) -> "TaskBase":
+    ) -> "TaskDef[OutputsType] | None":
         """Get a converter that converts from the source format type
         into the format specified by the class
 
@@ -550,12 +551,12 @@ class FileSet(DataType):
         name : str
             the name given to the converter task
         **kwargs
-            passed on to the task init method to customise the conversion
+            evolve the task definition
 
         Returns
         -------
-        pydra.engine.TaskBase or None
-            a pydra task or workflow that performs the conversion, or None if no
+        pydra.spec.TaskDef | None
+            a pydra task definition to perform the conversion, or None if no
             conversion is required
 
         Raises
@@ -576,18 +577,19 @@ class FileSet(DataType):
         else:
             import_extras_module(unclassified)
         try:
-            converter_spec = converters[source_format]
+            converter_def = converters[source_format]
         except KeyError:
             # If no direct mapping check for mapping from source super types and wildcard
             # matches
-            available_converters = cls.get_converter_specs(source_format)
+            available_converters = cls.get_converter_defs(source_format)
             if len(available_converters) > 1:
                 # FIXME: Hack to avoid situation where multiple converters get added but are identical
                 if all(a == available_converters[0] for a in available_converters[1:]):
                     available_converters = [available_converters[0]]
                 else:
+                    available_converters[0] == available_converters[1]
                     available_str = "\n".join(
-                        describe_task(a.task) for a in available_converters
+                        str(a.task_def) for a in available_converters
                     )
                     raise FormatConversionError(
                         f"Ambiguous converters found between '{cls.mime_like}' and "
@@ -606,28 +608,28 @@ class FileSet(DataType):
                         f"from PyPI (e.g. pip install {extras_mod.pypi}) or check it isn't broken"
                     )
                 raise FormatConversionError(msg) from None
-            converter_spec = available_converters[0]
+            converter_def = available_converters[0]
             # Store mapping for future reference
-            converters[source_format] = converter_spec
+            converters[source_format] = converter_def
         if kwargs:
-            # Merge kwargs provided to get_conveter with stored kwargs
-            conv_kwargs = copy(converter_spec.args)
-            conv_kwargs.update(kwargs)
+            task_def = copy(converter_def.task_def)
+            for key, val in kwargs.items():
+                setattr(task_def, key, val)
         else:
-            conv_kwargs = converter_spec.args
-        return converter_spec.task(name=name, **conv_kwargs)
+            task_def = converter_def.task_def
+        return task_def
 
     @classmethod
     def get_converters_dict(
         cls, klass: ty.Optional[ty.Type[DataType]] = None
-    ) -> ty.Dict[ty.Type[DataType], "ConverterSpec"]:
+    ) -> ty.Dict[ty.Type[DataType], "Converter[ty.Any]"]:
         # Only access converters to the specific class, not superclasses (which may not
         # be able to convert to the specific type)
         if klass is None:
             klass = cls
         # import related extras module for the target class
         import_extras_module(klass)
-        converters_dict: ty.Dict[ty.Type[DataType], "ConverterSpec"]
+        converters_dict: ty.Dict[ty.Type[DataType], "Converter[ty.Any]"]
         try:
             converters_dict = klass.__dict__["converters"]
         except KeyError:
@@ -635,7 +637,7 @@ class FileSet(DataType):
         return converters_dict
 
     @classmethod
-    def get_converter_specs(cls, source_format: type) -> ty.List["ConverterSpec"]:
+    def get_converter_defs(cls, source_format: type) -> ty.List["Converter[ty.Any]"]:
         """Search the registered converters to find any matches and return list of
         task and associated key-word args to perform the conversion between source and
         target formats
@@ -660,14 +662,14 @@ class FileSet(DataType):
                 if issubclass(source_format, src_frmt):
                     available.append(converter)
         if not available and hasattr(source_format, "unclassified"):
-            available = SubtypeVar.get_converter_specs(source_format, target_format=cls)
+            available = SubtypeVar.get_converter_defs(source_format, target_format=cls)
         return available
 
     @classmethod
     def register_converter(
         cls,
         source_format: ty.Type["FileSet"],
-        converter_spec: "ConverterSpec",
+        converter: "Converter[T]",
     ) -> None:
         """Registers a converter task within a class attribute. Called by the
         @fileformats.core.converter decorator.
@@ -689,28 +691,25 @@ class FileSet(DataType):
         converters_dict = cls.get_converters_dict()
         # If no converters are loaded, attempt to load from the standard location
         if source_format in converters_dict:
-            prev_spec = cls.converters[source_format]
+            prev_converter = cls.converters[source_format]
             # task, task_kwargs = converter_spec
             # prev_task, prev_kwargs = prev_tuple
-            if (
-                matching_source(converter_spec.task, prev_spec.task)
-                and converter_spec.args == prev_spec.args
-            ):
+            if converter.task_def == prev_converter.task_def:
                 logger.warning(
                     "Ignoring duplicate registrations of the same converter %s",
-                    describe_task(converter_spec.task),
+                    converter.task_def,
                 )
                 return  # actually the same task but just imported twice for some reason
             raise FormatConversionError(
                 f"Cannot register converter from {source_format.__name__} "
-                f"to {cls.__name__}, {describe_task(converter_spec.task)}, because there is already "
-                f"one registered from {describe_task(prev_spec.task)}:"
-                f"\n\n{inspect.getsource(converter_spec.task)}\n\n"
-                f"and{inspect.getsource(prev_spec.task)}\n\n"
+                f"to {cls.__name__}, {converter.task_def}, because there is already "
+                f"one registered from {prev_converter.task_def}:"
+                f"\n\n{converter.task_def}\n\n"
+                f"and {prev_converter.task_def}\n\n"
             )
-        converters_dict[source_format] = converter_spec
+        converters_dict[source_format] = converter
 
-    @classproperty
+    @classproperty  # type: ignore[arg-type]
     def all_formats(cls) -> ty.Set[ty.Type["FileSet"]]:
         """Iterate over all FileSet formats in fileformats.* namespaces"""
         if cls._all_formats is None:
@@ -721,12 +720,12 @@ class FileSet(DataType):
             )
         return cls._all_formats
 
-    @classproperty
+    @classproperty  # type: ignore[arg-type]
     def standard_formats(cls) -> ty.Iterable[ty.Type["FileSet"]]:
         """Iterate over all formats in the standard fileformats.* namespaces"""
         return (f for f in cls.all_formats if f.namespace in IANA_MIME_TYPE_REGISTRIES)
 
-    @classproperty
+    @classproperty  # type: ignore[arg-type]
     def formats_by_iana_mime(cls) -> ty.Dict[str, ty.Type["FileSet"]]:
         """a dictionary containing all formats by their IANA MIME type (if applicable)"""
         if cls._formats_by_iana_mime is None:
@@ -737,7 +736,7 @@ class FileSet(DataType):
             }
         return cls._formats_by_iana_mime
 
-    @classproperty
+    @classproperty  # type: ignore[arg-type]
     def formats_by_name(cls) -> ty.Dict[str, ty.Set[ty.Type["FileSet"]]]:
         """a dictionary containing lists of formats by their translated class names,
         i.e. their can be more than one format with the same translated name"""
@@ -893,7 +892,7 @@ class FileSet(DataType):
         """
         if crypto is None:
             crypto = hashlib.sha256
-        crytpo_obj = crypto()
+        crypto_obj = crypto()
         for path, bytes_iter in self.byte_chunks(
             mtime=mtime,
             chunk_len=chunk_len,
@@ -901,10 +900,10 @@ class FileSet(DataType):
             ignore_hidden_files=ignore_hidden_files,
             ignore_hidden_dirs=ignore_hidden_dirs,
         ):
-            crytpo_obj.update(path.encode())
+            crypto_obj.update(path.encode())
             for bytes_str in bytes_iter:
-                crytpo_obj.update(bytes_str)
-        digest: str = crytpo_obj.hexdigest()
+                crypto_obj.update(bytes_str)
+        digest: str = crypto_obj.hexdigest()
         return digest
 
     def hash_files(
@@ -1045,6 +1044,12 @@ class FileSet(DataType):
         """
         if not dest_dir:
             dest_dir = Path(tempfile.mkdtemp())
+        else:
+            dest_dir = Path(dest_dir)
+        # If the dest dir is actually the destination path
+        if not stem and cls.ext and cls.matching_exts([dest_dir], [cls.ext]):
+            dest_dir = dest_dir.parent
+            stem = dest_dir.name
         # Need to use mock to get an instance in order to use the singledispatch-based
         # extra decorator
         fspaths = cls.sample_data(
@@ -1266,10 +1271,10 @@ class FileSet(DataType):
         --------------------------------------
         leave
             simply leave the files where they are (i.e. do nothing)
-        symlink
-            symlink the files into the destination directory
         hardlink
             hardlink the files into the destination directory
+        symlink
+            symlink the files into the destination directory
         copy
             duplicate (actually copy) the files into the destination directory
 
@@ -1278,7 +1283,7 @@ class FileSet(DataType):
         link
             use either linking method (preferring symbolic)
         link_or_copy
-            use either link method or copy (preferring sym, hard, then copy)
+            use either link method or copy (preferring hard, sym, then copy)
         symlink_or_copy
             "  symbolic "   "         "
         hardlink_or_copy
@@ -1296,30 +1301,27 @@ class FileSet(DataType):
         # Bases
 
         leave = 0b0001
-        symlink = 0b0010
-        hardlink = 0b0100
+        hardlink = 0b0010
+        symlink = 0b0100
         copy = 0b1000
 
         # Common combinations
-
         link = 0b0110
         link_or_copy = 0b1110
-        symlink_or_copy = 0b1010
-        hardlink_or_copy = 0b1100
+        hardlink_or_copy = 0b1010
+        symlink_or_copy = 0b1100
 
         # Masks
-
         any = 0b1111
         none = 0b0000
 
         # All other combinations (typically the result of bit-masking)
-
         leave_or_copy = 0b1001
-        leave_or_symlink = 0b0011
-        leave_or_hardlink = 0b0101
+        leave_or_hardlink = 0b0011
+        leave_or_symlink = 0b0101
         leave_or_link = 0b0111
-        leave_or_symlink_or_copy = 0b1011
-        leave_or_hardlink_or_copy = 0b1101
+        leave_or_hardlink_or_copy = 0b1011
+        leave_or_symlink_or_copy = 0b1101
 
         def __xor__(self, other: "FileSet.CopyMode") -> "FileSet.CopyMode":
             return type(self)(self.value ^ other.value)

@@ -8,7 +8,7 @@ import urllib.error
 import fileformats.core
 from fileformats.core.typing import TypeAlias
 from .datatype import DataType
-from .converter_helpers import ConverterWrapper, ConverterSpec, SubtypeVar
+from .converter_helpers import Converter, SubtypeVar
 from .exceptions import FormatConversionError, FileFormatsExtrasError
 from .utils import import_extras_module, check_package_exists_on_pypi, add_exc_note
 
@@ -18,8 +18,9 @@ else:
     from typing import Self
 
 if ty.TYPE_CHECKING:
-    from pydra.engine.core import TaskBase
+    from pydra.engine.specs import TaskDef
 
+T = ty.TypeVar("T")
 ExtraImplementation = ty.TypeVar("ExtraImplementation", bound=ty.Callable[..., ty.Any])
 ExtraMethod = ty.TypeVar("ExtraMethod", bound=ty.Callable[..., ty.Any])
 
@@ -189,19 +190,21 @@ FormatType: TypeAlias = ty.Union[ty.Type["fileformats.core.FileSet"], SubtypeVar
 
 
 def converter(
-    task_spec: "TaskBase" = None,
+    task_type: ty.Optional[ty.Type["TaskDef[T]"]] = None,
     source_format: FormatType = None,
     target_format: FormatType = None,
     in_file: str = "in_file",
     out_file: str = "out_file",
     **converter_kwargs: ty.Any,
-) -> ty.Callable[[WrappedTask], WrappedTask]:
+) -> ty.Union[
+    ty.Type["TaskDef[T]"], ty.Callable[[ty.Type["TaskDef[T]"]], ty.Type["TaskDef[T]"]]
+]:
     """Decorator that registers a task as a converter between a source and target format
     pair
 
     Parameters
     ----------
-    task : pydra.engine.core.TaskBase, optional
+    task_type : pydra.engine.core.TaskBase, optional
         the Pydra task to register as a converter, if provided the decorator is assumed
         to wrap the task spec directly, otherwise a wrapping decorator is returned instead
     source_format: type, optional
@@ -216,9 +219,6 @@ def converter(
     **converter_kwargs
         keyword arguments passed on to the converter task
     """
-    # Note if explicit value for out_file isn't provided note it so we can also try
-    # "out"
-    from pydra.engine.helpers import make_klass
 
     try:
         import attrs
@@ -231,20 +231,18 @@ def converter(
         raise e
 
     def decorator(
-        task_spec: ty.Type["TaskBase"],
-    ) -> ty.Union[ty.Type["TaskBase"], ConverterWrapper]:
+        task_type: ty.Type["TaskDef[T]"],
+    ) -> ty.Type["TaskDef[T]"]:
         out_file_local = out_file
-        if source_format is None or target_format is None:
-            task = task_spec()
         source: FormatType
         target: FormatType
         if source_format is None:
-            inputs_dict = attrs.fields_dict(type(task.inputs))
+            inputs_dict = attrs.fields_dict(task_type)
             source = inputs_dict[in_file].type
         else:
             source = source_format
         if target_format is None:
-            outputs_dict = attrs.fields_dict(make_klass(task.output_spec))
+            outputs_dict = attrs.fields_dict(task_type.Outputs)
             try:
                 target = outputs_dict[out_file].type
             except KeyError:
@@ -259,7 +257,7 @@ def converter(
             target = target_format
         # Handle string annotations
         if isinstance(source, str) or isinstance(target, str):
-            module_dict = importlib.import_module(task_spec.__module__).__dict__
+            module_dict = importlib.import_module(task_type.__module__).__dict__
             if isinstance(source, str):
                 source = eval(source, module_dict)
             if isinstance(target, str):
@@ -270,20 +268,12 @@ def converter(
                 f"Target file format '{target.__name__}' is not of subtype of "
                 "fileformats.core.FileSet"
             )
-        wrapped_task_spec: ty.Union[ty.Type["TaskBase"], ConverterWrapper]
-        if in_file != "in_file" or out_file_local != "out_file":
-            wrapped_task_spec = ConverterWrapper(
-                task_spec,
-                in_file=in_file,
-                out_file=out_file_local,
-            )
-        else:
-            wrapped_task_spec = task_spec
         target.register_converter(
             source_format=source,
-            converter_spec=ConverterSpec(wrapped_task_spec, converter_kwargs),
+            converter=Converter(
+                task_type(**converter_kwargs), in_file=in_file, out_file=out_file_local
+            ),
         )
-        return wrapped_task_spec
+        return task_type
 
-    # We pretend to return the original function, instead of the Pydra task or ConverterWrapper
-    return decorator if task_spec is None else decorator(task_spec)  # type: ignore[return-value]
+    return decorator if task_type is None else decorator(task_type)

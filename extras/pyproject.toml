@@ -15,17 +15,10 @@ dependencies = [
     "pydicom >=2.3",
     "medimages4tests",
 ]
-license = {file = "LICENSE"}
-authors = [
-    {name = "Thomas G. Close", email = "tom.g.close@gmail.com"},
-]
-maintainers = [
-    {name = "Thomas G. Close", email = "tom.g.close@gmail.com"},
-]
-keywords = [
-    "file formats",
-    "data",
-]
+license = { file = "LICENSE" }
+authors = [{ name = "Thomas G. Close", email = "tom.g.close@gmail.com" }]
+maintainers = [{ name = "Thomas G. Close", email = "tom.g.close@gmail.com" }]
+keywords = ["file formats", "data"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Environment :: Console",
@@ -43,19 +36,14 @@ classifiers = [
 dynamic = ["version"]
 
 [project.optional-dependencies]
-dev = [
-    "black",
-    "pre-commit",
-    "codespell",
-    "flake8",
-    "flake8-pyproject",
-]
+dev = ["black", "pre-commit", "codespell", "flake8", "flake8-pyproject"]
 test = [
     "pytest >=6.2.5",
     "pytest-env>=0.6.2",
     "pytest-cov>=2.12.1",
     "codecov",
     "medimages4tests",
+    "pydra @ git+https://github.com/nipype/pydra.git@new-syntax",
 ]
 
 [project.urls]
@@ -63,13 +51,16 @@ repository = "https://github.com/ArcanaFramework/fileformats"
 
 [tool.hatch.version]
 source = "vcs"
-raw-options = {root = ".."}
+raw-options = { root = ".." }
 
 [tool.hatch.build.hooks.vcs]
 version-file = "fileformats/extras/core/_version.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["fileformats"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
 
 [tool.black]
 target-version = ['py38']
@@ -80,9 +71,7 @@ ignore-words = ".codespell-ignorewords"
 
 [tool.flake8]
 doctests = true
-per-file-ignores = [
-    "__init__.py:F401"
-]
+per-file-ignores = ["__init__.py:F401"]
 max-line-length = 88
 select = "C,E,F,W,B,B950"
 extend-ignore = ['E203', 'E501', 'E129', 'F403']
