@@ -76,7 +76,7 @@ source = "vcs"
 version-file = "fileformats/core/_version.py"
 
 [tool.hatch.metadata]
-allow-direct-references = true
+allow-direct-references = false
 
 [tool.hatch.build]
 packages = ["fileformats"]

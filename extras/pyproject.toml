@@ -43,7 +43,6 @@ test = [
     "pytest-cov>=2.12.1",
     "codecov",
     "medimages4tests",
-    "pydra @ git+https://github.com/nipype/pydra.git@new-syntax",
 ]
 
 [project.urls]
@@ -60,7 +59,7 @@ version-file = "fileformats/extras/core/_version.py"
 packages = ["fileformats"]
 
 [tool.hatch.metadata]
-allow-direct-references = true
+allow-direct-references = false
 
 [tool.black]
 target-version = ['py38']
