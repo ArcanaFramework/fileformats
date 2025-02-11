@@ -16,6 +16,8 @@ class MockMixin:
     """Strips out validation methods of a class, allowing it to be mocked in a way that
     still satisfies type-checking"""
 
+    _load_kwargs: ty.Dict[str, ty.Any]
+
     def __init__(
         self,
         fspaths: FspathsInputType,
@@ -23,6 +25,7 @@ class MockMixin:
     ):
         self.fspaths = fspaths_converter(fspaths)
         self._metadata = metadata
+        self._load_kwargs = {}
 
     @classproperty  # type: ignore[arg-type]
     def type_name(cls) -> str:
