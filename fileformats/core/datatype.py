@@ -23,6 +23,9 @@ from .identification import (
 )
 from .classifier import Classifier
 
+if ty.TYPE_CHECKING:
+    from .converter_helpers import Converter
+
 
 class DataType(Classifier, metaclass=ABCMeta):
     """
@@ -39,7 +42,7 @@ class DataType(Classifier, metaclass=ABCMeta):
     # Store converters registered by @converter decorator that convert to FileSet
     # NB: each class will have its own version of this dictionary
     converters: ty.Dict[
-        ty.Type["DataType"], "fileformats.core.converter_helpers.Converter[ty.Any]"  # type: ignore[type-arg]
+        ty.Type["DataType"], "fileformats.core.converter_helpers.Converter"  # type: ignore[type-arg]
     ] = {}
 
     @classmethod
@@ -92,8 +95,7 @@ class DataType(Classifier, metaclass=ABCMeta):
     def get_converter(
         cls,
         source_format: ty.Type[DataType],
-        **kwargs: ty.Any,
-    ) -> ty.Union[None]:
+    ) -> "Converter | None":
         if issubclass(source_format, cls):
             return None
         else:

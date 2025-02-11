@@ -229,6 +229,10 @@ def converter(
             "installed, this should be installed with Pydra by default",
         )
         raise e
+    if "out_file_" in converter_kwargs:
+        converter_kwargs["out_file"] = converter_kwargs.pop("out_file_")
+    if "in_file_" in converter_kwargs:
+        converter_kwargs["in_file"] = converter_kwargs.pop("in_file_")
 
     def decorator(
         task_type: ty.Type["TaskDef[T]"],
@@ -268,6 +272,7 @@ def converter(
                 f"Target file format '{target.__name__}' is not of subtype of "
                 "fileformats.core.FileSet"
             )
+
         target.register_converter(
             source_format=source,
             converter=Converter(
