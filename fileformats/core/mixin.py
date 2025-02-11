@@ -458,7 +458,7 @@ class WithClassifiers:
         return classified
 
     @classmethod
-    def get_converter_defs(cls, source_format: type) -> ty.List[Converter[ty.Any]]:
+    def get_converter_defs(cls, source_format: type) -> ty.List[Converter]:
         """Search the registered converters to find an appropriate task and associated
         key-word args to perform the conversion between source and target formats
 
@@ -470,7 +470,7 @@ class WithClassifiers:
         from fileformats.core import FileSet
 
         # Try to see if a converter has been defined to the exact type
-        available_converters: ty.List[Converter[ty.Any]] = super().get_converter_defs(  # type: ignore[misc, type-arg]
+        available_converters: ty.List[Converter] = super().get_converter_defs(  # type: ignore[misc, type-arg]
             source_format
         )
         # Failing that, see if there is a generic conversion between the container type
@@ -603,7 +603,7 @@ class WithClassifiers:
     def register_converter(
         cls,
         source_format: ty.Type["fileformats.core.FileSet"],
-        converter: Converter[T],
+        converter: Converter,
     ) -> None:
         """Registers a converter task within a class attribute. Called by the @fileformats.converter
         decorator.

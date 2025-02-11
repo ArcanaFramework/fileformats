@@ -43,7 +43,6 @@ from .fs_mount_identifier import FsMountIdentifier
 from .mock import MockMixin
 
 if ty.TYPE_CHECKING:
-    from pydra.engine.specs import TaskDef, OutputsType
     from .converter_helpers import Converter
 
 
@@ -501,7 +500,6 @@ class FileSet(DataType):
     def convert(
         cls,
         fileset: "FileSet",
-        worker: ty.Optional[str] = None,
         **kwargs: ty.Any,
     ) -> Self:
         """Convert a given file-set into the format specified by the class
@@ -510,12 +508,8 @@ class FileSet(DataType):
         ----------
         fileset : FileSet
             the file-set object to convert
-        plugin : str
-            the "execution plugin" used to run the conversion task
-        task_name : str
-            the name given to the converter task
         **kwargs
-            args to pass to the conversion process
+            args to pass to customise the converter task definition
 
         Returns
         -------
@@ -525,12 +519,14 @@ class FileSet(DataType):
         import attrs
 
         # Make unique, yet somewhat recognisable task name
-        task = cls.get_converter(source_format=type(fileset), **kwargs)
-        if task is None:
-            return copy(fileset)  # type: ignore[return-value]
-        task = attrs.evolve(task, in_file=fileset)
-        outputs = task(worker=worker)
-        out_file = outputs.out_file
+        converter = cls.get_converter(source_format=type(fileset))
+        if converter is None:
+            assert isinstance(fileset, cls)
+            return copy(fileset)
+        kwargs[converter.in_file] = fileset
+        task_def = attrs.evolve(converter.task_def, **kwargs)
+        outputs = task_def()
+        out_file = getattr(outputs, converter.out_file)
         if not isinstance(out_file, cls):
             out_file = cls(out_file)
         return out_file  # type: ignore
@@ -539,8 +535,7 @@ class FileSet(DataType):
     def get_converter(
         cls,
         source_format: ty.Type[DataType],
-        **kwargs: ty.Any,
-    ) -> "TaskDef[OutputsType] | None":
+    ) -> "Converter | None":
         """Get a converter that converts from the source format type
         into the format specified by the class
 
@@ -577,7 +572,7 @@ class FileSet(DataType):
         else:
             import_extras_module(unclassified)
         try:
-            converter_def = converters[source_format]
+            converter = converters[source_format]
         except KeyError:
             # If no direct mapping check for mapping from source super types and wildcard
             # matches
@@ -608,28 +603,22 @@ class FileSet(DataType):
                         f"from PyPI (e.g. pip install {extras_mod.pypi}) or check it isn't broken"
                     )
                 raise FormatConversionError(msg) from None
-            converter_def = available_converters[0]
+            converter = available_converters[0]
             # Store mapping for future reference
-            converters[source_format] = converter_def
-        if kwargs:
-            task_def = copy(converter_def.task_def)
-            for key, val in kwargs.items():
-                setattr(task_def, key, val)
-        else:
-            task_def = converter_def.task_def
-        return task_def
+            converters[source_format] = converter
+        return converter
 
     @classmethod
     def get_converters_dict(
         cls, klass: ty.Optional[ty.Type[DataType]] = None
-    ) -> ty.Dict[ty.Type[DataType], "Converter[ty.Any]"]:
+    ) -> ty.Dict[ty.Type[DataType], "Converter"]:
         # Only access converters to the specific class, not superclasses (which may not
         # be able to convert to the specific type)
         if klass is None:
             klass = cls
         # import related extras module for the target class
         import_extras_module(klass)
-        converters_dict: ty.Dict[ty.Type[DataType], "Converter[ty.Any]"]
+        converters_dict: ty.Dict[ty.Type[DataType], "Converter"]
         try:
             converters_dict = klass.__dict__["converters"]
         except KeyError:
@@ -637,7 +626,7 @@ class FileSet(DataType):
         return converters_dict
 
     @classmethod
-    def get_converter_defs(cls, source_format: type) -> ty.List["Converter[ty.Any]"]:
+    def get_converter_defs(cls, source_format: type) -> ty.List["Converter"]:
         """Search the registered converters to find any matches and return list of
         task and associated key-word args to perform the conversion between source and
         target formats
@@ -669,7 +658,7 @@ class FileSet(DataType):
     def register_converter(
         cls,
         source_format: ty.Type["FileSet"],
-        converter: "Converter[T]",
+        converter: "Converter",
     ) -> None:
         """Registers a converter task within a class attribute. Called by the
         @fileformats.core.converter decorator.

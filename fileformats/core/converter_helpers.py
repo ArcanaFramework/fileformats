@@ -28,7 +28,7 @@ class SubtypeVar:
         ...
     """
 
-    converters: ty.Dict[ty.Type["fileformats.core.FileSet"], "Converter[ty.Any]"] = {}
+    converters: ty.Dict[ty.Type["fileformats.core.FileSet"], "Converter"] = {}
 
     @classmethod
     def new(cls, name: str, klass: type) -> "SubtypeVar":
@@ -57,10 +57,10 @@ class SubtypeVar:
     @classmethod
     def get_converter_defs(
         cls, source_format: ty.Type["mixin.WithClassifiers"], target_format: type
-    ) -> ty.List["Converter[T]"]:
+    ) -> ty.List["Converter"]:
         # check to see whether there are converters from a base class of the source
         # format
-        available_converters: ty.List[Converter[T]] = []
+        available_converters: ty.List[Converter] = []
         # assert isinstance(source_format, WithClassifiers)
         if source_format.is_classified:
             for template_source_format, converter in cls.converters.items():
@@ -83,7 +83,7 @@ class SubtypeVar:
     def register_converter(
         cls,
         source_format: ty.Type["mixin.WithClassifiers"],
-        converter: "Converter[T]",
+        converter: "Converter",
     ) -> None:
         """Registers a converter task within a class attribute. Called by the
         @fileformats.core.converter decorator.
@@ -138,11 +138,11 @@ class SubtypeVar:
         cls.converters[source_format] = converter  # type: ignore
 
 
-class Converter(ty.Generic[T]):
+class Converter:
     """Specification of a converter task, including the task callable, its arguments and
     the classifiers"""
 
-    task_def: "TaskDef[T]"
+    task_def: "TaskDef[ty.Any]"
     classifiers: ty.Tuple[ty.Type[Classifier], ...]
     in_file: str
     out_file: str
