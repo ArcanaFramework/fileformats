@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
-        <title>fileformats.core.datatype - FileFormats v0.15a1</title>
+        <title>fileformats.core.datatype - FileFormats v0.15a2</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=beddf052" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
@@ -171,7 +171,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">FileFormats v0.15a1</div></a>
+      <a href="../../../index.html"><div class="brand">FileFormats v0.15a2</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -198,7 +198,7 @@
     <img class="sidebar-logo" src="../../../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.15a1</span>
+  <span class="sidebar-brand-text">FileFormats v0.15a2</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -290,6 +290,9 @@
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.classifier</span><span class="w"> </span><span class="kn">import</span> <span class="n">Classifier</span>
 
+<span class="k">if</span> <span class="n">ty</span><span class="o">.</span><span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.converter_helpers</span><span class="w"> </span><span class="kn">import</span> <span class="n">Converter</span>
+
 
 <div class="viewcode-block" id="DataType">
 <a class="viewcode-back" href="../../../api.html#fileformats.core.DataType">[docs]</a>
@@ -308,7 +311,7 @@
     <span class="c1"># Store converters registered by @converter decorator that convert to FileSet</span>
     <span class="c1"># NB: each class will have its own version of this dictionary</span>
     <span class="n">converters</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span>
-        <span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="s2">&quot;DataType&quot;</span><span class="p">],</span> <span class="s2">&quot;fileformats.core.converter_helpers.Converter[ty.Any]&quot;</span>  <span class="c1"># type: ignore[type-arg]</span>
+        <span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="s2">&quot;DataType&quot;</span><span class="p">],</span> <span class="s2">&quot;fileformats.core.converter_helpers.Converter&quot;</span>  <span class="c1"># type: ignore[type-arg]</span>
     <span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="nd">@classmethod</span>
@@ -369,8 +372,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">get_converter</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">source_format</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">DataType</span><span class="p">],</span>
-        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Converter | None&quot;</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">source_format</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
@@ -600,7 +602,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=a57a3b30"></script>
+</div><script src="../../../_static/documentation_options.js?v=dfcc80df"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=5fa4622c"></script>
