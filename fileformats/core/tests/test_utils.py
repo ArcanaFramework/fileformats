@@ -3,6 +3,7 @@ import os.path
 import random
 import shutil
 import time
+import typing as ty
 import pytest
 from fileformats.core import FileSet, validated_property
 from fileformats.generic import File, BinaryFile, Directory, FsObject
@@ -189,6 +190,163 @@ def test_copy_collation_stem(work_dir: Path, dest_dir: Path):
     cpy = fileset.copy(dest_dir=dest_dir, collation="adjacent", new_stem="newfile")
     assert all(p.parent == dest_dir for p in cpy.fspaths)
     assert all(p.stem == "newfile" for p in cpy.fspaths)
+
+
+def test_copy_with_suffix(work_dir: Path, dest_dir: Path):
+    a = work_dir / "a" / "filea.x"
+    b = work_dir / "b" / "fileb.y"
+    c = work_dir / "c" / "d" / "filec.z"
+    fspaths = (a, b, c)
+
+    for x in fspaths:
+        x.parent.mkdir(parents=True)
+        Path.touch(x)
+
+    fileset = FileSet(fspaths)
+
+    stem_suffix = "-2"
+
+    cpy = fileset.copy(dest_dir=dest_dir, stem_suffix=stem_suffix)
+    assert all(p.stem.endswith(stem_suffix) for p in cpy.fspaths)
+    assert set(p.suffix for p in cpy.fspaths) == set([".x", ".y", ".z"])
+
+
+def test_copy_with_prefix(work_dir: Path, dest_dir: Path):
+    a = work_dir / "a" / "filea.x"
+    b = work_dir / "b" / "fileb.y"
+    c = work_dir / "c" / "d" / "filec.z"
+    fspaths = (a, b, c)
+
+    for x in fspaths:
+        x.parent.mkdir(parents=True)
+        Path.touch(x)
+
+    fileset = FileSet(fspaths)
+
+    prefix = "my-"
+
+    cpy = fileset.copy(dest_dir=dest_dir, prefix=prefix)
+    assert all(p.stem.startswith(prefix) for p in cpy.fspaths)
+    assert set(p.suffix for p in cpy.fspaths) == set([".x", ".y", ".z"])
+
+
+def test_copy_retain_dir_structure(work_dir: Path, dest_dir: Path):
+    a = work_dir / "a" / "file"
+    b = work_dir / "b" / "file"
+    c = work_dir / "c" / "file"
+    fspaths = (a, b, c)
+
+    for x in fspaths:
+        x.parent.mkdir(parents=True)
+        Path.touch(x)
+
+    fileset = FileSet(fspaths)
+
+    cpy = fileset.copy(dest_dir=dest_dir)
+    assert all(p.parent.parent == dest_dir for p in cpy.fspaths)
+    assert set(p.parent.name for p in cpy.fspaths) == set(["a", "b", "c"])
+
+
+def test_copy_avoid_clashes1(work_dir: Path, dest_dir: Path):
+    a = work_dir / "file1"
+    b = work_dir / "file2"
+    c = work_dir / "file3"
+    fspaths = (a, b, c)
+
+    for x in fspaths:
+        Path.touch(x)
+
+    fileset = FileSet(fspaths)
+
+    # Create an existing file to avoid
+    Path.touch(dest_dir / "file3")
+
+    cpy = fileset.copy(dest_dir=dest_dir, avoid_clashes=True)
+    assert all(p.parent == dest_dir for p in cpy.fspaths)
+    assert set(p.name for p in cpy.fspaths) == set(
+        ["file1 (1)", "file2 (1)", "file3 (1)"]
+    )
+
+
+def test_copy_avoid_clashes2(work_dir: Path, dest_dir: Path):
+    a = work_dir / "a" / "file.x"
+    b = work_dir / "file.y"
+    c = work_dir / "c" / "file.z"
+    fspaths = (a, b, c)
+
+    for x in fspaths:
+        x.parent.mkdir(parents=True, exist_ok=True)
+        Path.touch(x)
+
+    fileset = FileSet(fspaths)
+    for x in fspaths:
+        Path.touch(x)
+
+    fileset = FileSet(fspaths)
+
+    # Create an existing file to avoid
+    (dest_dir / "a").mkdir()
+    Path.touch(dest_dir / "a" / "file.x")
+
+    cpy = fileset.copy(dest_dir=dest_dir, avoid_clashes=True)
+    assert set(p.parent.parent == dest_dir or p.parent == dest_dir for p in cpy.fspaths)
+    assert set(p for p in cpy.relative_fspaths) == set(
+        [Path("a (1)") / "file.x", Path("file (1).y"), Path("c (1)") / "file.z"]
+    )
+
+
+def test_copy_avoid_clashes3(work_dir: Path, dest_dir: Path):
+    sub_dirs = ("a", "b", "c")
+
+    files: ty.List[File] = []
+    for x in sub_dirs:
+        p = work_dir / x / "file.txt"
+        p.parent.mkdir()
+        p.touch()
+        files.append(File(p))
+
+    avoid_clashes: ty.Set[Path] = set()
+    copied: ty.List[File] = []
+    for file in files:
+        copied.append(file.copy(dest_dir=dest_dir, avoid_clashes=avoid_clashes))
+    assert all(f.parent == dest_dir for f in copied)
+    assert set(f.name for f in copied) == set(
+        ["file.txt", "file (1).txt", "file (2).txt"]
+    )
+
+
+def test_copy_avoid_clashes4(work_dir: Path, dest_dir: Path):
+    filesets: ty.List[FileSet] = []
+    for y in ("x", "y", "z"):
+        a = work_dir / y / "a" / "file.x"
+        b = work_dir / y / "file.y"
+        c = work_dir / y / "c" / "file.z"
+        fspaths = (a, b, c)
+        for x in fspaths:
+            x.parent.mkdir(parents=True, exist_ok=True)
+            x.touch()
+        filesets.append(FileSet(fspaths))
+
+    avoid_clashes: ty.Set[Path] = set()
+    copied: ty.List[FileSet] = []
+    for fileset in filesets:
+        copied.append(fileset.copy(dest_dir=dest_dir, avoid_clashes=avoid_clashes))
+    assert all(f.parent == dest_dir for f in copied)
+    assert sorted(
+        (Path(ppath) / fname).relative_to(dest_dir)
+        for ppath, _, fnames in os.walk(dest_dir)
+        for fname in fnames
+    ) == [
+        Path("a") / "file.x",
+        Path("a (1)") / "file.x",
+        Path("a (2)") / "file.x",
+        Path("c") / "file.z",
+        Path("c (1)") / "file.z",
+        Path("c (2)") / "file.z",
+        Path("file (1).y"),
+        Path("file (2).y"),
+        Path("file.y"),
+    ]
 
 
 def test_copy_collation_leave_diff_dir(work_dir: Path, dest_dir: Path):

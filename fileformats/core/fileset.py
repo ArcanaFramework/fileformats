@@ -1365,9 +1365,13 @@ class FileSet(DataType):
         mode: ty.Union[CopyMode, str] = CopyMode.copy,
         collation: ty.Union[CopyCollation, str] = CopyCollation.any,
         new_stem: ty.Optional[str] = None,
+        prefix: str = "",
+        stem_suffix: str = "",
         trim: bool = True,
         make_dirs: bool = False,
         overwrite: bool = False,
+        avoid_clashes: ty.Union[bool, ty.Set[Path]] = False,
+        clash_template: str = "{stem} ({counter})",
         supported_modes: CopyMode = CopyMode.any,
         extension_decomposition: ExtensionDecomposition = ExtensionDecomposition.single,
     ) -> Self:
@@ -1394,6 +1398,11 @@ class FileSet(DataType):
         new_stem: str, optional
             the file name excluding file extensions, to give the files/dirs in the parent
             directory, by default the original file name is used
+        prefix : str, optional
+            the prefix to append to the stem of the file name, by default ""
+        stem_suffix : str, optional
+            the suffix to append to the stem of the file name (i.e. before the extension),
+            by default ""
         trim : bool, optional
             Only copy the paths in the file-set that are "required" by the format,
             true by default
@@ -1401,7 +1410,21 @@ class FileSet(DataType):
             Make the parent destination and all missing ancestors if they are missing,
             false by default
         overwrite : bool, optional
-            whether to overwrite existing files/directories if present
+            whether to overwrite existing files/directories if present, ignored if
+            avoid_clashes is set to True, by default False
+        avoid_clashes : bool or set[Path], optional
+            whether to avoid name clashes between files in the file-set and existing files.
+            In this case the clash_template is used to generate a new name for the file
+            that doesn't clash with any existing files. If a set of paths is provided, then
+            Can either be a boolean to avoid clashes with any existing files (i.e. the
+            overwrite flag is irrelevant), or a set of paths to avoid clashes with.
+            If a set is provided, then the copied files will be added to that set as they
+            are copied to allow a series of copies to guarantee to have unique paths.
+        clash_template: str
+            The template used to generate a new file name if there is a clash with an
+            existing file. It should be a string template containing "stem", "counter"
+            and "ext", where counter is the number of files found with the same stem/
+            extension, by default "{stem} ({counter}){ext}",
         supported_modes : CopyMode, optional
             supported modes for the copy operation. Used to mask out the requested
             copy mode
@@ -1411,6 +1434,7 @@ class FileSet(DataType):
             FileSet isn't explicitly defined by the FileSet class. Only relevant when
             collation mode is set to "adjacent". By default True
         """
+        self._check_clash_template(clash_template)
         dest_dir = Path(dest_dir)
         # Logic to determine the laziest mode to use
         mode = self.CopyMode[mode] if isinstance(mode, str) else mode
@@ -1449,9 +1473,14 @@ class FileSet(DataType):
             )
             logger.debug(constraint)
             constraints.append(constraint)
-        if new_stem or (
-            collation >= self.CopyCollation.siblings
-            and not all(p.parent == self.parent for p in self.fspaths)
+        if (
+            new_stem
+            or prefix
+            or stem_suffix
+            or (
+                collation >= self.CopyCollation.siblings
+                and not all(p.parent == self.parent for p in self.fspaths)
+            )
         ):
             supported_modes -= self.CopyMode.leave
 
@@ -1491,37 +1520,28 @@ class FileSet(DataType):
             copy_dir = shutil.copytree
             copy_file = shutil.copyfile  # type: ignore
 
-        # Get the paths that need to be copied, checking that it is possible to achieve
-        # the requested collation mode
-        fspaths_to_copy, new_stem = self._fspaths_to_copy(
-            new_stem=new_stem,
-            trim=trim,
-            collation=collation,
-            extension_decomposition=extension_decomposition,
-        )
-
         # Prepare destination directory
         dest_dir = Path(dest_dir)
         if make_dirs:
             dest_dir.mkdir(parents=True, exist_ok=True)
 
+        # Get source/destination pairs for each of the paths in the fileset
+        src_dest = self._src_dest_pairs(
+            dest_dir=dest_dir,
+            new_stem=new_stem,
+            trim=trim,
+            prefix=prefix,
+            stem_suffix=stem_suffix,
+            collation=collation,
+            overwrite=overwrite,
+            clash_template=clash_template,
+            avoid_clashes=avoid_clashes,
+            extension_decomposition=extension_decomposition,
+        )
         # Iterate through the paths to copy, copying them to the destination directory
-        new_paths = []
-        for fspath in fspaths_to_copy:
-            new_path, fspath = self._new_copy_path(
-                dest_dir=dest_dir, fspath=fspath, new_stem=new_stem, collation=collation
-            )
-            if new_path.exists():
-                if overwrite:
-                    if fspath.is_dir():
-                        shutil.rmtree(new_path)
-                    else:
-                        os.unlink(new_path)
-                else:
-                    raise FileExistsError(
-                        f"Destination path '{str(new_path)}' exists, set "
-                        "'overwrite' to overwrite it"
-                    )
+        new_paths: ty.List[Path] = []
+        for fspath, new_path in src_dest:
+            new_path.parent.mkdir(parents=True, exist_ok=True)
             if fspath.is_dir():
                 copy_dir(fspath, new_path)
             else:
@@ -1534,9 +1554,13 @@ class FileSet(DataType):
         dest_dir: PathType,
         collation: ty.Union[CopyCollation, str] = CopyCollation.any,
         new_stem: ty.Optional[str] = None,
+        prefix: str = "",
+        stem_suffix: str = "",
         trim: bool = True,
         make_dirs: bool = False,
         overwrite: bool = False,
+        avoid_clashes: ty.Union[bool, ty.Set[Path]] = False,
+        clash_template: str = "{stem} ({counter})",
         extension_decomposition: ExtensionDecomposition = ExtensionDecomposition.single,
     ) -> Self:
         """Moves the file-set to a new directory, optionally renaming the files
@@ -1553,6 +1577,10 @@ class FileSet(DataType):
         new_stem: str, optional
             the file name excluding file extensions, to give the files/dirs in the parent
             directory, by default the original file name is used
+        prefix : str, optional
+            the prefix to append to the stem of the file name
+        stem_suffix : str, optional
+            the stem_suffix to append to the file name (i.e. before the extension), by default
         trim : bool, optional
             Only copy the paths in the file-set that are "required" by the format,
             true by default
@@ -1560,13 +1588,28 @@ class FileSet(DataType):
             Make the parent destination and all missing ancestors if they are missing,
             false by default
         overwrite : bool, optional
-            whether to overwrite existing files/directories if present
+            whether to overwrite existing files/directories if present, ignored if
+            avoid_clashes is set to True, by default False
+        avoid_clashes : bool or set[Path], optional
+            whether to avoid name clashes between files in the file-set and existing files.
+            In this case the clash_template is used to generate a new name for the file
+            that doesn't clash with any existing files. If a set of paths is provided, then
+            Can either be a boolean to avoid clashes with any existing files (i.e. the
+            overwrite flag is irrelevant), or a set of paths to avoid clashes with.
+            If a set is provided, then the copied files will be added to that set as they
+            are copied to allow a series of copies to guarantee to have unique paths.
+        clash_template: str
+            The template used to generate a new file name if there is a clash with an
+            existing file. It should be a string template containing "stem", "counter"
+            and "ext", where counter is the number of files found with the same stem/
+            extension, by default "{stem} ({counter})",
         extension_decomposition : FileSet.ExtensionDecomposition, optional
             whether to consider file extensions to start from the first '.' (multiple) or the
             last (single) or be empty (none), when the extension of a fspath in the
             FileSet isn't explicitly defined by the FileSet class. Only relevant when
             collation mode is set to "adjacent". By default True
         """
+        self._check_clash_template(clash_template)
         dest_dir = Path(dest_dir)
         if len(self.fspaths) == 1:
             # If there is only one path to copy, then collation isn't meaningful
@@ -1577,75 +1620,83 @@ class FileSet(DataType):
                 if isinstance(collation, str)
                 else collation
             )
-        fspaths_to_move, new_stem = self._fspaths_to_copy(
-            new_stem=new_stem,
-            trim=trim,
-            collation=collation,
-            extension_decomposition=extension_decomposition,
-        )
+        # Create destination directory
         dest_dir = Path(dest_dir)  # ensure a Path not a string
         if make_dirs:
             dest_dir.mkdir(parents=True, exist_ok=True)
 
-        new_paths = []
-        for fspath in fspaths_to_move:
-            new_path, fspath = self._new_copy_path(
-                dest_dir=dest_dir, fspath=fspath, new_stem=new_stem, collation=collation
-            )
-            if new_path.exists():
-                if overwrite:
-                    if fspath.is_dir():
-                        shutil.rmtree(new_path)
-                    else:
-                        os.unlink(new_path)
-                else:
-                    raise FileExistsError(
-                        f"Destination path '{str(new_path)}' exists, set "
-                        "'overwrite' to overwrite it"
-                    )
+        # Get source/destination pairs for each of the paths in the fileset
+        to_move_pairs = self._src_dest_pairs(
+            dest_dir=dest_dir,
+            new_stem=new_stem,
+            trim=trim,
+            prefix=prefix,
+            stem_suffix=stem_suffix,
+            overwrite=overwrite,
+            collation=collation,
+            clash_template=clash_template,
+            avoid_clashes=avoid_clashes,
+            extension_decomposition=extension_decomposition,
+        )
+        new_paths: ty.List[Path] = []
+        for fspath, new_path in to_move_pairs:
+            new_path.parent.mkdir(parents=True, exist_ok=True)
             shutil.move(str(fspath), new_path)
             new_paths.append(new_path)
         self.fspaths = frozenset(new_paths)
         return self
 
-    def _fspaths_to_copy(
+    def _src_dest_pairs(
         self,
+        dest_dir: Path,
         new_stem: ty.Optional[str],
         trim: bool,
+        prefix: str,
+        stem_suffix: str,
         collation: CopyCollation,
+        clash_template: str,
+        overwrite: bool,
+        avoid_clashes: ty.Union[bool, ty.Set[Path]],
         extension_decomposition: ExtensionDecomposition,
-    ) -> ty.Tuple[
-        ty.Iterable[ty.Union[Path, ty.Tuple[Path, str, str]]], ty.Optional[str]
-    ]:
-        """Returns the file-paths to be copied/moved based on the collation mode and
-        new_stem
+    ) -> ty.List[ty.Tuple[Path, Path]]:
+        """Returns the source-destination pairs for the file-paths to be copied/moved
 
         Parameters
         ----------
+        fspaths : list[Path]
+            the file-paths to be copied/moved
+        dest_dir : Path
+            the destination directory
         new_stem : str
             the file name excluding file extensions, to give the files/dirs in the parent
             directory, by default the original file name is used
-        trim : bool
-            Only copy the paths in the file-set that are "required" by the format, true
-            by default"
-        collation : FileSet.CopyCollation or str
+        prefix : str
+            the prefix to append to the stem of the file name
+        stem_suffix : str
+            the stem_suffix to append to the file name (i.e. before the extension)
+        collation : FileSet.CopyCollation
             how to treat relative paths within the fileset, i.e. whether to move them to a
             single directory, rename them to the same file-stem or maintain relative
             directory structure. See FileSet.CopyCollation for details
-        extension_decomposition : FileSet.ExtensionDecomposition
-            whether to consider file extensions to start from the first '.' (multiple) or
-            the last (single) or be empty (none), when the extension of a fspath in the
-            FileSet isn't explicitly defined by the FileSet class. Only relevant when
-            collation mode is set to "adjacent". By default True
+        clash_template: str
+            The template used to generate a new file name if there is a clash with an
+            existing file. It should be a string template containing "stem", "counter"
+            and "ext", where counter is the number of files found with the same stem/
+            extension
 
         Returns
         -------
-        fspaths_to_copy : Iterable[Path | tuple[Path, str, str]]:
-            the file-paths to be copied/moved
-        new_stem : str
-            the new stem to use for the file-paths, which is the determined if not
-            provided explicitly and collation mode is "adjacent"
+        pairs : list[tuple[Path, Path]]
+            the source-destination pairs for the file-paths to be copied/moved
         """
+        decomposed_fspaths = self.decomposed_fspaths(
+            required_only=trim, decomposition_mode=extension_decomposition
+        )
+        if not decomposed_fspaths:
+            raise UnsatisfiableCopyModeError(
+                f"Cannot copy {self} because none of the fspaths in the file-set are "
+                "required. Set trim=False to copy all file-paths"
+            )
         if collation >= self.CopyCollation.siblings:
             duplicate_names = [
                 n for n, c in Counter(p.name for p in self.fspaths).items() if c > 1
@@ -1657,9 +1708,6 @@ class FileSet(DataType):
                     f"in file paths: " + "\n".join(str(p) for p in self.fspaths)
                 )
         if collation == self.CopyCollation.adjacent or new_stem:
-            decomposed_fspaths = self.decomposed_fspaths(
-                required_only=trim, decomposition_mode=extension_decomposition
-            )
             exts = [d[-1] for d in decomposed_fspaths]
             duplicate_exts = [n for n, c in Counter(exts).items() if c > 1]
             if duplicate_exts:
@@ -1668,33 +1716,70 @@ class FileSet(DataType):
                     f'"{collation}", as there are duplicate extensions, {duplicate_exts}, '
                     f"in file paths: " + "\n".join(str(p) for p in self.fspaths)
                 )
-        fspaths_to_copy: ty.Iterable[ty.Union[Path, ty.Tuple[Path, str, str]]]
-        if trim and self.required_paths():
-            fspaths_to_copy = self.required_paths()
-        else:
-            fspaths_to_copy = self.fspaths
-        if not fspaths_to_copy:
-            raise UnsatisfiableCopyModeError(
-                f"Cannot copy {self} because none of the fspaths in the file-set are "
-                "required. Set trim=False to copy all file-paths"
-            )
-        # Set default for new_stem if not provided and collating file-set to be adjacent
-        if collation == self.CopyCollation.adjacent:
+            # Set default for new_stem if not provided and collating file-set to be adjacent
             if new_stem is None:
                 new_stem = sorted(decomposed_fspaths)[0][1]
-        # WARNING we redefine fspaths_to_copy as list of tuples not Paths
-
-        if new_stem:
-            fspaths_to_copy = decomposed_fspaths
-        return fspaths_to_copy, new_stem
+        if len(self.fspaths) == 1:
+            # Now that we have passed all the checks, we can set the collation to siblings
+            # to signify that we don't need to worry about relative paths
+            collation = self.CopyCollation.siblings
+        # Iterate through the paths to copy/move and determine their destination paths
+        counter = 0
+        previous_clashes = set()
+        pairs: ty.List[ty.Tuple[Path, Path]] = []
+        # We loop until we have a set of paths that don't clash with existing files
+        # in the destination directory, if avoid_clashes is set to True or a set
+        while not pairs:
+            iterate_counter = False
+            for parent_dir, stem, ext in decomposed_fspaths:
+                fspath = parent_dir / (stem + ext)
+                new_path = self._new_copy_path(
+                    parent_dir=parent_dir,
+                    stem=stem,
+                    ext=ext,
+                    dest_dir=dest_dir,
+                    new_stem=new_stem,
+                    prefix=prefix,
+                    stem_suffix=stem_suffix,
+                    collation=collation,
+                    counter=counter,
+                    clash_template=clash_template,
+                    extension_decomposition=extension_decomposition,
+                )
+                if counter and new_path in previous_clashes:
+                    raise RuntimeError(
+                        f"Cannot avoid clash for {str(fspath)!r} with template "
+                        f"{clash_template!r}, as it is not possible to generate a "
+                        f"unique path, tried {str(new_path)!r}"
+                    )
+                if self._destination_to_avoid(new_path, overwrite, avoid_clashes):
+                    iterate_counter = True
+                    previous_clashes.add(new_path)
+                    break
+                pairs.append((fspath, new_path))
+            if iterate_counter:
+                # Path clash to avoid detected, iterate counter and try again
+                pairs = []
+                counter += 1
+        # Update the paths to avoid with the new paths
+        if isinstance(avoid_clashes, set):
+            avoid_clashes.update(n for o, n in pairs)
+        return pairs
 
     def _new_copy_path(
         self,
+        parent_dir: Path,
+        stem: str,
+        ext: str,
         dest_dir: Path,
-        fspath: ty.Union[Path, ty.Tuple[Path, str, str]],
         new_stem: ty.Optional[str],
+        prefix: str,
+        stem_suffix: str,
         collation: CopyCollation,
-    ) -> ty.Tuple[Path, Path]:
+        counter: int,
+        clash_template: str,
+        extension_decomposition: ExtensionDecomposition,
+    ) -> Path:
         """Returns the new path for a file to be copied/moved based on the collation mode
         and new_stem
 
@@ -1707,10 +1792,27 @@ class FileSet(DataType):
         new_stem : str
             the file name excluding file extensions, to give the files/dirs in the parent
             directory, by default the original file name is used
+        prefix : str, optional
+            the prefix to append to the stem of the file name
+        stem_suffix : str, optional
+            the stem_suffix to append to the file name (i.e. before the extension), by default
+            None
         collation : FileSet.CopyCollation
             how to treat relative paths within the fileset, i.e. whether to move them to a
             single directory, rename them to the same file-stem or maintain relative
             directory structure. See FileSet.CopyCollation for details
+        counter : int
+            the counter to use in the clash_template to avoid name clashes
+        clash_template: str
+            The template used to generate a new file name if there is a clash with an
+            existing file. It should be a string template containing "stem", "counter"
+            and "ext", where counter is the number of files found with the same stem/
+            extension, by default "{stem} ({counter})",
+        extension_decomposition : FileSet.ExtensionDecomposition
+            whether to consider file extensions to start from the first '.' (multiple) or
+            the last (single) or be empty (none), when the extension of a fspath in the
+            FileSet isn't explicitly defined by the FileSet class. Only relevant when
+            collation mode is set to "adjacent". By default True
 
         Returns
         -------
@@ -1719,19 +1821,62 @@ class FileSet(DataType):
         fspath : Path
             the original file-path, reconstructed from its decomposition if necessary
         """
-        if not isinstance(fspath, Path):
-            assert new_stem
-            # fspath is a path decomposed into parent, stem, ext instead of a Path
-            parent_dir, old_stem, ext = fspath
-            fspath = parent_dir / (old_stem + ext)  # reconstruct into a Path
-            new_path = dest_dir / (new_stem + ext)
-        elif collation == self.CopyCollation.siblings:
-            new_path = dest_dir / fspath.name
-        else:
-            assert collation == self.CopyCollation.any
-            new_path = dest_dir / fspath.relative_to(self.parent)
-            new_path.parent.mkdir(parents=True, exist_ok=True)
-        return new_path, fspath
+        if collation == self.CopyCollation.any:
+            relpath = parent_dir.relative_to(self.parent)
+            if parts := relpath.parts:
+                # If the fileset contains relative sub-directory structure that may need
+                # to be retained
+                if counter:
+                    # Apply the clash template to the first top-level sub-directory
+                    # to be copied into the destination directory
+                    new_dir = clash_template.format(stem=parts[0], counter=counter)
+                    relpath = Path(new_dir).joinpath(*parts[1:])
+                    counter = 0  # counter has already been applied
+                dest_dir = dest_dir / relpath
+        if new_stem:
+            stem = new_stem
+        # apply the prefix and suffix to the stem
+        stem = prefix + stem + stem_suffix
+        # Append the filename-stem with a counter to avoid name clashes if provided
+        if counter:
+            stem = clash_template.format(stem=stem, counter=counter)
+        return dest_dir / (stem + ext)
+
+    def _check_clash_template(self, clash_template: str) -> None:
+        parts = ["stem", "counter"]
+        if missing := [p for p in parts if "{" + p + "}" not in clash_template]:
+            raise ValueError(
+                f"Invalid clash template {clash_template!r}, it must contain template "
+                f"args for {parts}, missing {missing}"
+            )
+
+    def _destination_to_avoid(
+        self,
+        new_path: Path,
+        overwrite: bool,
+        avoid_clashes: ty.Union[bool, ty.Set[Path]],
+    ) -> bool:
+        """Check if the destination path already exists and whether to avoid it"""
+        if overwrite and avoid_clashes is True:
+            raise ValueError(
+                "Cannot set both 'overwrite' and 'avoid_clashes' to True, as they are "
+                "mutually exclusive"
+            )
+        if new_path.exists():
+            if overwrite:
+                if new_path.is_dir():
+                    shutil.rmtree(new_path)
+                else:
+                    os.unlink(new_path)
+                assert not new_path.exists()
+            elif avoid_clashes is True or (avoid_clashes and new_path in avoid_clashes):
+                return True
+            else:
+                raise FileExistsError(
+                    f"Destination path '{str(new_path)}' exists, set "
+                    "'overwrite' to overwrite it"
+                )
+        return isinstance(avoid_clashes, set) and new_path in avoid_clashes
 
     # Class attributes, used to cache the results of the class methods
     _all_formats: ty.Optional[ty.Set[ty.Type["FileSet"]]] = None
