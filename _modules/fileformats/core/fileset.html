@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
-        <title>fileformats.core.fileset - FileFormats v0.15.0a3</title>
+        <title>fileformats.core.fileset - FileFormats v0.15.0a4</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=beddf052" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
@@ -171,7 +171,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">FileFormats v0.15.0a3</div></a>
+      <a href="../../../index.html"><div class="brand">FileFormats v0.15.0a4</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -198,7 +198,7 @@
     <img class="sidebar-logo" src="../../../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.15.0a3</span>
+  <span class="sidebar-brand-text">FileFormats v0.15.0a4</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -1669,9 +1669,13 @@
         <span class="n">mode</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">CopyMode</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">CopyMode</span><span class="o">.</span><span class="n">copy</span><span class="p">,</span>
         <span class="n">collation</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">CopyCollation</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">CopyCollation</span><span class="o">.</span><span class="n">any</span><span class="p">,</span>
         <span class="n">new_stem</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">stem_suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
         <span class="n">trim</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">make_dirs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">avoid_clashes</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Set</span><span class="p">[</span><span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">clash_template</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{stem}</span><span class="s2"> (</span><span class="si">{counter}</span><span class="s2">)&quot;</span><span class="p">,</span>
         <span class="n">supported_modes</span><span class="p">:</span> <span class="n">CopyMode</span> <span class="o">=</span> <span class="n">CopyMode</span><span class="o">.</span><span class="n">any</span><span class="p">,</span>
         <span class="n">extension_decomposition</span><span class="p">:</span> <span class="n">ExtensionDecomposition</span> <span class="o">=</span> <span class="n">ExtensionDecomposition</span><span class="o">.</span><span class="n">single</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
@@ -1698,6 +1702,11 @@
 <span class="sd">        new_stem: str, optional</span>
 <span class="sd">            the file name excluding file extensions, to give the files/dirs in the parent</span>
 <span class="sd">            directory, by default the original file name is used</span>
+<span class="sd">        prefix : str, optional</span>
+<span class="sd">            the prefix to append to the stem of the file name, by default &quot;&quot;</span>
+<span class="sd">        stem_suffix : str, optional</span>
+<span class="sd">            the suffix to append to the stem of the file name (i.e. before the extension),</span>
+<span class="sd">            by default &quot;&quot;</span>
 <span class="sd">        trim : bool, optional</span>
 <span class="sd">            Only copy the paths in the file-set that are &quot;required&quot; by the format,</span>
 <span class="sd">            true by default</span>
@@ -1705,7 +1714,21 @@
 <span class="sd">            Make the parent destination and all missing ancestors if they are missing,</span>
 <span class="sd">            false by default</span>
 <span class="sd">        overwrite : bool, optional</span>
-<span class="sd">            whether to overwrite existing files/directories if present</span>
+<span class="sd">            whether to overwrite existing files/directories if present, ignored if</span>
+<span class="sd">            avoid_clashes is set to True, by default False</span>
+<span class="sd">        avoid_clashes : bool or set[Path], optional</span>
+<span class="sd">            whether to avoid name clashes between files in the file-set and existing files.</span>
+<span class="sd">            In this case the clash_template is used to generate a new name for the file</span>
+<span class="sd">            that doesn&#39;t clash with any existing files. If a set of paths is provided, then</span>
+<span class="sd">            Can either be a boolean to avoid clashes with any existing files (i.e. the</span>
+<span class="sd">            overwrite flag is irrelevant), or a set of paths to avoid clashes with.</span>
+<span class="sd">            If a set is provided, then the copied files will be added to that set as they</span>
+<span class="sd">            are copied to allow a series of copies to guarantee to have unique paths.</span>
+<span class="sd">        clash_template: str</span>
+<span class="sd">            The template used to generate a new file name if there is a clash with an</span>
+<span class="sd">            existing file. It should be a string template containing &quot;stem&quot;, &quot;counter&quot;</span>
+<span class="sd">            and &quot;ext&quot;, where counter is the number of files found with the same stem/</span>
+<span class="sd">            extension, by default &quot;{stem} ({counter}){ext}&quot;,</span>
 <span class="sd">        supported_modes : CopyMode, optional</span>
 <span class="sd">            supported modes for the copy operation. Used to mask out the requested</span>
 <span class="sd">            copy mode</span>
@@ -1715,6 +1738,7 @@
 <span class="sd">            FileSet isn&#39;t explicitly defined by the FileSet class. Only relevant when</span>
 <span class="sd">            collation mode is set to &quot;adjacent&quot;. By default True</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_clash_template</span><span class="p">(</span><span class="n">clash_template</span><span class="p">)</span>
         <span class="n">dest_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">dest_dir</span><span class="p">)</span>
         <span class="c1"># Logic to determine the laziest mode to use</span>
         <span class="n">mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">CopyMode</span><span class="p">[</span><span class="n">mode</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">mode</span>
@@ -1753,9 +1777,14 @@
             <span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span>
             <span class="n">constraints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">new_stem</span> <span class="ow">or</span> <span class="p">(</span>
-            <span class="n">collation</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">CopyCollation</span><span class="o">.</span><span class="n">siblings</span>
-            <span class="ow">and</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">parent</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fspaths</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">new_stem</span>
+            <span class="ow">or</span> <span class="n">prefix</span>
+            <span class="ow">or</span> <span class="n">stem_suffix</span>
+            <span class="ow">or</span> <span class="p">(</span>
+                <span class="n">collation</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">CopyCollation</span><span class="o">.</span><span class="n">siblings</span>
+                <span class="ow">and</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">parent</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fspaths</span><span class="p">)</span>
+            <span class="p">)</span>
         <span class="p">):</span>
             <span class="n">supported_modes</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">CopyMode</span><span class="o">.</span><span class="n">leave</span>
 
@@ -1795,37 +1824,28 @@
             <span class="n">copy_dir</span> <span class="o">=</span> <span class="n">shutil</span><span class="o">.</span><span class="n">copytree</span>
             <span class="n">copy_file</span> <span class="o">=</span> <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span>  <span class="c1"># type: ignore</span>
 
-        <span class="c1"># Get the paths that need to be copied, checking that it is possible to achieve</span>
-        <span class="c1"># the requested collation mode</span>
-        <span class="n">fspaths_to_copy</span><span class="p">,</span> <span class="n">new_stem</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fspaths_to_copy</span><span class="p">(</span>
-            <span class="n">new_stem</span><span class="o">=</span><span class="n">new_stem</span><span class="p">,</span>
-            <span class="n">trim</span><span class="o">=</span><span class="n">trim</span><span class="p">,</span>
-            <span class="n">collation</span><span class="o">=</span><span class="n">collation</span><span class="p">,</span>
-            <span class="n">extension_decomposition</span><span class="o">=</span><span class="n">extension_decomposition</span><span class="p">,</span>
-        <span class="p">)</span>
-
         <span class="c1"># Prepare destination directory</span>
         <span class="n">dest_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">dest_dir</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">make_dirs</span><span class="p">:</span>
             <span class="n">dest_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
+        <span class="c1"># Get source/destination pairs for each of the paths in the fileset</span>
+        <span class="n">src_dest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_src_dest_pairs</span><span class="p">(</span>
+            <span class="n">dest_dir</span><span class="o">=</span><span class="n">dest_dir</span><span class="p">,</span>
+            <span class="n">new_stem</span><span class="o">=</span><span class="n">new_stem</span><span class="p">,</span>
+            <span class="n">trim</span><span class="o">=</span><span class="n">trim</span><span class="p">,</span>
+            <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
+            <span class="n">stem_suffix</span><span class="o">=</span><span class="n">stem_suffix</span><span class="p">,</span>
+            <span class="n">collation</span><span class="o">=</span><span class="n">collation</span><span class="p">,</span>
+            <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">,</span>
+            <span class="n">clash_template</span><span class="o">=</span><span class="n">clash_template</span><span class="p">,</span>
+            <span class="n">avoid_clashes</span><span class="o">=</span><span class="n">avoid_clashes</span><span class="p">,</span>
+            <span class="n">extension_decomposition</span><span class="o">=</span><span class="n">extension_decomposition</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="c1"># Iterate through the paths to copy, copying them to the destination directory</span>
-        <span class="n">new_paths</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">fspath</span> <span class="ow">in</span> <span class="n">fspaths_to_copy</span><span class="p">:</span>
-            <span class="n">new_path</span><span class="p">,</span> <span class="n">fspath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_copy_path</span><span class="p">(</span>
-                <span class="n">dest_dir</span><span class="o">=</span><span class="n">dest_dir</span><span class="p">,</span> <span class="n">fspath</span><span class="o">=</span><span class="n">fspath</span><span class="p">,</span> <span class="n">new_stem</span><span class="o">=</span><span class="n">new_stem</span><span class="p">,</span> <span class="n">collation</span><span class="o">=</span><span class="n">collation</span>
-            <span class="p">)</span>
-            <span class="k">if</span> <span class="n">new_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">overwrite</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">fspath</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
-                        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">FileExistsError</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Destination path &#39;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39; exists, set &quot;</span>
-                        <span class="s2">&quot;&#39;overwrite&#39; to overwrite it&quot;</span>
-                    <span class="p">)</span>
+        <span class="n">new_paths</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">fspath</span><span class="p">,</span> <span class="n">new_path</span> <span class="ow">in</span> <span class="n">src_dest</span><span class="p">:</span>
+            <span class="n">new_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">fspath</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
                 <span class="n">copy_dir</span><span class="p">(</span><span class="n">fspath</span><span class="p">,</span> <span class="n">new_path</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -1841,9 +1861,13 @@
         <span class="n">dest_dir</span><span class="p">:</span> <span class="n">PathType</span><span class="p">,</span>
         <span class="n">collation</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">CopyCollation</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">CopyCollation</span><span class="o">.</span><span class="n">any</span><span class="p">,</span>
         <span class="n">new_stem</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">stem_suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
         <span class="n">trim</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">make_dirs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">avoid_clashes</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Set</span><span class="p">[</span><span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">clash_template</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{stem}</span><span class="s2"> (</span><span class="si">{counter}</span><span class="s2">)&quot;</span><span class="p">,</span>
         <span class="n">extension_decomposition</span><span class="p">:</span> <span class="n">ExtensionDecomposition</span> <span class="o">=</span> <span class="n">ExtensionDecomposition</span><span class="o">.</span><span class="n">single</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Moves the file-set to a new directory, optionally renaming the files</span>
@@ -1860,6 +1884,10 @@
 <span class="sd">        new_stem: str, optional</span>
 <span class="sd">            the file name excluding file extensions, to give the files/dirs in the parent</span>
 <span class="sd">            directory, by default the original file name is used</span>
+<span class="sd">        prefix : str, optional</span>
+<span class="sd">            the prefix to append to the stem of the file name</span>
+<span class="sd">        stem_suffix : str, optional</span>
+<span class="sd">            the stem_suffix to append to the file name (i.e. before the extension), by default</span>
 <span class="sd">        trim : bool, optional</span>
 <span class="sd">            Only copy the paths in the file-set that are &quot;required&quot; by the format,</span>
 <span class="sd">            true by default</span>
@@ -1867,13 +1895,28 @@
 <span class="sd">            Make the parent destination and all missing ancestors if they are missing,</span>
 <span class="sd">            false by default</span>
 <span class="sd">        overwrite : bool, optional</span>
-<span class="sd">            whether to overwrite existing files/directories if present</span>
+<span class="sd">            whether to overwrite existing files/directories if present, ignored if</span>
+<span class="sd">            avoid_clashes is set to True, by default False</span>
+<span class="sd">        avoid_clashes : bool or set[Path], optional</span>
+<span class="sd">            whether to avoid name clashes between files in the file-set and existing files.</span>
+<span class="sd">            In this case the clash_template is used to generate a new name for the file</span>
+<span class="sd">            that doesn&#39;t clash with any existing files. If a set of paths is provided, then</span>
+<span class="sd">            Can either be a boolean to avoid clashes with any existing files (i.e. the</span>
+<span class="sd">            overwrite flag is irrelevant), or a set of paths to avoid clashes with.</span>
+<span class="sd">            If a set is provided, then the copied files will be added to that set as they</span>
+<span class="sd">            are copied to allow a series of copies to guarantee to have unique paths.</span>
+<span class="sd">        clash_template: str</span>
+<span class="sd">            The template used to generate a new file name if there is a clash with an</span>
+<span class="sd">            existing file. It should be a string template containing &quot;stem&quot;, &quot;counter&quot;</span>
+<span class="sd">            and &quot;ext&quot;, where counter is the number of files found with the same stem/</span>
+<span class="sd">            extension, by default &quot;{stem} ({counter})&quot;,</span>
 <span class="sd">        extension_decomposition : FileSet.ExtensionDecomposition, optional</span>
 <span class="sd">            whether to consider file extensions to start from the first &#39;.&#39; (multiple) or the</span>
 <span class="sd">            last (single) or be empty (none), when the extension of a fspath in the</span>
 <span class="sd">            FileSet isn&#39;t explicitly defined by the FileSet class. Only relevant when</span>
 <span class="sd">            collation mode is set to &quot;adjacent&quot;. By default True</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_clash_template</span><span class="p">(</span><span class="n">clash_template</span><span class="p">)</span>
         <span class="n">dest_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">dest_dir</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fspaths</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="c1"># If there is only one path to copy, then collation isn&#39;t meaningful</span>
@@ -1884,76 +1927,84 @@
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">collation</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
                 <span class="k">else</span> <span class="n">collation</span>
             <span class="p">)</span>
-        <span class="n">fspaths_to_move</span><span class="p">,</span> <span class="n">new_stem</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fspaths_to_copy</span><span class="p">(</span>
-            <span class="n">new_stem</span><span class="o">=</span><span class="n">new_stem</span><span class="p">,</span>
-            <span class="n">trim</span><span class="o">=</span><span class="n">trim</span><span class="p">,</span>
-            <span class="n">collation</span><span class="o">=</span><span class="n">collation</span><span class="p">,</span>
-            <span class="n">extension_decomposition</span><span class="o">=</span><span class="n">extension_decomposition</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="c1"># Create destination directory</span>
         <span class="n">dest_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">dest_dir</span><span class="p">)</span>  <span class="c1"># ensure a Path not a string</span>
         <span class="k">if</span> <span class="n">make_dirs</span><span class="p">:</span>
             <span class="n">dest_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-        <span class="n">new_paths</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">fspath</span> <span class="ow">in</span> <span class="n">fspaths_to_move</span><span class="p">:</span>
-            <span class="n">new_path</span><span class="p">,</span> <span class="n">fspath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_copy_path</span><span class="p">(</span>
-                <span class="n">dest_dir</span><span class="o">=</span><span class="n">dest_dir</span><span class="p">,</span> <span class="n">fspath</span><span class="o">=</span><span class="n">fspath</span><span class="p">,</span> <span class="n">new_stem</span><span class="o">=</span><span class="n">new_stem</span><span class="p">,</span> <span class="n">collation</span><span class="o">=</span><span class="n">collation</span>
-            <span class="p">)</span>
-            <span class="k">if</span> <span class="n">new_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">overwrite</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">fspath</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
-                        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">FileExistsError</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Destination path &#39;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39; exists, set &quot;</span>
-                        <span class="s2">&quot;&#39;overwrite&#39; to overwrite it&quot;</span>
-                    <span class="p">)</span>
+        <span class="c1"># Get source/destination pairs for each of the paths in the fileset</span>
+        <span class="n">to_move_pairs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_src_dest_pairs</span><span class="p">(</span>
+            <span class="n">dest_dir</span><span class="o">=</span><span class="n">dest_dir</span><span class="p">,</span>
+            <span class="n">new_stem</span><span class="o">=</span><span class="n">new_stem</span><span class="p">,</span>
+            <span class="n">trim</span><span class="o">=</span><span class="n">trim</span><span class="p">,</span>
+            <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
+            <span class="n">stem_suffix</span><span class="o">=</span><span class="n">stem_suffix</span><span class="p">,</span>
+            <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">,</span>
+            <span class="n">collation</span><span class="o">=</span><span class="n">collation</span><span class="p">,</span>
+            <span class="n">clash_template</span><span class="o">=</span><span class="n">clash_template</span><span class="p">,</span>
+            <span class="n">avoid_clashes</span><span class="o">=</span><span class="n">avoid_clashes</span><span class="p">,</span>
+            <span class="n">extension_decomposition</span><span class="o">=</span><span class="n">extension_decomposition</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">new_paths</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">fspath</span><span class="p">,</span> <span class="n">new_path</span> <span class="ow">in</span> <span class="n">to_move_pairs</span><span class="p">:</span>
+            <span class="n">new_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="n">shutil</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">fspath</span><span class="p">),</span> <span class="n">new_path</span><span class="p">)</span>
             <span class="n">new_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fspaths</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">new_paths</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_fspaths_to_copy</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_src_dest_pairs</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
+        <span class="n">dest_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
         <span class="n">new_stem</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="n">trim</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">stem_suffix</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">collation</span><span class="p">:</span> <span class="n">CopyCollation</span><span class="p">,</span>
+        <span class="n">clash_template</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">avoid_clashes</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Set</span><span class="p">[</span><span class="n">Path</span><span class="p">]],</span>
         <span class="n">extension_decomposition</span><span class="p">:</span> <span class="n">ExtensionDecomposition</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span>
-        <span class="n">ty</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]],</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-    <span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the file-paths to be copied/moved based on the collation mode and</span>
-<span class="sd">        new_stem</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the source-destination pairs for the file-paths to be copied/moved</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
+<span class="sd">        fspaths : list[Path]</span>
+<span class="sd">            the file-paths to be copied/moved</span>
+<span class="sd">        dest_dir : Path</span>
+<span class="sd">            the destination directory</span>
 <span class="sd">        new_stem : str</span>
 <span class="sd">            the file name excluding file extensions, to give the files/dirs in the parent</span>
 <span class="sd">            directory, by default the original file name is used</span>
-<span class="sd">        trim : bool</span>
-<span class="sd">            Only copy the paths in the file-set that are &quot;required&quot; by the format, true</span>
-<span class="sd">            by default&quot;</span>
-<span class="sd">        collation : FileSet.CopyCollation or str</span>
+<span class="sd">        prefix : str</span>
+<span class="sd">            the prefix to append to the stem of the file name</span>
+<span class="sd">        stem_suffix : str</span>
+<span class="sd">            the stem_suffix to append to the file name (i.e. before the extension)</span>
+<span class="sd">        collation : FileSet.CopyCollation</span>
 <span class="sd">            how to treat relative paths within the fileset, i.e. whether to move them to a</span>
 <span class="sd">            single directory, rename them to the same file-stem or maintain relative</span>
 <span class="sd">            directory structure. See FileSet.CopyCollation for details</span>
-<span class="sd">        extension_decomposition : FileSet.ExtensionDecomposition</span>
-<span class="sd">            whether to consider file extensions to start from the first &#39;.&#39; (multiple) or</span>
-<span class="sd">            the last (single) or be empty (none), when the extension of a fspath in the</span>
-<span class="sd">            FileSet isn&#39;t explicitly defined by the FileSet class. Only relevant when</span>
-<span class="sd">            collation mode is set to &quot;adjacent&quot;. By default True</span>
+<span class="sd">        clash_template: str</span>
+<span class="sd">            The template used to generate a new file name if there is a clash with an</span>
+<span class="sd">            existing file. It should be a string template containing &quot;stem&quot;, &quot;counter&quot;</span>
+<span class="sd">            and &quot;ext&quot;, where counter is the number of files found with the same stem/</span>
+<span class="sd">            extension</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        fspaths_to_copy : Iterable[Path | tuple[Path, str, str]]:</span>
-<span class="sd">            the file-paths to be copied/moved</span>
-<span class="sd">        new_stem : str</span>
-<span class="sd">            the new stem to use for the file-paths, which is the determined if not</span>
-<span class="sd">            provided explicitly and collation mode is &quot;adjacent&quot;</span>
+<span class="sd">        pairs : list[tuple[Path, Path]]</span>
+<span class="sd">            the source-destination pairs for the file-paths to be copied/moved</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">decomposed_fspaths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decomposed_fspaths</span><span class="p">(</span>
+            <span class="n">required_only</span><span class="o">=</span><span class="n">trim</span><span class="p">,</span> <span class="n">decomposition_mode</span><span class="o">=</span><span class="n">extension_decomposition</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">decomposed_fspaths</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">UnsatisfiableCopyModeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Cannot copy </span><span class="si">{</span><span class="bp">self</span><span class="si">}</span><span class="s2"> because none of the fspaths in the file-set are &quot;</span>
+                <span class="s2">&quot;required. Set trim=False to copy all file-paths&quot;</span>
+            <span class="p">)</span>
         <span class="k">if</span> <span class="n">collation</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">CopyCollation</span><span class="o">.</span><span class="n">siblings</span><span class="p">:</span>
             <span class="n">duplicate_names</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="n">n</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">Counter</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fspaths</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">c</span> <span class="o">&gt;</span> <span class="mi">1</span>
@@ -1965,9 +2016,6 @@
                     <span class="sa">f</span><span class="s2">&quot;in file paths: &quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fspaths</span><span class="p">)</span>
                 <span class="p">)</span>
         <span class="k">if</span> <span class="n">collation</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">CopyCollation</span><span class="o">.</span><span class="n">adjacent</span> <span class="ow">or</span> <span class="n">new_stem</span><span class="p">:</span>
-            <span class="n">decomposed_fspaths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decomposed_fspaths</span><span class="p">(</span>
-                <span class="n">required_only</span><span class="o">=</span><span class="n">trim</span><span class="p">,</span> <span class="n">decomposition_mode</span><span class="o">=</span><span class="n">extension_decomposition</span>
-            <span class="p">)</span>
             <span class="n">exts</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">decomposed_fspaths</span><span class="p">]</span>
             <span class="n">duplicate_exts</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">Counter</span><span class="p">(</span><span class="n">exts</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">c</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">duplicate_exts</span><span class="p">:</span>
@@ -1976,33 +2024,70 @@
                     <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">collation</span><span class="si">}</span><span class="s1">&quot;, as there are duplicate extensions, </span><span class="si">{</span><span class="n">duplicate_exts</span><span class="si">}</span><span class="s1">, &#39;</span>
                     <span class="sa">f</span><span class="s2">&quot;in file paths: &quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fspaths</span><span class="p">)</span>
                 <span class="p">)</span>
-        <span class="n">fspaths_to_copy</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]</span>
-        <span class="k">if</span> <span class="n">trim</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">required_paths</span><span class="p">():</span>
-            <span class="n">fspaths_to_copy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">required_paths</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">fspaths_to_copy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fspaths</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">fspaths_to_copy</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">UnsatisfiableCopyModeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Cannot copy </span><span class="si">{</span><span class="bp">self</span><span class="si">}</span><span class="s2"> because none of the fspaths in the file-set are &quot;</span>
-                <span class="s2">&quot;required. Set trim=False to copy all file-paths&quot;</span>
-            <span class="p">)</span>
-        <span class="c1"># Set default for new_stem if not provided and collating file-set to be adjacent</span>
-        <span class="k">if</span> <span class="n">collation</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">CopyCollation</span><span class="o">.</span><span class="n">adjacent</span><span class="p">:</span>
+            <span class="c1"># Set default for new_stem if not provided and collating file-set to be adjacent</span>
             <span class="k">if</span> <span class="n">new_stem</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">new_stem</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">decomposed_fspaths</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
-        <span class="c1"># WARNING we redefine fspaths_to_copy as list of tuples not Paths</span>
-
-        <span class="k">if</span> <span class="n">new_stem</span><span class="p">:</span>
-            <span class="n">fspaths_to_copy</span> <span class="o">=</span> <span class="n">decomposed_fspaths</span>
-        <span class="k">return</span> <span class="n">fspaths_to_copy</span><span class="p">,</span> <span class="n">new_stem</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fspaths</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># Now that we have passed all the checks, we can set the collation to siblings</span>
+            <span class="c1"># to signify that we don&#39;t need to worry about relative paths</span>
+            <span class="n">collation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">CopyCollation</span><span class="o">.</span><span class="n">siblings</span>
+        <span class="c1"># Iterate through the paths to copy/move and determine their destination paths</span>
+        <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">previous_clashes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">pairs</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># We loop until we have a set of paths that don&#39;t clash with existing files</span>
+        <span class="c1"># in the destination directory, if avoid_clashes is set to True or a set</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">pairs</span><span class="p">:</span>
+            <span class="n">iterate_counter</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">parent_dir</span><span class="p">,</span> <span class="n">stem</span><span class="p">,</span> <span class="n">ext</span> <span class="ow">in</span> <span class="n">decomposed_fspaths</span><span class="p">:</span>
+                <span class="n">fspath</span> <span class="o">=</span> <span class="n">parent_dir</span> <span class="o">/</span> <span class="p">(</span><span class="n">stem</span> <span class="o">+</span> <span class="n">ext</span><span class="p">)</span>
+                <span class="n">new_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_copy_path</span><span class="p">(</span>
+                    <span class="n">parent_dir</span><span class="o">=</span><span class="n">parent_dir</span><span class="p">,</span>
+                    <span class="n">stem</span><span class="o">=</span><span class="n">stem</span><span class="p">,</span>
+                    <span class="n">ext</span><span class="o">=</span><span class="n">ext</span><span class="p">,</span>
+                    <span class="n">dest_dir</span><span class="o">=</span><span class="n">dest_dir</span><span class="p">,</span>
+                    <span class="n">new_stem</span><span class="o">=</span><span class="n">new_stem</span><span class="p">,</span>
+                    <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
+                    <span class="n">stem_suffix</span><span class="o">=</span><span class="n">stem_suffix</span><span class="p">,</span>
+                    <span class="n">collation</span><span class="o">=</span><span class="n">collation</span><span class="p">,</span>
+                    <span class="n">counter</span><span class="o">=</span><span class="n">counter</span><span class="p">,</span>
+                    <span class="n">clash_template</span><span class="o">=</span><span class="n">clash_template</span><span class="p">,</span>
+                    <span class="n">extension_decomposition</span><span class="o">=</span><span class="n">extension_decomposition</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">counter</span> <span class="ow">and</span> <span class="n">new_path</span> <span class="ow">in</span> <span class="n">previous_clashes</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Cannot avoid clash for </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">fspath</span><span class="p">)</span><span class="si">!r}</span><span class="s2"> with template &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">clash_template</span><span class="si">!r}</span><span class="s2">, as it is not possible to generate a &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;unique path, tried </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span><span class="si">!r}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_destination_to_avoid</span><span class="p">(</span><span class="n">new_path</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">,</span> <span class="n">avoid_clashes</span><span class="p">):</span>
+                    <span class="n">iterate_counter</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="n">previous_clashes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span>
+                    <span class="k">break</span>
+                <span class="n">pairs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">fspath</span><span class="p">,</span> <span class="n">new_path</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">iterate_counter</span><span class="p">:</span>
+                <span class="c1"># Path clash to avoid detected, iterate counter and try again</span>
+                <span class="n">pairs</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c1"># Update the paths to avoid with the new paths</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">avoid_clashes</span><span class="p">,</span> <span class="nb">set</span><span class="p">):</span>
+            <span class="n">avoid_clashes</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">n</span> <span class="k">for</span> <span class="n">o</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pairs</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_new_copy_path</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
+        <span class="n">parent_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+        <span class="n">stem</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">ext</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">dest_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-        <span class="n">fspath</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
         <span class="n">new_stem</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">stem_suffix</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">collation</span><span class="p">:</span> <span class="n">CopyCollation</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="n">Path</span><span class="p">]:</span>
+        <span class="n">counter</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">clash_template</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">extension_decomposition</span><span class="p">:</span> <span class="n">ExtensionDecomposition</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the new path for a file to be copied/moved based on the collation mode</span>
 <span class="sd">        and new_stem</span>
 
@@ -2015,10 +2100,27 @@
 <span class="sd">        new_stem : str</span>
 <span class="sd">            the file name excluding file extensions, to give the files/dirs in the parent</span>
 <span class="sd">            directory, by default the original file name is used</span>
+<span class="sd">        prefix : str, optional</span>
+<span class="sd">            the prefix to append to the stem of the file name</span>
+<span class="sd">        stem_suffix : str, optional</span>
+<span class="sd">            the stem_suffix to append to the file name (i.e. before the extension), by default</span>
+<span class="sd">            None</span>
 <span class="sd">        collation : FileSet.CopyCollation</span>
 <span class="sd">            how to treat relative paths within the fileset, i.e. whether to move them to a</span>
 <span class="sd">            single directory, rename them to the same file-stem or maintain relative</span>
 <span class="sd">            directory structure. See FileSet.CopyCollation for details</span>
+<span class="sd">        counter : int</span>
+<span class="sd">            the counter to use in the clash_template to avoid name clashes</span>
+<span class="sd">        clash_template: str</span>
+<span class="sd">            The template used to generate a new file name if there is a clash with an</span>
+<span class="sd">            existing file. It should be a string template containing &quot;stem&quot;, &quot;counter&quot;</span>
+<span class="sd">            and &quot;ext&quot;, where counter is the number of files found with the same stem/</span>
+<span class="sd">            extension, by default &quot;{stem} ({counter})&quot;,</span>
+<span class="sd">        extension_decomposition : FileSet.ExtensionDecomposition</span>
+<span class="sd">            whether to consider file extensions to start from the first &#39;.&#39; (multiple) or</span>
+<span class="sd">            the last (single) or be empty (none), when the extension of a fspath in the</span>
+<span class="sd">            FileSet isn&#39;t explicitly defined by the FileSet class. Only relevant when</span>
+<span class="sd">            collation mode is set to &quot;adjacent&quot;. By default True</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -2027,19 +2129,62 @@
 <span class="sd">        fspath : Path</span>
 <span class="sd">            the original file-path, reconstructed from its decomposition if necessary</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fspath</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
-            <span class="k">assert</span> <span class="n">new_stem</span>
-            <span class="c1"># fspath is a path decomposed into parent, stem, ext instead of a Path</span>
-            <span class="n">parent_dir</span><span class="p">,</span> <span class="n">old_stem</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">fspath</span>
-            <span class="n">fspath</span> <span class="o">=</span> <span class="n">parent_dir</span> <span class="o">/</span> <span class="p">(</span><span class="n">old_stem</span> <span class="o">+</span> <span class="n">ext</span><span class="p">)</span>  <span class="c1"># reconstruct into a Path</span>
-            <span class="n">new_path</span> <span class="o">=</span> <span class="n">dest_dir</span> <span class="o">/</span> <span class="p">(</span><span class="n">new_stem</span> <span class="o">+</span> <span class="n">ext</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">collation</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">CopyCollation</span><span class="o">.</span><span class="n">siblings</span><span class="p">:</span>
-            <span class="n">new_path</span> <span class="o">=</span> <span class="n">dest_dir</span> <span class="o">/</span> <span class="n">fspath</span><span class="o">.</span><span class="n">name</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="n">collation</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">CopyCollation</span><span class="o">.</span><span class="n">any</span>
-            <span class="n">new_path</span> <span class="o">=</span> <span class="n">dest_dir</span> <span class="o">/</span> <span class="n">fspath</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span>
-            <span class="n">new_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">new_path</span><span class="p">,</span> <span class="n">fspath</span>
+        <span class="k">if</span> <span class="n">collation</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">CopyCollation</span><span class="o">.</span><span class="n">any</span><span class="p">:</span>
+            <span class="n">relpath</span> <span class="o">=</span> <span class="n">parent_dir</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">parts</span> <span class="o">:=</span> <span class="n">relpath</span><span class="o">.</span><span class="n">parts</span><span class="p">:</span>
+                <span class="c1"># If the fileset contains relative sub-directory structure that may need</span>
+                <span class="c1"># to be retained</span>
+                <span class="k">if</span> <span class="n">counter</span><span class="p">:</span>
+                    <span class="c1"># Apply the clash template to the first top-level sub-directory</span>
+                    <span class="c1"># to be copied into the destination directory</span>
+                    <span class="n">new_dir</span> <span class="o">=</span> <span class="n">clash_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stem</span><span class="o">=</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">counter</span><span class="o">=</span><span class="n">counter</span><span class="p">)</span>
+                    <span class="n">relpath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">new_dir</span><span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="o">*</span><span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+                    <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># counter has already been applied</span>
+                <span class="n">dest_dir</span> <span class="o">=</span> <span class="n">dest_dir</span> <span class="o">/</span> <span class="n">relpath</span>
+        <span class="k">if</span> <span class="n">new_stem</span><span class="p">:</span>
+            <span class="n">stem</span> <span class="o">=</span> <span class="n">new_stem</span>
+        <span class="c1"># apply the prefix and suffix to the stem</span>
+        <span class="n">stem</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">stem</span> <span class="o">+</span> <span class="n">stem_suffix</span>
+        <span class="c1"># Append the filename-stem with a counter to avoid name clashes if provided</span>
+        <span class="k">if</span> <span class="n">counter</span><span class="p">:</span>
+            <span class="n">stem</span> <span class="o">=</span> <span class="n">clash_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stem</span><span class="o">=</span><span class="n">stem</span><span class="p">,</span> <span class="n">counter</span><span class="o">=</span><span class="n">counter</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dest_dir</span> <span class="o">/</span> <span class="p">(</span><span class="n">stem</span> <span class="o">+</span> <span class="n">ext</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_clash_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clash_template</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;stem&quot;</span><span class="p">,</span> <span class="s2">&quot;counter&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">missing</span> <span class="o">:=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parts</span> <span class="k">if</span> <span class="s2">&quot;{&quot;</span> <span class="o">+</span> <span class="n">p</span> <span class="o">+</span> <span class="s2">&quot;}&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">clash_template</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Invalid clash template </span><span class="si">{</span><span class="n">clash_template</span><span class="si">!r}</span><span class="s2">, it must contain template &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;args for </span><span class="si">{</span><span class="n">parts</span><span class="si">}</span><span class="s2">, missing </span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_destination_to_avoid</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">new_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+        <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">avoid_clashes</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Set</span><span class="p">[</span><span class="n">Path</span><span class="p">]],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the destination path already exists and whether to avoid it&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">overwrite</span> <span class="ow">and</span> <span class="n">avoid_clashes</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Cannot set both &#39;overwrite&#39; and &#39;avoid_clashes&#39; to True, as they are &quot;</span>
+                <span class="s2">&quot;mutually exclusive&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">new_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">overwrite</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">new_path</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
+                    <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="ow">not</span> <span class="n">new_path</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+            <span class="k">elif</span> <span class="n">avoid_clashes</span> <span class="ow">is</span> <span class="kc">True</span> <span class="ow">or</span> <span class="p">(</span><span class="n">avoid_clashes</span> <span class="ow">and</span> <span class="n">new_path</span> <span class="ow">in</span> <span class="n">avoid_clashes</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">FileExistsError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Destination path &#39;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39; exists, set &quot;</span>
+                    <span class="s2">&quot;&#39;overwrite&#39; to overwrite it&quot;</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">avoid_clashes</span><span class="p">,</span> <span class="nb">set</span><span class="p">)</span> <span class="ow">and</span> <span class="n">new_path</span> <span class="ow">in</span> <span class="n">avoid_clashes</span>
 
     <span class="c1"># Class attributes, used to cache the results of the class methods</span>
     <span class="n">_all_formats</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Set</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="s2">&quot;FileSet&quot;</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -2080,7 +2225,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=b5539a38"></script>
+</div><script src="../../../_static/documentation_options.js?v=df7c797c"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=5fa4622c"></script>
