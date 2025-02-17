@@ -271,6 +271,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">warnings</span><span class="w"> </span><span class="kn">import</span> <span class="n">warn</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">errno</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">copy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">Counter</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ty</span>
@@ -1849,7 +1850,15 @@
             <span class="k">if</span> <span class="n">fspath</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
                 <span class="n">copy_dir</span><span class="p">(</span><span class="n">fspath</span><span class="p">,</span> <span class="n">new_path</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">copy_file</span><span class="p">(</span><span class="n">fspath</span><span class="p">,</span> <span class="n">new_path</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">copy_file</span><span class="p">(</span><span class="n">fspath</span><span class="p">,</span> <span class="n">new_path</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">PermissionError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">errno</span> <span class="o">==</span> <span class="n">errno</span><span class="o">.</span><span class="n">EPERM</span> <span class="ow">and</span> <span class="n">copy_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">:</span>  <span class="c1"># type: ignore[comparison-overlap]</span>
+                        <span class="c1"># Fallback to proper copy if the link fails for some reason</span>
+                        <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">fspath</span><span class="p">,</span> <span class="n">new_path</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">raise</span>
+
             <span class="n">new_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="n">new_paths</span><span class="p">)</span></div>
 
