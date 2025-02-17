@@ -4,6 +4,7 @@ from enum import Enum, IntEnum
 from warnings import warn
 import inspect
 import tempfile
+import errno
 from copy import copy
 from collections import Counter
 import typing as ty
@@ -1545,7 +1546,15 @@ class FileSet(DataType):
             if fspath.is_dir():
                 copy_dir(fspath, new_path)
             else:
-                copy_file(fspath, new_path)
+                try:
+                    copy_file(fspath, new_path)
+                except PermissionError as e:
+                    if e.errno == errno.EPERM and copy_file is not shutil.copyfile:  # type: ignore[comparison-overlap]
+                        # Fallback to proper copy if the link fails for some reason
+                        shutil.copyfile(fspath, new_path)
+                    else:
+                        raise
+
             new_paths.append(new_path)
         return type(self)(new_paths)
 
