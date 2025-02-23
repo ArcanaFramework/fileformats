@@ -28,7 +28,6 @@ for instructions on how to design *FileFormats* extensions modules to augment th
 standard file-types implemented in the main repository with custom domain/vendor-specific
 file-format types (e.g. [fileformats-medimage](https://pypi.org/project/fileformats-medimage/)).
 
-
 ## Notes on MIME-type coverage
 
 Support for all non-vendor standard MIME types (i.e. ones not matching `*/vnd.*` or `*/x-*`) has been
@@ -40,20 +39,19 @@ type, please raise an issue in the [GitHub tracker](https://github.com/ArcanaFra
 
 Adding support for vendor formats is planned for v1.0.
 
-
 ## Installation
 
 *FileFormats* can be installed for Python >= 3.8 from PyPI with
 
 ```console
-    $ python3 -m pip fileformats
+    python3 -m pip fileformats
 ```
 
 Implementations of methods and converters between select formats that require
 external dependencies require the installation of the corresponding "extras" package e.g
 
 ```console
-    $ python3 -m pip install fileformats-extras
+    python3 -m pip install fileformats-extras
 ```
 
 Extension packages exist for for formats not covered by [IANA MIME types] (e.g. NIfTI, R-files, MATLAB files)
@@ -66,7 +64,6 @@ and can be installed along with their "extras" package similarly
       fileformats-datascience \
       fileformats-datascience-extras
 ```
-
 
 ## Examples
 
@@ -121,7 +118,6 @@ installed fileformats classes and return all that validate successfully (formats
 any specific constraints are excluded by default). The potential candidate classes can be
 restricted by using the `candidates` keyword argument.
 
-
 ## Format Conversion
 
 While not implemented in the main File-formats itself, file-formats provides hooks for
@@ -167,10 +163,14 @@ Alternatively, the conversion can be executed outside of a [Pydra](https://pydra
     yaml_file = Yaml.convert(json_file)
 ```
 
-
 ## License
 
 This work is licensed under a
 [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/)
 
 [![CC0](https://i.creativecommons.org/l/by/4.0/88x31.png)](http://creativecommons.org/licenses/by/4.0/)
+
+## Acknowledgements
+
+The authors acknowledge the facilities and scientific and technical assistance of the
+National Imaging Facility, a National Collaborative Research Infrastructure Strategy (NCRIS) capability.

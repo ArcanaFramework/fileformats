@@ -23,7 +23,7 @@ class SubtypeVar:
     AnyFileFormat = FileSet.type_var("AnyFileFormat")
 
     @converter
-    @pydra.mark.task  # type: ignore[misc]
+    @python.define  # type: ignore[misc]
     def unzip(in_file: Zip[AnyFileFormat], out_file: AnyFileFormat):
         ...
     """
@@ -92,10 +92,8 @@ class SubtypeVar:
         ----------
         source_format : type
             the source format to register a converter from
-        converter_spec
-            a tuple consisting of a `task_spec` callable that resolves to a Pydra task
-            and a dictionary of keyword arguments to be passed to the task spec at
-            initialisation time
+        converter : Converter
+            The converter object to register
 
         Raises
         ------
