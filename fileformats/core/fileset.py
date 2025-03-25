@@ -1544,6 +1544,10 @@ class FileSet(DataType):
         for fspath, new_path in src_dest:
             new_path.parent.mkdir(parents=True, exist_ok=True)
             if fspath.is_dir():
+                if new_path.is_relative_to(fspath):  # type: ignore[attr-defined]
+                    raise ValueError(
+                        f"Cannot copy directory {fspath} into itself at {new_path}"
+                    )
                 copy_dir(fspath, new_path)
             else:
                 try:
