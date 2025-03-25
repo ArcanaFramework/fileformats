@@ -10,7 +10,7 @@ requires-python = ">=3.8"
 dependencies = [
     "fileformats",
     "imageio >=2.24.0",
-    "pydra >= 0.23.0a",
+    "pydra",
     "PyYAML>=6.0",
     "pydicom >=2.3",
     "medimages4tests",
