@@ -6,7 +6,7 @@ from .classifier import Classifier
 from .datatype import DataType
 
 if ty.TYPE_CHECKING:
-    from pydra.engine.specs import TaskDef
+    from pydra.compose.base import Task
     import fileformats.core
     from . import mixin
 
@@ -140,14 +140,14 @@ class Converter:
     """Specification of a converter task, including the task callable, its arguments and
     the classifiers"""
 
-    task_def: "TaskDef[ty.Any]"
+    task_def: "Task[ty.Any]"
     classifiers: ty.Tuple[ty.Type[Classifier], ...]
     in_file: str
     out_file: str
 
     def __init__(
         self,
-        task_def: "TaskDef[T]",
+        task_def: "Task[T]",
         classifiers: ty.Tuple[ty.Type[Classifier], ...] = (),
         in_file: str = "in_file",
         out_file: str = "out_file",

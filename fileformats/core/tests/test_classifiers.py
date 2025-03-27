@@ -1,7 +1,7 @@
 from __future__ import annotations
 import decimal
 import pytest
-from pydra.design import python
+from pydra.compose import python
 from fileformats.core import from_mime, DataType, FileSet
 from fileformats.core import converter
 from fileformats.application import Zip

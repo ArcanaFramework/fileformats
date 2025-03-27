@@ -1,7 +1,7 @@
 from pathlib import Path
 import typing as ty
 import tempfile
-from pydra.design import python
+from pydra.compose import python
 from fileformats.core import converter
 from fileformats.image.raster import RasterImage, Bitmap, Gif, Jpeg, Png, Tiff
 

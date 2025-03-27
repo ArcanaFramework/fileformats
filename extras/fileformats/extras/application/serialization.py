@@ -2,7 +2,7 @@ from pathlib import Path
 import typing as ty
 import tempfile
 import yaml
-from pydra.design import python
+from pydra.compose import python
 from fileformats.core import FileSet, converter, extra_implementation
 from fileformats.application import TextSerialization, Json, Yaml
 from fileformats.application.serialization import SerializationType

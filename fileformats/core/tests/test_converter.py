@@ -2,7 +2,7 @@ import tempfile
 import attrs
 from pathlib import Path
 import pytest
-from pydra.design import python, shell
+from pydra.compose import python, shell
 from fileformats.generic import File
 from fileformats.testing import Foo, Bar, Baz, Qux
 from fileformats.core import converter

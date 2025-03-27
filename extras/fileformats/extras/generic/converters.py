@@ -1,7 +1,7 @@
 import tempfile
 from pathlib import Path
 import typing as ty
-from pydra.design import python
+from pydra.compose import python
 from fileformats.core import converter, FileSet
 from fileformats.generic import DirectoryOf, SetOf, TypedDirectory, TypedSet
 

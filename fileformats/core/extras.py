@@ -18,7 +18,7 @@ else:
     from typing import Self
 
 if ty.TYPE_CHECKING:
-    from pydra.engine.specs import TaskDef
+    from pydra.compose.base import Task
 
 T = ty.TypeVar("T")
 ExtraImplementation = ty.TypeVar("ExtraImplementation", bound=ty.Callable[..., ty.Any])
@@ -190,21 +190,21 @@ FormatType: TypeAlias = ty.Union[ty.Type["fileformats.core.FileSet"], SubtypeVar
 
 
 def converter(
-    task_type: ty.Optional[ty.Type["TaskDef[T]"]] = None,
+    task_type: ty.Optional[ty.Type["Task[T]"]] = None,
     source_format: FormatType = None,
     target_format: FormatType = None,
     in_file: str = "in_file",
     out_file: str = "out_file",
     **converter_kwargs: ty.Any,
 ) -> ty.Union[
-    ty.Type["TaskDef[T]"], ty.Callable[[ty.Type["TaskDef[T]"]], ty.Type["TaskDef[T]"]]
+    ty.Type["Task[T]"], ty.Callable[[ty.Type["Task[T]"]], ty.Type["Task[T]"]]
 ]:
     """Decorator that registers a task as a converter between a source and target format
     pair
 
     Parameters
     ----------
-    task_type : pydra.engine.core.TaskBase, optional
+    task_type : pydra.compose.base.Task, optional
         the Pydra task to register as a converter, if provided the decorator is assumed
         to wrap the task spec directly, otherwise a wrapping decorator is returned instead
     source_format: type, optional
@@ -235,8 +235,8 @@ def converter(
         converter_kwargs["in_file"] = converter_kwargs.pop("in_file_")
 
     def decorator(
-        task_type: ty.Type["TaskDef[T]"],
-    ) -> ty.Type["TaskDef[T]"]:
+        task_type: ty.Type["Task[T]"],
+    ) -> ty.Type["Task[T]"]:
         out_file_local = out_file
         source: FormatType
         target: FormatType
