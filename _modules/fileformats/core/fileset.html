@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
-        <title>fileformats.core.fileset - FileFormats v0.15.0a6</title>
+        <title>fileformats.core.fileset - FileFormats v0.15.0a7</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=beddf052" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
@@ -171,7 +171,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">FileFormats v0.15.0a6</div></a>
+      <a href="../../../index.html"><div class="brand">FileFormats v0.15.0a7</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -198,7 +198,7 @@
     <img class="sidebar-logo" src="../../../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.15.0a6</span>
+  <span class="sidebar-brand-text">FileFormats v0.15.0a7</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -802,8 +802,8 @@
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fileset</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">copy</span><span class="p">(</span><span class="n">fileset</span><span class="p">)</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="n">converter</span><span class="o">.</span><span class="n">in_file</span><span class="p">]</span> <span class="o">=</span> <span class="n">fileset</span>
-        <span class="n">task_def</span> <span class="o">=</span> <span class="n">attrs</span><span class="o">.</span><span class="n">evolve</span><span class="p">(</span><span class="n">converter</span><span class="o">.</span><span class="n">task_def</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">outputs</span> <span class="o">=</span> <span class="n">task_def</span><span class="p">()</span>
+        <span class="n">task</span> <span class="o">=</span> <span class="n">attrs</span><span class="o">.</span><span class="n">evolve</span><span class="p">(</span><span class="n">converter</span><span class="o">.</span><span class="n">task</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="n">task</span><span class="p">()</span>
         <span class="n">out_file</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">converter</span><span class="o">.</span><span class="n">out_file</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out_file</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
             <span class="n">out_file</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">out_file</span><span class="p">)</span>
@@ -864,9 +864,7 @@
                     <span class="n">available_converters</span> <span class="o">=</span> <span class="p">[</span><span class="n">available_converters</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">available_converters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">available_converters</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-                    <span class="n">available_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                        <span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">task_def</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">available_converters</span>
-                    <span class="p">)</span>
+                    <span class="n">available_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">task</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">available_converters</span><span class="p">)</span>
                     <span class="k">raise</span> <span class="n">FormatConversionError</span><span class="p">(</span>
                         <span class="sa">f</span><span class="s2">&quot;Ambiguous converters found between &#39;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">mime_like</span><span class="si">}</span><span class="s2">&#39; and &quot;</span>
                         <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">source_format</span><span class="o">.</span><span class="n">mime_like</span><span class="si">}</span><span class="s2">&#39;:</span><span class="se">\n</span><span class="si">{</span><span class="n">available_str</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -967,18 +965,18 @@
             <span class="n">prev_converter</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">converters</span><span class="p">[</span><span class="n">source_format</span><span class="p">]</span>
             <span class="c1"># task, task_kwargs = converter_spec</span>
             <span class="c1"># prev_task, prev_kwargs = prev_tuple</span>
-            <span class="k">if</span> <span class="n">converter</span><span class="o">.</span><span class="n">task_def</span> <span class="o">==</span> <span class="n">prev_converter</span><span class="o">.</span><span class="n">task_def</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">converter</span><span class="o">.</span><span class="n">task</span> <span class="o">==</span> <span class="n">prev_converter</span><span class="o">.</span><span class="n">task</span><span class="p">:</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                     <span class="s2">&quot;Ignoring duplicate registrations of the same converter </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
-                    <span class="n">converter</span><span class="o">.</span><span class="n">task_def</span><span class="p">,</span>
+                    <span class="n">converter</span><span class="o">.</span><span class="n">task</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="k">return</span>  <span class="c1"># actually the same task but just imported twice for some reason</span>
             <span class="k">raise</span> <span class="n">FormatConversionError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Cannot register converter from </span><span class="si">{</span><span class="n">source_format</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;to </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">converter</span><span class="o">.</span><span class="n">task_def</span><span class="si">}</span><span class="s2">, because there is already &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;one registered from </span><span class="si">{</span><span class="n">prev_converter</span><span class="o">.</span><span class="n">task_def</span><span class="si">}</span><span class="s2">:&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="si">{</span><span class="n">converter</span><span class="o">.</span><span class="n">task_def</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;and </span><span class="si">{</span><span class="n">prev_converter</span><span class="o">.</span><span class="n">task_def</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;to </span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">converter</span><span class="o">.</span><span class="n">task</span><span class="si">}</span><span class="s2">, because there is already &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;one registered from </span><span class="si">{</span><span class="n">prev_converter</span><span class="o">.</span><span class="n">task</span><span class="si">}</span><span class="s2">:&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="si">{</span><span class="n">converter</span><span class="o">.</span><span class="n">task</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;and </span><span class="si">{</span><span class="n">prev_converter</span><span class="o">.</span><span class="n">task</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
             <span class="p">)</span>
         <span class="n">converters_dict</span><span class="p">[</span><span class="n">source_format</span><span class="p">]</span> <span class="o">=</span> <span class="n">converter</span></div>
 
@@ -2238,7 +2236,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=3a885609"></script>
+</div><script src="../../../_static/documentation_options.js?v=a5cac293"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=5fa4622c"></script>
