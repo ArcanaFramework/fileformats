@@ -44,17 +44,17 @@ def baz_bar_converter():
 def FooQuxConverter():
     @converter(source_format=Foo, target_format=Qux)
     @shell.define
-    class FooQuxConverter_:
+    class FooQuxConverter_(shell.Task["FooQuxConverter_.Outputs"]):
 
         in_file: File = shell.arg(help="the input file", argstr="")
         executable = "cp"
 
-        class Outputs:
+        class Outputs(shell.Outputs):
             out_file: File = shell.outarg(
                 help="output file",
                 argstr="",
                 position=-1,
-                output_file_template="out.qux",
+                path_template="out.qux",
             )
 
     return FooQuxConverter_
@@ -65,8 +65,8 @@ def test_get_converter_functask(foo_bar_converter, work_dir):
 
     fspath = work_dir / "test.foo"
     write_test_file(fspath)
-    assert attrs.asdict(Bar.get_converter(Foo, name="Foo2Bar").inputs) == attrs.asdict(
-        foo_bar_converter(name="Foo2Bar").inputs
+    assert attrs.asdict(Bar.get_converter(Foo).task) == attrs.asdict(
+        foo_bar_converter()
     )
 
 
@@ -75,9 +75,7 @@ def test_get_converter_shellcmd(FooQuxConverter, work_dir):
 
     fspath = work_dir / "test.foo"
     write_test_file(fspath)
-    assert attrs.asdict(Qux.get_converter(Foo, name="Foo2Qux").inputs) == attrs.asdict(
-        FooQuxConverter(name="Foo2Qux").inputs
-    )
+    assert attrs.asdict(Qux.get_converter(Foo).task) == attrs.asdict(FooQuxConverter())
 
 
 @pytest.mark.skipif(pydra is None, reason="Pydra could not be imported")
@@ -86,7 +84,7 @@ def test_get_converter_fail(work_dir):
     fspath = work_dir / "test.foo"
     write_test_file(fspath)
     with pytest.raises(FormatConversionError):
-        Baz.get_converter(Foo, name="Foo2Baz")
+        Baz.get_converter(Foo)
 
 
 @pytest.mark.skipif(pydra is None, reason="Pydra could not be imported")
@@ -97,7 +95,7 @@ def test_convert_functask(foo_bar_converter, work_dir):
     foo = Foo(fspath)
     bar = Bar.convert(foo)
     assert type(bar) is Bar
-    assert bar.contents == foo.contents
+    assert bar.raw_contents == foo.raw_contents
 
 
 @pytest.mark.skipif(pydra is None, reason="Pydra could not be imported")
@@ -108,7 +106,7 @@ def test_convert_shellcmd(FooQuxConverter, work_dir):
     foo = Foo(fspath)
     qux = Qux.convert(foo)
     assert type(qux) is Qux
-    assert qux.contents == foo.contents
+    assert qux.raw_contents == foo.raw_contents
 
 
 @pytest.mark.skipif(pydra is None, reason="Pydra could not be imported")
@@ -119,4 +117,4 @@ def test_convert_mapped_conversion(baz_bar_converter, work_dir):
     baz = Baz(fspath)
     bar = Bar.convert(baz)
     assert type(bar) is Bar
-    assert bar.contents == baz.contents
+    assert bar.raw_contents == baz.raw_contents

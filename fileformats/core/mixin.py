@@ -661,7 +661,7 @@ class WithClassifiers:
                     if converter == prev_converter:
                         logger.warning(
                             "Ignoring duplicate registrations of the same converter %s",
-                            converter.task_def,
+                            converter.task,
                         )
                         return  # actually the same task but just imported twice for some reason
                     prev_unclassified = prev.unclassified
@@ -669,7 +669,7 @@ class WithClassifiers:
                     raise FormatDefinitionError(
                         f"Cannot register converter from {prev_unclassified} "
                         f"to {unclassified} with non-wildcard classifiers "
-                        f"{list(prev.non_wildcard_classifiers())}, {converter.task_def}, "
+                        f"{list(prev.non_wildcard_classifiers())}, {converter.task}, "
                         f"because there is already one registered, {prev_converter.task}"
                     )
             converters_dict = cls.unclassified.get_converters_dict()  # type: ignore[attr-defined]
