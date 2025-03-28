@@ -525,8 +525,8 @@ class FileSet(DataType):
             assert isinstance(fileset, cls)
             return copy(fileset)
         kwargs[converter.in_file] = fileset
-        task_def = attrs.evolve(converter.task_def, **kwargs)
-        outputs = task_def()
+        task = attrs.evolve(converter.task, **kwargs)
+        outputs = task()
         out_file = getattr(outputs, converter.out_file)
         if not isinstance(out_file, cls):
             out_file = cls(out_file)
@@ -584,9 +584,7 @@ class FileSet(DataType):
                     available_converters = [available_converters[0]]
                 else:
                     available_converters[0] == available_converters[1]
-                    available_str = "\n".join(
-                        str(a.task_def) for a in available_converters
-                    )
+                    available_str = "\n".join(str(a.task) for a in available_converters)
                     raise FormatConversionError(
                         f"Ambiguous converters found between '{cls.mime_like}' and "
                         f"'{source_format.mime_like}':\n{available_str}"
@@ -684,18 +682,18 @@ class FileSet(DataType):
             prev_converter = cls.converters[source_format]
             # task, task_kwargs = converter_spec
             # prev_task, prev_kwargs = prev_tuple
-            if converter.task_def == prev_converter.task_def:
+            if converter.task == prev_converter.task:
                 logger.warning(
                     "Ignoring duplicate registrations of the same converter %s",
-                    converter.task_def,
+                    converter.task,
                 )
                 return  # actually the same task but just imported twice for some reason
             raise FormatConversionError(
                 f"Cannot register converter from {source_format.__name__} "
-                f"to {cls.__name__}, {converter.task_def}, because there is already "
-                f"one registered from {prev_converter.task_def}:"
-                f"\n\n{converter.task_def}\n\n"
-                f"and {prev_converter.task_def}\n\n"
+                f"to {cls.__name__}, {converter.task}, because there is already "
+                f"one registered from {prev_converter.task}:"
+                f"\n\n{converter.task}\n\n"
+                f"and {prev_converter.task}\n\n"
             )
         converters_dict[source_format] = converter
 

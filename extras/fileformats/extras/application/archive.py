@@ -5,7 +5,7 @@ import tempfile
 import tarfile
 import zipfile
 from pathlib import Path
-from pydra.design import python
+from pydra.compose import python
 from fileformats.generic import FsObject
 from fileformats.core.utils import set_cwd
 from fileformats.core.typing import PathType

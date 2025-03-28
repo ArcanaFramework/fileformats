@@ -6,7 +6,7 @@ from .classifier import Classifier
 from .datatype import DataType
 
 if ty.TYPE_CHECKING:
-    from pydra.engine.specs import TaskDef
+    from pydra.compose.base import Task
     import fileformats.core
     from . import mixin
 
@@ -120,17 +120,17 @@ class SubtypeVar:
             prev_def = cls.converters[prev_registered[0]]
             # task, task_kwargs, _ = converter_spec
             # prev_task, prev_kwargs = prev_tuple
-            if converter.task_def == prev_def.task_def:
+            if converter.task == prev_def.task:
                 logger.warning(
                     "Ignoring duplicate registrations of the same converter %s",
-                    converter.task_def,
+                    converter.task,
                 )
                 return  # actually the same task but just imported twice for some reason
-            generic_type = tuple(prev_def.task_def.wildcard_classifiers())[0]  # type: ignore
+            generic_type = tuple(prev_def.task.wildcard_classifiers())[0]  # type: ignore
             raise FormatDefinitionError(
                 f"Cannot register converter from {source_format} to the generic type "
-                f"'{generic_type}', {converter.task_def} "
-                f"because there is already one registered, {prev_def.task_def}"
+                f"'{generic_type}', {converter.task} "
+                f"because there is already one registered, {prev_def.task}"
             )
 
         cls.converters[source_format] = converter  # type: ignore
@@ -140,19 +140,19 @@ class Converter:
     """Specification of a converter task, including the task callable, its arguments and
     the classifiers"""
 
-    task_def: "TaskDef[ty.Any]"
+    task: "Task[ty.Any]"
     classifiers: ty.Tuple[ty.Type[Classifier], ...]
     in_file: str
     out_file: str
 
     def __init__(
         self,
-        task_def: "TaskDef[T]",
+        task: "Task[T]",
         classifiers: ty.Tuple[ty.Type[Classifier], ...] = (),
         in_file: str = "in_file",
         out_file: str = "out_file",
     ):
-        self.task_def = task_def
+        self.task = task
         self.classifiers = classifiers
         self.in_file = in_file
         self.out_file = out_file
@@ -162,7 +162,7 @@ class Converter:
 
         return (
             isinstance(other, Converter)
-            and self.task_def == other.task_def
+            and self.task == other.task
             and hash_function(self.classifiers) == hash_function(other.classifiers)
             and self.in_file == other.in_file
             and self.out_file == other.out_file
