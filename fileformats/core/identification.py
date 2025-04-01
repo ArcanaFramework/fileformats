@@ -128,6 +128,10 @@ def to_mime(
         namespace scheme instead of putting all non-standard types into the 'application'
         registry if not
     """
+    if not issubclass(datatype, fileformats.core.FileSet):
+        raise TypeError(
+            f"Cannot convert {datatype} to mime-type as it is not a file-set class"
+        )
     origin = ty.get_origin(datatype)
     if official and (origin or datatype.namespace == "field"):
         raise TypeError(
