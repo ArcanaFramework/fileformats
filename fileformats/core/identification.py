@@ -129,6 +129,10 @@ def to_mime(
         registry if not
     """
     origin = ty.get_origin(datatype)
+    if origin is None and not issubclass(datatype, fileformats.core.DataType):
+        raise TypeError(
+            f"Cannot convert {datatype} to mime-type as it is not a file-set class"
+        )
     if official and (origin or datatype.namespace == "field"):
         raise TypeError(
             f"Cannot convert {datatype} to official mime-type as it is not a proper "
