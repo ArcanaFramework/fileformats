@@ -22,16 +22,17 @@ def FooBarConverter():
     return FooBarConverter_
 
 
-def baz_bar_converter():
+@pytest.fixture
+def BazBarConverter():
     work_dir = Path(tempfile.mkdtemp())
 
     @converter(out_file="out")
     @python.define(outputs={"out": Bar})  # type: ignore[misc]
-    def baz_bar_converter_(in_file: Baz):
+    def BazBarConverter_(in_file: Baz):
         assert in_file
         return Bar(write_test_file(work_dir / "bar.bar", in_file.raw_contents))
 
-    return baz_bar_converter_
+    return BazBarConverter_
 
 
 @pytest.fixture
@@ -96,7 +97,7 @@ def test_convert_shellcmd(FooQuxConverter, work_dir):
     assert qux.raw_contents == foo.raw_contents
 
 
-def test_convert_mapped_conversion(baz_bar_converter, work_dir):
+def test_convert_mapped_conversion(BazBarConverter, work_dir):
 
     fspath = work_dir / "test.baz"
     write_test_file(fspath)
