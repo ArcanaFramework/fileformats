@@ -9,38 +9,33 @@ from fileformats.core import converter
 from fileformats.core.exceptions import FormatConversionError
 from conftest import write_test_file
 
-try:
-    import pydra.mark
-except ImportError:
-    pydra = None
 
-
-@pytest.fixture(scope="session")
-def foo_bar_converter():
+@pytest.fixture
+def FooBarConverter():
     work_dir = Path(tempfile.mkdtemp())
 
     @converter
     @python.define(outputs={"out_file": Bar})  # type: ignore[misc]
-    def foo_bar_converter_(in_file: Foo):
+    def FooBarConverter_(in_file: Foo):
         return Bar(write_test_file(work_dir / "bar.bar", in_file.raw_contents))
 
-    return foo_bar_converter_
+    return FooBarConverter_
 
 
-@pytest.fixture(scope="session")
-def baz_bar_converter():
+@pytest.fixture
+def BazBarConverter():
     work_dir = Path(tempfile.mkdtemp())
 
     @converter(out_file="out")
     @python.define(outputs={"out": Bar})  # type: ignore[misc]
-    def baz_bar_converter_(in_file: Baz):
+    def BazBarConverter_(in_file: Baz):
         assert in_file
         return Bar(write_test_file(work_dir / "bar.bar", in_file.raw_contents))
 
-    return baz_bar_converter_
+    return BazBarConverter_
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def FooQuxConverter():
     @converter(source_format=Foo, target_format=Qux)
     @shell.define
@@ -60,17 +55,13 @@ def FooQuxConverter():
     return FooQuxConverter_
 
 
-@pytest.mark.skipif(pydra is None, reason="Pydra could not be imported")
-def test_get_converter_functask(foo_bar_converter, work_dir):
+def test_get_converter_functask(FooBarConverter, work_dir):
 
     fspath = work_dir / "test.foo"
     write_test_file(fspath)
-    assert attrs.asdict(Bar.get_converter(Foo).task) == attrs.asdict(
-        foo_bar_converter()
-    )
+    assert attrs.asdict(Bar.get_converter(Foo).task) == attrs.asdict(FooBarConverter())
 
 
-@pytest.mark.skipif(pydra is None, reason="Pydra could not be imported")
 def test_get_converter_shellcmd(FooQuxConverter, work_dir):
 
     fspath = work_dir / "test.foo"
@@ -78,7 +69,6 @@ def test_get_converter_shellcmd(FooQuxConverter, work_dir):
     assert attrs.asdict(Qux.get_converter(Foo).task) == attrs.asdict(FooQuxConverter())
 
 
-@pytest.mark.skipif(pydra is None, reason="Pydra could not be imported")
 def test_get_converter_fail(work_dir):
 
     fspath = work_dir / "test.foo"
@@ -87,8 +77,7 @@ def test_get_converter_fail(work_dir):
         Baz.get_converter(Foo)
 
 
-@pytest.mark.skipif(pydra is None, reason="Pydra could not be imported")
-def test_convert_functask(foo_bar_converter, work_dir):
+def test_convert_functask(FooBarConverter, work_dir):
 
     fspath = work_dir / "test.foo"
     write_test_file(fspath)
@@ -98,7 +87,6 @@ def test_convert_functask(foo_bar_converter, work_dir):
     assert bar.raw_contents == foo.raw_contents
 
 
-@pytest.mark.skipif(pydra is None, reason="Pydra could not be imported")
 def test_convert_shellcmd(FooQuxConverter, work_dir):
 
     fspath = work_dir / "test.foo"
@@ -109,8 +97,7 @@ def test_convert_shellcmd(FooQuxConverter, work_dir):
     assert qux.raw_contents == foo.raw_contents
 
 
-@pytest.mark.skipif(pydra is None, reason="Pydra could not be imported")
-def test_convert_mapped_conversion(baz_bar_converter, work_dir):
+def test_convert_mapped_conversion(BazBarConverter, work_dir):
 
     fspath = work_dir / "test.baz"
     write_test_file(fspath)

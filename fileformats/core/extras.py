@@ -95,6 +95,10 @@ def extra_implementation(
             ftype : Union[str, type]
                 the type of the function argument
             """
+
+            if isinstance(mtype, str) and not isinstance(ftype, str):
+                mtype = eval(mtype, implementation.__globals__)
+
             return (
                 mtype is ty.Any  # type: ignore[comparison-overlap]
                 or mtype == ftype
