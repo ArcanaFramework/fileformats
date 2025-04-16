@@ -33,6 +33,7 @@ def baz_bar_converter():
     return baz_bar_converter_
 
 
+@pytest.fixture
 def FooQuxConverter():
     @converter(source_format=Foo, target_format=Qux)
     @shell.define
