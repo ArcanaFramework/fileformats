@@ -26,7 +26,9 @@ def dicom_read_metadata(
     metadata_keys: ty.Optional[TagListType] = None,
     **kwargs: ty.Any,
 ) -> ty.Mapping[str, ty.Any]:
-    dcm = pydicom.dcmread(dicom.fspath, specific_tags=metadata_keys)
+    dcm = pydicom.dcmread(
+        dicom.fspath, specific_tags=metadata_keys, stop_before_pixels=True
+    )
     return Dicom.pydicom_to_dict(dcm)
 
 
