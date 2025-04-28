@@ -260,6 +260,11 @@ class FileSet(DataType):
         """
         return tuple((str(p), p.stat().st_mtime_ns) for p in sorted(self.fspaths))
 
+    @property
+    def last_modified(self) -> int:
+        """The latest modification time of all files in the set"""
+        return max(m for _, m in self.mtimes)
+
     @classproperty  # type: ignore[arg-type]
     def mime_type(cls) -> str:
         """Generates a MIME type (IANA) identifier from a format class. If an official
