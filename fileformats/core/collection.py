@@ -31,6 +31,11 @@ class TypedCollection(FileSet, metaclass=ABCMeta):
                     continue
         return contnts
 
+    # @property
+    # def last_modified(self) -> int:
+    #     """The latest modification time of all files in the set"""
+    #     return max(c.last_modified for c in self.contents)
+
     @validated_property
     def _validate_required_content_types(self) -> None:
         not_found = set(self.required_content_types)
