@@ -1,4 +1,4 @@
-import tempfile
+import typing as ty
 import attrs
 from pathlib import Path
 import pytest
@@ -10,59 +10,43 @@ from fileformats.core.exceptions import FormatConversionError
 from conftest import write_test_file
 
 
-@pytest.fixture
-def FooBarConverter():
-    work_dir = Path(tempfile.mkdtemp())
-
-    @converter
-    @python.define(outputs={"out_file": Bar})  # type: ignore[misc]
-    def FooBarConverter_(in_file: Foo):
-        return Bar(write_test_file(work_dir / "bar.bar", in_file.raw_contents))
-
-    return FooBarConverter_
+@converter
+@python.define(outputs={"out_file": Bar})  # type: ignore[misc]
+def FooBarConverter(in_file: Foo):
+    return Bar(write_test_file(Path.cwd() / "bar.bar", in_file.raw_contents))
 
 
-@pytest.fixture
-def BazBarConverter():
-    work_dir = Path(tempfile.mkdtemp())
-
-    @converter(out_file="out")
-    @python.define(outputs={"out": Bar})  # type: ignore[misc]
-    def BazBarConverter_(in_file: Baz):
-        assert in_file
-        return Bar(write_test_file(work_dir / "bar.bar", in_file.raw_contents))
-
-    return BazBarConverter_
+@converter(out_file="out")
+@python.define(outputs={"out": Bar})  # type: ignore[misc]
+def BazBarConverter(in_file: Baz):
+    assert in_file
+    return Bar(write_test_file(Path.cwd() / "bar.bar", in_file.raw_contents))
 
 
-@pytest.fixture
-def FooQuxConverter():
-    @converter(source_format=Foo, target_format=Qux)
-    @shell.define
-    class FooQuxConverter_(shell.Task["FooQuxConverter_.Outputs"]):
+@converter(source_format=Foo, target_format=Qux)
+@shell.define
+class FooQuxConverter(shell.Task["FooQuxConverter.Outputs"]):
 
-        in_file: File = shell.arg(help="the input file", argstr="")
-        executable = "cp"
+    in_file: File = shell.arg(help="the input file", argstr="")
+    executable = "cp"
 
-        class Outputs(shell.Outputs):
-            out_file: File = shell.outarg(
-                help="output file",
-                argstr="",
-                position=-1,
-                path_template="out.qux",
-            )
-
-    return FooQuxConverter_
+    class Outputs(shell.Outputs):
+        out_file: File = shell.outarg(
+            help="output file",
+            argstr="",
+            position=-1,
+            path_template="out.qux",
+        )
 
 
-def test_get_converter_functask(FooBarConverter, work_dir):
+def test_get_converter_functask(work_dir):
 
     fspath = work_dir / "test.foo"
     write_test_file(fspath)
     assert attrs.asdict(Bar.get_converter(Foo).task) == attrs.asdict(FooBarConverter())
 
 
-def test_get_converter_shellcmd(FooQuxConverter, work_dir):
+def test_get_converter_shellcmd(work_dir):
 
     fspath = work_dir / "test.foo"
     write_test_file(fspath)
@@ -77,7 +61,7 @@ def test_get_converter_fail(work_dir):
         Baz.get_converter(Foo)
 
 
-def test_convert_functask(FooBarConverter, work_dir):
+def test_convert_functask(work_dir):
 
     fspath = work_dir / "test.foo"
     write_test_file(fspath)
@@ -87,7 +71,7 @@ def test_convert_functask(FooBarConverter, work_dir):
     assert bar.raw_contents == foo.raw_contents
 
 
-def test_convert_shellcmd(FooQuxConverter, work_dir):
+def test_convert_shellcmd(work_dir):
 
     fspath = work_dir / "test.foo"
     write_test_file(fspath)
@@ -97,7 +81,7 @@ def test_convert_shellcmd(FooQuxConverter, work_dir):
     assert qux.raw_contents == foo.raw_contents
 
 
-def test_convert_mapped_conversion(BazBarConverter, work_dir):
+def test_convert_mapped_conversion(work_dir):
 
     fspath = work_dir / "test.baz"
     write_test_file(fspath)
@@ -105,3 +89,11 @@ def test_convert_mapped_conversion(BazBarConverter, work_dir):
     bar = Bar.convert(baz)
     assert type(bar) is Bar
     assert bar.raw_contents == baz.raw_contents
+
+
+def test_convertible_from():
+
+    assert Bar.convertible_from() == ty.Union[Bar, Foo, Baz]
+    assert Qux.convertible_from() == ty.Union[Qux, Foo]
+    assert Foo.convertible_from() == Foo
+    assert Baz.convertible_from() == Baz

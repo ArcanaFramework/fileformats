@@ -625,6 +625,16 @@ class FileSet(DataType):
         return converters_dict
 
     @classmethod
+    def convertible_from(cls) -> ty.Type[DataType]:
+        """Union of types that can be converted to this type, including the current type.
+        If there are no other types that can be converted to this type, return the current type
+        """
+        datatypes = (cls,) + tuple(cls.get_converters_dict().keys())
+        if len(datatypes) == 1:
+            return cls
+        return ty.Union.__getitem__(datatypes)  # type: ignore[return-value]
+
+    @classmethod
     def get_converter_defs(cls, source_format: type) -> ty.List["Converter"]:
         """Search the registered converters to find any matches and return list of
         task and associated key-word args to perform the conversion between source and
