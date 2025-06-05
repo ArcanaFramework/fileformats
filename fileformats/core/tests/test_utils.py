@@ -101,11 +101,11 @@ def test_copy_symlink_with_unrequired_fallback(fsobject: FsObject, dest_dir: Pat
 
 
 def test_copy_hardlink(fsobject: FsObject, dest_dir: Path):
-    cpy = fsobject.copy(dest_dir, mode=File.CopyMode.symlink)
+    cpy = fsobject.copy(dest_dir, mode=File.CopyMode.hardlink_or_copy)
     assert all(p.parent == dest_dir for p in cpy.fspaths)
     assert set(p.name for p in cpy.fspaths) == set(p.name for p in fsobject.fspaths)
     assert all(
-        os.path.samefile(c, o)
+        c != o and os.path.samefile(c, o)
         for c, o in zip(sorted(cpy.fspaths), sorted(fsobject.fspaths))
         if o.is_file()
     )

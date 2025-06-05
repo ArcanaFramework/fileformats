@@ -1455,11 +1455,17 @@ class FileSet(DataType):
         if len(self.fspaths) == 1:
             # If there is only one path to copy, then collation isn't meaningful
             collation = self.CopyCollation.any
+            logger.debug(
+                "Collation mode is set to 'any' as there is only one path in the fileset"
+            )
         else:
             collation = (
                 self.CopyCollation[collation]
                 if isinstance(collation, str)
                 else collation
+            )
+            logger.debug(
+                "Collation mode is set to '%s' for the copy operation", collation
             )
         # Rule out any copy modes that are not supported given the collation mode
         # and file-system mounts the paths and destination directory reside on
@@ -1497,6 +1503,11 @@ class FileSet(DataType):
             )
         ):
             supported_modes -= self.CopyMode.leave
+            logger.debug(
+                "Collation mode is set to '%s' or new_stem/prefix/stem_suffix is set, "
+                "therefore we cannot leave the files where they are",
+                collation,
+            )
 
         # Get the intersection of copy modes that are supported and have been requested
         selected_mode = mode & supported_modes
