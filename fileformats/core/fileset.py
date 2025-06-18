@@ -1452,6 +1452,7 @@ class FileSet(DataType):
         dest_dir = Path(dest_dir)
         # Logic to determine the laziest mode to use
         mode = self.CopyMode[mode] if isinstance(mode, str) else mode
+        logger.debug("Requested '%s' for the copy operation", mode)
         if len(self.fspaths) == 1:
             # If there is only one path to copy, then collation isn't meaningful
             collation = self.CopyCollation.any
@@ -1479,7 +1480,9 @@ class FileSet(DataType):
                 f"Destination directory is on CIFS mount ({dest_dir}) "
                 "and we therefore cannot create a symlink"
             )
-            logger.debug(constraint)
+            logger.debug(
+                constraint + ", supported modes restricted to %s", supported_modes
+            )
             constraints.append(constraint)
         not_on_same_mount = [
             p for p in self.fspaths if not FsMountIdentifier.on_same_mount(p, dest_dir)
@@ -1491,7 +1494,9 @@ class FileSet(DataType):
                 f"not on same file-system mount as the destination directory {dest_dir}"
                 "and therefore cannot be hard-linked"
             )
-            logger.debug(constraint)
+            logger.debug(
+                constraint + ", supported modes restricted to %s", supported_modes
+            )
             constraints.append(constraint)
         if (
             new_stem
@@ -1511,6 +1516,11 @@ class FileSet(DataType):
 
         # Get the intersection of copy modes that are supported and have been requested
         selected_mode = mode & supported_modes
+        logger.debug(
+            "Selected copy mode is '%s' for the copy operation (requested %s)",
+            selected_mode,
+            mode,
+        )
         if not selected_mode:
             msg = (
                 f"Cannot copy {self} using '{mode}' mode as it is not supported by "
@@ -1520,6 +1530,9 @@ class FileSet(DataType):
                 msg += ", and the following constraints:\n" + "\n".join(constraints)
             raise UnsatisfiableCopyModeError(msg)
         if selected_mode & self.CopyMode.leave:
+            logger.debug(
+                "Selected copy mode is set to 'leave', therefore we are not copying anything"
+            )
             return self  # Don't need to do anything
 
         copy_file: ty.Callable[[Path, Path], None]
@@ -1527,8 +1540,10 @@ class FileSet(DataType):
 
         # Select inner copy/link methods
         if selected_mode & self.CopyMode.symlink:
+            logger.debug('Using symbolic links for the "copy" operation')
             copy_dir = copy_file = os.symlink
         elif selected_mode & self.CopyMode.hardlink:
+            logger.debug('Using hard links for the "copy" operation')
             copy_file = os.link
 
             def hardlink_dir(src: Path, dest: Path) -> None:
@@ -1541,6 +1556,7 @@ class FileSet(DataType):
 
             copy_dir = hardlink_dir
         else:
+            logger.debug('Using full copy for the "copy" operation')
             assert selected_mode & self.CopyMode.copy
             copy_dir = shutil.copytree
             copy_file = shutil.copyfile  # type: ignore
@@ -1748,10 +1764,15 @@ class FileSet(DataType):
             exts = [d[-1] for d in decomposed_fspaths]
             duplicate_exts = [n for n, c in Counter(exts).items() if c > 1]
             if duplicate_exts:
+                reason = ""
+                if new_stem:
+                    reason += f"with a new stem, {new_stem!r}, "
+                if collation == self.CopyCollation.adjacent:
+                    reason += f"with collation mode '{collation}', "
                 raise UnsatisfiableCopyModeError(
-                    f"Cannot copy/move {self} with collation mode "
-                    f'"{collation}", as there are duplicate extensions, {duplicate_exts}, '
-                    f"in file paths: " + "\n".join(str(p) for p in self.fspaths)
+                    f"Cannot copy/move {self} {reason} as there are duplicate "
+                    f"extensions, {duplicate_exts}, in file paths: "
+                    + "\n".join(str(p) for p in self.fspaths)
                 )
             # Set default for new_stem if not provided and collating file-set to be adjacent
             if new_stem is None:
