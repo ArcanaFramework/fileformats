@@ -1,5 +1,6 @@
 import operator
 from pathlib import Path
+import inspect
 import typing as ty
 import re
 from fileformats.core.exceptions import (
@@ -128,8 +129,15 @@ def to_mime(
         namespace scheme instead of putting all non-standard types into the 'application'
         registry if not
     """
+    # Handle forward references
+    if isinstance(datatype, ty.ForwardRef):
+        datatype = datatype.__forward_arg__
     origin = ty.get_origin(datatype)
-    if origin is None and not issubclass(datatype, fileformats.core.DataType):
+    if (
+        origin is None
+        and inspect.isclass(datatype)
+        and not issubclass(datatype, fileformats.core.DataType)
+    ):
         raise TypeError(
             f"Cannot convert {datatype} to mime-type as it is not a file-set class"
         )
@@ -146,9 +154,6 @@ def to_mime(
         return item_mime
     if origin is ty.Union:
         return ",".join(to_mime(t, official=official) for t in ty.get_args(datatype))
-    # Handle case
-    if isinstance(datatype, ty.ForwardRef):
-        datatype = datatype.__forward_arg__
     if (
         isinstance(datatype, str)
         and datatype.startswith("fileformats.")
