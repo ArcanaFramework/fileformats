@@ -190,7 +190,7 @@ class Array(
     ] = (Singular,)
     item_type: ty.Optional[ty.Type[Singular[ItemType, ty.Any]]] = None
 
-    primitive = tuple
+    primitive = tuple  # type: ignore[assignment]
 
     value: ty.Tuple[ItemType, ...]
 
