@@ -20,6 +20,13 @@ from .headers import (
 from .classifiers.file import A, B, C, D, E, F, G, H, J, K, L, M, N, P, Q, R, TestField
 from .classifiers.generic import Classified, U, V, W, X, Y, Z
 from .magic import Magic, MagicVersion
+from .abstract import (
+    AbstractFile,
+    AbstractSubclass,
+    ConcreteClass,
+    AnotherConcreteClass,
+    ConvertibleToFile,
+)
 
 __all__ = [
     "__version__",
@@ -68,4 +75,9 @@ __all__ = [
     "Z",
     "Magic",
     "MagicVersion",
+    "AbstractFile",
+    "AbstractSubclass",
+    "ConcreteClass",
+    "AnotherConcreteClass",
+    "ConvertibleToFile",
 ]

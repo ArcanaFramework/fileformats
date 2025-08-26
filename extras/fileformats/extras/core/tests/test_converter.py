@@ -3,8 +3,9 @@ import attrs
 from pathlib import Path
 import pytest
 from pydra.compose import python, shell
-from fileformats.generic import File
+from fileformats.generic import File, FileSet
 from fileformats.testing import Foo, Bar, Baz, Qux
+from fileformats.testing import ConvertibleToFile, ConcreteClass, AnotherConcreteClass
 from fileformats.core import converter
 from fileformats.core.exceptions import FormatConversionError
 from conftest import write_test_file
@@ -91,9 +92,18 @@ def test_convert_mapped_conversion(work_dir):
     assert bar.raw_contents == baz.raw_contents
 
 
-def test_convertible_from():
-
-    assert Bar.convertible_from() == ty.Union[Bar, Foo, Baz]
-    assert Qux.convertible_from() == ty.Union[Qux, Foo]
-    assert Foo.convertible_from() == Foo
-    assert Baz.convertible_from() == Baz
+@pytest.mark.parametrize(
+    ["klass", "convertible_from"],
+    [
+        [Bar, ty.Union[Bar, Baz, Foo]],
+        [Qux, ty.Union[Foo, Qux]],
+        [Foo, Foo],
+        [Baz, Baz],
+        [
+            ConvertibleToFile,
+            ty.Union[AnotherConcreteClass, ConcreteClass, ConvertibleToFile],
+        ],
+    ],
+)
+def test_convertible_from(klass: type[FileSet], convertible_from: type[FileSet]):
+    assert klass.convertible_from() == convertible_from

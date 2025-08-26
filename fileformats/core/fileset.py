@@ -630,14 +630,45 @@ class FileSet(DataType):
         return converters_dict
 
     @classmethod
-    def convertible_from(cls) -> ty.Type[DataType]:
+    def convertible_from(cls) -> ty.Type["DataType"]:
         """Union of types that can be converted to this type, including the current type.
         If there are no other types that can be converted to this type, return the current type
         """
-        datatypes = (cls,) + tuple(cls.get_converters_dict().keys())
+        datatypes: ty.Tuple[ty.Type[DataType], ...] = (cls,) + tuple(
+            cls.get_converters_dict().keys()
+        )
         if len(datatypes) == 1:
             return cls
-        return ty.Union.__getitem__(datatypes)  # type: ignore[return-value]
+        concrete_datatypes = set()
+        module = inspect.getmodule(cls)
+        sisters = [
+            subclass
+            for subclass in module.__dict__.values()
+            if isinstance(subclass, type) and issubclass(subclass, FileSet)
+        ]
+
+        def subclasses(
+            klass: ty.Type[DataType],
+        ) -> ty.Generator[ty.Type[DataType], None, None]:
+            """Yields all non-abstract subclasses of the given class."""
+            for subclass in sisters:
+                if issubclass(subclass, klass) and subclass is not klass:
+                    yield subclass
+
+        def add_concrete(datatype: ty.Type[DataType]) -> None:
+            """Adds datatype to concrete_datatypes list if not abstract, otherwise adds all non-abstract subclasses"""
+            if inspect.isabstract(datatype):
+                for subclass in subclasses(datatype):
+                    add_concrete(subclass)
+            else:
+                concrete_datatypes.add(datatype)
+
+        # Create list of non-abstract datatypes
+        for datatype in datatypes:
+            add_concrete(datatype)
+        return ty.Union.__getitem__(  # pyright: ignore[reportAttributeAccessIssue]
+            tuple(sorted(concrete_datatypes, key=lambda x: x.__name__))
+        )  # type: ignore[return-value]
 
     @classmethod
     def get_converter_defs(cls, source_format: type) -> ty.List["Converter"]:
@@ -1558,7 +1589,7 @@ class FileSet(DataType):
         else:
             logger.debug('Using full copy for the "copy" operation')
             assert selected_mode & self.CopyMode.copy
-            copy_dir = shutil.copytree
+            copy_dir = shutil.copytree  # type: ignore
             copy_file = shutil.copyfile  # type: ignore
 
         # Prepare destination directory
