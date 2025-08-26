@@ -1589,7 +1589,7 @@ class FileSet(DataType):
         else:
             logger.debug('Using full copy for the "copy" operation')
             assert selected_mode & self.CopyMode.copy
-            copy_dir = shutil.copytree
+            copy_dir = shutil.copytree  # type: ignore
             copy_file = shutil.copyfile  # type: ignore
 
         # Prepare destination directory
