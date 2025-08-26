@@ -630,11 +630,13 @@ class FileSet(DataType):
         return converters_dict
 
     @classmethod
-    def convertible_from(cls) -> ty.Type[DataType]:
+    def convertible_from(cls) -> ty.Type["DataType"]:
         """Union of types that can be converted to this type, including the current type.
         If there are no other types that can be converted to this type, return the current type
         """
-        datatypes = (cls,) + tuple(cls.get_converters_dict().keys())
+        datatypes: ty.Tuple[ty.Type[DataType], ...] = (cls,) + tuple(
+            cls.get_converters_dict().keys()
+        )
         if len(datatypes) == 1:
             return cls
         concrete_datatypes = set()
@@ -645,13 +647,15 @@ class FileSet(DataType):
             if isinstance(subclass, type) and issubclass(subclass, FileSet)
         ]
 
-        def subclasses(klass) -> ty.Generator[type[FileSet], None, None]:
+        def subclasses(
+            klass: ty.Type[DataType],
+        ) -> ty.Generator[ty.Type[DataType], None, None]:
             """Yields all non-abstract subclasses of the given class."""
             for subclass in sisters:
                 if issubclass(subclass, klass) and subclass is not klass:
                     yield subclass
 
-        def add_concrete(datatype):
+        def add_concrete(datatype: ty.Type[DataType]) -> None:
             """Adds datatype to concrete_datatypes list if not abstract, otherwise adds all non-abstract subclasses"""
             if inspect.isabstract(datatype):
                 for subclass in subclasses(datatype):
@@ -662,7 +666,9 @@ class FileSet(DataType):
         # Create list of non-abstract datatypes
         for datatype in datatypes:
             add_concrete(datatype)
-        return ty.Union.__getitem__(tuple(sorted(concrete_datatypes, key=lambda x: x.__name__)))  # type: ignore[return-value]
+        return ty.Union.__getitem__(  # pyright: ignore[reportAttributeAccessIssue]
+            tuple(sorted(concrete_datatypes, key=lambda x: x.__name__))
+        )  # type: ignore[return-value]
 
     @classmethod
     def get_converter_defs(cls, source_format: type) -> ty.List["Converter"]:
