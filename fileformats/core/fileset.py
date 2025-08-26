@@ -637,7 +637,32 @@ class FileSet(DataType):
         datatypes = (cls,) + tuple(cls.get_converters_dict().keys())
         if len(datatypes) == 1:
             return cls
-        return ty.Union.__getitem__(datatypes)  # type: ignore[return-value]
+        concrete_datatypes = set()
+        module = inspect.getmodule(cls)
+        sisters = [
+            subclass
+            for subclass in module.__dict__.values()
+            if isinstance(subclass, type) and issubclass(subclass, FileSet)
+        ]
+
+        def subclasses(klass) -> ty.Generator[type[FileSet], None, None]:
+            """Yields all non-abstract subclasses of the given class."""
+            for subclass in sisters:
+                if issubclass(subclass, klass) and subclass is not klass:
+                    yield subclass
+
+        def add_concrete(datatype):
+            """Adds datatype to concrete_datatypes list if not abstract, otherwise adds all non-abstract subclasses"""
+            if inspect.isabstract(datatype):
+                for subclass in subclasses(datatype):
+                    add_concrete(subclass)
+            else:
+                concrete_datatypes.add(datatype)
+
+        # Create list of non-abstract datatypes
+        for datatype in datatypes:
+            add_concrete(datatype)
+        return ty.Union.__getitem__(tuple(sorted(concrete_datatypes, key=lambda x: x.__name__)))  # type: ignore[return-value]
 
     @classmethod
     def get_converter_defs(cls, source_format: type) -> ty.List["Converter"]:
