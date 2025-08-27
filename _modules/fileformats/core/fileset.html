@@ -6,7 +6,7 @@
         <link rel="prefetch" href="../../../_static/logo_small.png" as="image" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2025.07.19 -->
-        <title>fileformats.core.fileset - FileFormats v0.15.5</title>
+        <title>fileformats.core.fileset - FileFormats v0.15.6</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=beddf052" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=25af2a20" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -172,7 +172,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">FileFormats v0.15.5</div></a>
+      <a href="../../../index.html"><div class="brand">FileFormats v0.15.6</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -198,7 +198,7 @@
     <img class="sidebar-logo" src="../../../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.15.5</span>
+  <span class="sidebar-brand-text">FileFormats v0.15.6</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -276,7 +276,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">Counter</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ty</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">operator</span><span class="w"> </span><span class="kn">import</span> <span class="n">itemgetter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">operator</span><span class="w"> </span><span class="kn">import</span> <span class="n">itemgetter</span><span class="p">,</span> <span class="n">attrgetter</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
@@ -911,35 +911,42 @@
         <span class="k">return</span> <span class="n">converters_dict</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">convertible_from</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="s2">&quot;DataType&quot;</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convertible_from</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">only_namespace_parents</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">union_sort_key</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Callable</span><span class="p">[[</span><span class="n">DataType</span><span class="p">],</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">attrgetter</span><span class="p">(</span><span class="s2">&quot;__name__&quot;</span><span class="p">),</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="s2">&quot;DataType&quot;</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Union of types that can be converted to this type, including the current type.</span>
 <span class="sd">        If there are no other types that can be converted to this type, return the current type</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        only_namespace_parents: bool</span>
+<span class="sd">            If True, only consider parent classes in the same namespace for conversion.</span>
+<span class="sd">        union_sort_key : callable[[DataType], Any], optional</span>
+<span class="sd">            A function used to sort the union of types. Defaults to sorting by the type name.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Type[DataType]</span>
+<span class="sd">            The type or union of types that can be converted to this type.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">datatypes</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">DataType</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">cls</span><span class="p">,)</span> <span class="o">+</span> <span class="nb">tuple</span><span class="p">(</span>
-            <span class="bp">cls</span><span class="o">.</span><span class="n">get_converters_dict</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-        <span class="p">)</span>
+
+        <span class="n">ns</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">namespace</span>
+        <span class="n">datatypes</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">DataType</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="bp">cls</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">fformat</span> <span class="ow">in</span> <span class="n">FileSet</span><span class="o">.</span><span class="n">subclasses</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">fformat</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
+                <span class="n">fformat</span><span class="o">.</span><span class="n">namespace</span> <span class="o">==</span> <span class="n">ns</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">only_namespace_parents</span>
+            <span class="p">):</span>
+                <span class="n">datatypes</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">fformat</span><span class="o">.</span><span class="n">get_converters_dict</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">datatypes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">cls</span>
         <span class="n">concrete_datatypes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-        <span class="n">module</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmodule</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
-        <span class="n">sisters</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">subclass</span>
-            <span class="k">for</span> <span class="n">subclass</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subclass</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">subclass</span><span class="p">,</span> <span class="n">FileSet</span><span class="p">)</span>
-        <span class="p">]</span>
-
-        <span class="k">def</span><span class="w"> </span><span class="nf">subclasses</span><span class="p">(</span>
-            <span class="n">klass</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">DataType</span><span class="p">],</span>
-        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Generator</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">DataType</span><span class="p">],</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Yields all non-abstract subclasses of the given class.&quot;&quot;&quot;</span>
-            <span class="k">for</span> <span class="n">subclass</span> <span class="ow">in</span> <span class="n">sisters</span><span class="p">:</span>
-                <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">subclass</span><span class="p">,</span> <span class="n">klass</span><span class="p">)</span> <span class="ow">and</span> <span class="n">subclass</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">klass</span><span class="p">:</span>
-                    <span class="k">yield</span> <span class="n">subclass</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">add_concrete</span><span class="p">(</span><span class="n">datatype</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">DataType</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Adds datatype to concrete_datatypes list if not abstract, otherwise adds all non-abstract subclasses&quot;&quot;&quot;</span>
             <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isabstract</span><span class="p">(</span><span class="n">datatype</span><span class="p">):</span>
-                <span class="k">for</span> <span class="n">subclass</span> <span class="ow">in</span> <span class="n">subclasses</span><span class="p">(</span><span class="n">datatype</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">subclass</span> <span class="ow">in</span> <span class="n">datatype</span><span class="o">.</span><span class="n">subclasses</span><span class="p">():</span>
                     <span class="n">add_concrete</span><span class="p">(</span><span class="n">subclass</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">concrete_datatypes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">datatype</span><span class="p">)</span>
@@ -947,8 +954,9 @@
         <span class="c1"># Create list of non-abstract datatypes</span>
         <span class="k">for</span> <span class="n">datatype</span> <span class="ow">in</span> <span class="n">datatypes</span><span class="p">:</span>
             <span class="n">add_concrete</span><span class="p">(</span><span class="n">datatype</span><span class="p">)</span>
+        <span class="c1"># TODO: Might want to sort datatypes in a more specific order</span>
         <span class="k">return</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span>  <span class="c1"># pyright: ignore[reportAttributeAccessIssue]</span>
-            <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">concrete_datatypes</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+            <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">concrete_datatypes</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">union_sort_key</span><span class="p">))</span>
         <span class="p">)</span>  <span class="c1"># type: ignore[return-value]</span>
 
     <span class="nd">@classmethod</span>
@@ -2314,7 +2322,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=8c792987"></script>
+</div><script src="../../../_static/documentation_options.js?v=f6cf9268"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>
