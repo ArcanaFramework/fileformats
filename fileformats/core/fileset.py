@@ -9,7 +9,7 @@ from copy import copy
 from collections import Counter
 import typing as ty
 import shutil
-from operator import itemgetter
+from operator import itemgetter, attrgetter
 import itertools
 import functools
 from pathlib import Path
@@ -630,35 +630,42 @@ class FileSet(DataType):
         return converters_dict
 
     @classmethod
-    def convertible_from(cls) -> ty.Type["DataType"]:
+    def convertible_from(
+        cls,
+        only_namespace_parents: bool = True,
+        union_sort_key: ty.Callable[[DataType], ty.Any] = attrgetter("__name__"),
+    ) -> ty.Type["DataType"]:
         """Union of types that can be converted to this type, including the current type.
         If there are no other types that can be converted to this type, return the current type
+
+        Parameters
+        ----------
+        only_namespace_parents: bool
+            If True, only consider parent classes in the same namespace for conversion.
+        union_sort_key : callable[[DataType], Any], optional
+            A function used to sort the union of types. Defaults to sorting by the type name.
+
+        Returns
+        -------
+        Type[DataType]
+            The type or union of types that can be converted to this type.
         """
-        datatypes: ty.Tuple[ty.Type[DataType], ...] = (cls,) + tuple(
-            cls.get_converters_dict().keys()
-        )
+
+        ns = cls.namespace
+        datatypes: ty.List[ty.Type[DataType]] = [cls]
+        for fformat in FileSet.subclasses():
+            if issubclass(cls, fformat) and (
+                fformat.namespace == ns or not only_namespace_parents
+            ):
+                datatypes.extend(fformat.get_converters_dict().keys())
         if len(datatypes) == 1:
             return cls
         concrete_datatypes = set()
-        module = inspect.getmodule(cls)
-        sisters = [
-            subclass
-            for subclass in module.__dict__.values()
-            if isinstance(subclass, type) and issubclass(subclass, FileSet)
-        ]
-
-        def subclasses(
-            klass: ty.Type[DataType],
-        ) -> ty.Generator[ty.Type[DataType], None, None]:
-            """Yields all non-abstract subclasses of the given class."""
-            for subclass in sisters:
-                if issubclass(subclass, klass) and subclass is not klass:
-                    yield subclass
 
         def add_concrete(datatype: ty.Type[DataType]) -> None:
             """Adds datatype to concrete_datatypes list if not abstract, otherwise adds all non-abstract subclasses"""
             if inspect.isabstract(datatype):
-                for subclass in subclasses(datatype):
+                for subclass in datatype.subclasses():
                     add_concrete(subclass)
             else:
                 concrete_datatypes.add(datatype)
@@ -666,8 +673,9 @@ class FileSet(DataType):
         # Create list of non-abstract datatypes
         for datatype in datatypes:
             add_concrete(datatype)
+        # TODO: Might want to sort datatypes in a more specific order
         return ty.Union.__getitem__(  # pyright: ignore[reportAttributeAccessIssue]
-            tuple(sorted(concrete_datatypes, key=lambda x: x.__name__))
+            tuple(sorted(concrete_datatypes, key=union_sort_key))
         )  # type: ignore[return-value]
 
     @classmethod
