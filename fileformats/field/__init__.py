@@ -87,6 +87,12 @@ class Text(Singular[str, str]):
     def __repr__(self) -> str:
         return f'{self.type_name}("{self.value}")'
 
+    def __str__(self) -> str:
+        return self.value
+
+    def __fspath__(self) -> str:
+        return self.value
+
 
 class Integer(Singular[int, int], ScalarMixin[int, int]):
     value: int
