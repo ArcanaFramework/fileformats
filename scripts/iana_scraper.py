@@ -91,10 +91,10 @@ def get_subtype_templates() -> ty.Dict[str, ty.Dict[str, ty.Dict[str, ty.Any]]]:
             response = requests.get(subtype_url)
             # Check if the request was successful
             if response.status_code == 200:
-                subtype_templates[registry][subtype_name] = (
-                    extract_info_from_subtype_template(
-                        registry, subtype_name, response.text
-                    )
+                subtype_templates[registry][
+                    subtype_name
+                ] = extract_info_from_subtype_template(
+                    registry, subtype_name, response.text
                 )
             else:
                 # If the request was not successful, return an error message
