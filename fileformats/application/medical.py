@@ -1,6 +1,7 @@
 import typing as ty
-from fileformats.generic import BinaryFile
+
 from fileformats.core.mixin import WithMagicNumber
+from fileformats.generic import BinaryFile
 
 if ty.TYPE_CHECKING:
     import pydicom
@@ -34,9 +35,9 @@ class Dicom(WithMagicNumber, BinaryFile):
             The dictionary representation of the pydicom Dataset
         """
         import pydicom.dataset
-        import pydicom.valuerep
         import pydicom.multival
         import pydicom.uid
+        import pydicom.valuerep
 
         # Ensure that all keys are loaded before creating dictionary otherwise the keywords
         # will not be set in the elem

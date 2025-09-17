@@ -1,6 +1,7 @@
-from fileformats.generic import BinaryFile
-from .archive import Zip
 from fileformats.core.mixin import WithMagicNumber
+from fileformats.generic import BinaryFile
+
+from .archive import Zip
 
 
 # Document formats

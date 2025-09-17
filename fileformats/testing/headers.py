@@ -1,6 +1,6 @@
-from fileformats.generic import UnicodeFile, BinaryFile
 from fileformats.application import Json
-from fileformats.core.mixin import WithSideCars, WithSeparateHeader, WithMagicNumber
+from fileformats.core.mixin import WithMagicNumber, WithSeparateHeader, WithSideCars
+from fileformats.generic import BinaryFile, UnicodeFile
 
 
 class YFile(UnicodeFile):

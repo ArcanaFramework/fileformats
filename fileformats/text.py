@@ -1,6 +1,7 @@
-from .core import __version__
 from fileformats.core.mixin import WithMagicNumber
-from fileformats.generic import UnicodeFile, BinaryFile, File
+from fileformats.generic import BinaryFile, File, UnicodeFile
+
+from .core import __version__
 
 
 class Text(File):
@@ -429,12 +430,11 @@ class XmlExternalParsedEntity(Text, UnicodeFile):
     alternate_exts = (None,)
 
 
-from fileformats.application import (  # noqa
+from fileformats.application import (  # noqa; These are sometimes/historically considered part of the text registry so we import them here
     Json,
     Xml,
     Yaml,
-)  # These are sometimes/historically considered part of the text registry so we import them here
-
+)
 
 __all__ = [
     "__version__",

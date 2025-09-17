@@ -1,10 +1,11 @@
+import time
 import typing as ty
 from pathlib import Path
-import time
 from threading import RLock
-import fileformats.core
-from .fs_mount_identifier import FsMountIdentifier
 
+import fileformats.core
+
+from .fs_mount_identifier import FsMountIdentifier
 
 PropReturn = ty.TypeVar("PropReturn")
 

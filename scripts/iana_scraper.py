@@ -1,10 +1,11 @@
-import sys
 import json
-import requests
+import sys
 import typing as ty
 from warnings import warn
-from tqdm import tqdm
+
+import requests
 from bs4 import BeautifulSoup
+from tqdm import tqdm
 
 # Define the URL to scrape
 IANA_URL = "https://www.iana.org/assignments/media-types/media-types.xhtml"
@@ -12,12 +13,16 @@ IANA_URL = "https://www.iana.org/assignments/media-types/media-types.xhtml"
 NONE_TYPES = ("none", "n/a", "")
 
 
-def extract_info_from_subtype_template(name: str, registry: str, text: str) -> str:
+def extract_info_from_subtype_template(
+    name: str, registry: str, text: str
+) -> ty.Dict[str, ty.Optional[str]]:
     mime_info = {}
 
-    def add_mime_info(key: str, value: str):
+    def add_mime_info(
+        key: ty.Optional[str], value: ty.Optional[str]
+    ) -> ty.Optional[str]:
         if key is not None:
-            value = value.strip()
+            value = value.strip() if value else value
             if "magic number" in key:
                 if value.lower() in NONE_TYPES:
                     value = None
@@ -86,10 +91,10 @@ def get_subtype_templates() -> ty.Dict[str, ty.Dict[str, ty.Dict[str, ty.Any]]]:
             response = requests.get(subtype_url)
             # Check if the request was successful
             if response.status_code == 200:
-                subtype_templates[registry][
-                    subtype_name
-                ] = extract_info_from_subtype_template(
-                    registry, subtype_name, response.text
+                subtype_templates[registry][subtype_name] = (
+                    extract_info_from_subtype_template(
+                        registry, subtype_name, response.text
+                    )
                 )
             else:
                 # If the request was not successful, return an error message

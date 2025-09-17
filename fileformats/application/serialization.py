@@ -1,13 +1,17 @@
 import json
 import typing as ty
-from fileformats.core.typing import TypeAlias
 from pathlib import Path
-from fileformats.core import DataType, FileSet, extra_implementation
-from fileformats.core.mixin import WithClassifier
-from fileformats.generic import UnicodeFile
-from fileformats.core.exceptions import FormatMismatchError
-from fileformats.core import SampleFileGenerator
 
+from fileformats.core import (
+    DataType,
+    FileSet,
+    SampleFileGenerator,
+    extra_implementation,
+)
+from fileformats.core.exceptions import FormatMismatchError
+from fileformats.core.mixin import WithClassifier
+from fileformats.core.typing import TypeAlias
+from fileformats.generic import UnicodeFile
 
 SerializationType: TypeAlias = ty.Union[ty.Dict[str, ty.Any], ty.List[ty.Any]]
 

@@ -1,7 +1,7 @@
 from fileformats.core import __version__
-from .raster import RasterImage, Bitmap, Gif, Jpeg, Png, Tiff
-from .vector import VectorImage, Svg
+
 from .notclassifiedyet import (
+    T38,
     Aces,
     Apng,
     Avci,
@@ -40,11 +40,12 @@ from .notclassifiedyet import (
     Prs_Pti,
     PwgRaster,
     Svg__Xml,
-    T38,
     TiffFx,
     Webp,
     Wmf,
 )
+from .raster import Bitmap, Gif, Jpeg, Png, RasterImage, Tiff
+from .vector import Svg, VectorImage
 
 __all__ = [
     "__version__",

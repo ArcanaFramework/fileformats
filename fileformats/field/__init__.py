@@ -7,9 +7,10 @@ data, so the classes in this module are provided to support these use cases.
 
 import decimal
 import typing as ty
+
 from fileformats.core import Field, __version__  # noqa: F401
-from fileformats.core.mixin import WithClassifier
 from fileformats.core.exceptions import FormatMismatchError
+from fileformats.core.mixin import WithClassifier
 
 ValueType = ty.TypeVar("ValueType")
 PrimitiveType = ty.TypeVar("PrimitiveType")

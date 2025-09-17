@@ -1,27 +1,27 @@
 from __future__ import annotations
-from inspect import isclass
-import typing as ty
-from fileformats.core.typing import Self
-from abc import ABCMeta
+
 import importlib
 import itertools
+import typing as ty
+from abc import ABCMeta
+from inspect import isclass
+
+from fileformats.core.typing import Self
+
+from .classifier import Classifier
+from .decorators import classproperty
 from .exceptions import (
     FileFormatsError,
-    FormatMismatchError,
     FormatConversionError,
+    FormatMismatchError,
     FormatRecognitionError,
 )
-from .decorators import classproperty
-from .utils import (
-    subpackages,
-    add_exc_note,
-)
 from .identification import (
-    to_mime_format_name,
-    from_mime_format_name,
     IANA_MIME_TYPE_REGISTRIES,
+    from_mime_format_name,
+    to_mime_format_name,
 )
-from .classifier import Classifier
+from .utils import add_exc_note, subpackages
 
 if ty.TYPE_CHECKING:
     from .converter_helpers import Converter
@@ -288,6 +288,7 @@ class DataType(Classifier, metaclass=ABCMeta):
     CHECK_ANNOTATION = "__fileformats_check__"
 
 
-from .fileset import FileSet  # noqa
-from .field import Field  # noqa
 import fileformats.core.converter_helpers  # noqa
+
+from .field import Field  # noqa
+from .fileset import FileSet  # noqa

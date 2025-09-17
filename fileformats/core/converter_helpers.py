@@ -1,13 +1,16 @@
-from abc import ABCMeta
-import typing as ty
 import logging
-from .exceptions import FormatDefinitionError
+import typing as ty
+from abc import ABCMeta
+
 from .classifier import Classifier
 from .datatype import DataType
+from .exceptions import FormatDefinitionError
 
 if ty.TYPE_CHECKING:
     from pydra.compose.base import Task
+
     import fileformats.core
+
     from . import mixin
 
 logger = logging.getLogger("fileformats")

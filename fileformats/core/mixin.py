@@ -1,20 +1,21 @@
-from pathlib import Path
+import logging
 import re
 import typing as ty
-import logging
-from .datatype import DataType
+from pathlib import Path
+
 import fileformats.core
-from .utils import get_optional_type
-from .decorators import validated_property, classproperty
-from .identification import to_mime_format_name
-from .converter_helpers import SubtypeVar, Converter
+
 from .classifier import Classifier
+from .converter_helpers import Converter, SubtypeVar
+from .datatype import DataType
+from .decorators import classproperty, validated_property
 from .exceptions import (
+    FormatDefinitionError,
     FormatMismatchError,
     FormatRecognitionError,
-    FormatDefinitionError,
 )
-
+from .identification import to_mime_format_name
+from .utils import get_optional_type
 
 logger = logging.getLogger("fileformats")
 

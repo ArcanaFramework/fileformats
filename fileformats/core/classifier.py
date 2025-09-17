@@ -1,4 +1,5 @@
 import typing as ty
+
 from .decorators import classproperty
 from .exceptions import FormatDefinitionError
 

@@ -2,11 +2,10 @@ import os
 import sys
 import typing as ty
 from pathlib import Path
+
+from fileformats.core.decorators import classproperty, validated_property
+from fileformats.core.exceptions import FormatMismatchError
 from fileformats.core.fileset import FileSet
-from fileformats.core.exceptions import (
-    FormatMismatchError,
-)
-from fileformats.core.decorators import validated_property, classproperty
 
 
 class FsObject(FileSet, os.PathLike):  # type: ignore

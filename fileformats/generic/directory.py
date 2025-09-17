@@ -1,16 +1,15 @@
 import typing as ty
 from pathlib import Path
+
+from fileformats.core.collection import TypedCollection
+from fileformats.core.decorators import mtime_cached_property, validated_property
 from fileformats.core.exceptions import FormatMismatchError
-from fileformats.core.decorators import (
-    validated_property,
-    mtime_cached_property,
-)
-from .fsobject import FsObject
-from fileformats.core.fileset import FileSet, FILE_CHUNK_LEN_DEFAULT
+from fileformats.core.fileset import FILE_CHUNK_LEN_DEFAULT, FileSet
 from fileformats.core.mixin import WithClassifiers
 from fileformats.core.typing import CryptoMethod
-from fileformats.core.collection import TypedCollection
+
 from .file import File
+from .fsobject import FsObject
 
 
 class Directory(FsObject):
