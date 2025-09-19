@@ -1,5 +1,4 @@
 from fileformats.core import __version__
-from fileformats.text import Javascript
 
 from .archive import Archive, Bzip, Gzip, Tar, TarGzip, Zip
 from .document import Document, Msword, MswordX, Pdf, Postscript
@@ -504,6 +503,8 @@ from .serialization import (
     XmlSchema,
     Yaml,
 )
+
+from fileformats.text import Javascript  # isort: skip
 
 __all__ = [
     "__version__",

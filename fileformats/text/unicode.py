@@ -1,11 +1,6 @@
-from fileformats.core.mixin import WithMagicNumber
-from fileformats.generic import BinaryFile, File, UnicodeFile
+from fileformats.generic import UnicodeFile
 
-from .core import __version__
-
-
-class Text(File):
-    """Base class for text files"""
+from .base import Text
 
 
 # General formats
@@ -49,15 +44,6 @@ class _1d_interleaved_parityfec(Text, UnicodeFile):
 
     iana_mime = "text/1d-interleaved-parityfec"
     ext = None
-
-
-class CacheManifest(WithMagicNumber, Text, BinaryFile):
-    """"""
-
-    iana_mime = "text/cache-manifest"
-    ext = ".appcache"
-    alternate_exts = ('"manifest"',)
-    magic_number = b"CACHE MANIFEST"
 
 
 class Calendar(Text, UnicodeFile):
@@ -428,69 +414,3 @@ class XmlExternalParsedEntity(Text, UnicodeFile):
     iana_mime = "text/xml-external-parsed-entity"
     ext = ".ent"
     alternate_exts = (None,)
-
-
-from fileformats.application import (  # noqa; These are sometimes/historically considered part of the text registry so we import them here
-    Json,
-    Xml,
-    Yaml,
-)
-
-__all__ = [
-    "__version__",
-    "Text",
-    "Plain",
-    "TextFile",
-    "Csv",
-    "Tsv",
-    "Html",
-    "Markdown",
-    "RestructedText",
-    "_1d_interleaved_parityfec",
-    "CacheManifest",
-    "Calendar",
-    "Cql",
-    "CqlExpression",
-    "CqlIdentifier",
-    "Css",
-    "CsvSchema",
-    "Dns",
-    "Encaprtp",
-    "Fhirpath",
-    "Flexfec",
-    "Fwdred",
-    "Gff3",
-    "GrammarRefList",
-    "Hl7v2",
-    "Javascript",
-    "JcrCnd",
-    "Mizar",
-    "N3",
-    "Parameters",
-    "Parityfec",
-    "ProvenanceNotation",
-    "Prs_Fallenstein_Rst",
-    "Prs_Lines_Tag",
-    "Prs_Prop_Logic",
-    "Raptorfec",
-    "Red",
-    "Rfc822_headers",
-    "RichText",
-    "RtpEncAescm128",
-    "Rtploopback",
-    "Rtx",
-    "Sgml",
-    "Shaclc",
-    "Shex",
-    "Spdx",
-    "Strings",
-    "T140",
-    "Troff",
-    "Turtle",
-    "Ulpfec",
-    "UriList",
-    "Vcard",
-    "Vtt",
-    "Wgsl",
-    "XmlExternalParsedEntity",
-]
