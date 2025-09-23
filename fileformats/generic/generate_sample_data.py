@@ -1,14 +1,14 @@
+import itertools
 import os
 import typing as ty
-import itertools
 from pathlib import Path
-from fileformats.core import FileSet, extra_implementation
-from fileformats.core import SampleFileGenerator
-from .fsobject import FsObject
-from .file import File
-from .set import TypedSet
-from .directory import Directory, TypedDirectory
 
+from fileformats.core import FileSet, SampleFileGenerator, extra_implementation
+
+from .directory import Directory, TypedDirectory
+from .file import File
+from .fsobject import FsObject
+from .set import TypedSet
 
 # Methods to generate sample files, typically used in testing
 FILE_FILL_LENGTH = 256

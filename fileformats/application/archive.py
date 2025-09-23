@@ -1,12 +1,13 @@
 import typing as ty
+
 from fileformats.core import FileSet
-from fileformats.core.mixin import WithClassifier
+from fileformats.core.mixin import WithClassifier, WithMagicNumber
 from fileformats.generic import BinaryFile
-from fileformats.core.mixin import WithMagicNumber
 
 
 class Archive(BinaryFile):
     "Base class for compressed archives"
+
     archived_type: ty.Optional[ty.Type[FileSet]] = None
 
 

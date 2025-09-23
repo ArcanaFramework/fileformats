@@ -1,16 +1,18 @@
-import sys
-import importlib
-import typing as ty
-import inspect
-from itertools import zip_longest
 import functools
+import importlib
+import inspect
+import sys
+import typing as ty
 import urllib.error
+from itertools import zip_longest
+
 import fileformats.core
 from fileformats.core.typing import TypeAlias
-from .datatype import DataType
+
 from .converter_helpers import Converter, SubtypeVar
-from .exceptions import FormatConversionError, FileFormatsExtrasError
-from .utils import import_extras_module, check_package_exists_on_pypi, add_exc_note
+from .datatype import DataType
+from .exceptions import FileFormatsExtrasError, FormatConversionError
+from .utils import add_exc_note, check_package_exists_on_pypi, import_extras_module
 
 if sys.version_info < (3, 11):
     from typing_extensions import Self

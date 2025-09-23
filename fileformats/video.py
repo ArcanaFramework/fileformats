@@ -1,10 +1,12 @@
+from fileformats.generic import BinaryFile
+
 from .core import __version__  # noqa
 from .core.mixin import WithMagicNumber
-from fileformats.generic import BinaryFile
 
 
 class Video(BinaryFile):
     "Base class for audio file formats"
+
     binary = True
     # iana_mime = None
     pass

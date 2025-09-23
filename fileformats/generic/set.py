@@ -1,9 +1,10 @@
-import typing as ty
 import itertools
+import typing as ty
 from pathlib import Path
+
 from fileformats.core import FileSet
-from fileformats.core.mixin import WithClassifiers
 from fileformats.core.collection import TypedCollection
+from fileformats.core.mixin import WithClassifiers
 
 
 class TypedSet(TypedCollection):

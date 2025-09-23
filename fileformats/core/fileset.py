@@ -1,47 +1,43 @@
-import os
-import struct
-from enum import Enum, IntEnum
-from warnings import warn
-import inspect
-import tempfile
 import errno
-from copy import copy
-from collections import Counter
-import typing as ty
-import shutil
-from operator import itemgetter, attrgetter
-import itertools
 import functools
-from pathlib import Path
 import hashlib
+import inspect
+import itertools
 import logging
+import os
+import shutil
+import struct
+import tempfile
+import typing as ty
+from collections import Counter
+from copy import copy
+from enum import Enum, IntEnum
+from operator import attrgetter, itemgetter
+from pathlib import Path
+from warnings import warn
+
 from fileformats.core.typing import Self
-from .utils import (
-    fspaths_converter,
-    import_extras_module,
-)
-from .decorators import mtime_cached_property, classproperty, VALIDATED_PROPERTY_FLAG
-from .typing import FspathsInputType, CryptoMethod, PathType
-from .sampling import SampleFileGenerator
-from .identification import (
-    to_mime_format_name,
-    IANA_MIME_TYPE_REGISTRIES,
-)
+
 from .classifier import Classifier
+from .datatype import DataType
+from .decorators import VALIDATED_PROPERTY_FLAG, classproperty, mtime_cached_property
 from .exceptions import (
+    FileFormatsExtrasError,
+    FileFormatsExtrasPkgNotCheckedError,
+    FileFormatsExtrasPkgUninstalledError,
+    FormatConversionError,
+    FormatDefinitionError,
     FormatMismatchError,
     UnconstrainedExtensionException,
-    FormatConversionError,
     UnsatisfiableCopyModeError,
-    FormatDefinitionError,
-    FileFormatsExtrasError,
-    FileFormatsExtrasPkgUninstalledError,
-    FileFormatsExtrasPkgNotCheckedError,
 )
-from .datatype import DataType
 from .extras import extra
 from .fs_mount_identifier import FsMountIdentifier
+from .identification import IANA_MIME_TYPE_REGISTRIES, to_mime_format_name
 from .mock import MockMixin
+from .sampling import SampleFileGenerator
+from .typing import CryptoMethod, FspathsInputType, PathType
+from .utils import fspaths_converter, import_extras_module
 
 if ty.TYPE_CHECKING:
     from .converter_helpers import Converter

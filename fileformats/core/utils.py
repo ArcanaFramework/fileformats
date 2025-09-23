@@ -1,18 +1,19 @@
 import importlib
-from pathlib import Path
 import inspect
-import typing as ty
-from types import ModuleType
-import urllib.request
-import urllib.error
-import os
 import logging
+import os
 import pkgutil
+import typing as ty
+import urllib.error
+import urllib.request
 from contextlib import contextmanager
-from .typing import FspathsInputType
+from pathlib import Path
+from types import ModuleType
+
 import fileformats.core
 from fileformats.core.exceptions import FormatDefinitionError
 
+from .typing import FspathsInputType
 
 logger = logging.getLogger("fileformats")
 

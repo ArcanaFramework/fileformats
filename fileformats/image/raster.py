@@ -1,10 +1,12 @@
 import typing  # noqa: F401
 import typing as ty
+
 from fileformats.core import validated_property
-from fileformats.core.typing import TypeAlias
-from fileformats.core.mixin import WithMagicNumber
 from fileformats.core.exceptions import FormatMismatchError
+from fileformats.core.mixin import WithMagicNumber
+from fileformats.core.typing import TypeAlias
 from fileformats.generic import BinaryFile
+
 from .base import Image
 
 if ty.TYPE_CHECKING:

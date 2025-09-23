@@ -1,7 +1,8 @@
 import typing as ty
-from pathlib import Path
 from abc import ABCMeta, abstractproperty
-from fileformats.core import FileSet, validated_property, mtime_cached_property
+from pathlib import Path
+
+from fileformats.core import FileSet, mtime_cached_property, validated_property
 from fileformats.core.decorators import classproperty
 from fileformats.core.exceptions import FormatMismatchError
 from fileformats.core.utils import get_optional_type

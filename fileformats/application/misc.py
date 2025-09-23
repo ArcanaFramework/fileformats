@@ -1,7 +1,9 @@
 import typing as ty
-from fileformats.generic import BinaryFile, File
+
 from fileformats.core.mixin import WithMagicNumber
-from .serialization import Xml, Json
+from fileformats.generic import BinaryFile, File
+
+from .serialization import Json, Xml
 
 
 class _1dInterleavedParityfec(File):

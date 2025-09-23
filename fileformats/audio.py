@@ -1,6 +1,7 @@
-from .core import __version__  # noqa
-from fileformats.generic import BinaryFile
 from fileformats.core.mixin import WithMagicNumber
+from fileformats.generic import BinaryFile
+
+from .core import __version__  # noqa
 
 
 class Audio(BinaryFile):

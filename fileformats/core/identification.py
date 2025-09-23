@@ -1,15 +1,13 @@
-import operator
-from pathlib import Path
 import inspect
-import typing as ty
+import operator
 import re
-from fileformats.core.exceptions import (
-    FormatDefinitionError,
-    FormatRecognitionError,
-)
-import fileformats.core
-from .utils import fspaths_converter, add_exc_note
+import typing as ty
+from pathlib import Path
 
+import fileformats.core
+from fileformats.core.exceptions import FormatDefinitionError, FormatRecognitionError
+
+from .utils import add_exc_note, fspaths_converter
 
 LIST_MIME = "+list-of"
 IANA_MIME_TYPE_REGISTRIES = [

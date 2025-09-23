@@ -1,7 +1,8 @@
+from fileformats.application import Json, Xml
+from fileformats.generic import BinaryFile, File
+
 from .core import __version__
 from .core.mixin import WithMagicNumber
-from fileformats.generic import BinaryFile, File
-from fileformats.application import Json, Xml
 
 
 class Model(File):
