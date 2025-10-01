@@ -492,6 +492,7 @@ from .misc import (
     _3gpphalforms__Json,
     _3gppIms__Xml,
 )
+from .presentation import Presentation
 from .serialization import (
     InformalSchema,
     Json,
@@ -503,6 +504,7 @@ from .serialization import (
     XmlSchema,
     Yaml,
 )
+from .spreadsheet import Spreadsheet
 
 from fileformats.text import Javascript  # isort: skip
 
@@ -833,6 +835,7 @@ __all__ = [
     "Pls__Xml",
     "PocSettings__Xml",
     "PpspTracker__Json",
+    "Presentation",
     "Problem__Json",
     "Problem__Xml",
     "Provenance__Xml",
@@ -922,6 +925,7 @@ __all__ = [
     "Spdx__Json",
     "SparqlResults__Xml",
     "SpiritsEvent__Xml",
+    "Spreadsheet",
     "Sql",
     "Srgs",
     "Srgs__Xml",
