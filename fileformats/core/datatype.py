@@ -211,7 +211,7 @@ class DataType(Classifier, metaclass=ABCMeta):
                 module = importlib.import_module(module_path)
             except ImportError:
                 raise FormatRecognitionError(
-                    f"Did not find fileformats namespace package corresponding to '{namespace}' "
+                    f"Did not find fileformats namespace package at '{module_path}' "
                     f"required to interpret '{mime_string}' MIME, or MIME-like, type. "
                     f"try installing the namespace package with "
                     f"'python3 -m pip install fileformats-{namespace}'."
