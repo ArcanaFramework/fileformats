@@ -117,7 +117,11 @@ class DataType(Classifier, metaclass=ABCMeta):
         return a MIME-like identifier, e.g. "text/plain" for fileformats.text.Plain.
         and "medimage/nifti" for fileformats.medimage.Nifti.
         """
-        return f"{cls.namespace}/{to_mime_format_name(cls.__name__)}"  # type: ignore
+        mime_like: str = cls.namespace + "/"
+        if cls.vendor:
+            mime_like += "vnd." + cls.vendor + "."
+        mime_like += to_mime_format_name(cls.__name__)  # type: ignore[attr-defined]
+        return mime_like
 
     @classmethod
     def from_mime(cls, mime_string: str) -> ty.Type[DataType]:
@@ -196,16 +200,23 @@ class DataType(Classifier, metaclass=ABCMeta):
             else:
                 klass = next(iter(matching_name))
         else:
-            class_name = from_mime_format_name(format_name)
+            if format_name.startswith("vnd."):
+                name_parts = format_name.split(".")
+                vendor = name_parts[1]
+                format_name = ".".join(name_parts[2:])
+                module_path = f"fileformats.vendor.{vendor}.{namespace}"
+            else:
+                module_path = f"fileformats.{namespace}"
             try:
-                module = importlib.import_module("fileformats." + namespace)
+                module = importlib.import_module(module_path)
             except ImportError:
                 raise FormatRecognitionError(
-                    f"Did not find fileformats namespace package corresponding to {namespace} "
+                    f"Did not find fileformats namespace package corresponding to '{namespace}' "
                     f"required to interpret '{mime_string}' MIME, or MIME-like, type. "
                     f"try installing the namespace package with "
                     f"'python3 -m pip install fileformats-{namespace}'."
                 ) from None
+            class_name = from_mime_format_name(format_name)
             try:
                 klass = getattr(module, class_name)
             except AttributeError:

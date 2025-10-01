@@ -46,7 +46,7 @@ jobs:
     - name: Install Package
       run: python3 -m pip install -e .[test]
     - name: Install Extras Package
-      run: python3 -m pip install -e ./extras[test]
+      run: python3 -m pip install -e ./extras[test,application,image,vendor_openxmlformats_officedocument]
     - name: MyPy
       run: mypy --install-types --non-interactive --no-warn-unused-ignores .
     - name: Pytest

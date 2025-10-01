@@ -30,6 +30,4 @@ class Postscript(WithMagicNumber, Document):
     iana_mime = "application/postscript"
 
 
-from fileformats.vendor.openxmlformats_officedocument import MswordX  # noqa
-
-__all__ = ["Document", "Pdf", "Msword", "MswordX", "Postscript"]
+__all__ = ["Document", "Pdf", "Msword", "Postscript"]

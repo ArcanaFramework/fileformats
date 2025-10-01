@@ -7,6 +7,3 @@ class Wordprocessingml_Document(Zip, Document):
 
 class Wordprocessingml_Template(Zip, Document):
     ext = ".dotx"
-
-
-MswordX = Wordprocessingml_Document

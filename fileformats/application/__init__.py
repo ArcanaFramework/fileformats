@@ -1,7 +1,7 @@
 from fileformats.core import __version__
 
 from .archive import Archive, Bzip, Gzip, Tar, TarGzip, Zip
-from .document import Document, Msword, MswordX, Pdf, Postscript
+from .document import Document, Msword, Pdf, Postscript
 from .medical import Dicom
 from .misc import (
     H224,
@@ -507,6 +507,9 @@ from .serialization import (
 from .spreadsheet import Spreadsheet
 
 from fileformats.text import Javascript  # isort: skip
+from fileformats.vendor.openxmlformats_officedocument.application import (  # isort:skip
+    Wordprocessingml_Document as MswordX,
+)
 
 __all__ = [
     "__version__",
