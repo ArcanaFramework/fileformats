@@ -7,12 +7,15 @@ from fileformats.vendor.openxmlformats_officedocument.application import (
     Wordprocessingml_Document as MswordX,
 )
 
+if ty.TYPE_CHECKING:
+    from docx.document import Document as DocumentObject
+
 
 @extra_implementation(FileSet.load)
-def load_docx(doc: MswordX, **kwargs: ty.Any) -> Document:
-    return Document(doc)  # type: ignore[no-any-return]
+def load_docx(doc: MswordX, **kwargs: ty.Any) -> DocumentObject:
+    return Document(str(doc))  # type: ignore[no-any-return]
 
 
 @extra_implementation(FileSet.save)
-def save_docx(doc: MswordX, data: Document, **kwargs: ty.Any) -> None:
-    data.save(doc)
+def save_docx(doc: MswordX, data: DocumentObject, **kwargs: ty.Any) -> None:
+    data.save(str(doc))
