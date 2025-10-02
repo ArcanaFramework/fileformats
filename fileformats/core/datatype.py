@@ -200,6 +200,7 @@ class DataType(Classifier, metaclass=ABCMeta):
             else:
                 klass = next(iter(matching_name))
         else:
+            # Get the path to the module to load the class from
             if format_name.startswith("vnd."):
                 name_parts = format_name.split(".")
                 vendor = name_parts[1]
@@ -207,6 +208,7 @@ class DataType(Classifier, metaclass=ABCMeta):
                 module_path = f"fileformats.vendor.{vendor}.{namespace}"
             else:
                 module_path = f"fileformats.{namespace}"
+            module_path = module_path.replace("-", "_")
             try:
                 module = importlib.import_module(module_path)
             except ImportError:
