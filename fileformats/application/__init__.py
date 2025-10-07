@@ -1,7 +1,7 @@
 from fileformats.core import __version__
 
 from .archive import Archive, Bzip, Gzip, Tar, TarGzip, Zip
-from .document import Document, Msword, MswordX, Pdf, Postscript
+from .document import Document, Msword, Pdf, Postscript
 from .medical import Dicom
 from .misc import (
     H224,
@@ -492,6 +492,7 @@ from .misc import (
     _3gpphalforms__Json,
     _3gppIms__Xml,
 )
+from .presentation import Presentation
 from .serialization import (
     InformalSchema,
     Json,
@@ -503,8 +504,12 @@ from .serialization import (
     XmlSchema,
     Yaml,
 )
+from .spreadsheet import Spreadsheet
 
 from fileformats.text import Javascript  # isort: skip
+from fileformats.vendor.openxmlformats_officedocument.application import (  # isort:skip
+    Wordprocessingml_Document as MswordX,
+)
 
 __all__ = [
     "__version__",
@@ -833,6 +838,7 @@ __all__ = [
     "Pls__Xml",
     "PocSettings__Xml",
     "PpspTracker__Json",
+    "Presentation",
     "Problem__Json",
     "Problem__Xml",
     "Provenance__Xml",
@@ -922,6 +928,7 @@ __all__ = [
     "Spdx__Json",
     "SparqlResults__Xml",
     "SpiritsEvent__Xml",
+    "Spreadsheet",
     "Sql",
     "Srgs",
     "Srgs__Xml",

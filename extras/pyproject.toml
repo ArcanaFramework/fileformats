@@ -9,11 +9,7 @@ readme = "README.rst"
 requires-python = ">=3.11"
 dependencies = [
     "fileformats",
-    "imageio >=2.24.0",
     "pydra >=1.0a",
-    "PyYAML>=6.0",
-    "pydicom >=2.3",
-    "medimages4tests",
 ]
 license = { file = "LICENSE" }
 authors = [{ name = "Thomas G. Close", email = "tom.g.close@gmail.com" }]
@@ -43,6 +39,18 @@ test = [
     "codecov",
     "medimages4tests",
 ]
+application = [
+    "PyYAML>=6.0",
+    "pydicom >=2.3",
+    "medimages4tests",
+]
+image = [
+    "imageio >=2.24.0",
+]
+vendor_openxmlformats_officedocument = [
+    "python-docx >= 1.2.0",
+]
+
 
 [project.urls]
 repository = "https://github.com/ArcanaFramework/fileformats"

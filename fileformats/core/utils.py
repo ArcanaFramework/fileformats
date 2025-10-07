@@ -186,8 +186,12 @@ def import_extras_module(klass: ty.Type["fileformats.core.DataType"]) -> ExtrasM
         klass = klass.TRUE_CLASS  # type: ignore
     except AttributeError:
         pass
-    pkg_parts = klass.__module__.split(".")
-    if pkg_parts[0] != "fileformats":
+    try:
+        if klass.vendor:
+            sub_pkg = f"vendor.{klass.vendor}.{klass.namespace}"
+        else:
+            sub_pkg = klass.namespace
+    except FormatDefinitionError:
         logger.debug(
             "There is no 'extras' module for classes not within the 'fileformats' package, "
             "not %s in %s",
@@ -195,12 +199,13 @@ def import_extras_module(klass: ty.Type["fileformats.core.DataType"]) -> ExtrasM
             klass.__module__,
         )
         return ExtrasModule(True, None, None)
-    sub_pkg = pkg_parts[1]
-    extras_pkg = "fileformats.extras." + sub_pkg
+    extras_pkg = "fileformats.extras." + sub_pkg.replace("-", "_")
     if sub_pkg in IANA_MIME_TYPE_REGISTRIES + ["testing"]:
         extras_pypi = "fileformats-extras"
+    elif klass.vendor:
+        extras_pypi = f"fileformats-{klass.vendor}-extras"
     else:
-        extras_pypi = f"fileformats-{sub_pkg.replace('_', '-')}-extras"
+        extras_pypi = f"fileformats-{klass.namespace}-extras"
     try:
         importlib.import_module(extras_pkg)
     except ModuleNotFoundError as e:

@@ -1,9 +1,15 @@
-from pathlib import Path
 import platform
 import typing as ty
+from pathlib import Path
+
 import pytest
-from fileformats.core import extra, MockMixin, FileSet, extra_implementation
+from docx import Document
+
+from fileformats.core import FileSet, MockMixin, extra, extra_implementation
 from fileformats.testing import Foo
+from fileformats.vendor.openxmlformats_officedocument.application import (
+    Wordprocessingml_Document,
+)
 
 
 def test_sample():
@@ -72,3 +78,32 @@ def test_extra_signature4():
         @extra_implementation(Woo.test_extra)
         def woo_test_extra(woo: Woo, a: int, b: str) -> int:
             pass
+
+
+def test_vendor_extra_load(tmp_path: Path):
+
+    fspath = tmp_path / "test.docx"
+
+    # Create a sample document
+    data = Document()
+    data.add_heading("A document")
+    data.add_paragraph("The quick brown fox jumped over the lazy dog.")
+
+    Wordprocessingml_Document.new(fspath, data=data)
+    doc = Wordprocessingml_Document(fspath)
+    hsh = doc.hash()
+    reloaded_data = doc.load()
+    assert documents_equal(data, reloaded_data)
+    data.add_paragraph("Another paragraph")
+    doc.save(data)
+    assert doc.hash() != hsh
+
+
+def documents_equal(doc1: Document, doc2: Document) -> bool:
+    """Compare two Document objects by their XML content."""
+
+    # Get the main document part XML
+    xml1 = doc1.part.element.xml
+    xml2 = doc2.part.element.xml
+
+    return xml1 == xml2
