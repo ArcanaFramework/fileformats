@@ -12,10 +12,10 @@ if ty.TYPE_CHECKING:
 
 
 @extra_implementation(FileSet.load)
-def load_docx(doc: MswordX, **kwargs: ty.Any) -> DocumentObject:
+def load_docx(doc: MswordX, **kwargs: ty.Any) -> "DocumentObject":
     return Document(str(doc))  # type: ignore[no-any-return]
 
 
 @extra_implementation(FileSet.save)
-def save_docx(doc: MswordX, data: DocumentObject, **kwargs: ty.Any) -> None:
+def save_docx(doc: MswordX, data: "DocumentObject", **kwargs: ty.Any) -> None:
     data.save(str(doc))
