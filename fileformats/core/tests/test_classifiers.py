@@ -1,28 +1,31 @@
 from __future__ import annotations
+
 import decimal
+
 import pytest
 from pydra.compose import python
-from fileformats.core import from_mime, DataType, FileSet
-from fileformats.core import converter
+
 from fileformats.application import Zip
-from fileformats.generic import DirectoryOf
-from fileformats.field import Array, Integer, Decimal, Text, Boolean
+from fileformats.core import DataType, FileSet, converter, from_mime
 from fileformats.core.exceptions import (
-    FormatDefinitionError,
     FormatConversionError,
-    FormatRecognitionError,
+    FormatDefinitionError,
     FormatMismatchError,
+    FormatRecognitionError,
 )
+from fileformats.field import Array, Boolean, Decimal, Integer, Text
+from fileformats.generic import DirectoryOf
+from fileformats.testing import J  # Y,
 from fileformats.testing import (
     A,
     B,
     C,
+    Classified,
     D,
     E,
     F,
     G,
     H,
-    J,
     K,
     L,
     M,
@@ -31,15 +34,12 @@ from fileformats.testing import (
     Q,
     R,
     TestField,
-    Classified,
     U,
     V,
     W,
     X,
-    # Y,
     Z,
 )
-
 
 SpecificDataType = DataType.type_var("SpecificDataType")
 SpecificFileSet = FileSet.type_var("SpecificFileSet")
@@ -242,9 +242,28 @@ def test_mime_roundtrips():
     assert from_mime("testing/b.a+k") is K[B, A]
     assert from_mime("testing/b.a+k") is not K[A, B]
 
-    with pytest.raises(FormatRecognitionError) as e:
+    with pytest.raises(
+        FormatRecognitionError, match="Cannot create reversible MIME type"
+    ):
         Array[TestField].mime_like
-    assert "Cannot create reversible MIME type for " in str(e)
+
+
+def test_mime_fail():
+    class BadFormat(DataType):
+        pass
+
+    with pytest.raises(FormatDefinitionError, match="Cannot determine namespace"):
+        BadFormat.namespace
+
+
+def test_vendor_mime_fail():
+    class BadVendorFormat(DataType):
+        pass
+
+    BadVendorFormat.__module__ = "fileformats.vendor.badnamespace"
+
+    with pytest.raises(FormatDefinitionError, match="Cannot determine namespace"):
+        BadVendorFormat.namespace
 
 
 def test_inherited_classifiers():
@@ -429,4 +448,5 @@ def test_classifier_categories6():
         FormatDefinitionError,
         match="Cannot have more than one occurrence of a classifier ",
     ):
+        Classified[C, E]
         Classified[C, E]
