@@ -6,7 +6,7 @@
         <link rel="prefetch" href="../../../_static/logo_small.png" as="image">
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
-        <title>fileformats.application.document - FileFormats v0.16.0</title>
+        <title>fileformats.text.ascii - FileFormats v0.16.0</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=beddf052" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -255,52 +255,23 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <h1>Source code for fileformats.application.document</h1><div class="highlight"><pre>
+          <h1>Source code for fileformats.text.ascii</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.core.mixin</span><span class="w"> </span><span class="kn">import</span> <span class="n">WithMagicNumber</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.generic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BinaryFile</span>
 
-
-<span class="c1"># Document formats</span>
-<div class="viewcode-block" id="Document">
-<a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Document">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">Document</span><span class="p">(</span><span class="n">BinaryFile</span><span class="p">):</span>
-    <span class="c1"># iana_mime = None</span>
-    <span class="k">pass</span></div>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Text</span>
 
 
+<div class="viewcode-block" id="CacheManifest">
+<a class="viewcode-back" href="../../../reference/text.html#fileformats.text.CacheManifest">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CacheManifest</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Pdf">
-<a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Pdf">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">Pdf</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Document</span><span class="p">):</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.pdf&quot;</span>
-    <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;%PDF-&quot;</span>
-    <span class="n">binary</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/cache-manifest&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.appcache&quot;</span>
+    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;&quot;manifest&quot;&#39;</span><span class="p">,)</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;CACHE MANIFEST&quot;</span></div>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;application/pdf&quot;</span></div>
-
-
-
-<div class="viewcode-block" id="Msword">
-<a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Msword">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">Msword</span><span class="p">(</span><span class="n">Document</span><span class="p">):</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.doc&quot;</span>
-    <span class="n">binary</span> <span class="o">=</span> <span class="kc">True</span>
-
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;application/msword&quot;</span></div>
-
-
-
-<div class="viewcode-block" id="Postscript">
-<a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Postscript">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">Postscript</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Document</span><span class="p">):</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.eps&quot;</span>
-    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.ps&quot;</span><span class="p">,)</span>
-    <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;%!&quot;</span>
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;application/postscript&quot;</span></div>
-
-
-
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Document&quot;</span><span class="p">,</span> <span class="s2">&quot;Pdf&quot;</span><span class="p">,</span> <span class="s2">&quot;Msword&quot;</span><span class="p">,</span> <span class="s2">&quot;Postscript&quot;</span><span class="p">]</span>
 </pre></div>
         </article>
       </div>
