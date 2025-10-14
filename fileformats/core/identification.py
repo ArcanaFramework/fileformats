@@ -262,16 +262,19 @@ def from_paths(
 
 
 def to_mime_format_name(format_name: str) -> str:
-    if "___" in format_name:
+    if "____" in format_name:
         raise FormatDefinitionError(
             f"Cannot convert name of format class {format_name} to mime string as it "
-            "contains triple underscore"
+            "contains quadruple underscore, which is undefined behavior (triple underscore "
+            "is used to indicate '+' in mime string, double underscores are used as "
+            "delimiters between classifiers, and single underscores are used to indicate '.')"
         )
     if format_name.startswith("_"):
         format_name = format_name[1:]
     format_name = format_name[0].lower() + format_name[1:]
-    format_name = re.sub("__([A-Z])", lambda m: "+" + m.group(1).lower(), format_name)
+    format_name = re.sub("___([A-Z])", lambda m: "+" + m.group(1).lower(), format_name)
     format_name = re.sub("_([A-Z])", lambda m: "." + m.group(1).lower(), format_name)
+    format_name = format_name.replace("_", ".")
     format_name = re.sub("([A-Z])", lambda m: "-" + m.group(1).lower(), format_name)
     return format_name
 

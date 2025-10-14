@@ -253,7 +253,7 @@ class DataType(Classifier, metaclass=ABCMeta):
                             ) from None
 
                     classifiers_str, classified_name = format_name.split("+")
-                    classifiers = [get_format(c) for c in classifiers_str.split(".")]
+                    classifiers = [get_format(c) for c in classifiers_str.split("..")]
                     try:
                         classified = get_format(classified_name)
                     except FormatRecognitionError as e:
