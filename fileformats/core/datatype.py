@@ -273,7 +273,7 @@ class DataType(Classifier, metaclass=ABCMeta):
                     klass = classified[classifiers]  # type: ignore
                 else:
                     raise FormatRecognitionError(
-                        f"Did not find '{class_name}' class in fileformats.{namespace} "
+                        f"Did not find '{class_name}' class in {module_path} "
                         f"corresponding to MIME, or MIME-like, type {mime_string}"
                     ) from None
         if not (ty.get_origin(klass) is ty.Union or issubclass(klass, cls)):
