@@ -1,3 +1,4 @@
+from fileformats.application import Cdfx___Xml
 from fileformats.core.identification import from_mime
 from fileformats.generic import DirectoryOf, FileSet
 from fileformats.testing import Classified, U, V
@@ -7,7 +8,7 @@ from fileformats.vendor.openxmlformats_officedocument.application import (
 )
 
 
-def test_mime_roundtrip():
+def test_mime_roundtrip() -> None:
     for klass in FileSet.all_formats:
         mimetype = klass.mime_type
         assert isinstance(mimetype, str)
@@ -15,7 +16,7 @@ def test_mime_roundtrip():
         assert reloaded is klass
 
 
-def test_mimelike_roundtrip():
+def test_mimelike_roundtrip() -> None:
     for klass in FileSet.all_formats:
         mimetype = klass.mime_like
         assert isinstance(mimetype, str)
@@ -23,12 +24,12 @@ def test_mimelike_roundtrip():
         assert reloaded is klass
 
 
-def test_subpackage_to_mime_roundtrip():
+def test_subpackage_to_mime_roundtrip() -> None:
     assert Psi.mime_like == "testing-subpackage/psi"
     assert from_mime("testing-subpackage/psi") is Psi
 
 
-def test_subpackage_to_mime_classified_rountrip():
+def test_subpackage_to_mime_classified_rountrip() -> None:
     assert (
         SubpackageClassified[Zeta, Theta].mime_like
         == "testing-subpackage/theta..zeta+subpackage-classified"
@@ -39,7 +40,7 @@ def test_subpackage_to_mime_classified_rountrip():
     )
 
 
-def test_subpackage_to_mime_parent_classified_rountrip():
+def test_subpackage_to_mime_parent_classified_rountrip() -> None:
     assert (
         Classified[Zeta, Theta].mime_like == "testing-subpackage/theta..zeta+classified"
     )
@@ -49,7 +50,7 @@ def test_subpackage_to_mime_parent_classified_rountrip():
     )
 
 
-def test_subpackage_to_mime_parent_classifiers_rountrip():
+def test_subpackage_to_mime_parent_classifiers_rountrip() -> None:
     assert (
         SubpackageClassified[U, V].mime_like
         == "testing-subpackage/u..v+subpackage-classified"
@@ -60,13 +61,19 @@ def test_subpackage_to_mime_parent_classifiers_rountrip():
     )
 
 
-def test_vendor_roundtrip():
+def test_vendor_roundtrip() -> None:
 
     mime = Wordprocessingml_Document.mime_like
     assert Wordprocessingml_Document is from_mime(mime)
 
 
-def test_vendor_in_container_roundtrip():
+def test_vendor_in_container_roundtrip() -> None:
 
     mime = DirectoryOf[Wordprocessingml_Document].mime_like
     assert DirectoryOf[Wordprocessingml_Document] is from_mime(mime)
+
+
+def test_native_container_roundtrip() -> None:
+
+    mime = Cdfx___Xml.mime_like
+    assert Cdfx___Xml is from_mime(mime)

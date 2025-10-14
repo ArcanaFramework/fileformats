@@ -285,7 +285,7 @@ def from_mime_format_name(format_name: str) -> str:
     if re.match(r"^[0-9]", format_name):
         format_name = "_" + format_name
     format_name = format_name.capitalize()
-    format_name = re.sub(r"(\.)(\w)", lambda m: "_" + m.group(2).upper(), format_name)
-    format_name = re.sub(r"(\+)(\w)", lambda m: "__" + m.group(2).upper(), format_name)
+    format_name = format_name.replace(".", "_")
+    format_name = re.sub(r"(\+)(\w)", lambda m: "___" + m.group(2).upper(), format_name)
     format_name = re.sub(r"(-)(\w)", lambda m: m.group(2).upper(), format_name)
     return format_name

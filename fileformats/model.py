@@ -117,7 +117,7 @@ class U3d(WithMagicNumber, BinaryFile):
     magic_number = "55334400"
 
 
-class X3d_vrml(WithMagicNumber, BinaryFile):
+class X3dVrml(WithMagicNumber, BinaryFile):
     """"""
 
     iana_mime = "model/x3d-vrml"
@@ -157,7 +157,7 @@ __all__ = [
     "StepXml___Zip",
     "Stl",
     "U3d",
-    "X3d_vrml",
+    "X3dVrml",
     "X3d___Fastinfoset",
     "X3d___Xml",
 ]

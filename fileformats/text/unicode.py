@@ -39,7 +39,7 @@ class RestructedText(Text, UnicodeFile):
     iana_mime = "text/x-rst"
 
 
-class _1d_interleaved_parityfec(Text, UnicodeFile):
+class _1dInterleavedParityfec(Text, UnicodeFile):
     """"""
 
     iana_mime = "text/1d-interleaved-parityfec"
