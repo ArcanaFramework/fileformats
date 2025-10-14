@@ -768,7 +768,7 @@ class FileSet(DataType):
         """a dictionary containing all formats by their IANA MIME type (if applicable)"""
         if cls._formats_by_iana_mime is None:
             cls._formats_by_iana_mime = {
-                f.iana_mime: f
+                f.iana_mime.lower(): f
                 for f in FileSet.all_formats
                 if f.__dict__.get("iana_mime", "")
             }
