@@ -12,7 +12,7 @@ class Svg(InformalSchema):
     pass
 
 
-class Svg__Xml(VectorImage, Xml):
+class Svg___Xml(VectorImage, Xml):
     ext = ".svg"
     iana_mime = "image/svg+xml"
     schema = Svg  # Set Xml schema attribute

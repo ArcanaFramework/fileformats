@@ -347,7 +347,7 @@ class PwgRaster(WithMagicNumber, BinaryFile, Image):
     magic_number = "52615332"
 
 
-class Svg__Xml(Image, BinaryFile):
+class Svg___Xml(Image, BinaryFile):
     """SVG is used by Web browsers, often in conjunction with HTML; by mobile phones and
     digital cameras, as a format for interchange of graphical assets in desk top publishing,
     for industrial process visualization, display signage, and many other applications
