@@ -258,7 +258,7 @@ class Red(Text, UnicodeFile):
     ext = None
 
 
-class Rfc822_headers(Text, UnicodeFile):
+class Rfc822Headers(Text, UnicodeFile):
     """"""
 
     iana_mime = "text/rfc822-headers"
