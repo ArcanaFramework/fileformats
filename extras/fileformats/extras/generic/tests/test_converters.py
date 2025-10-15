@@ -29,7 +29,7 @@ def test_files(files_dir: Path, file_names: ty.List[str]) -> ty.List[Path]:
 def test_list_dir_contents(
     files_dir: Path, test_files: ty.List[Path], tmp_path: Path
 ) -> None:
-    text_set = SetOf[TextFile].convert(DirectoryOf[TextFile](files_dir), cache_root=tmp_path / "cache")  # type: ignore[misc]
+    text_set = SetOf[TextFile].convert(DirectoryOf[TextFile](files_dir))  # type: ignore[misc]
     assert sorted(t.name for t in text_set.contents) == sorted(
         f.name for f in test_files
     )
@@ -38,5 +38,5 @@ def test_list_dir_contents(
 def test_put_contents_in_dir(
     file_names: ty.List[str], test_files: ty.List[Path], tmp_path: Path
 ) -> None:
-    text_dir = DirectoryOf[TextFile].convert(SetOf[TextFile](test_files), cache_root=tmp_path / "cache")  # type: ignore[misc]
+    text_dir = DirectoryOf[TextFile].convert(SetOf[TextFile](test_files))  # type: ignore[misc]
     assert sorted(t.name for t in text_dir.contents) == file_names
