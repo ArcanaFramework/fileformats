@@ -6,7 +6,7 @@
         <link rel="prefetch" href="../../../_static/logo_small.png" as="image">
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
-        <title>fileformats.core.fileset - FileFormats v0.16.1</title>
+        <title>fileformats.core.fileset - FileFormats v0.16.2</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=beddf052" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">FileFormats v0.16.1</div></a>
+      <a href="../../../index.html"><div class="brand">FileFormats v0.16.2</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -191,7 +191,7 @@
     <img class="sidebar-logo" src="../../../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.16.1</span>
+  <span class="sidebar-brand-text">FileFormats v0.16.2</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -778,6 +778,9 @@
 <span class="sd">        ----------</span>
 <span class="sd">        fileset : FileSet</span>
 <span class="sd">            the file-set object to convert</span>
+<span class="sd">        cache_root : Path, optional</span>
+<span class="sd">            a directory to use for any temporary files created during the conversion,</span>
+<span class="sd">            by default None which will use the default Pydra cache</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            args to pass to customise the converter task definition</span>
 
@@ -795,7 +798,9 @@
             <span class="k">return</span> <span class="n">copy</span><span class="p">(</span><span class="n">fileset</span><span class="p">)</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="n">converter</span><span class="o">.</span><span class="n">in_file</span><span class="p">]</span> <span class="o">=</span> <span class="n">fileset</span>
         <span class="n">task</span> <span class="o">=</span> <span class="n">attrs</span><span class="o">.</span><span class="n">evolve</span><span class="p">(</span><span class="n">converter</span><span class="o">.</span><span class="n">task</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">outputs</span> <span class="o">=</span> <span class="n">task</span><span class="p">()</span>
+        <span class="c1"># We need to use a fresh cache root each time to avoid picking up previous</span>
+        <span class="c1"># conversions that no longer exist</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="n">task</span><span class="p">(</span><span class="n">cache_root</span><span class="o">=</span><span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">())</span>  <span class="c1"># type: ignore[call-arg]</span>
         <span class="n">out_file</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">converter</span><span class="o">.</span><span class="n">out_file</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out_file</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
             <span class="n">out_file</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">out_file</span><span class="p">)</span>
@@ -1043,7 +1048,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;a dictionary containing all formats by their IANA MIME type (if applicable)&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_formats_by_iana_mime</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">cls</span><span class="o">.</span><span class="n">_formats_by_iana_mime</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">iana_mime</span><span class="p">:</span> <span class="n">f</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">iana_mime</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="n">f</span>
                 <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">FileSet</span><span class="o">.</span><span class="n">all_formats</span>
                 <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;iana_mime&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
             <span class="p">}</span>
@@ -2309,7 +2314,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=19b58ebd"></script>
+</div><script src="../../../_static/documentation_options.js?v=63033552"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>
