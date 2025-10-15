@@ -502,6 +502,7 @@ class FileSet(DataType):
     def convert(
         cls,
         fileset: "FileSet",
+        cache_root: ty.Optional[Path] = None,
         **kwargs: ty.Any,
     ) -> Self:
         """Convert a given file-set into the format specified by the class
@@ -510,6 +511,9 @@ class FileSet(DataType):
         ----------
         fileset : FileSet
             the file-set object to convert
+        cache_root : Path, optional
+            a directory to use for any temporary files created during the conversion,
+            by default None which will use the default Pydra cache
         **kwargs
             args to pass to customise the converter task definition
 
@@ -527,7 +531,7 @@ class FileSet(DataType):
             return copy(fileset)
         kwargs[converter.in_file] = fileset
         task = attrs.evolve(converter.task, **kwargs)
-        outputs = task()
+        outputs = task(cache_root=cache_root)  # type: ignore[call-arg]
         out_file = getattr(outputs, converter.out_file)
         if not isinstance(out_file, cls):
             out_file = cls(out_file)
