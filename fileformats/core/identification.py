@@ -274,7 +274,7 @@ def to_mime_format_name(format_name: str) -> str:
     format_name = format_name[0].lower() + format_name[1:]
     format_name = re.sub("___([A-Z])", lambda m: "+" + m.group(1).lower(), format_name)
     format_name = re.sub("_([A-Z])", lambda m: "." + m.group(1).lower(), format_name)
-    format_name = format_name.replace("._", "..")
+    format_name = format_name.replace("_.", "..")
     format_name = re.sub("([A-Z])", lambda m: "-" + m.group(1).lower(), format_name)
     return format_name
 
