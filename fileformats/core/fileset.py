@@ -502,7 +502,6 @@ class FileSet(DataType):
     def convert(
         cls,
         fileset: "FileSet",
-        cache_root: ty.Optional[Path] = None,
         **kwargs: ty.Any,
     ) -> Self:
         """Convert a given file-set into the format specified by the class
@@ -531,7 +530,9 @@ class FileSet(DataType):
             return copy(fileset)
         kwargs[converter.in_file] = fileset
         task = attrs.evolve(converter.task, **kwargs)
-        outputs = task(cache_root=cache_root)  # type: ignore[call-arg]
+        # We need to use a fresh cache root each time to avoid picking up previous
+        # conversions that no longer exist
+        outputs = task(cache_root=tempfile.mkdtemp())  # type: ignore[call-arg]
         out_file = getattr(outputs, converter.out_file)
         if not isinstance(out_file, cls):
             out_file = cls(out_file)
