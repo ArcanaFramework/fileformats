@@ -15,7 +15,6 @@ from fileformats.core.exceptions import (
 )
 from fileformats.field import Array, Boolean, Decimal, Integer, Text
 from fileformats.generic import DirectoryOf
-from fileformats.testing import J  # Y,
 from fileformats.testing import (
     A,
     B,
@@ -26,6 +25,7 @@ from fileformats.testing import (
     F,
     G,
     H,
+    J,  # Y,
     K,
     L,
     M,
@@ -234,13 +234,13 @@ def test_mime_roundtrips():
     assert from_mime("testing/f+directory-of") is DirectoryOf[F]
 
     # Directory is unordered so sort classifiers to create unique mime
-    assert DirectoryOf[H, F].mime_like == "testing/f.h+directory-of"
-    assert from_mime("testing/f.h+directory-of") is DirectoryOf[F, H]
+    assert DirectoryOf[H, F].mime_like == "testing/f..h+directory-of"
+    assert from_mime("testing/f..h+directory-of") is DirectoryOf[F, H]
 
     # K is ordered
-    assert K[B, A].mime_like == "testing/b.a+k"
-    assert from_mime("testing/b.a+k") is K[B, A]
-    assert from_mime("testing/b.a+k") is not K[A, B]
+    assert K[B, A].mime_like == "testing/b..a+k"
+    assert from_mime("testing/b..a+k") is K[B, A]
+    assert from_mime("testing/b..a+k") is not K[A, B]
 
     with pytest.raises(
         FormatRecognitionError, match="Cannot create reversible MIME type"

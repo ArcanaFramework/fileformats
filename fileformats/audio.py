@@ -32,7 +32,7 @@ class Wav(Audio):
     iana_mime = "audio/wav"
 
 
-class _1d_interleaved_parityfec(Audio):
+class _1dInterleavedParityfec(Audio):
     """"""
 
     iana_mime = "audio/1d-interleaved-parityfec"
@@ -105,7 +105,7 @@ class AmrWb(Audio):
     alternate_exts = (".AWB",)
 
 
-class AmrWb__(Audio):
+class AmrWb___(Audio):
     """This MIME type is not applicable for file storage.
     Instead, file storage of AMR-WB+ encoded audio is
     specified within the 3GPP-defined ISO-based multimedia
@@ -633,7 +633,7 @@ class Mpa(Audio):
     ext = None
 
 
-class Mp4a_latm(Audio):
+class Mp4aLatm(Audio):
     """"""
 
     iana_mime = "audio/MP4A-LATM"
@@ -647,7 +647,7 @@ class MpaRobust(Audio):
     ext = None
 
 
-class Mpeg4_generic(Audio):
+class Mpeg4Generic(Audio):
     """"""
 
     iana_mime = "audio/mpeg4-generic"
@@ -858,14 +858,14 @@ class TelephoneEvent(Audio):
     ext = None
 
 
-class TetraAcelp(Audio):
+class Tetra_acelp(Audio):
     """"""
 
     iana_mime = "audio/TETRA_ACELP"
     ext = None
 
 
-class TetraAcelpBb(Audio):
+class Tetra_acelp_bb(Audio):
     """"""
 
     iana_mime = "audio/TETRA_ACELP_BB"
@@ -943,14 +943,14 @@ __all__ = [
     "Mp4",
     "Aac",
     "Wav",
-    "_1d_interleaved_parityfec",
+    "_1dInterleavedParityfec",
     "_32kadpcm",
     "_3gpp",
     "_3gpp2",
     "Ac3",
     "Amr",
     "AmrWb",
-    "AmrWb__",
+    "AmrWb___",
     "Aptx",
     "Asc",
     "AtracAdvancedLossless",
@@ -1018,9 +1018,9 @@ __all__ = [
     "Mhas",
     "MobileXmf",
     "Mpa",
-    "Mp4a_latm",
+    "Mp4aLatm",
     "MpaRobust",
-    "Mpeg4_generic",
+    "Mpeg4Generic",
     "Ogg",
     "Opus",
     "Parityfec",
@@ -1046,8 +1046,8 @@ __all__ = [
     "T140c",
     "T38",
     "TelephoneEvent",
-    "TetraAcelp",
-    "TetraAcelpBb",
+    "Tetra_acelp",
+    "Tetra_acelp_bb",
     "Tone",
     "Tsvcis",
     "Uemclip",

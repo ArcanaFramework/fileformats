@@ -450,7 +450,7 @@ class WithClassifiers:
             if not cls.ordered_classifiers:
                 classifier_names.sort()
             classified = type(
-                f"{'_'.join(classifier_names)}__{cls.__name__}",
+                f"{'__'.join(classifier_names)}___{cls.__name__}",
                 (cls,),
                 class_attrs,
             )
@@ -713,6 +713,30 @@ class WithClassifiers:
             except AttributeError:
                 namespace = None
         return namespace
+
+    @classproperty
+    def vendor(cls) -> ty.Optional[str]:
+        """The "vendor" the format belongs to under the "fileformats" umbrella
+        namespace"""
+        vendor: ty.Optional[str]
+        if cls.is_classified:
+            vendors: ty.Collection[str] = set(
+                t.vendor for t in cls.classifiers if t.vendor
+            )
+            if cls.unclassified.vendor:  # type: ignore[attr-defined]
+                vendors.add(cls.unclassified.vendor)  # type: ignore[attr-defined]
+            if not vendors:
+                return None
+            if len(vendors) == 1:
+                return next(iter(vendors))
+            msg = (
+                "Cannot create reversible MIME type for because did not find a "
+                f"common vendor between all classifiers {list(cls.classifiers)}"
+            )
+            raise FormatRecognitionError(msg + f", found:\n{list(vendors)}")
+        else:
+            vendor = super().vendor  # type: ignore[misc]
+        return vendor
 
     @classproperty  # type: ignore[arg-type]
     def type_name(cls) -> str:

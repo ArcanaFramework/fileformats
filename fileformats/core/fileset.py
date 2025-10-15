@@ -510,6 +510,9 @@ class FileSet(DataType):
         ----------
         fileset : FileSet
             the file-set object to convert
+        cache_root : Path, optional
+            a directory to use for any temporary files created during the conversion,
+            by default None which will use the default Pydra cache
         **kwargs
             args to pass to customise the converter task definition
 
@@ -527,7 +530,9 @@ class FileSet(DataType):
             return copy(fileset)
         kwargs[converter.in_file] = fileset
         task = attrs.evolve(converter.task, **kwargs)
-        outputs = task()
+        # We need to use a fresh cache root each time to avoid picking up previous
+        # conversions that no longer exist
+        outputs = task(cache_root=tempfile.mkdtemp())  # type: ignore[call-arg]
         out_file = getattr(outputs, converter.out_file)
         if not isinstance(out_file, cls):
             out_file = cls(out_file)
@@ -768,7 +773,7 @@ class FileSet(DataType):
         """a dictionary containing all formats by their IANA MIME type (if applicable)"""
         if cls._formats_by_iana_mime is None:
             cls._formats_by_iana_mime = {
-                f.iana_mime: f
+                f.iana_mime.lower(): f
                 for f in FileSet.all_formats
                 if f.__dict__.get("iana_mime", "")
             }

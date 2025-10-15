@@ -30,7 +30,7 @@ class GltfBinary(Model, BinaryFile):
     ext = None
 
 
-class Gltf__Json(Model, Json):
+class Gltf___Json(Model, Json):
     """"""
 
     iana_mime = "model/gltf+json"
@@ -81,21 +81,21 @@ class Step(Model):
     alternate_exts = (".stp", ".step", ".stpnc", ".210")
 
 
-class Step__Xml(Model):
+class Step___Xml(Model):
     """"""
 
     iana_mime = "model/step+xml"
     ext = ".stpx"
 
 
-class Step__Zip(Model):
+class Step___Zip(Model):
     """"""
 
     iana_mime = "model/step+zip"
     ext = ".stpz"
 
 
-class StepXml__Zip(Model):
+class StepXml___Zip(Model):
     """"""
 
     iana_mime = "model/step-xml+zip"
@@ -117,7 +117,7 @@ class U3d(WithMagicNumber, BinaryFile):
     magic_number = "55334400"
 
 
-class X3d_vrml(WithMagicNumber, BinaryFile):
+class X3dVrml(WithMagicNumber, BinaryFile):
     """"""
 
     iana_mime = "model/x3d-vrml"
@@ -125,14 +125,14 @@ class X3d_vrml(WithMagicNumber, BinaryFile):
     magic_number = b"#X3D"
 
 
-class X3d__Fastinfoset(Model):
+class X3d___Fastinfoset(Model):
     """"""
 
     iana_mime = "model/x3d+fastinfoset"
     ext = ".x3db"
 
 
-class X3d__Xml(Model, Xml):
+class X3d___Xml(Model, Xml):
     """"""
 
     iana_mime = "model/x3d+xml"
@@ -145,19 +145,19 @@ __all__ = [
     "_3mf",
     "E57",
     "GltfBinary",
-    "Gltf__Json",
+    "Gltf___Json",
     "Jt",
     "Iges",
     "Mtl",
     "Obj",
     "Prc",
     "Step",
-    "Step__Xml",
-    "Step__Zip",
-    "StepXml__Zip",
+    "Step___Xml",
+    "Step___Zip",
+    "StepXml___Zip",
     "Stl",
     "U3d",
-    "X3d_vrml",
-    "X3d__Fastinfoset",
-    "X3d__Xml",
+    "X3dVrml",
+    "X3d___Fastinfoset",
+    "X3d___Xml",
 ]

@@ -39,7 +39,7 @@ class RestructedText(Text, UnicodeFile):
     iana_mime = "text/x-rst"
 
 
-class _1d_interleaved_parityfec(Text, UnicodeFile):
+class _1dInterleavedParityfec(Text, UnicodeFile):
     """"""
 
     iana_mime = "text/1d-interleaved-parityfec"
@@ -258,7 +258,7 @@ class Red(Text, UnicodeFile):
     ext = None
 
 
-class Rfc822_headers(Text, UnicodeFile):
+class Rfc822Headers(Text, UnicodeFile):
     """"""
 
     iana_mime = "text/rfc822-headers"

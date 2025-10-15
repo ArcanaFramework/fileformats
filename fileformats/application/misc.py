@@ -13,28 +13,28 @@ class _1dInterleavedParityfec(File):
     ext: ty.Optional[str] = None
 
 
-class _3gpdashQoeReport__Xml(Xml):
+class _3gpdashQoeReport___Xml(Xml):
     """"""
 
     iana_mime = "application/3gpdash-qoe-report+xml"
     ext = None
 
 
-class _3gpphal__Json(Json):
+class _3gpphal___Json(Json):
     """"""
 
     iana_mime = "application/3gppHal+json"
     ext = None
 
 
-class _3gpphalforms__Json(Json):
+class _3gpphalforms___Json(Json):
     """"""
 
     iana_mime = "application/3gppHalForms+json"
     ext = None
 
 
-class _3gppIms__Xml(Xml):
+class _3gppIms___Xml(Xml):
     """"""
 
     iana_mime = "application/3gpp-ims+xml"
@@ -48,14 +48,14 @@ class A2l(File):
     ext = ".a2l"
 
 
-class Ace__Cbor(File):
+class Ace___Cbor(File):
     """The type is used by authorization servers, clients, and resource servers that support the ACE framework with CBOR encoding, as specified in RFC 9200."""
 
     iana_mime = "application/ace+cbor"
     ext = None
 
 
-class Ace__Json(Json):
+class Ace___Json(Json):
     """This media type is intended for Authorization-Server-Client and Authorization-Server-Resource- Server communication as part of the ACE framework using JSON encoding, as specified in RFC 9431."""
 
     iana_mime = "application/ace+json"
@@ -69,14 +69,14 @@ class Activemessage(File):
     ext = None
 
 
-class Activity__Json(Json):
+class Activity___Json(Json):
     """"""
 
     iana_mime = "application/activity+json"
     ext = None
 
 
-class Aif__Cbor(File):
+class Aif___Cbor(File):
     """Applications that need to
     convey structured authorization data for identified resources,
     conveying sets of permissions."""
@@ -85,7 +85,7 @@ class Aif__Cbor(File):
     ext = None
 
 
-class Aif__Json(Json):
+class Aif___Json(Json):
     """Applications that need to
     convey structured authorization data for identified resources,
     conveying sets of permissions."""
@@ -94,7 +94,7 @@ class Aif__Json(Json):
     ext = None
 
 
-class AltoCdni__Json(Json):
+class AltoCdni___Json(Json):
     """ALTO servers and ALTO clients [RFC7285] either stand alone or are
     embedded within other applications that provide CDNI interfaces
     for uCDNs or dCDNs."""
@@ -103,7 +103,7 @@ class AltoCdni__Json(Json):
     ext = None
 
 
-class AltoCdnifilter__Json(Json):
+class AltoCdnifilter___Json(Json):
     """ALTO servers and ALTO clients [RFC7285] either stand alone or are
     embedded within other applications that provide CDNI interfaces
     for uCDNs or dCDNs and supports CDNI capability-based filtering."""
@@ -112,7 +112,7 @@ class AltoCdnifilter__Json(Json):
     ext = None
 
 
-class AltoCostmap__Json(Json):
+class AltoCostmap___Json(Json):
     """ALTO servers and ALTO clients
     either stand alone or are embedded within other applications."""
 
@@ -120,7 +120,7 @@ class AltoCostmap__Json(Json):
     ext = None
 
 
-class AltoCostmapfilter__Json(Json):
+class AltoCostmapfilter___Json(Json):
     """ALTO servers and ALTO clients
     either stand alone or are embedded within other applications."""
 
@@ -128,7 +128,7 @@ class AltoCostmapfilter__Json(Json):
     ext = None
 
 
-class AltoDirectory__Json(Json):
+class AltoDirectory___Json(Json):
     """ALTO servers and ALTO clients
     either stand alone or are embedded within other applications."""
 
@@ -136,7 +136,7 @@ class AltoDirectory__Json(Json):
     ext = None
 
 
-class AltoEndpointprop__Json(Json):
+class AltoEndpointprop___Json(Json):
     """ALTO servers and ALTO clients
     either stand alone or are embedded within other applications."""
 
@@ -144,7 +144,7 @@ class AltoEndpointprop__Json(Json):
     ext = None
 
 
-class AltoEndpointpropparams__Json(Json):
+class AltoEndpointpropparams___Json(Json):
     """ALTO servers and ALTO clients
     either stand alone or are embedded within other applications."""
 
@@ -152,7 +152,7 @@ class AltoEndpointpropparams__Json(Json):
     ext = None
 
 
-class AltoEndpointcost__Json(Json):
+class AltoEndpointcost___Json(Json):
     """ALTO servers and ALTO clients
     either stand alone or are embedded within other applications."""
 
@@ -160,7 +160,7 @@ class AltoEndpointcost__Json(Json):
     ext = None
 
 
-class AltoEndpointcostparams__Json(Json):
+class AltoEndpointcostparams___Json(Json):
     """ALTO servers and ALTO clients
     either stand alone or are embedded within other applications."""
 
@@ -168,7 +168,7 @@ class AltoEndpointcostparams__Json(Json):
     ext = None
 
 
-class AltoError__Json(Json):
+class AltoError___Json(Json):
     """ALTO servers and ALTO clients
     either stand alone or are embedded within other applications."""
 
@@ -176,7 +176,7 @@ class AltoError__Json(Json):
     ext = None
 
 
-class AltoNetworkmapfilter__Json(Json):
+class AltoNetworkmapfilter___Json(Json):
     """ALTO servers and ALTO clients
     either stand alone or are embedded within other applications."""
 
@@ -184,7 +184,7 @@ class AltoNetworkmapfilter__Json(Json):
     ext = None
 
 
-class AltoNetworkmap__Json(Json):
+class AltoNetworkmap___Json(Json):
     """ALTO servers and ALTO clients
     either stand alone or are embedded within other applications."""
 
@@ -192,7 +192,7 @@ class AltoNetworkmap__Json(Json):
     ext = None
 
 
-class AltoPropmap__Json(Json):
+class AltoPropmap___Json(Json):
     """ALTO servers and ALTO clients [RFC7285], either standalone or
     embedded within other applications, when the queried resource is a
     property map, whether filtered or not."""
@@ -201,7 +201,7 @@ class AltoPropmap__Json(Json):
     ext = None
 
 
-class AltoPropmapparams__Json(Json):
+class AltoPropmapparams___Json(Json):
     """ALTO servers and ALTO clients [RFC7285], either standalone or
     embedded within other applications, when the queried resource is a
     filtered property map.  This media type indicates the data format
@@ -212,7 +212,7 @@ class AltoPropmapparams__Json(Json):
     ext = None
 
 
-class AltoUpdatestreamcontrol__Json(Json):
+class AltoUpdatestreamcontrol___Json(Json):
     """ALTO servers and ALTO clients
     either stand alone or are embedded within other applications."""
 
@@ -220,7 +220,7 @@ class AltoUpdatestreamcontrol__Json(Json):
     ext = None
 
 
-class AltoUpdatestreamparams__Json(Json):
+class AltoUpdatestreamparams___Json(Json):
     """ALTO servers and ALTO clients
     either stand alone or are embedded within other applications."""
 
@@ -249,7 +249,7 @@ class Applefile(File):
     ext = None
 
 
-class At__Jwt(File):
+class At___Jwt(File):
     """Applications that access
     resource servers using OAuth 2.0 access tokens encoded in JWT
     format"""
@@ -272,21 +272,21 @@ class Atfx(File):
     ext = ".atfx"
 
 
-class Atom__Xml(Xml):
+class Atom___Xml(Xml):
     """No known applications currently use this media type."""
 
     iana_mime = "application/atom+xml"
     ext = ".atom"
 
 
-class Atomcat__Xml(Xml):
+class Atomcat___Xml(Xml):
     """No known applications currently use this media type."""
 
     iana_mime = "application/atomcat+xml"
     ext = ".atomcat"
 
 
-class Atomdeleted__Xml(Xml):
+class Atomdeleted___Xml(Xml):
     """Undefined. As an extension to the Atom Syndication Format ([RFC4287]), this specification may be used within any application that uses the Atom Format."""
 
     iana_mime = "application/atomdeleted+xml"
@@ -300,14 +300,14 @@ class Atomicmail(File):
     ext = None
 
 
-class Atomsvc__Xml(Xml):
+class Atomsvc___Xml(Xml):
     """No known applications currently use this media type."""
 
     iana_mime = "application/atomsvc+xml"
     ext = ".atomsvc"
 
 
-class AtscDwd__Xml(Xml):
+class AtscDwd___Xml(Xml):
     """ATSC 3.0 television and
     Internet encoders, decoders and other facility and consumer
     equipment."""
@@ -325,7 +325,7 @@ class AtscDynamicEventMessage(File):
     ext = None
 
 
-class AtscHeld__Xml(Xml):
+class AtscHeld___Xml(Xml):
     """ATSC 3.0 television and
     Internet encoders, decoders and other facility and consumer
     equipment."""
@@ -334,7 +334,7 @@ class AtscHeld__Xml(Xml):
     ext = ".held"
 
 
-class AtscRdt__Json(Json):
+class AtscRdt___Json(Json):
     """ATSC 3.0 television and
     Internet encoders, decoders and other facility and consumer
     equipment."""
@@ -343,7 +343,7 @@ class AtscRdt__Json(Json):
     ext = None
 
 
-class AtscRsat__Xml(Xml):
+class AtscRsat___Xml(Xml):
     """ATSC 3.0 television and
     Internet encoders, decoders and other facility and consumer
     equipment."""
@@ -359,14 +359,14 @@ class Atxml(File):
     ext = ".atxml"
 
 
-class AuthPolicy__Xml(Xml):
+class AuthPolicy___Xml(Xml):
     """"""
 
     iana_mime = "application/auth-policy+xml"
     ext = ".apxml"
 
 
-class AutomationmlAml__Xml(Xml):
+class AutomationmlAml___Xml(Xml):
     """ "AutomationML" is used by
     automation engineering software tools like e.g. ECAD, MCAD, PLC
     Programming."""
@@ -375,7 +375,7 @@ class AutomationmlAml__Xml(Xml):
     ext = ".aml"
 
 
-class AutomationmlAmlx__Zip(File):
+class AutomationmlAmlx___Zip(File):
     """ "AutomationML" is used by
     automation engineering software tools like e.g. ECAD, MCAD, PLC
     Programming."""
@@ -384,7 +384,7 @@ class AutomationmlAmlx__Zip(File):
     ext = ".amlx"
 
 
-class BacnetXdd__Zip(WithMagicNumber, BinaryFile):
+class BacnetXdd___Zip(WithMagicNumber, BinaryFile):
     """"""
 
     iana_mime = "application/bacnet-xdd+zip"
@@ -399,21 +399,21 @@ class BatchSmtp(File):
     ext = None
 
 
-class Beep__Xml(Xml):
+class Beep___Xml(Xml):
     """"""
 
     iana_mime = "application/beep+xml"
     ext = None
 
 
-class Calendar__Json(Json):
+class Calendar___Json(Json):
     """"""
 
     iana_mime = "application/calendar+json"
     ext = None
 
 
-class Calendar__Xml(Xml):
+class Calendar___Xml(Xml):
     """Applications that currently make use of the text/calendar media type can use this as an alternative."""
 
     iana_mime = "application/calendar+xml"
@@ -434,7 +434,7 @@ class Cals_1840(File):
     ext = None
 
 
-class Captive__Json(Json):
+class Captive___Json(Json):
     """This media type is intended to be used by servers presenting the Captive Portal API, and clients connecting to such captive networks."""
 
     iana_mime = "application/captive+json"
@@ -462,7 +462,7 @@ class Cccex(File):
     ext = ".c3ex"
 
 
-class Ccmp__Xml(Xml):
+class Ccmp___Xml(Xml):
     """Centralized Conferencing control clients and servers.
 
     Magic Number(s): (none)"""
@@ -471,21 +471,21 @@ class Ccmp__Xml(Xml):
     ext = ".ccmp"
 
 
-class Ccxml__Xml(Xml):
+class Ccxml___Xml(Xml):
     """"""
 
     iana_mime = "application/ccxml+xml"
     ext = None
 
 
-class Cda__Xml(Xml):
+class Cda___Xml(Xml):
     """"""
 
     iana_mime = "application/cda+xml"
     ext = None
 
 
-class Cdfx__Xml(Xml):
+class Cdfx___Xml(Xml):
     """"""
 
     iana_mime = "application/CDFX+XML"
@@ -543,14 +543,14 @@ class Cea(File):
     ext = ".cea"
 
 
-class Cea_2018__Xml(Xml):
+class Cea_2018___Xml(Xml):
     """"""
 
     iana_mime = "application/cea-2018+xml"
     ext = ".xml"
 
 
-class Cellml__Xml(Xml):
+class Cellml___Xml(Xml):
     """As per Section 4.2 of this document."""
 
     iana_mime = "application/cellml+xml"
@@ -565,7 +565,7 @@ class Cfw(File):
     ext = None
 
 
-class City__Json(Json):
+class City___Json(Json):
     """CityJSON is used for storing
     the geometry, semantics and appearance of 3D city models. It is
     used in geographic processing, geospatial databases, data
@@ -582,14 +582,14 @@ class Clr(File):
     ext = ".1clr"
 
 
-class ClueInfo__Xml(Xml):
+class ClueInfo___Xml(Xml):
     """"""
 
     iana_mime = "application/clue_info+xml"
     ext = ".clue"
 
 
-class Clue__Xml(Xml):
+class Clue___Xml(Xml):
     """CLUE Participants.
 
     Magic Number(s): (none),"""
@@ -606,14 +606,14 @@ class Cms(File):
     ext = ".cmsc"
 
 
-class Cnrp__Xml(Xml):
+class Cnrp___Xml(Xml):
     """"""
 
     iana_mime = "application/cnrp+xml"
     ext = None
 
 
-class CoapGroup__Json(Json):
+class CoapGroup___Json(Json):
     """CoAP client and server implementations that wish to set/read the group configuration resource via the 'application/coap-group+json' payload as described in Section 2.6.2 of RFC7390."""
 
     iana_mime = "application/coap-group+json"
@@ -634,7 +634,7 @@ class Commonground(File):
     ext = None
 
 
-class ConciseProblemDetails__Cbor(File):
+class ConciseProblemDetails___Cbor(File):
     """Clients and servers in the
     Internet of Things"""
 
@@ -642,14 +642,14 @@ class ConciseProblemDetails__Cbor(File):
     ext = None
 
 
-class ConferenceInfo__Xml(Xml):
+class ConferenceInfo___Xml(Xml):
     """"""
 
     iana_mime = "application/conference-info+xml"
     ext = ".xml"
 
 
-class Cpl__Xml(Xml):
+class Cpl___Xml(Xml):
     """"""
 
     iana_mime = "application/cpl+xml"
@@ -698,7 +698,7 @@ class Csrattrs(File):
     ext = ".csrattrs"
 
 
-class Csta__Xml(Xml):
+class Csta___Xml(Xml):
     """CSTA XML (ECMA-323) is an application level protocol that enables an application
     to control and observe communications involving various types of media (voice calls,
     video calls, instant messages, Email, SMS, Page, etc.) and devices associated
@@ -708,7 +708,7 @@ class Csta__Xml(Xml):
     ext = None
 
 
-class Cstadata__Xml(Xml):
+class Cstadata___Xml(Xml):
     """CSTA XML (ECMA-323) is an application level protocol that enables an
     application to control and observe communications involving various
     types of media (voice calls, video calls, instant messages, Email, SMS,
@@ -718,7 +718,7 @@ class Cstadata__Xml(Xml):
     ext = None
 
 
-class Csvm__Json(Json):
+class Csvm___Json(Json):
     """"""
 
     iana_mime = "application/csvm+json"
@@ -739,7 +739,7 @@ class Cwl(File):
     ext = ".cwl"
 
 
-class Cwl__Json(Json):
+class Cwl___Json(Json):
     """
 
     TODO: All CWL document have the US-ASCII string "cwlVersion" (99 119 108
@@ -764,14 +764,14 @@ class Cybercash(File):
     ext = None
 
 
-class Dash__Xml(Xml):
+class Dash___Xml(Xml):
     """"""
 
     iana_mime = "application/dash+xml"
     ext = ".mpd"
 
 
-class DashPatch__Xml(Xml):
+class DashPatch___Xml(Xml):
     """"""
 
     iana_mime = "application/dash-patch+xml"
@@ -785,7 +785,7 @@ class Dashdelta(File):
     ext = ".mpdd"
 
 
-class Davmount__Xml(Xml):
+class Davmount___Xml(Xml):
     """SAP Netweaver Knowledge Management, Xythos Drive."""
 
     iana_mime = "application/davmount+xml"
@@ -813,7 +813,7 @@ class DecDx(File):
     ext = None
 
 
-class DialogInfo__Xml(Xml):
+class DialogInfo___Xml(Xml):
     """This document type has been
     used to support SIP applications such as call return and
     auto-conference."""
@@ -829,14 +829,14 @@ class Dicom(File):
     ext = None
 
 
-class Dicom__Json(Json):
+class Dicom___Json(Json):
     """"""
 
     iana_mime = "application/dicom+json"
     ext = None
 
 
-class Dicom__Xml(Xml):
+class Dicom___Xml(Xml):
     """"""
 
     iana_mime = "application/dicom+xml"
@@ -864,7 +864,7 @@ class Dns(File):
     ext = None
 
 
-class Dns__Json(Json):
+class Dns___Json(Json):
     """Systems that want to exchange DNS messages"""
 
     iana_mime = "application/dns+json"
@@ -878,35 +878,35 @@ class DnsMessage(File):
     ext = None
 
 
-class Dots__Cbor(File):
+class Dots___Cbor(File):
     """DOTS agents sending DOTS  messages over CoAP over (D)TLS."""
 
     iana_mime = "application/dots+cbor"
     ext = None
 
 
-class Dpop__Jwt(File):
+class Dpop___Jwt(File):
     """Applications using RFC-ietf-oauth-dpop-16 for application-level proof of possession"""
 
     iana_mime = "application/dpop+jwt"
     ext = None
 
 
-class Dskpp__Xml(Xml):
+class Dskpp___Xml(Xml):
     """Protocol for key exchange."""
 
     iana_mime = "application/dskpp+xml"
     ext = ".xmls"
 
 
-class Dssc__Der(File):
+class Dssc___Der(File):
     """"""
 
     iana_mime = "application/dssc+der"
     ext = ".dssc"
 
 
-class Dssc__Xml(Xml):
+class Dssc___Xml(Xml):
     """"""
 
     iana_mime = "application/dssc+xml"
@@ -953,42 +953,42 @@ class Efi(WithMagicNumber, BinaryFile):
     magic_number = b"MZ"
 
 
-class Elm__Json(Json):
+class Elm___Json(Json):
     """"""
 
     iana_mime = "application/elm+json"
     ext = None
 
 
-class Elm__Xml(Xml):
+class Elm___Xml(Xml):
     """"""
 
     iana_mime = "application/elm+xml"
     ext = None
 
 
-class Emergencycalldata_Cap__Xml(Xml):
+class Emergencycalldata_Cap___Xml(Xml):
     """OASIS has published the Common Alerting"""
 
     iana_mime = "application/EmergencyCallData.cap+xml"
     ext = None
 
 
-class Emergencycalldata_Comment__Xml(Xml):
+class Emergencycalldata_Comment___Xml(Xml):
     """Emergency Services"""
 
     iana_mime = "application/EmergencyCallData.Comment+xml"
     ext = ".xml"
 
 
-class Emergencycalldata_Control__Xml(Xml):
+class Emergencycalldata_Control___Xml(Xml):
     """"""
 
     iana_mime = "application/EmergencyCallData.Control+xml"
     ext = ".xml"
 
 
-class Emergencycalldata_Deviceinfo__Xml(Xml):
+class Emergencycalldata_Deviceinfo___Xml(Xml):
     """Emergency Services"""
 
     iana_mime = "application/EmergencyCallData.DeviceInfo+xml"
@@ -1002,42 +1002,42 @@ class Emergencycalldata_Ecall_Msd(File):
     ext = None
 
 
-class Emergencycalldata_Legacyesn__Json(Json):
+class Emergencycalldata_Legacyesn___Json(Json):
     """"""
 
     iana_mime = "application/EmergencyCallData.LegacyESN+json"
     ext = ".json"
 
 
-class Emergencycalldata_Providerinfo__Xml(Xml):
+class Emergencycalldata_Providerinfo___Xml(Xml):
     """Emergency Services"""
 
     iana_mime = "application/EmergencyCallData.ProviderInfo+xml"
     ext = ".xml"
 
 
-class Emergencycalldata_Serviceinfo__Xml(Xml):
+class Emergencycalldata_Serviceinfo___Xml(Xml):
     """Emergency Services"""
 
     iana_mime = "application/EmergencyCallData.ServiceInfo+xml"
     ext = ".xml"
 
 
-class Emergencycalldata_Subscriberinfo__Xml(Xml):
+class Emergencycalldata_Subscriberinfo___Xml(Xml):
     """Emergency Services"""
 
     iana_mime = "application/EmergencyCallData.SubscriberInfo+xml"
     ext = ".xml"
 
 
-class Emergencycalldata_Veds__Xml(Xml):
+class Emergencycalldata_Veds___Xml(Xml):
     """"""
 
     iana_mime = "application/EmergencyCallData.VEDS+xml"
     ext = ".xml"
 
 
-class Emma__Xml(Xml):
+class Emma___Xml(Xml):
     """"""
 
     iana_mime = "application/emma+xml"
@@ -1045,7 +1045,7 @@ class Emma__Xml(Xml):
     alternative_exts = (".emma",)
 
 
-class Emotionml__Xml(Xml):
+class Emotionml___Xml(Xml):
     """"""
 
     iana_mime = "application/emotionml+xml"
@@ -1059,7 +1059,7 @@ class Encaprtp(File):
     ext = None
 
 
-class Epp__Xml(Xml):
+class Epp___Xml(Xml):
     """EPP is device-, platform-, and vendor-neutral and is supported by multiple service providers.
 
     If used, magic numbers, fragment identifiers, base URIs, and use of the BOM should be as specified in [RFC3023].
@@ -1069,7 +1069,7 @@ class Epp__Xml(Xml):
     ext = ".xml"
 
 
-class Epub__Zip(File):
+class Epub___Zip(File):
     """This media type is in wide use
     for the distribution of ebooks in the EPUB format."""
 
@@ -1097,7 +1097,7 @@ class Exi(WithMagicNumber, BinaryFile):
     magic_number = "24455849"
 
 
-class ExpectCtReport__Json(Json):
+class ExpectCtReport___Json(Json):
     """UAs that implement
     Certificate Transparency compliance checks and reporting"""
 
@@ -1138,21 +1138,21 @@ class Fdf(WithMagicNumber, BinaryFile):
     magic_number = b"%FDF-"
 
 
-class Fdt__Xml(Xml):
+class Fdt___Xml(Xml):
     """file and object delivery applications and protocols (e.g., FLUTE)."""
 
     iana_mime = "application/fdt+xml"
     ext = ".fdt"
 
 
-class Fhir__Json(Json):
+class Fhir___Json(Json):
     """"""
 
     iana_mime = "application/fhir+json"
     ext = None
 
 
-class Fhir__Xml(Xml):
+class Fhir___Xml(Xml):
     """"""
 
     iana_mime = "application/fhir+xml"
@@ -1184,7 +1184,7 @@ class Flexfec(File):
     ext = None
 
 
-class FrameworkAttributes__Xml(Xml):
+class FrameworkAttributes___Xml(Xml):
     """Implementations of
     appropriate Media Control Channel packages."""
 
@@ -1192,7 +1192,7 @@ class FrameworkAttributes__Xml(Xml):
     ext = None
 
 
-class Geo__Json(Json):
+class Geo___Json(Json):
     """No known applications
     currently use this media type.  This media type is intended for
     GeoJSON applications currently using the "application/
@@ -1202,7 +1202,7 @@ class Geo__Json(Json):
     ext = ".geojson"
 
 
-class Geo__JsonSeq(File):
+class Geo___JsonSeq(File):
     """Geographic information
     systems (GIS)"""
 
@@ -1210,7 +1210,7 @@ class Geo__JsonSeq(File):
     ext = None
 
 
-class Geopackage__Sqlite3(WithMagicNumber, BinaryFile):
+class Geopackage___Sqlite3(WithMagicNumber, BinaryFile):
     """"""
 
     iana_mime = "application/geopackage+sqlite3"
@@ -1218,7 +1218,7 @@ class Geopackage__Sqlite3(WithMagicNumber, BinaryFile):
     magic_number = "47504b47"
 
 
-class Geoxacml__Xml(Xml):
+class Geoxacml___Xml(Xml):
     """"""
 
     iana_mime = "application/geoxacml+xml"
@@ -1233,7 +1233,7 @@ class GltfBuffer(File):
     alternative_exts = (".glbin", ".glbuf")
 
 
-class Gml__Xml(Xml):
+class Gml___Xml(Xml):
     """"""
 
     iana_mime = "application/gml+xml"
@@ -1255,14 +1255,14 @@ class H224(File):
     ext = None
 
 
-class Held__Xml(Xml):
+class Held___Xml(Xml):
     """"""
 
     iana_mime = "application/held+xml"
     ext = ".heldxml"
 
 
-class Hl7v2__Xml(Xml):
+class Hl7v2___Xml(Xml):
     """"""
 
     iana_mime = "application/hl7v2+xml"
@@ -1283,14 +1283,14 @@ class Hyperstudio(File):
     ext = None
 
 
-class IbeKeyRequest__Xml(Xml):
+class IbeKeyRequest___Xml(Xml):
     """Applications that implement IBE in compliance with this specification will use this media type. The most commonly used of these applications are encrypted email and file encryption."""
 
     iana_mime = "application/ibe-key-request+xml"
     ext = None
 
 
-class IbePkgReply__Xml(Xml):
+class IbePkgReply___Xml(Xml):
     """Applications that implement IBE in compliance with this specification will use this media type. The most commonly used of these applications are encrypted email and file encryption."""
 
     iana_mime = "application/ibe-pkg-reply+xml"
@@ -1314,7 +1314,7 @@ class Iges(File):
     ext = None
 
 
-class ImIscomposing__Xml(Xml):
+class ImIscomposing___Xml(Xml):
     """"""
 
     iana_mime = "application/im-iscomposing+xml"
@@ -1358,7 +1358,7 @@ class Index_Vnd(File):
     ext = None
 
 
-class Inkml__Xml(Xml):
+class Inkml___Xml(Xml):
     """"""
 
     iana_mime = "application/inkml+xml"
@@ -1394,7 +1394,7 @@ class Isup(File):
     ext = None
 
 
-class Its__Xml(Xml):
+class Its___Xml(Xml):
     """"""
 
     iana_mime = "application/its+xml"
@@ -1409,7 +1409,7 @@ class JavaArchive(WithMagicNumber, BinaryFile):
     magic_number = b"PK\x03\x04"
 
 
-class Jf2feed__Json(Json):
+class Jf2feed___Json(Json):
     """"""
 
     iana_mime = "application/jf2feed+json"
@@ -1427,7 +1427,7 @@ class Jose(File):
     ext = None
 
 
-class Jose__Json(Json):
+class Jose___Json(Json):
     """Nimbus JOSE + JWT library
 
     Magic number(s): n/a, File extension(s):"""
@@ -1436,7 +1436,7 @@ class Jose__Json(Json):
     ext = None
 
 
-class Jrd__Json(Json):
+class Jrd___Json(Json):
     """The JSON Resource Descriptor (JRD) is used by the WebFinger  protocol (RFC7033) to enable the exchange of information
     between a client and a WebFinger resource over HTTPS."""
 
@@ -1444,7 +1444,7 @@ class Jrd__Json(Json):
     ext = ".jrd"
 
 
-class Jscalendar__Json(Json):
+class Jscalendar___Json(Json):
     """Applications that currently
     make use of the text/calendar and application/calendar+json media
     types can use this as an alternative.  Similarly, applications
@@ -1455,7 +1455,7 @@ class Jscalendar__Json(Json):
     ext = None
 
 
-class JsonPatch__Json(Json):
+class JsonPatch___Json(Json):
     """Applications that manipulate JSON documents."""
 
     iana_mime = "application/json-patch+json"
@@ -1469,7 +1469,7 @@ class JsonSeq(File):
     ext = None
 
 
-class Jwk__Json(Json):
+class Jwk___Json(Json):
     """OpenID Connect, Salesforce,
         Google, Android, Windows Azure, W3C WebCrypto API, numerous others
 
@@ -1479,7 +1479,7 @@ class Jwk__Json(Json):
     ext = None
 
 
-class JwkSet__Json(Json):
+class JwkSet___Json(Json):
     """OpenID Connect, Salesforce,
         Google, Android, Windows Azure, W3C WebCrypto API, numerous others
 
@@ -1500,21 +1500,21 @@ class Jwt(File):
     ext = None
 
 
-class KpmlRequest__Xml(Xml):
+class KpmlRequest___Xml(Xml):
     """"""
 
     iana_mime = "application/kpml-request+xml"
     ext = None
 
 
-class KpmlResponse__Xml(Xml):
+class KpmlResponse___Xml(Xml):
     """"""
 
     iana_mime = "application/kpml-response+xml"
     ext = None
 
 
-class Ld__Json(Json):
+class Ld___Json(Json):
     """Any programming environment
     that requires the exchange of directed graphs. Implementations of
     JSON-LD have been created for JavaScript, Python, Ruby, PHP, and
@@ -1524,7 +1524,7 @@ class Ld__Json(Json):
     ext = ".jsonld"
 
 
-class Lgr__Xml(Xml):
+class Lgr___Xml(Xml):
     """"""
 
     iana_mime = "application/lgr+xml"
@@ -1545,28 +1545,28 @@ class Linkset(File):
     ext = None
 
 
-class Linkset__Json(Json):
+class Linkset___Json(Json):
     """This media type is not specific to any application, as it can be used by any application that wants to interchange web links."""
 
     iana_mime = "application/linkset+json"
     ext = None
 
 
-class LoadControl__Xml(Xml):
+class LoadControl___Xml(Xml):
     """Applications that perform load control of SIP entities."""
 
     iana_mime = "application/load-control+xml"
     ext = None
 
 
-class Logout__Jwt(File):
+class Logout___Jwt(File):
     """"""
 
     iana_mime = "application/logout+jwt"
     ext = None
 
 
-class Lost__Xml(Xml):
+class Lost___Xml(Xml):
     """Emergency and location-based
     systems"""
 
@@ -1574,14 +1574,14 @@ class Lost__Xml(Xml):
     ext = ".lostxml"
 
 
-class Lostsync__Xml(Xml):
+class Lostsync___Xml(Xml):
     """Emergency and Location-based Systems"""
 
     iana_mime = "application/lostsync+xml"
     ext = ".lostsyncxml"
 
 
-class Lpf__Zip(WithMagicNumber, BinaryFile):
+class Lpf___Zip(WithMagicNumber, BinaryFile):
     """This media type is intended to
     be used by multiple interoperable applications for the
     distribution and consumption of ebooks, audiobooks, digital visual
@@ -1614,14 +1614,14 @@ class Macwriteii(File):
     ext = None
 
 
-class Mads__Xml(Xml):
+class Mads___Xml(Xml):
     """"""
 
     iana_mime = "application/mads+xml"
     ext = ".mads"
 
 
-class Manifest__Json(Json):
+class Manifest___Json(Json):
     """"""
 
     iana_mime = "application/manifest+json"
@@ -1635,7 +1635,7 @@ class Marc(File):
     ext = ".mrc"
 
 
-class Marcxml__Xml(Xml):
+class Marcxml___Xml(Xml):
     """"""
 
     iana_mime = "application/marcxml+xml"
@@ -1650,98 +1650,98 @@ class Mathematica(File):
     alternative_exts = (".ma", ".mb")
 
 
-class Mathml__Xml(Xml):
+class Mathml___Xml(Xml):
     """"""
 
     iana_mime = "application/mathml+xml"
     ext = ".mml"
 
 
-class MathmlContent__Xml(Xml):
+class MathmlContent___Xml(Xml):
     """"""
 
     iana_mime = "application/mathml-content+xml"
     ext = None
 
 
-class MathmlPresentation__Xml(Xml):
+class MathmlPresentation___Xml(Xml):
     """"""
 
     iana_mime = "application/mathml-presentation+xml"
     ext = None
 
 
-class MbmsAssociatedProcedureDescription__Xml(Xml):
+class MbmsAssociatedProcedureDescription___Xml(Xml):
     """"""
 
     iana_mime = "application/mbms-associated-procedure-description+xml"
     ext = None
 
 
-class MbmsDeregister__Xml(Xml):
+class MbmsDeregister___Xml(Xml):
     """"""
 
     iana_mime = "application/mbms-deregister+xml"
     ext = None
 
 
-class MbmsEnvelope__Xml(Xml):
+class MbmsEnvelope___Xml(Xml):
     """"""
 
     iana_mime = "application/mbms-envelope+xml"
     ext = None
 
 
-class MbmsMskResponse__Xml(Xml):
+class MbmsMskResponse___Xml(Xml):
     """"""
 
     iana_mime = "application/mbms-msk-response+xml"
     ext = None
 
 
-class MbmsMsk__Xml(Xml):
+class MbmsMsk___Xml(Xml):
     """"""
 
     iana_mime = "application/mbms-msk+xml"
     ext = None
 
 
-class MbmsProtectionDescription__Xml(Xml):
+class MbmsProtectionDescription___Xml(Xml):
     """"""
 
     iana_mime = "application/mbms-protection-description+xml"
     ext = None
 
 
-class MbmsReceptionReport__Xml(Xml):
+class MbmsReceptionReport___Xml(Xml):
     """"""
 
     iana_mime = "application/mbms-reception-report+xml"
     ext = None
 
 
-class MbmsRegisterResponse__Xml(Xml):
+class MbmsRegisterResponse___Xml(Xml):
     """"""
 
     iana_mime = "application/mbms-register-response+xml"
     ext = None
 
 
-class MbmsRegister__Xml(Xml):
+class MbmsRegister___Xml(Xml):
     """"""
 
     iana_mime = "application/mbms-register+xml"
     ext = None
 
 
-class MbmsSchedule__Xml(Xml):
+class MbmsSchedule___Xml(Xml):
     """"""
 
     iana_mime = "application/mbms-schedule+xml"
     ext = None
 
 
-class MbmsUserServiceDescription__Xml(Xml):
+class MbmsUserServiceDescription___Xml(Xml):
     """"""
 
     iana_mime = "application/mbms-user-service-description+xml"
@@ -1764,42 +1764,42 @@ class Mbox(WithMagicNumber, BinaryFile):
     magic_number = b"From "
 
 
-class MediaControl__Xml(Xml):
+class MediaControl___Xml(Xml):
     """"""
 
     iana_mime = "application/media_control+xml"
     ext = None
 
 
-class MediaPolicyDataset__Xml(Xml):
+class MediaPolicyDataset___Xml(Xml):
     """This document type is used to convey session description and media policy information between SIP user agents and a domain."""
 
     iana_mime = "application/media-policy-dataset+xml"
     ext = ".mpf"
 
 
-class Mediaservercontrol__Xml(Xml):
+class Mediaservercontrol___Xml(Xml):
     """Multimedia, enhanced conferencing and interactive applications. Personal and email address for further"""
 
     iana_mime = "application/mediaservercontrol+xml"
     ext = None
 
 
-class MergePatch__Json(Json):
+class MergePatch___Json(Json):
     """None currently known."""
 
     iana_mime = "application/merge-patch+json"
     ext = None
 
 
-class Metalink4__Xml(Xml):
+class Metalink4___Xml(Xml):
     """File transfer applications."""
 
     iana_mime = "application/metalink4+xml"
     ext = ".meta4"
 
 
-class Mets__Xml(Xml):
+class Mets___Xml(Xml):
     """"""
 
     iana_mime = "application/mets+xml"
@@ -1840,14 +1840,14 @@ class Mipc(File):
     ext = None
 
 
-class MissingBlocks__CborSeq(File):
+class MissingBlocks___CborSeq(File):
     """Data serialization and  deserialization.  In particular, the type is used by applications  relying upon block-wise transfers, allowing a server to specify  non-received blocks and request their retransmission, as defined  in Section 4 of RFC 9177."""
 
     iana_mime = "application/missing-blocks+cbor-seq"
     ext = None
 
 
-class MmtAei__Xml(Xml):
+class MmtAei___Xml(Xml):
     """ATSC 3.0 television and
     Internet encoders, decoders and other facility and consumer
     equipment."""
@@ -1856,14 +1856,14 @@ class MmtAei__Xml(Xml):
     ext = ".maei"
 
 
-class MmtUsd__Xml(Xml):
+class MmtUsd___Xml(Xml):
     """ATSC 3.0 television and Internet encoders, decoders and other facility and consumer equipment."""
 
     iana_mime = "application/mmt-usd+xml"
     ext = ".musd"
 
 
-class Mods__Xml(Xml):
+class Mods___Xml(Xml):
     """"""
 
     iana_mime = "application/mods+xml"
@@ -1935,21 +1935,21 @@ class Mpeg4IodXmt(File):
     ext = None
 
 
-class MrbConsumer__Xml(Xml):
+class MrbConsumer___Xml(Xml):
     """"""
 
     iana_mime = "application/mrb-consumer+xml"
     ext = ".xdf"
 
 
-class MrbPublish__Xml(Xml):
+class MrbPublish___Xml(Xml):
     """"""
 
     iana_mime = "application/mrb-publish+xml"
     ext = ".xdf"
 
 
-class MscIvr__Xml(Xml):
+class MscIvr___Xml(Xml):
     """Implementations of
     the Media Control Channel Framework IVR package."""
 
@@ -1957,7 +1957,7 @@ class MscIvr__Xml(Xml):
     ext = None
 
 
-class MscMixer__Xml(Xml):
+class MscMixer___Xml(Xml):
     """Implementations of
     the Media Control Channel Framework Mixer package."""
 
@@ -1972,7 +1972,7 @@ class Msword(File):
     ext = None
 
 
-class Mud__Json(Json):
+class Mud___Json(Json):
     """MUD managers as specified by RFC 8520."""
 
     iana_mime = "application/mud+json"
@@ -2039,7 +2039,7 @@ class NewsTransmission(File):
     ext = None
 
 
-class Nlsml__Xml(Xml):
+class Nlsml___Xml(Xml):
     """MRCPv2 clients and servers"""
 
     iana_mime = "application/nlsml+xml"
@@ -2061,7 +2061,7 @@ class Nss(File):
     ext = None
 
 
-class OauthAuthzReq__Jwt(File):
+class OauthAuthzReq___Jwt(File):
     """Applications that use
     Request Objects to make an OAuth 2.0 Authorization Request"""
 
@@ -2104,7 +2104,7 @@ class Oda(File):
     ext = None
 
 
-class Odm__Xml(Xml):
+class Odm___Xml(Xml):
     """"""
 
     iana_mime = "application/odm+xml"
@@ -2118,7 +2118,7 @@ class Odx(File):
     ext = ".odx"
 
 
-class OebpsPackage__Xml(Xml):
+class OebpsPackage___Xml(Xml):
     """"""
 
     iana_mime = "application/oebps-package+xml"
@@ -2141,7 +2141,7 @@ class OhttpKeys(File):
     ext = None
 
 
-class OpcNodeset__Xml(Xml):
+class OpcNodeset___Xml(Xml):
     """"""
 
     iana_mime = "application/opc-nodeset+xml"
@@ -2171,14 +2171,14 @@ class P21(File):
     alternative_exts = (".stp", ".step", ".stpnc", ".210", ".ifc")
 
 
-class P21__Zip(File):
+class P21___Zip(File):
     """"""
 
     iana_mime = "application/p21+zip"
     ext = ".stpz"
 
 
-class P2pOverlay__Xml(Xml):
+class P2pOverlay___Xml(Xml):
     """The type is used to configure the peer to peer overlay networks defined in RFC-to-be.
 
     The syntax for this media type is specified in Section 11.1 of [RFC-to-be].  The contents MUST be valid XML compliant with the RELAX NG grammar specified in RFC-to-be and use the UTF-8[RFC3629] character encoding.
@@ -2203,7 +2203,7 @@ class Passport(File):
     ext = None
 
 
-class PatchOpsError__Xml(Xml):
+class PatchOpsError___Xml(Xml):
     """"""
 
     iana_mime = "application/patch-ops-error+xml"
@@ -2254,14 +2254,14 @@ class PgpSignature(File):
     alternative_exts = (".sig",)
 
 
-class PidfDiff__Xml(Xml):
+class PidfDiff___Xml(Xml):
     """SIP-based presence systems"""
 
     iana_mime = "application/pidf-diff+xml"
     ext = ".xml"
 
 
-class Pidf__Xml(Xml):
+class Pidf___Xml(Xml):
     """"""
 
     iana_mime = "application/pidf+xml"
@@ -2353,14 +2353,14 @@ class Pkixcmp(File):
     ext = ".PKI"
 
 
-class Pls__Xml(Xml):
+class Pls___Xml(Xml):
     """"""
 
     iana_mime = "application/pls+xml"
     ext = None
 
 
-class PocSettings__Xml(Xml):
+class PocSettings___Xml(Xml):
     """The Open Mobile Alliance publishes the Push-to-talk over Cellular specifications in the OMA web site at"""
 
     iana_mime = "application/poc-settings+xml"
@@ -2374,28 +2374,28 @@ class Postscript(File):
     ext = None
 
 
-class PpspTracker__Json(Json):
+class PpspTracker___Json(Json):
     """PPSP trackers and peers either stand alone or embedded within other applications."""
 
     iana_mime = "application/ppsp-tracker+json"
     ext = None
 
 
-class Problem__Json(Json):
+class Problem___Json(Json):
     """HTTP"""
 
     iana_mime = "application/problem+json"
     ext = None
 
 
-class Problem__Xml(Xml):
+class Problem___Xml(Xml):
     """HTTP"""
 
     iana_mime = "application/problem+xml"
     ext = None
 
 
-class Provenance__Xml(Xml):
+class Provenance___Xml(Xml):
     """"""
 
     iana_mime = "application/provenance+xml"
@@ -2424,14 +2424,14 @@ class Prs_Cyn(File):
     ext = None
 
 
-class Prs_Hpub__Zip(File):
+class Prs_Hpub___Zip(File):
     """"""
 
     iana_mime = "application/prs.hpub+zip"
     ext = ".HPUB"
 
 
-class Prs_ImpliedDocument__Xml(Xml):
+class Prs_ImpliedDocument___Xml(Xml):
     """"""
 
     iana_mime = "application/prs.implied-document+xml"
@@ -2476,7 +2476,7 @@ class Prs_RdfXmlCrypt(File):
     ext = ".rdf-crypt"
 
 
-class Prs_Xsf__Xml(Xml):
+class Prs_Xsf___Xml(Xml):
     """//www.xstandoff.net"""
 
     iana_mime = "application/prs.xsf+xml"
@@ -2484,42 +2484,42 @@ class Prs_Xsf__Xml(Xml):
     alternative_exts = (".xml",)
 
 
-class Pskc__Xml(Xml):
+class Pskc___Xml(Xml):
     """"""
 
     iana_mime = "application/pskc+xml"
     ext = ".pskcxml"
 
 
-class Pvd__Json(Json):
+class Pvd___Json(Json):
     """This media type is intended to be used by networks advertising additional Provisioning Domain information, and clients looking up such information."""
 
     iana_mime = "application/pvd+json"
     ext = None
 
 
-class Rdf__Xml(Xml):
+class Rdf___Xml(Xml):
     """"""
 
     iana_mime = "application/rdf+xml"
     ext = ".rdf"
 
 
-class RouteApd__Xml(Xml):
+class RouteApd___Xml(Xml):
     """"""
 
     iana_mime = "application/route-apd+xml"
     ext = ".rapd"
 
 
-class RouteSTsid__Xml(Xml):
+class RouteSTsid___Xml(Xml):
     """ATSC 3.0 television and Internet encoders, decoders and other facility and consumer equipment."""
 
     iana_mime = "application/route-s-tsid+xml"
     ext = ".sls"
 
 
-class RouteUsd__Xml(Xml):
+class RouteUsd___Xml(Xml):
     """ATSC 3.0 television and Internet encoders, decoders and other facility and consumer equipment."""
 
     iana_mime = "application/route-usd+xml"
@@ -2540,7 +2540,7 @@ class Raptorfec(File):
     ext = None
 
 
-class Rdap__Json(Json):
+class Rdap___Json(Json):
     """Implementations of the Registration Data Access Protocol (RDAP).
 
     This media type is a product of the IETF REGEXT Working Group.  The REGEXT charter, information on the REGEXT mailing list, and other documents produced by the REGEXT
@@ -2550,7 +2550,7 @@ class Rdap__Json(Json):
     ext = None
 
 
-class Reginfo__Xml(Xml):
+class Reginfo___Xml(Xml):
     """"""
 
     iana_mime = "application/reginfo+xml"
@@ -2564,7 +2564,7 @@ class RelaxNgCompactSyntax(File):
     ext = ".rnc"
 
 
-class Reputon__Json(Json):
+class Reputon___Json(Json):
     """Any application that wishes
         to query a service that provides reputation data using the form
         defined in [RFC7072].  The example application is one that
@@ -2578,7 +2578,7 @@ class Reputon__Json(Json):
     ext = None
 
 
-class ResourceListsDiff__Xml(Xml):
+class ResourceListsDiff___Xml(Xml):
     """This document type has been
     defined to support partial notifications in subscriptions to
     resource lists."""
@@ -2587,7 +2587,7 @@ class ResourceListsDiff__Xml(Xml):
     ext = ".rld"
 
 
-class ResourceLists__Xml(Xml):
+class ResourceLists___Xml(Xml):
     """This document type has been
     used to support subscriptions to lists of users [14] for SIP-based
     presence [11]."""
@@ -2596,7 +2596,7 @@ class ResourceLists__Xml(Xml):
     ext = ".rl"
 
 
-class Rfc__Xml(Xml):
+class Rfc___Xml(Xml):
     """Applications that transform
     xml2rfc to output representations such as plain text or HTML, plus
     additional analysis tools."""
@@ -2612,7 +2612,7 @@ class Riscos(File):
     ext = None
 
 
-class Rlmi__Xml(Xml):
+class Rlmi___Xml(Xml):
     """This media type is used to
     convey meta-information for the state of lists of resources within
     a Session Initiation Protocol (SIP) subscription."""
@@ -2621,7 +2621,7 @@ class Rlmi__Xml(Xml):
     ext = None
 
 
-class RlsServices__Xml(Xml):
+class RlsServices___Xml(Xml):
     """This document type has been
     used to support subscriptions to lists of users [14] for SIP-based
     presence [11]."""
@@ -2694,21 +2694,21 @@ class Rtx(File):
     ext = None
 
 
-class Samlassertion__Xml(Xml):
+class Samlassertion___Xml(Xml):
     """"""
 
     iana_mime = "application/samlassertion+xml"
     ext = None
 
 
-class Samlmetadata__Xml(Xml):
+class Samlmetadata___Xml(Xml):
     """"""
 
     iana_mime = "application/samlmetadata+xml"
     ext = None
 
 
-class SarifExternalProperties__Json(Json):
+class SarifExternalProperties___Json(Json):
     """"""
 
     iana_mime = "application/sarif-external-properties+json"
@@ -2716,7 +2716,7 @@ class SarifExternalProperties__Json(Json):
     alternative_exts = (".sarif-external-properties.json",)
 
 
-class Sarif__Json(Json):
+class Sarif___Json(Json):
     """"""
 
     iana_mime = "application/sarif+json"
@@ -2731,21 +2731,21 @@ class Sbe(File):
     ext = None
 
 
-class Sbml__Xml(Xml):
+class Sbml___Xml(Xml):
     """"""
 
     iana_mime = "application/sbml+xml"
     ext = None
 
 
-class Scaip__Xml(Xml):
+class Scaip___Xml(Xml):
     """"""
 
     iana_mime = "application/scaip+xml"
     ext = None
 
 
-class Scim__Json(Json):
+class Scim___Json(Json):
     """It is expected that
     applications that use this type may be special-purpose
     applications intended for inter-domain provisioning.  Clients may
@@ -2797,7 +2797,7 @@ class Sdp(File):
     ext = ".sdp"
 
 
-class Secevent__Jwt(File):
+class Secevent___Jwt(File):
     """Applications that exchange
     SETs"""
 
@@ -2805,7 +2805,7 @@ class Secevent__Jwt(File):
     ext = None
 
 
-class SenmlEtch__Cbor(File):
+class SenmlEtch___Cbor(File):
     """Applications that use the
     SenML media type for resource representation."""
 
@@ -2813,7 +2813,7 @@ class SenmlEtch__Cbor(File):
     ext = ".senml-etchc"
 
 
-class SenmlEtch__Json(Json):
+class SenmlEtch___Json(Json):
     """Applications that use the
     SenML media type for resource representation."""
 
@@ -2828,21 +2828,21 @@ class SenmlExi(File):
     ext = ".senmle"
 
 
-class Senml__Cbor(File):
+class Senml___Cbor(File):
     """The type is used by systems that report, e.g., electrical power usage and environmental information such as temperature and humidity.  It can be used for a wide range of sensor reporting systems."""
 
     iana_mime = "application/senml+cbor"
     ext = ".senmlc"
 
 
-class Senml__Json(Json):
+class Senml___Json(Json):
     """The type is used by systems that report, e.g., electrical power usage and environmental information such as temperature and humidity.  It can be used for a wide range of sensor reporting systems."""
 
     iana_mime = "application/senml+json"
     ext = ".senml"
 
 
-class Senml__Xml(Xml):
+class Senml___Xml(Xml):
     """The type is used by systems that report, e.g., electrical power usage and environmental information such as temperature and humidity.  It can be used for a wide range of sensor reporting systems."""
 
     iana_mime = "application/senml+xml"
@@ -2856,21 +2856,21 @@ class SensmlExi(File):
     ext = ".sensmle"
 
 
-class Sensml__Cbor(File):
+class Sensml___Cbor(File):
     """The type is used by systems that report, e.g., electrical power usage and environmental information such as temperature and humidity.  It can be used for a wide range of sensor reporting systems."""
 
     iana_mime = "application/sensml+cbor"
     ext = ".sensmlc"
 
 
-class Sensml__Json(Json):
+class Sensml___Json(Json):
     """The type is used by systems that report, e.g., electrical power usage and environmental information such as temperature and humidity.  It can be used for a wide range of sensor reporting systems."""
 
     iana_mime = "application/sensml+json"
     ext = ".sensml"
 
 
-class Sensml__Xml(Xml):
+class Sensml___Xml(Xml):
     """The type is used by systems that report, e.g., electrical power usage and environmental information such as temperature and humidity.  It can be used for a wide range of sensor reporting systems."""
 
     iana_mime = "application/sensml+xml"
@@ -2884,7 +2884,7 @@ class SepExi(File):
     ext = None
 
 
-class Sep__Xml(Xml):
+class Sep___Xml(Xml):
     """"""
 
     iana_mime = "application/sep+xml"
@@ -2943,7 +2943,7 @@ class SgmlOpenCatalog(File):
     ext = None
 
 
-class Shf__Xml(Xml):
+class Shf___Xml(Xml):
     """any program or individual wishing to make use of this XML 1.0 subset for hexdump exchange."""
 
     iana_mime = "application/shf+xml"
@@ -2959,7 +2959,7 @@ class Sieve(File):
     alternative_exts = (".sieve",)
 
 
-class SimpleFilter__Xml(Xml):
+class SimpleFilter___Xml(Xml):
     """This document type has been used to support the SIP-based Event notification framework and its packages."""
 
     iana_mime = "application/simple-filter+xml"
@@ -3008,7 +3008,7 @@ class Slate(File):
     ext = None
 
 
-class Smil__Xml(Xml):
+class Smil___Xml(Xml):
     """See registration of application/smil."""
 
     iana_mime = "application/smil+xml"
@@ -3025,7 +3025,7 @@ class Smpte336m(File):
     ext = None
 
 
-class Soap__Fastinfoset(File):
+class Soap___Fastinfoset(File):
     """
     TODO: For details on the identification of a fast infoset document refer to the
     magic number section of the "application/fastinfoset" media type.
@@ -3040,7 +3040,7 @@ class Soap__Fastinfoset(File):
     ext = ".W3C"
 
 
-class Soap__Xml(Xml):
+class Soap___Xml(Xml):
     """"""
 
     iana_mime = "application/soap+xml"
@@ -3057,21 +3057,21 @@ class SparqlQuery(File):
     ext = ".rq"
 
 
-class Spdx__Json(Json):
+class Spdx___Json(Json):
     """"""
 
     iana_mime = "application/spdx+json"
     ext = ".spdx.json"
 
 
-class SparqlResults__Xml(Xml):
+class SparqlResults___Xml(Xml):
     """"""
 
     iana_mime = "application/sparql-results+xml"
     ext = ".srx"
 
 
-class SpiritsEvent__Xml(Xml):
+class SpiritsEvent___Xml(Xml):
     """"""
 
     iana_mime = "application/spirits-event+xml"
@@ -3092,35 +3092,35 @@ class Srgs(File):
     ext = None
 
 
-class Srgs__Xml(Xml):
+class Srgs___Xml(Xml):
     """"""
 
     iana_mime = "application/srgs+xml"
     ext = None
 
 
-class Sru__Xml(Xml):
+class Sru___Xml(Xml):
     """"""
 
     iana_mime = "application/sru+xml"
     ext = ".sru"
 
 
-class Ssml__Xml(Xml):
+class Ssml___Xml(Xml):
     """"""
 
     iana_mime = "application/ssml+xml"
     ext = None
 
 
-class Stix__Json(Json):
+class Stix___Json(Json):
     """"""
 
     iana_mime = "application/stix+json"
     ext = ".stix"
 
 
-class Swid__Cbor(WithMagicNumber, BinaryFile):
+class Swid___Cbor(WithMagicNumber, BinaryFile):
     """The type is used by software asset management systems and vulnerability assessment systems and is used in applications that use remote integrity verification."""
 
     iana_mime = "application/swid+cbor"
@@ -3128,7 +3128,7 @@ class Swid__Cbor(WithMagicNumber, BinaryFile):
     magic_number = "53574944"
 
 
-class Swid__Xml(Xml):
+class Swid___Xml(Xml):
     """"""
 
     iana_mime = "application/swid+xml"
@@ -3212,14 +3212,14 @@ class TampUpdateConfirm(File):
     ext = ".tuc"
 
 
-class Taxii__Json(Json):
+class Taxii___Json(Json):
     """"""
 
     iana_mime = "application/taxii+json"
     ext = None
 
 
-class Td__Json(Json):
+class Td___Json(Json):
     """All participating entities
     in the W3C Web of Things, that is, Things, Consumers, and
     Intermediaries as defined in the Web of Things (WoT) Architecture."""
@@ -3228,7 +3228,7 @@ class Td__Json(Json):
     ext = ".jsontd"
 
 
-class Tei__Xml(Xml):
+class Tei___Xml(Xml):
     """"""
 
     iana_mime = "application/tei+xml"
@@ -3236,14 +3236,14 @@ class Tei__Xml(Xml):
     alternative_exts = (".teiCorpus", ".odd")
 
 
-class TetraIsi(File):
+class Tetra_isi(File):
     """"""
 
     iana_mime = "application/TETRA_ISI"
     ext = None
 
 
-class Thraud__Xml(Xml):
+class Thraud___Xml(Xml):
     """transaction and authentication
     fraud analysis and reporting applications, and risk-based
     transaction and authentication evaluation applications.  Additional information"""
@@ -3273,21 +3273,21 @@ class TimestampedData(File):
     ext = ".tsd"
 
 
-class Tlsrpt__Gzip(File):
+class Tlsrpt___Gzip(File):
     """Mail User Agents (MUAs) and Mail Transfer Agents."""
 
     iana_mime = "application/tlsrpt+gzip"
     ext = None
 
 
-class Tlsrpt__Json(Json):
+class Tlsrpt___Json(Json):
     """Mail User Agents (MUAs) and Mail Transfer Agents."""
 
     iana_mime = "application/tlsrpt+json"
     ext = None
 
 
-class Tm__Json(Json):
+class Tm___Json(Json):
     """All participating entities in
     the W3C Web of Things, that is, Things, Consumers, and
     Intermediaries as defined in the W3C Web of Things (WoT)"""
@@ -3306,7 +3306,7 @@ class Tnauthlist(File):
     ext = None
 
 
-class TokenIntrospection__Jwt(File):
+class TokenIntrospection___Jwt(File):
     """Applications that produce
     and consume OAuth Token Introspection Responses in JWT format"""
 
@@ -3328,7 +3328,7 @@ class Trig(File):
     ext = ".trig"
 
 
-class Ttml__Xml(Xml):
+class Ttml___Xml(Xml):
     """"""
 
     iana_mime = "application/ttml+xml"
@@ -3373,42 +3373,42 @@ class Ulpfec(File):
     ext = None
 
 
-class UrcGrpsheet__Xml(Xml):
+class UrcGrpsheet___Xml(Xml):
     """"""
 
     iana_mime = "application/urc-grpsheet+xml"
     ext = ".gsheet"
 
 
-class UrcRessheet__Xml(Xml):
+class UrcRessheet___Xml(Xml):
     """"""
 
     iana_mime = "application/urc-ressheet+xml"
     ext = ".rsheet"
 
 
-class UrcTargetdesc__Xml(Xml):
+class UrcTargetdesc___Xml(Xml):
     """"""
 
     iana_mime = "application/urc-targetdesc+xml"
     ext = ".td"
 
 
-class UrcUisocketdesc__Xml(Xml):
+class UrcUisocketdesc___Xml(Xml):
     """"""
 
     iana_mime = "application/urc-uisocketdesc+xml"
     ext = ".uis"
 
 
-class Vcard__Json(Json):
+class Vcard___Json(Json):
     """"""
 
     iana_mime = "application/vcard+json"
     ext = None
 
 
-class Vcard__Xml(Xml):
+class Vcard___Xml(Xml):
     """Applications that currently
     make use of the text/vcard media type can use this as an
     alternative.  In general, applications that maintain or process
@@ -3425,14 +3425,14 @@ class Vemmi(File):
     ext = None
 
 
-class Voicexml__Xml(Xml):
+class Voicexml___Xml(Xml):
     """"""
 
     iana_mime = "application/voicexml+xml"
     ext = None
 
 
-class VoucherCms__Json(Json):
+class VoucherCms___Json(Json):
     """ANIMA, 6tisch, and NETCONF
     zero-touch imprinting systems."""
 
@@ -3456,7 +3456,7 @@ class Wasm(WithMagicNumber, BinaryFile):
     magic_number = "61736d"
 
 
-class Watcherinfo__Xml(Xml):
+class Watcherinfo___Xml(Xml):
     """"""
 
     iana_mime = "application/watcherinfo+xml"
@@ -3464,7 +3464,7 @@ class Watcherinfo__Xml(Xml):
     alternative_exts = (".xml",)
 
 
-class WebpushOptions__Json(Json):
+class WebpushOptions___Json(Json):
     """Web browsers, via the Web
     Push protocol [RFC8030]"""
 
@@ -3508,14 +3508,14 @@ class Wordperfect5_1(File):
     ext = None
 
 
-class Wsdl__Xml(Xml):
+class Wsdl___Xml(Xml):
     """"""
 
     iana_mime = "application/wsdl+xml"
     ext = ".wsdl"
 
 
-class Wspolicy__Xml(Xml):
+class Wspolicy___Xml(Xml):
     """"""
 
     iana_mime = "application/wspolicy+xml"
@@ -3564,7 +3564,7 @@ class X400Bp(File):
     ext = None
 
 
-class Xacml__Xml(Xml):
+class Xacml___Xml(Xml):
     """Potentially, any application implementing or using XACML, as well
     as those applications implementing or using specifications based
     on XACML.  In particular, applications using the Representational
@@ -3575,7 +3575,7 @@ class Xacml__Xml(Xml):
     ext = None
 
 
-class XcapAtt__Xml(Xml):
+class XcapAtt___Xml(Xml):
     """This document type has been
     used to support transport of XML attribute values in RFC 4825, the
     XML Configuration Access Protocol (XCAP)."""
@@ -3584,7 +3584,7 @@ class XcapAtt__Xml(Xml):
     ext = ".xav"
 
 
-class XcapCaps__Xml(Xml):
+class XcapCaps___Xml(Xml):
     """This document type conveys
     capabilities of an XML Configuration Access Protocol (XCAP)
     server, as defined in RFC 4825."""
@@ -3593,14 +3593,14 @@ class XcapCaps__Xml(Xml):
     ext = ".xca"
 
 
-class XcapDiff__Xml(Xml):
+class XcapDiff___Xml(Xml):
     """This document type has been used to support manipulation of resource lists [RFC4826] using XCAP."""
 
     iana_mime = "application/xcap-diff+xml"
     ext = ".xdf"
 
 
-class XcapEl__Xml(Xml):
+class XcapEl___Xml(Xml):
     """This document type has been
     used to support transport of XML fragment bodies in RFC 4825, the
     XML Configuration Access Protocol (XCAP)."""
@@ -3609,7 +3609,7 @@ class XcapEl__Xml(Xml):
     ext = ".xel"
 
 
-class XcapError__Xml(Xml):
+class XcapError___Xml(Xml):
     """This document type conveys
     error conditions defined in RFC 4825"""
 
@@ -3617,7 +3617,7 @@ class XcapError__Xml(Xml):
     ext = ".xer"
 
 
-class XcapNs__Xml(Xml):
+class XcapNs___Xml(Xml):
     """This document type has been
     used to support transport of XML fragment bodies in RFC 4825, the
     XML Configuration Access Protocol (XCAP)."""
@@ -3626,7 +3626,7 @@ class XcapNs__Xml(Xml):
     ext = ".xns"
 
 
-class XconConferenceInfoDiff__Xml(Xml):
+class XconConferenceInfoDiff___Xml(Xml):
     """This document type has been
     defined to support partial notifications in centralized
     conferencing applications."""
@@ -3635,7 +3635,7 @@ class XconConferenceInfoDiff__Xml(Xml):
     ext = ".xml"
 
 
-class XconConferenceInfo__Xml(Xml):
+class XconConferenceInfo___Xml(Xml):
     """This document type has been
     defined to support centralized conferencing applications."""
 
@@ -3643,7 +3643,7 @@ class XconConferenceInfo__Xml(Xml):
     ext = ".xml"
 
 
-class Xenc__Xml(Xml):
+class Xenc___Xml(Xml):
     """"""
 
     iana_mime = "application/xenc+xml"
@@ -3657,7 +3657,7 @@ class Xfdf(File):
     ext = ".xfdf"
 
 
-class Xhtml__Xml(Xml):
+class Xhtml___Xml(Xml):
     """"""
 
     iana_mime = "application/xhtml+xml"
@@ -3665,7 +3665,7 @@ class Xhtml__Xml(Xml):
     alternative_exts = (".xht",)
 
 
-class Xliff__Xml(Xml):
+class Xliff___Xml(Xml):
     """"""
 
     iana_mime = "application/xliff+xml"
@@ -3687,28 +3687,28 @@ class XmlExternalParsedEntity(File):
     ext = ".ent"
 
 
-class XmlPatch__Xml(Xml):
+class XmlPatch___Xml(Xml):
     """Applications that manipulate XML documents."""
 
     iana_mime = "application/xml-patch+xml"
     ext = None
 
 
-class Xmpp__Xml(Xml):
+class Xmpp___Xml(Xml):
     """(none)"""
 
     iana_mime = "application/xmpp+xml"
     ext = None
 
 
-class Xop__Xml(Xml):
+class Xop___Xml(Xml):
     """"""
 
     iana_mime = "application/xop+xml"
     ext = ".XOP"
 
 
-class Xslt__Xml(Xml):
+class Xslt___Xml(Xml):
     """"""
 
     iana_mime = "application/xslt+xml"
@@ -3716,7 +3716,7 @@ class Xslt__Xml(Xml):
     alternative_exts = (".xsl", ".xslt")
 
 
-class Xv__Xml(Xml):
+class Xv___Xml(Xml):
     """"""
 
     iana_mime = "application/xv+xml"
@@ -3732,7 +3732,7 @@ class Yang(File):
     ext = ".yang"
 
 
-class YangData__Cbor(File):
+class YangData___Cbor(File):
     """applications that need a
     concise and efficient representation of YANG-modeled data"""
 
@@ -3740,7 +3740,7 @@ class YangData__Cbor(File):
     ext = None
 
 
-class YangData__Json(Json):
+class YangData___Json(Json):
     """Instance document
     data parsers used within a protocol or automation tool
     that utilize YANG-defined data structures."""
@@ -3749,7 +3749,7 @@ class YangData__Json(Json):
     ext = None
 
 
-class YangData__Xml(Xml):
+class YangData___Xml(Xml):
     """Instance document
     data parsers used within a protocol or automation tool
     that utilize YANG-defined data structures."""
@@ -3758,7 +3758,7 @@ class YangData__Xml(Xml):
     ext = None
 
 
-class YangPatch__Json(Json):
+class YangPatch___Json(Json):
     """Instance document
     data parsers used within a protocol or automation tool
     that utilize the YANG Patch data structure."""
@@ -3767,7 +3767,7 @@ class YangPatch__Json(Json):
     ext = None
 
 
-class YangPatch__Xml(Xml):
+class YangPatch___Xml(Xml):
     """Instance document
     data parsers used within a protocol or automation tool
     that utilize the YANG Patch data structure."""
@@ -3776,7 +3776,7 @@ class YangPatch__Xml(Xml):
     ext = None
 
 
-class Yin__Xml(Xml):
+class Yin___Xml(Xml):
     """YANG module validators, web servers used for downloading YANG
     modules, email clients, etc."""
 
