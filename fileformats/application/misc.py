@@ -3236,7 +3236,7 @@ class Tei___Xml(Xml):
     alternative_exts = (".teiCorpus", ".odd")
 
 
-class TetraIsi(File):
+class Tetra_isi(File):
     """"""
 
     iana_mime = "application/TETRA_ISI"

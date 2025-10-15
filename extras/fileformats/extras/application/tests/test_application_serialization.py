@@ -27,7 +27,7 @@ def test_json_to_yaml(tmp_path: Path):
     with open(in_file, "w") as f:
         f.write(SAMPLE_JSON)
     jsn = Json(in_file)
-    yml = Yaml.convert(jsn)
+    yml = Yaml.convert(jsn, out_dir=tmp_path)
     assert yml.raw_contents == SAMPLE_YAML
 
 
@@ -36,5 +36,5 @@ def test_yaml_to_json(tmp_path: Path):
     with open(in_file, "w") as f:
         f.write(SAMPLE_YAML)
     yml = Yaml(in_file)
-    jsn = Json.convert(yml)
+    jsn = Json.convert(yml, out_dir=tmp_path)
     assert jsn.raw_contents == SAMPLE_JSON

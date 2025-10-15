@@ -858,14 +858,14 @@ class TelephoneEvent(Audio):
     ext = None
 
 
-class TetraAcelp(Audio):
+class Tetra_acelp(Audio):
     """"""
 
     iana_mime = "audio/TETRA_ACELP"
     ext = None
 
 
-class TetraAcelpBb(Audio):
+class Tetra_acelp_bb(Audio):
     """"""
 
     iana_mime = "audio/TETRA_ACELP_BB"
@@ -1046,8 +1046,8 @@ __all__ = [
     "T140c",
     "T38",
     "TelephoneEvent",
-    "TetraAcelp",
-    "TetraAcelpBb",
+    "Tetra_acelp",
+    "Tetra_acelp_bb",
     "Tone",
     "Tsvcis",
     "Uemclip",
