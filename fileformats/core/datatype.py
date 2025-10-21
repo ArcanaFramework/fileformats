@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib
 import itertools
+import decimal
 import typing as ty
 from abc import ABCMeta
 from inspect import isclass
@@ -25,6 +26,19 @@ from .utils import add_exc_note, subpackages
 
 if ty.TYPE_CHECKING:
     from .converter_helpers import Converter
+
+FieldPrimitive: ty.TypeAlias = ty.Union[
+    str,
+    int,
+    float,
+    bool,
+    decimal.Decimal,
+    ty.Sequence[str],
+    ty.Sequence[int],
+    ty.Sequence[float],
+    ty.Sequence[bool],
+    ty.Sequence[decimal.Decimal],
+]
 
 
 class DataType(Classifier, metaclass=ABCMeta):
@@ -95,7 +109,7 @@ class DataType(Classifier, metaclass=ABCMeta):
     def get_converter(
         cls,
         source_format: ty.Type[DataType],
-    ) -> "Converter | None":
+    ) -> "ty.Optional[Converter]":
         if issubclass(source_format, cls):
             return None
         else:
@@ -168,9 +182,9 @@ class DataType(Classifier, metaclass=ABCMeta):
             # treats it). Therefore, we loop through all subclasses across the different
             # namespaces to find one that matches the name.
             format_name = format_name[2:]  # remove "x-" prefix
-            matching_name: ty.Collection[
-                ty.Type[FileSet]
-            ] = FileSet.formats_by_name.get(format_name, ())
+            matching_name: ty.Collection[ty.Type[FileSet]] = (
+                FileSet.formats_by_name.get(format_name, ())
+            )
             matching_name = [
                 m
                 for m in matching_name
@@ -293,9 +307,9 @@ class DataType(Classifier, metaclass=ABCMeta):
         return cls._generically_classifiable_by_name
 
     # Register all generically classified types
-    _generically_classifiable_by_name: ty.Optional[
-        ty.Dict[str, ty.Type[DataType]]
-    ] = None
+    _generically_classifiable_by_name: ty.Optional[ty.Dict[str, ty.Type[DataType]]] = (
+        None
+    )
 
     REQUIRED_ANNOTATION = "__fileformats_required__"
     CHECK_ANNOTATION = "__fileformats_check__"

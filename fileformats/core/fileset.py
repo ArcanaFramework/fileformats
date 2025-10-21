@@ -44,13 +44,14 @@ if ty.TYPE_CHECKING:
 
 
 class SupportsDunderLT(ty.Protocol):
-    def __lt__(self, other: ty.Any) -> bool:
-        ...
+    def __lt__(self, other: ty.Any) -> bool: ...
 
 
 class SupportsDunderGT(ty.Protocol):
-    def __gt__(self, other: ty.Any) -> bool:
-        ...
+    def __gt__(self, other: ty.Any) -> bool: ...
+
+
+FileSetPrimitive: ty.TypeAlias = ty.Union[os.PathLike, ty.Sequence[os.PathLike]]
 
 
 FILE_CHUNK_LEN_DEFAULT = 8192
@@ -552,7 +553,7 @@ class FileSet(DataType):
     def get_converter(
         cls,
         source_format: ty.Type[DataType],
-    ) -> "Converter | None":
+    ) -> "ty.Optional[Converter]":
         """Get a converter that converts from the source format type
         into the format specified by the class
 
