@@ -43,6 +43,16 @@ if ty.TYPE_CHECKING:
     from .converter_helpers import Converter
 
 
+class SupportsDunderLT(ty.Protocol):
+    def __lt__(self, other: ty.Any) -> bool:
+        ...
+
+
+class SupportsDunderGT(ty.Protocol):
+    def __gt__(self, other: ty.Any) -> bool:
+        ...
+
+
 FILE_CHUNK_LEN_DEFAULT = 8192
 
 
@@ -633,15 +643,18 @@ class FileSet(DataType):
     @classmethod
     def convertible_from(
         cls,
-        only_namespace_parents: bool = True,
-        union_sort_key: ty.Callable[[DataType], ty.Any] = attrgetter("__name__"),
+        include_generic: bool = False,
+        union_sort_key: ty.Callable[
+            [ty.Type[DataType]],
+            ty.Union[SupportsDunderLT, SupportsDunderGT],
+        ] = attrgetter("__name__"),
     ) -> ty.Type["DataType"]:
         """Union of types that can be converted to this type, including the current type.
         If there are no other types that can be converted to this type, return the current type
 
         Parameters
         ----------
-        only_namespace_parents: bool
+        include_generic: bool
             If True, only consider parent classes in the same namespace for conversion.
         union_sort_key : callable[[DataType], Any], optional
             A function used to sort the union of types. Defaults to sorting by the type name.
@@ -652,11 +665,10 @@ class FileSet(DataType):
             The type or union of types that can be converted to this type.
         """
 
-        ns = cls.namespace
         datatypes: ty.List[ty.Type[DataType]] = [cls]
         for fformat in FileSet.subclasses():
             if issubclass(cls, fformat) and (
-                fformat.namespace == ns or not only_namespace_parents
+                fformat.namespace != "generic" or include_generic
             ):
                 datatypes.extend(fformat.get_converters_dict().keys())
         if len(datatypes) == 1:
