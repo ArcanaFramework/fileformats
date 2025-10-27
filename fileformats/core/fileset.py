@@ -684,7 +684,7 @@ class FileSet(DataType):
         datatypes: ty.List[ty.Type[DataType]] = [cls]
         cls._import_extras_module()
         exclude_subpackages = copy(_excluded_subpackages)
-        exclude_subpackages.remove(cls.namespace)
+        exclude_subpackages.discard(cls.namespace)
         for fformat in FileSet.subclasses(exclude=exclude_subpackages):
             if issubclass(cls, fformat) and (
                 fformat.namespace != "generic" or include_generic
