@@ -12,7 +12,6 @@ from fileformats.core import Field, FieldPrimitive, __version__  # noqa: F401
 from fileformats.core.exceptions import FormatMismatchError
 from fileformats.core.mixin import WithClassifier
 
-
 ValueType = ty.TypeVar("ValueType")
 PrimitiveType = ty.TypeVar("PrimitiveType", bound=FieldPrimitive)
 
@@ -183,18 +182,18 @@ class Boolean(Singular[bool, bool], LogicalMixin):
         return hash(self.value)
 
 
-ItemType = ty.TypeVar("ItemType", decimal.Decimal, int, float, bool)
+ItemType = ty.TypeVar("ItemType", bound=ty.Union[decimal.Decimal, int, float, bool])
 
 
 class Array(
     WithClassifier,
-    Field[ty.Tuple[ItemType, ...], ty.Tuple[ItemType, ...]],
+    Field[ty.Sequence[ItemType], ty.Sequence[ItemType]],
     ty.Sequence[ItemType],
 ):
     # WithClassifiers class attrs
     classifiers_attr_name: str = "item_type"
-    allowed_classifiers: ty.Tuple[
-        ty.Type[Singular[ty.Tuple[ItemType, ...], ty.Tuple[ItemType, ...]]]
+    allowed_classifiers: ty.Tuple[  # type: ignore[type-var]
+        ty.Type[Singular[ty.Sequence[ItemType], ty.Sequence[ItemType]]]
     ] = (Singular,)
     item_type: ty.Optional[ty.Type[Singular[ItemType, ty.Any]]] = None
 
@@ -255,10 +254,12 @@ class Array(
         return len(self.value)
 
     @ty.overload
-    def __getitem__(self, index: int) -> ItemType: ...  # noqa: E704
+    def __getitem__(self, index: int) -> ItemType:
+        ...  # noqa: E704
 
     @ty.overload
-    def __getitem__(self, slice: slice) -> ty.Sequence[ItemType]: ...  # noqa: E704
+    def __getitem__(self, slice: slice) -> ty.Sequence[ItemType]:
+        ...  # noqa: E704
 
     def __getitem__(self, key: ty.Any) -> ty.Any:
         return self.value[key]

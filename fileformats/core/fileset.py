@@ -7,6 +7,7 @@ import logging
 import os
 import shutil
 import struct
+import sys
 import tempfile
 import typing as ty
 from collections import Counter
@@ -16,7 +17,13 @@ from operator import attrgetter, itemgetter
 from pathlib import Path
 from warnings import warn
 
+if sys.version_info >= (3, 10):
+    from typing import TypeAlias
+else:
+    from typing_extensions import TypeAlias
+
 from fileformats.core.typing import Self
+from fileformats.core.utils import _excluded_subpackages
 
 from .classifier import Classifier
 from .datatype import DataType
@@ -44,14 +51,16 @@ if ty.TYPE_CHECKING:
 
 
 class SupportsDunderLT(ty.Protocol):
-    def __lt__(self, other: ty.Any) -> bool: ...
+    def __lt__(self, other: ty.Any) -> bool:
+        ...
 
 
 class SupportsDunderGT(ty.Protocol):
-    def __gt__(self, other: ty.Any) -> bool: ...
+    def __gt__(self, other: ty.Any) -> bool:
+        ...
 
 
-FileSetPrimitive: ty.TypeAlias = ty.Union[os.PathLike, ty.Sequence[os.PathLike]]
+FileSetPrimitive: TypeAlias = ty.Union[os.PathLike[str], ty.Sequence[os.PathLike[str]]]
 
 
 FILE_CHUNK_LEN_DEFAULT = 8192
@@ -583,12 +592,9 @@ class FileSet(DataType):
             return None
         # trigger loading of standard converters for target format
         converters = cls.get_converters_dict()
-        try:
-            unclassified = source_format.unclassified  # type: ignore
-        except AttributeError:
-            import_extras_module(source_format)
-        else:
-            import_extras_module(unclassified)
+        # import extras modules
+        source_format._import_extras_module()  # type: ignore[attr-defined]
+        cls._import_extras_module()
         try:
             converter = converters[source_format]
         except KeyError:
@@ -623,6 +629,15 @@ class FileSet(DataType):
             # Store mapping for future reference
             converters[source_format] = converter
         return converter
+
+    @classmethod
+    def _import_extras_module(cls) -> None:
+        try:
+            unclassified = cls.unclassified  # type: ignore
+        except AttributeError:
+            import_extras_module(cls)
+        else:
+            import_extras_module(unclassified)
 
     @classmethod
     def get_converters_dict(
@@ -667,10 +682,14 @@ class FileSet(DataType):
         """
 
         datatypes: ty.List[ty.Type[DataType]] = [cls]
-        for fformat in FileSet.subclasses():
+        cls._import_extras_module()
+        exclude_subpackages = copy(_excluded_subpackages)
+        exclude_subpackages.remove(cls.namespace)
+        for fformat in FileSet.subclasses(exclude=exclude_subpackages):
             if issubclass(cls, fformat) and (
                 fformat.namespace != "generic" or include_generic
             ):
+                fformat._import_extras_module()
                 datatypes.extend(fformat.get_converters_dict().keys())
         if len(datatypes) == 1:
             return cls

@@ -1,11 +1,17 @@
 from __future__ import annotations
 
+import decimal
 import importlib
 import itertools
-import decimal
+import sys
 import typing as ty
 from abc import ABCMeta
 from inspect import isclass
+
+if sys.version_info >= (3, 10):
+    from typing import TypeAlias
+else:
+    from typing_extensions import TypeAlias
 
 from fileformats.core.typing import Self
 
@@ -27,7 +33,7 @@ from .utils import add_exc_note, subpackages
 if ty.TYPE_CHECKING:
     from .converter_helpers import Converter
 
-FieldPrimitive: ty.TypeAlias = ty.Union[
+FieldPrimitive: TypeAlias = ty.Union[
     str,
     int,
     float,
@@ -92,9 +98,9 @@ class DataType(Classifier, metaclass=ABCMeta):
         return itertools.chain(FileSet.all_formats, Field.all_fields)
 
     @classmethod
-    def subclasses(cls) -> ty.Generator[ty.Type[Self], None, None]:
+    def subclasses(cls, **kwargs: ty.Any) -> ty.Generator[ty.Type[Self], None, None]:
         """Iterate over all installed subclasses"""
-        for subpkg in subpackages():
+        for subpkg in subpackages(**kwargs):
             for attr_name in dir(subpkg):
                 attr = getattr(subpkg, attr_name)
                 if (
@@ -182,9 +188,9 @@ class DataType(Classifier, metaclass=ABCMeta):
             # treats it). Therefore, we loop through all subclasses across the different
             # namespaces to find one that matches the name.
             format_name = format_name[2:]  # remove "x-" prefix
-            matching_name: ty.Collection[ty.Type[FileSet]] = (
-                FileSet.formats_by_name.get(format_name, ())
-            )
+            matching_name: ty.Collection[
+                ty.Type[FileSet]
+            ] = FileSet.formats_by_name.get(format_name, ())
             matching_name = [
                 m
                 for m in matching_name
@@ -307,9 +313,9 @@ class DataType(Classifier, metaclass=ABCMeta):
         return cls._generically_classifiable_by_name
 
     # Register all generically classified types
-    _generically_classifiable_by_name: ty.Optional[ty.Dict[str, ty.Type[DataType]]] = (
-        None
-    )
+    _generically_classifiable_by_name: ty.Optional[
+        ty.Dict[str, ty.Type[DataType]]
+    ] = None
 
     REQUIRED_ANNOTATION = "__fileformats_required__"
     CHECK_ANNOTATION = "__fileformats_check__"
