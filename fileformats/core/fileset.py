@@ -4,6 +4,7 @@ import hashlib
 import inspect
 import itertools
 import logging
+import operator
 import os
 import shutil
 import struct
@@ -707,8 +708,8 @@ class FileSet(DataType):
         for datatype in datatypes:
             add_concrete(datatype)
         # TODO: Might want to sort datatypes in a more specific order
-        return ty.Union.__getitem__(  # pyright: ignore[reportAttributeAccessIssue]
-            tuple(sorted(concrete_datatypes, key=union_sort_key))
+        return functools.reduce(
+            operator.or_, sorted(concrete_datatypes, key=union_sort_key)
         )  # type: ignore[return-value]
 
     @classmethod
