@@ -1,3 +1,4 @@
+import functools
 import inspect
 import operator
 import re
@@ -102,7 +103,7 @@ def from_mime(
             item_mime = item_mime[1:-1]
         return ty.List[from_mime(item_mime)]  # type: ignore
     if "," in mime_str:
-        return ty.Union.__getitem__(tuple(from_mime(t) for t in mime_str.split(",")))  # type: ignore
+        return functools.reduce(operator.or_, (from_mime(t) for t in mime_str.split(",")))  # type: ignore
     return fileformats.core.DataType.from_mime(mime_str)
 
 
