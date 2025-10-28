@@ -55,7 +55,7 @@ test = [
     "pytest-env>=0.6.2",
     "pytest-cov>=2.12.1",
     "pydra >=1.0a",
-    "fileformats-extras",
+    "fileformats-extras[application,model,image,text,audio,video,vendor_openxmlformats_officedocument]",
 ]
 docs = [
     "packaging",

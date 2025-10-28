@@ -44,9 +44,13 @@ application = [
     "pydicom >=2.3",
     "medimages4tests",
 ]
+audio = []
 image = [
     "imageio >=2.24.0",
 ]
+model = []
+text = []
+video = []
 vendor_openxmlformats_officedocument = [
     "python-docx >= 1.2.0",
 ]
