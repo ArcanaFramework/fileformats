@@ -6,7 +6,7 @@
         <link rel="prefetch" href="../../_static/logo_small.png" as="image">
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
-        <title>fileformats.field - FileFormats v0.16.2</title>
+        <title>fileformats.field - FileFormats v0.16.3</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=beddf052" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">FileFormats v0.16.2</div></a>
+      <a href="../../index.html"><div class="brand">FileFormats v0.16.3</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -191,7 +191,7 @@
     <img class="sidebar-logo" src="../../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.16.2</span>
+  <span class="sidebar-brand-text">FileFormats v0.16.3</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -266,12 +266,12 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">decimal</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ty</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span><span class="p">,</span> <span class="n">__version__</span>  <span class="c1"># noqa: F401</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span><span class="p">,</span> <span class="n">FieldPrimitive</span><span class="p">,</span> <span class="n">__version__</span>  <span class="c1"># noqa: F401</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.core.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">FormatMismatchError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.core.mixin</span><span class="w"> </span><span class="kn">import</span> <span class="n">WithClassifier</span>
 
 <span class="n">ValueType</span> <span class="o">=</span> <span class="n">ty</span><span class="o">.</span><span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;ValueType&quot;</span><span class="p">)</span>
-<span class="n">PrimitiveType</span> <span class="o">=</span> <span class="n">ty</span><span class="o">.</span><span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;PrimitiveType&quot;</span><span class="p">)</span>
+<span class="n">PrimitiveType</span> <span class="o">=</span> <span class="n">ty</span><span class="o">.</span><span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;PrimitiveType&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">FieldPrimitive</span><span class="p">)</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">Singular</span><span class="p">(</span><span class="n">Field</span><span class="p">[</span><span class="n">ValueType</span><span class="p">,</span> <span class="n">PrimitiveType</span><span class="p">]):</span>
@@ -452,20 +452,20 @@
 
 
 
-<span class="n">ItemType</span> <span class="o">=</span> <span class="n">ty</span><span class="o">.</span><span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;ItemType&quot;</span><span class="p">,</span> <span class="n">decimal</span><span class="o">.</span><span class="n">Decimal</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+<span class="n">ItemType</span> <span class="o">=</span> <span class="n">ty</span><span class="o">.</span><span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;ItemType&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">decimal</span><span class="o">.</span><span class="n">Decimal</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">])</span>
 
 
 <div class="viewcode-block" id="Array">
 <a class="viewcode-back" href="../../api.html#fileformats.field.Array">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Array</span><span class="p">(</span>
     <span class="n">WithClassifier</span><span class="p">,</span>
-    <span class="n">Field</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">ItemType</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">ItemType</span><span class="p">,</span> <span class="o">...</span><span class="p">]],</span>
+    <span class="n">Field</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Sequence</span><span class="p">[</span><span class="n">ItemType</span><span class="p">],</span> <span class="n">ty</span><span class="o">.</span><span class="n">Sequence</span><span class="p">[</span><span class="n">ItemType</span><span class="p">]],</span>
     <span class="n">ty</span><span class="o">.</span><span class="n">Sequence</span><span class="p">[</span><span class="n">ItemType</span><span class="p">],</span>
 <span class="p">):</span>
     <span class="c1"># WithClassifiers class attrs</span>
     <span class="n">classifiers_attr_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;item_type&quot;</span>
-    <span class="n">allowed_classifiers</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span>
-        <span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">Singular</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">ItemType</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">ItemType</span><span class="p">,</span> <span class="o">...</span><span class="p">]]]</span>
+    <span class="n">allowed_classifiers</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span>  <span class="c1"># type: ignore[type-var]</span>
+        <span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">Singular</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Sequence</span><span class="p">[</span><span class="n">ItemType</span><span class="p">],</span> <span class="n">ty</span><span class="o">.</span><span class="n">Sequence</span><span class="p">[</span><span class="n">ItemType</span><span class="p">]]]</span>
     <span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Singular</span><span class="p">,)</span>
     <span class="n">item_type</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">Singular</span><span class="p">[</span><span class="n">ItemType</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -568,7 +568,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=63033552"></script>
+</div><script src="../../_static/documentation_options.js?v=fc41a1c8"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>

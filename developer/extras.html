@@ -7,7 +7,7 @@
         <link rel="prefetch" href="../_static/logo_small.png" as="image">
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
-        <title>Extras - FileFormats v0.16.2</title>
+        <title>Extras - FileFormats v0.16.3</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=beddf052" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -168,7 +168,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">FileFormats v0.16.2</div></a>
+      <a href="../index.html"><div class="brand">FileFormats v0.16.3</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -192,7 +192,7 @@
     <img class="sidebar-logo" src="../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.16.2</span>
+  <span class="sidebar-brand-text">FileFormats v0.16.3</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -379,7 +379,6 @@ to do a generic conversion between all image types,</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pydra.mark</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pydra.engine.specs</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">converter</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.raster</span><span class="w"> </span><span class="kn">import</span> <span class="n">RasterImage</span><span class="p">,</span> <span class="n">Bitmap</span><span class="p">,</span> <span class="n">Gif</span><span class="p">,</span> <span class="n">Jpeg</span><span class="p">,</span> <span class="n">Png</span><span class="p">,</span> <span class="n">Tiff</span>
 
@@ -389,9 +388,8 @@ to do a generic conversion between all image types,</p>
 <span class="nd">@converter</span><span class="p">(</span><span class="n">target_format</span><span class="o">=</span><span class="n">Jpeg</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="n">Jpeg</span><span class="p">)</span>
 <span class="nd">@converter</span><span class="p">(</span><span class="n">target_format</span><span class="o">=</span><span class="n">Png</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="n">Png</span><span class="p">)</span>
 <span class="nd">@converter</span><span class="p">(</span><span class="n">target_format</span><span class="o">=</span><span class="n">Tiff</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="n">Tiff</span><span class="p">)</span>
-<span class="nd">@pydra</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">task</span>
-<span class="nd">@pydra</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">annotate</span><span class="p">({</span><span class="s2">&quot;return&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;out_file&quot;</span><span class="p">:</span> <span class="n">RasterImage</span><span class="p">}})</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">convert_image</span><span class="p">(</span><span class="n">in_file</span><span class="p">:</span> <span class="n">RasterImage</span><span class="p">,</span> <span class="n">output_format</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="nd">@python</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="n">outputs</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;out_file&quot;</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_image</span><span class="p">(</span><span class="n">in_file</span><span class="p">:</span> <span class="n">RasterImage</span><span class="p">,</span> <span class="n">output_format</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RasterImage</span><span class="p">:</span>
     <span class="n">data_array</span> <span class="o">=</span> <span class="n">in_file</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">out_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">out_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">())</span>
@@ -534,7 +532,7 @@ FormatB.</p>
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=63033552"></script>
+</div><script src="../_static/documentation_options.js?v=fc41a1c8"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
