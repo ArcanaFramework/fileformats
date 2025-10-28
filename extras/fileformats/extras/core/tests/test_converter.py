@@ -1,14 +1,22 @@
-import typing as ty
-import attrs
 from pathlib import Path
+
+import attrs
 import pytest
 from pydra.compose import python, shell
-from fileformats.generic import File, FileSet
-from fileformats.testing import Foo, Bar, Baz, Qux
-from fileformats.testing import ConvertibleToFile, ConcreteClass, AnotherConcreteClass
+
+from conftest import write_test_file
 from fileformats.core import converter
 from fileformats.core.exceptions import FormatConversionError
-from conftest import write_test_file
+from fileformats.generic import File, FileSet
+from fileformats.testing import (
+    AnotherConcreteClass,
+    Bar,
+    Baz,
+    ConcreteClass,
+    ConvertibleToFile,
+    Foo,
+    Qux,
+)
 
 
 @converter
@@ -95,13 +103,13 @@ def test_convert_mapped_conversion(work_dir):
 @pytest.mark.parametrize(
     ["klass", "convertible_from"],
     [
-        [Bar, ty.Union[Bar, Baz, Foo]],
-        [Qux, ty.Union[Foo, Qux]],
+        [Bar, Bar | Baz | Foo],
+        [Qux, Foo | Qux],
         [Foo, Foo],
         [Baz, Baz],
         [
             ConvertibleToFile,
-            ty.Union[AnotherConcreteClass, ConcreteClass, ConvertibleToFile],
+            AnotherConcreteClass | ConcreteClass | ConvertibleToFile,
         ],
     ],
 )
