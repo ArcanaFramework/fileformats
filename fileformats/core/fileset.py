@@ -660,7 +660,6 @@ class FileSet(DataType):
     @classmethod
     def convertible_from(
         cls,
-        include_generic: bool = False,
         union_sort_key: ty.Callable[
             [ty.Type[DataType]],
             ty.Union[SupportsDunderLT, SupportsDunderGT],
@@ -686,12 +685,10 @@ class FileSet(DataType):
         cls._import_extras_module()
         exclude_subpackages = copy(_excluded_subpackages)
         exclude_subpackages.discard(cls.namespace)
-        for fformat in FileSet.subclasses(exclude=exclude_subpackages):
-            if issubclass(cls, fformat) and (
-                fformat.namespace != "generic" or include_generic
-            ):
-                fformat._import_extras_module()
-                datatypes.extend(fformat.get_converters_dict().keys())
+        for subcls in FileSet.subclasses(exclude=exclude_subpackages):
+            if issubclass(subcls, cls):
+                subcls._import_extras_module()
+                datatypes.extend(subcls.get_converters_dict().keys())
         if len(datatypes) == 1:
             return cls
         concrete_datatypes = set()
