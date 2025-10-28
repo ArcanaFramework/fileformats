@@ -1,10 +1,17 @@
 from __future__ import annotations
 
+import decimal
 import importlib
 import itertools
+import sys
 import typing as ty
 from abc import ABCMeta
 from inspect import isclass
+
+if sys.version_info >= (3, 10):
+    from typing import TypeAlias
+else:
+    from typing_extensions import TypeAlias
 
 from fileformats.core.typing import Self
 
@@ -25,6 +32,19 @@ from .utils import add_exc_note, subpackages
 
 if ty.TYPE_CHECKING:
     from .converter_helpers import Converter
+
+FieldPrimitive: TypeAlias = ty.Union[
+    str,
+    int,
+    float,
+    bool,
+    decimal.Decimal,
+    ty.Sequence[str],
+    ty.Sequence[int],
+    ty.Sequence[float],
+    ty.Sequence[bool],
+    ty.Sequence[decimal.Decimal],
+]
 
 
 class DataType(Classifier, metaclass=ABCMeta):
@@ -78,9 +98,9 @@ class DataType(Classifier, metaclass=ABCMeta):
         return itertools.chain(FileSet.all_formats, Field.all_fields)
 
     @classmethod
-    def subclasses(cls) -> ty.Generator[ty.Type[Self], None, None]:
+    def subclasses(cls, **kwargs: ty.Any) -> ty.Generator[ty.Type[Self], None, None]:
         """Iterate over all installed subclasses"""
-        for subpkg in subpackages():
+        for subpkg in subpackages(**kwargs):
             for attr_name in dir(subpkg):
                 attr = getattr(subpkg, attr_name)
                 if (
@@ -95,7 +115,7 @@ class DataType(Classifier, metaclass=ABCMeta):
     def get_converter(
         cls,
         source_format: ty.Type[DataType],
-    ) -> "Converter | None":
+    ) -> "ty.Optional[Converter]":
         if issubclass(source_format, cls):
             return None
         else:

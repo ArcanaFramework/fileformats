@@ -134,7 +134,6 @@ to do a generic conversion between all image types,
     from pathlib import Path
     import tempfile
     import pydra.mark
-    import pydra.engine.specs
     from fileformats.core import converter
     from .raster import RasterImage, Bitmap, Gif, Jpeg, Png, Tiff
 
@@ -144,9 +143,8 @@ to do a generic conversion between all image types,
     @converter(target_format=Jpeg, output_format=Jpeg)
     @converter(target_format=Png, output_format=Png)
     @converter(target_format=Tiff, output_format=Tiff)
-    @pydra.mark.task
-    @pydra.mark.annotate({"return": {"out_file": RasterImage}})
-    def convert_image(in_file: RasterImage, output_format: type, out_dir: ty.Optional[Path] = None):
+    @python.define(outputs=["out_file"])
+    def convert_image(in_file: RasterImage, output_format: type, out_dir: Path | None = None) -> RasterImage:
         data_array = in_file.load()
         if out_dir is None:
             out_dir = Path(tempfile.mkdtemp())

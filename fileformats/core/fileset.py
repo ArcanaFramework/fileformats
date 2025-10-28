@@ -4,9 +4,11 @@ import hashlib
 import inspect
 import itertools
 import logging
+import operator
 import os
 import shutil
 import struct
+import sys
 import tempfile
 import typing as ty
 from collections import Counter
@@ -16,7 +18,13 @@ from operator import attrgetter, itemgetter
 from pathlib import Path
 from warnings import warn
 
+if sys.version_info >= (3, 10):
+    from typing import TypeAlias
+else:
+    from typing_extensions import TypeAlias
+
 from fileformats.core.typing import Self
+from fileformats.core.utils import _excluded_subpackages
 
 from .classifier import Classifier
 from .datatype import DataType
@@ -41,6 +49,19 @@ from .utils import fspaths_converter, import_extras_module
 
 if ty.TYPE_CHECKING:
     from .converter_helpers import Converter
+
+
+class SupportsDunderLT(ty.Protocol):
+    def __lt__(self, other: ty.Any) -> bool:
+        ...
+
+
+class SupportsDunderGT(ty.Protocol):
+    def __gt__(self, other: ty.Any) -> bool:
+        ...
+
+
+FileSetPrimitive: TypeAlias = ty.Union[os.PathLike[str], ty.Sequence[os.PathLike[str]]]
 
 
 FILE_CHUNK_LEN_DEFAULT = 8192
@@ -542,7 +563,7 @@ class FileSet(DataType):
     def get_converter(
         cls,
         source_format: ty.Type[DataType],
-    ) -> "Converter | None":
+    ) -> "ty.Optional[Converter]":
         """Get a converter that converts from the source format type
         into the format specified by the class
 
@@ -572,12 +593,9 @@ class FileSet(DataType):
             return None
         # trigger loading of standard converters for target format
         converters = cls.get_converters_dict()
-        try:
-            unclassified = source_format.unclassified  # type: ignore
-        except AttributeError:
-            import_extras_module(source_format)
-        else:
-            import_extras_module(unclassified)
+        # import extras modules
+        source_format._import_extras_module()  # type: ignore[attr-defined]
+        cls._import_extras_module()
         try:
             converter = converters[source_format]
         except KeyError:
@@ -614,6 +632,15 @@ class FileSet(DataType):
         return converter
 
     @classmethod
+    def _import_extras_module(cls) -> None:
+        try:
+            unclassified = cls.unclassified  # type: ignore
+        except AttributeError:
+            import_extras_module(cls)
+        else:
+            import_extras_module(unclassified)
+
+    @classmethod
     def get_converters_dict(
         cls, klass: ty.Optional[ty.Type[DataType]] = None
     ) -> ty.Dict[ty.Type[DataType], "Converter"]:
@@ -633,15 +660,17 @@ class FileSet(DataType):
     @classmethod
     def convertible_from(
         cls,
-        only_namespace_parents: bool = True,
-        union_sort_key: ty.Callable[[DataType], ty.Any] = attrgetter("__name__"),
+        union_sort_key: ty.Callable[
+            [ty.Type[DataType]],
+            ty.Union[SupportsDunderLT, SupportsDunderGT],
+        ] = attrgetter("__name__"),
     ) -> ty.Type["DataType"]:
         """Union of types that can be converted to this type, including the current type.
         If there are no other types that can be converted to this type, return the current type
 
         Parameters
         ----------
-        only_namespace_parents: bool
+        include_generic: bool
             If True, only consider parent classes in the same namespace for conversion.
         union_sort_key : callable[[DataType], Any], optional
             A function used to sort the union of types. Defaults to sorting by the type name.
@@ -652,13 +681,14 @@ class FileSet(DataType):
             The type or union of types that can be converted to this type.
         """
 
-        ns = cls.namespace
         datatypes: ty.List[ty.Type[DataType]] = [cls]
-        for fformat in FileSet.subclasses():
-            if issubclass(cls, fformat) and (
-                fformat.namespace == ns or not only_namespace_parents
-            ):
-                datatypes.extend(fformat.get_converters_dict().keys())
+        cls._import_extras_module()
+        exclude_subpackages = copy(_excluded_subpackages)
+        exclude_subpackages.discard(cls.namespace)
+        for subcls in FileSet.subclasses(exclude=exclude_subpackages):
+            if issubclass(subcls, cls):
+                subcls._import_extras_module()
+                datatypes.extend(subcls.get_converters_dict().keys())
         if len(datatypes) == 1:
             return cls
         concrete_datatypes = set()
@@ -675,8 +705,8 @@ class FileSet(DataType):
         for datatype in datatypes:
             add_concrete(datatype)
         # TODO: Might want to sort datatypes in a more specific order
-        return ty.Union.__getitem__(  # pyright: ignore[reportAttributeAccessIssue]
-            tuple(sorted(concrete_datatypes, key=union_sort_key))
+        return functools.reduce(
+            operator.or_, sorted(concrete_datatypes, key=union_sort_key)
         )  # type: ignore[return-value]
 
     @classmethod

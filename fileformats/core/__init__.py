@@ -1,8 +1,8 @@
 from ._version import __version__
 from .classifier import Classifier
-from .datatype import DataType
+from .datatype import DataType, FieldPrimitive
 from .mock import MockMixin
-from .fileset import FileSet
+from .fileset import FileSet, FileSetPrimitive
 from .field import Field
 from .identification import (
     to_mime,
@@ -19,6 +19,8 @@ __all__ = [
     "Classifier",
     "DataType",
     "FileSet",
+    "FieldPrimitive",
+    "FileSetPrimitive",
     "MockMixin",
     "Field",
     "to_mime",

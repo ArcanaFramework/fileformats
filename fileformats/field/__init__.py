@@ -8,12 +8,12 @@ data, so the classes in this module are provided to support these use cases.
 import decimal
 import typing as ty
 
-from fileformats.core import Field, __version__  # noqa: F401
+from fileformats.core import Field, FieldPrimitive, __version__  # noqa: F401
 from fileformats.core.exceptions import FormatMismatchError
 from fileformats.core.mixin import WithClassifier
 
 ValueType = ty.TypeVar("ValueType")
-PrimitiveType = ty.TypeVar("PrimitiveType")
+PrimitiveType = ty.TypeVar("PrimitiveType", bound=FieldPrimitive)
 
 
 class Singular(Field[ValueType, PrimitiveType]):
@@ -182,18 +182,18 @@ class Boolean(Singular[bool, bool], LogicalMixin):
         return hash(self.value)
 
 
-ItemType = ty.TypeVar("ItemType", decimal.Decimal, int, float, bool)
+ItemType = ty.TypeVar("ItemType", bound=ty.Union[decimal.Decimal, int, float, bool])
 
 
 class Array(
     WithClassifier,
-    Field[ty.Tuple[ItemType, ...], ty.Tuple[ItemType, ...]],
+    Field[ty.Sequence[ItemType], ty.Sequence[ItemType]],
     ty.Sequence[ItemType],
 ):
     # WithClassifiers class attrs
     classifiers_attr_name: str = "item_type"
-    allowed_classifiers: ty.Tuple[
-        ty.Type[Singular[ty.Tuple[ItemType, ...], ty.Tuple[ItemType, ...]]]
+    allowed_classifiers: ty.Tuple[  # type: ignore[type-var]
+        ty.Type[Singular[ty.Sequence[ItemType], ty.Sequence[ItemType]]]
     ] = (Singular,)
     item_type: ty.Optional[ty.Type[Singular[ItemType, ty.Any]]] = None
 

@@ -19,7 +19,15 @@ logger = logging.getLogger("fileformats")
 
 
 _excluded_subpackages = set(
-    ["core", "testing", "serialization", "archive", "document", "conftest"]
+    [
+        "core",
+        "testing",
+        "testing_subpackage",
+        "serialization",
+        "archive",
+        "document",
+        "conftest",
+    ]
 )
 
 T = ty.TypeVar("T")
