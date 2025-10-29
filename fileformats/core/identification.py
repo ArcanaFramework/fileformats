@@ -21,11 +21,15 @@ IANA_MIME_TYPE_REGISTRIES = [
     "multipart",
     "text",
     "video",
+    "vendor.ms_excel",
+    "vendor.ms_powerpoint",
+    "vendor.ms_word",
+    "vendor.openxmlformats_officedocument",
 ]
 ALL_STANDARD_TYPE_REGISTRIES = IANA_MIME_TYPE_REGISTRIES + [
     "field",
     "testing",
-    "testing_subpackage",
+    "vendor.testing",
 ]
 
 

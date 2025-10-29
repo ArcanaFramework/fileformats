@@ -1,5 +1,6 @@
 import importlib
 import inspect
+import itertools
 import logging
 import os
 import pkgutil
@@ -11,6 +12,7 @@ from pathlib import Path
 from types import ModuleType
 
 import fileformats.core
+import fileformats.vendor
 from fileformats.core.exceptions import FormatDefinitionError
 
 from .typing import FspathsInputType
@@ -22,7 +24,7 @@ _excluded_subpackages = set(
     [
         "core",
         "testing",
-        "testing_subpackage",
+        "vendor.testing",
         "serialization",
         "archive",
         "document",
@@ -65,10 +67,19 @@ def subpackages(
     module
         all modules within the package
     """
-    for mod_info in pkgutil.iter_modules(
-        fileformats.__path__, prefix=fileformats.__package__ + "."
+    for mod_info in itertools.chain(
+        pkgutil.iter_modules(
+            fileformats.__path__, prefix=fileformats.__package__ + "."
+        ),
+        pkgutil.iter_modules(
+            fileformats.vendor.__path__,
+            prefix=fileformats.vendor.__package__ + ".",
+        ),
     ):
-        if mod_info.name.split(".")[-1] in exclude:
+        parts = mod_info.name.split(".")
+        if parts[-1] in exclude or (
+            parts[1] == "vendor" and ".".join(parts[:2]) in exclude
+        ):
             continue
         yield importlib.import_module(mod_info.name)
 
