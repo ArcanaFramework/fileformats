@@ -1,5 +1,6 @@
 import typing as ty
 import pytest
+import sys
 from fileformats.application import Cdfx___Xml
 from fileformats.core import DataType
 from fileformats.core.identification import to_mime, from_mime
@@ -28,6 +29,9 @@ def test_mimelike_roundtrip() -> None:
         assert reloaded is klass
 
 
+UNION_TYPE = U | V if sys.version_info >= (3, 10) else ty.Union[U, V]
+
+
 @pytest.mark.parametrize(
     ["klass", "expected_mime"],
     [
@@ -44,17 +48,20 @@ def test_mimelike_roundtrip() -> None:
         [Zip[Classified[U]], "testing/u+classified+zip"],
         [Zip[Classified[U, X]], "testing/[u..v]+classified+zip"],
         [Classified[U, Zip[MyFormat]], "testing/[u..my-format+zip]+classified"],
-        [Classified[U, MyFormat[A, B]], "testing/[u..[a..b]+my-format]+classified"],
+        [
+            Classified[Theta, MyFormat[A, B]],
+            "testing/[vnd.testing.theta..[a..b]+my-format]+classified",
+        ],
         [
             Wordprocessingml_Document,
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         ],
         [
             DirectoryOf[Wordprocessingml_Document],
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document+directory",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document+directory-of",
         ],
         [Cdfx___Xml, "application/vnd.ms-cdfx+xml"],
-        [U | V, "testing/u,testing/v"],
+        [UNION_TYPE, "testing/u,testing/v"],
     ],
 )
 def test_compound_mime_roundtrip(klass: ty.Type[DataType], expected_mime: str) -> None:
