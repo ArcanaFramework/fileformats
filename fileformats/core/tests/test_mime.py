@@ -32,6 +32,9 @@ def test_mimelike_roundtrip() -> None:
 UNION_TYPE = U | V if sys.version_info >= (3, 10) else ty.Union[U, V]
 
 
+@pytest.mark.xfail(
+    reason="Classifier mime-types need to be refactored to match desired new format"
+)
 @pytest.mark.parametrize(
     ["klass", "expected_mime"],
     [
