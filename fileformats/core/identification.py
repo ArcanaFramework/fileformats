@@ -149,12 +149,12 @@ def to_mime(
             f"Cannot convert {datatype} to official mime-type as it is not a proper "
             'file-type, please use official=False to convert to "mime-like" string instead'
         )
-    # if origin is list:
-    #     item_mime = to_mime(ty.get_args(datatype)[0], official=official)
-    #     if "," in item_mime:
-    #         item_mime = "[" + item_mime + "]"
-    #     item_mime += LIST_MIME
-    #     return item_mime
+    if origin is list:
+        item_mime = to_mime(ty.get_args(datatype)[0], official=official)
+        if "," in item_mime:
+            item_mime = "[" + item_mime + "]"
+        item_mime += LIST_MIME
+        return item_mime
     if is_union(datatype):
         return ",".join(to_mime(t, official=official) for t in ty.get_args(datatype))
     if (
