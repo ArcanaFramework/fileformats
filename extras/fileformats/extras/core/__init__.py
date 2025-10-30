@@ -16,8 +16,8 @@ def check_optional_dependency(module: ty.Optional[types.ModuleType]) -> None:
                 break
             frame = frame.f_back
         raise ImportError(
-            f"The optional dependencies are not installed for '{extras_module}', please include it in "
-            f"when installing fileformats-extras, e.g. `pip install 'fileformats-extras[{extras_module}]'`"
+            f"The optional dependencies are not installed for '{extras_module}', please include when "
+            f"installing fileformats-extras, e.g. `pip install 'fileformats-extras[{extras_module}]'`"
         )
 
 
