@@ -3,7 +3,7 @@ import typing as ty
 try:
     import docx.document
 except ImportError:
-    docx = None
+    docx = None  # type: ignore[assignment]
 
 from fileformats.core import FileSet, extra_implementation
 from fileformats.extras.core import check_optional_dependency

@@ -9,7 +9,7 @@ if ty.TYPE_CHECKING:
 
 class Dicom(WithMagicNumber, BinaryFile):
 
-    iana_mime = "application/dicom"
+    iana_mime = "application/dicom"  # type: ignore[assignment]
     magic_number = b"DICM"
     magic_number_offset = 128
     binary = True
