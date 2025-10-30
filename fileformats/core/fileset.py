@@ -682,9 +682,13 @@ class FileSet(DataType):
 
         datatypes: ty.List[ty.Type[DataType]] = [cls]
         cls._import_extras_module()
-        exclude_subpackages = copy(_excluded_subpackages)
-        exclude_subpackages.discard(cls.namespace)
-        for subcls in FileSet.subclasses(exclude=exclude_subpackages):
+        if cls.namespace == "generic":
+            subclasses = [cls]
+        else:
+            exclude_subpackages = copy(_excluded_subpackages)
+            exclude_subpackages.discard(cls.namespace)
+            subclasses = list(FileSet.subclasses(exclude=exclude_subpackages))
+        for subcls in subclasses:
             if issubclass(subcls, cls):
                 subcls._import_extras_module()
                 datatypes.extend(subcls.get_converters_dict().keys())
