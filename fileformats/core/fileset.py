@@ -24,6 +24,7 @@ else:
     from typing_extensions import TypeAlias
 
 from fileformats.core.typing import Self
+from fileformats.core.converter_helpers import SubtypeVar
 from fileformats.core.utils import _excluded_subpackages
 
 from .classifier import Classifier
@@ -670,8 +671,6 @@ class FileSet(DataType):
 
         Parameters
         ----------
-        include_generic: bool
-            If True, only consider parent classes in the same namespace for conversion.
         union_sort_key : callable[[DataType], Any], optional
             A function used to sort the union of types. Defaults to sorting by the type name.
 
@@ -698,6 +697,8 @@ class FileSet(DataType):
             if inspect.isabstract(datatype):
                 for subclass in datatype.subclasses():
                     add_concrete(subclass)
+            elif issubclass(datatype, SubtypeVar):
+                concrete_datatypes.add(datatype.bound)
             else:
                 concrete_datatypes.add(datatype)
 
