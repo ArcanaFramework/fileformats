@@ -9,11 +9,11 @@ from fileformats.core import SampleFileGenerator
 try:
     import pydicom.tag
 except ImportError:
-    pydicom = None
+    pydicom = None  # type: ignore[assignment]
 try:
     import medimages4tests.dummy.dicom.mri.t1w.siemens.skyra.syngo_d13c
 except ImportError:
-    medimages4tests = None
+    medimages4tests = None  # type: ignore[assignment]
 
 if sys.version_info <= (3, 11):
     from typing_extensions import TypeAlias
