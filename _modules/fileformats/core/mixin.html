@@ -6,7 +6,7 @@
         <link rel="prefetch" href="../../../_static/logo_small.png" as="image">
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
-        <title>fileformats.core.mixin - FileFormats v0.16.3</title>
+        <title>fileformats.core.mixin - FileFormats v0.16.4</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=beddf052" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">FileFormats v0.16.3</div></a>
+      <a href="../../../index.html"><div class="brand">FileFormats v0.16.4</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -191,7 +191,7 @@
     <img class="sidebar-logo" src="../../../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.16.3</span>
+  <span class="sidebar-brand-text">FileFormats v0.16.4</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -547,7 +547,18 @@
 <span class="sd">    allowed_classifiers : tuple[type,...], optional</span>
 <span class="sd">        the allowable types (+ subclasses) for the content types. If None all types</span>
 <span class="sd">        are allowed</span>
-<span class="sd">    genericly_classified : bool, optional</span>
+<span class="sd">    multiple_classifiers: bool, optional</span>
+<span class="sd">        whether multiple classifiers can be provided (true) or just a single classifier (false)</span>
+<span class="sd">    allow_optional_classifiers: bool, optional</span>
+<span class="sd">        whether Optional classifiers are allowed in the classifier set. Optional classifiers are</span>
+<span class="sd">        classifiers that are wrapped in typing.Optional[], indicating that the classifier</span>
+<span class="sd">        may or may not be present in the format</span>
+<span class="sd">    exclusive_classifiers: tuple[ty.Type[Classifier], ...], optional</span>
+<span class="sd">        a set of classifiers that are exclusive, i.e. only one classifier from each</span>
+<span class="sd">        by default empty.</span>
+<span class="sd">    ordered_classifiers: bool, optional</span>
+<span class="sd">        whether the order of the classifiers matters (true) or not (false). If false,</span>
+<span class="sd">    genericly_classified: bool, optional</span>
 <span class="sd">        whether the class can be classified by classifiers in any namespace (true) or just the</span>
 <span class="sd">        namespace it belongs to (false). If true, then the namespace of the genericly</span>
 <span class="sd">        classified class is omitted from the &quot;mime-like&quot; string. Note that the</span>
@@ -655,7 +666,9 @@
                     <span class="p">}</span>
                     <span class="k">for</span> <span class="n">classifier</span> <span class="ow">in</span> <span class="n">classifiers_to_check</span><span class="p">:</span>
                         <span class="k">for</span> <span class="n">exc_classifier</span> <span class="ow">in</span> <span class="n">repetitions</span><span class="p">:</span>
-                            <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">classifier</span><span class="p">,</span> <span class="n">exc_classifier</span><span class="p">):</span>
+                            <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span>
+                                <span class="n">origin_type</span><span class="p">(</span><span class="n">classifier</span><span class="p">),</span> <span class="n">origin_type</span><span class="p">(</span><span class="n">exc_classifier</span><span class="p">)</span>
+                            <span class="p">):</span>
                                 <span class="n">repetitions</span><span class="p">[</span><span class="n">exc_classifier</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">classifier</span><span class="p">)</span>
                     <span class="n">repeated</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">repetitions</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span>
                     <span class="k">if</span> <span class="n">repeated</span><span class="p">:</span>
@@ -1034,6 +1047,14 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">WithOrderedClassifiers</span><span class="p">(</span><span class="n">WithClassifiers</span><span class="p">):</span>
 
     <span class="n">ordered_classifiers</span> <span class="o">=</span> <span class="kc">True</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">origin_type</span><span class="p">(</span><span class="n">tp</span><span class="p">:</span> <span class="nb">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the origin type of a possibly generic type&quot;&quot;&quot;</span>
+    <span class="n">origin</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="n">ty</span><span class="o">.</span><span class="n">get_origin</span><span class="p">(</span><span class="n">tp</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">origin</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">tp</span>
+    <span class="k">return</span> <span class="n">origin</span>  <span class="c1"># type: ignore[no-any-return]</span>
 </pre></div>
         </article>
       </div>
@@ -1066,7 +1087,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=fc41a1c8"></script>
+</div><script src="../../../_static/documentation_options.js?v=966e428c"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>
