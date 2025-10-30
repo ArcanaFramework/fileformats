@@ -37,7 +37,9 @@ extensions and magic numbers. As such, many of the formats in the library have n
 tested on real data and so should be treated with some caution. If you encounter any issues with an implemented file
 type, please raise an issue in the [GitHub tracker](https://github.com/ArcanaFramework/fileformats/issues).
 
-Adding support for vendor formats is planned for v1.0.
+A small selection of vendor-specific types can be found under `fileformats.vendor.*`. Support for additional vendor-specific
+formats can be added via plugin (see the
+[extension template](https://github.com/ArcanaFramework/fileformats-extension-template)).
 
 ## Installation
 
