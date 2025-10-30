@@ -1,8 +1,11 @@
 from pydra.compose import python
 
-from fileformats.core import converter
-from fileformats.testing import AbstractFile, ConvertibleToFile, EncodedText
+from fileformats.core import converter, extra_implementation
+from fileformats.extras.core import check_optional_dependency
+from fileformats.testing import AbstractFile, ConvertibleToFile, EncodedText, MyFormat
 from fileformats.text import TextFile
+
+dummy_import = None
 
 
 @converter  # pyright: ignore[reportArgumentType]
@@ -31,3 +34,9 @@ def EncodedToTextConverter(in_file: EncodedText) -> TextFile:
     out_file = TextFile.sample()
     out_file.write_text(decoded_contents)
     return out_file
+
+
+@extra_implementation(MyFormat.dummy_extra)
+def my_format_dummy_extra(my_format: MyFormat) -> int:
+    check_optional_dependency(dummy_import)
+    return 42

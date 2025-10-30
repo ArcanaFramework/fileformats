@@ -280,7 +280,7 @@ def get_optional_type(
     return args[0] if args[0] is not None else args[1]  # type: ignore[no-any-return]
 
 
-def is_union(type_: type, args: list[type] = None) -> bool:
+def is_union(type_: type, args: ty.Optional[ty.List[type]] = None) -> bool:
     """Checks whether a type is a Union, in either ty.Union[T, U] or T | U form
 
     Parameters
@@ -297,6 +297,6 @@ def is_union(type_: type, args: list[type] = None) -> bool:
     """
     if ty.get_origin(type_) in UNION_TYPES:
         if args is not None:
-            return ty.get_args(type_) == args
+            return list(ty.get_args(type_)) == args
         return True
     return False

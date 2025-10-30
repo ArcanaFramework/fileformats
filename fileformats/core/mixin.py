@@ -773,9 +773,9 @@ class WithOrderedClassifiers(WithClassifiers):
     ordered_classifiers = True
 
 
-def origin_type(tp: ty.Type) -> ty.Type:
+def origin_type(tp: type) -> type:
     """Get the origin type of a possibly generic type"""
-    origin = ty.get_origin(tp)
+    origin: ty.Optional[type] = ty.get_origin(tp)
     if origin is None:
         return tp
-    return origin
+    return origin  # type: ignore[no-any-return]
