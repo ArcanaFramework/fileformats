@@ -16,10 +16,10 @@ def ConvertibleToConverter(in_file: AbstractFile) -> ConvertibleToFile:
 
 @converter  # pyright: ignore[reportArgumentType]
 @python.define(outputs=["out_file"])  # type: ignore[misc]
-def EncodedFromTextConverter(in_file: TextFile) -> EncodedText:
+def EncodedFromTextConverter(in_file: TextFile, shift: int = 1) -> EncodedText:
     contents = in_file.read_text()
     # Encode by shifting ASCII codes forward by 1
-    encoded_contents = "".join(chr(ord(c) + 1) for c in contents)
+    encoded_contents = "".join(chr(ord(c) + shift) for c in contents)
     out_file = EncodedText.sample()
     out_file.write_text(encoded_contents)
     return out_file
@@ -27,10 +27,10 @@ def EncodedFromTextConverter(in_file: TextFile) -> EncodedText:
 
 @converter  # pyright: ignore[reportArgumentType]
 @python.define(outputs=["out_file"])  # type: ignore[misc]
-def EncodedToTextConverter(in_file: EncodedText) -> TextFile:
+def EncodedToTextConverter(in_file: EncodedText, shift: int = 1) -> TextFile:
     contents = in_file.read_text()
     # Decode by shifting ASCII codes back by 1
-    decoded_contents = "".join(chr(ord(c) - 1) for c in contents)
+    decoded_contents = "".join(chr(ord(c) - shift) for c in contents)
     out_file = TextFile.sample()
     out_file.write_text(decoded_contents)
     return out_file
