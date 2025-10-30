@@ -8,7 +8,7 @@ from pathlib import Path
 import fileformats.core
 from fileformats.core.exceptions import FormatDefinitionError, FormatRecognitionError
 
-from .utils import add_exc_note, fspaths_converter
+from .utils import add_exc_note, fspaths_converter, is_union
 
 LIST_MIME = "+list-of"
 IANA_MIME_TYPE_REGISTRIES = [
@@ -21,11 +21,15 @@ IANA_MIME_TYPE_REGISTRIES = [
     "multipart",
     "text",
     "video",
+    "vendor.ms_excel",
+    "vendor.ms_powerpoint",
+    "vendor.ms_word",
+    "vendor.openxmlformats_officedocument",
 ]
 ALL_STANDARD_TYPE_REGISTRIES = IANA_MIME_TYPE_REGISTRIES + [
     "field",
     "testing",
-    "testing_subpackage",
+    "vendor.testing",
 ]
 
 
@@ -151,7 +155,7 @@ def to_mime(
             item_mime = "[" + item_mime + "]"
         item_mime += LIST_MIME
         return item_mime
-    if origin is ty.Union:
+    if is_union(datatype):
         return ",".join(to_mime(t, official=official) for t in ty.get_args(datatype))
     if (
         isinstance(datatype, str)

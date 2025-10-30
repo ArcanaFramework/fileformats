@@ -34,7 +34,7 @@ def extra(method: ExtraMethod) -> "ExtraMethod":
     dispatch_method: ty.Callable[..., ty.Any] = functools.singledispatch(method)
 
     @functools.wraps(method)
-    def decorated(obj: DataType, *args: ty.Any, **kwargs: ty.Any) -> ty.Any:
+    def decorated_extra(obj: DataType, *args: ty.Any, **kwargs: ty.Any) -> ty.Any:
         cls = type(obj)
         extras = []
         for tp in cls.referenced_types():  # type: ignore[attr-defined]
@@ -61,8 +61,8 @@ def extra(method: ExtraMethod) -> "ExtraMethod":
 
     # Store single dispatch method on the decorated function so we can register
     # implementations to it later
-    decorated._dispatch = dispatch_method  # type: ignore[attr-defined]
-    return decorated  # type: ignore[return-value]
+    decorated_extra._dispatch = dispatch_method  # type: ignore[attr-defined]
+    return decorated_extra  # type: ignore[return-value]
 
 
 def extra_implementation(
@@ -78,7 +78,9 @@ def extra_implementation(
             "an implementation"
         )
 
-    def decorator(implementation: ExtraImplementation) -> ExtraImplementation:
+    def extra_implementation_decorator(
+        implementation: ExtraImplementation,
+    ) -> ExtraImplementation:
         msig = inspect.signature(method)
         fsig = inspect.signature(implementation)
         msig_args = list(msig.parameters.values())[1:]
@@ -188,7 +190,7 @@ def extra_implementation(
         dispatch_method.register(implementation)
         return implementation
 
-    return decorator
+    return extra_implementation_decorator
 
 
 WrappedTask = ty.TypeVar("WrappedTask", bound=ty.Callable[..., ty.Any])

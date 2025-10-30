@@ -1,7 +1,10 @@
 import importlib
 import inspect
+import itertools
 import logging
 import os
+import sys
+import types
 import pkgutil
 import typing as ty
 import urllib.error
@@ -11,6 +14,7 @@ from pathlib import Path
 from types import ModuleType
 
 import fileformats.core
+import fileformats.vendor
 from fileformats.core.exceptions import FormatDefinitionError
 
 from .typing import FspathsInputType
@@ -18,11 +22,17 @@ from .typing import FspathsInputType
 logger = logging.getLogger("fileformats")
 
 
+if sys.version_info >= (3, 10):
+    UNION_TYPES = (ty.Union, types.UnionType)
+else:
+    UNION_TYPES = (ty.Union,)
+
+
 _excluded_subpackages = set(
     [
         "core",
         "testing",
-        "testing_subpackage",
+        "vendor.testing",
         "serialization",
         "archive",
         "document",
@@ -65,10 +75,19 @@ def subpackages(
     module
         all modules within the package
     """
-    for mod_info in pkgutil.iter_modules(
-        fileformats.__path__, prefix=fileformats.__package__ + "."
+    for mod_info in itertools.chain(
+        pkgutil.iter_modules(
+            fileformats.__path__, prefix=fileformats.__package__ + "."
+        ),
+        pkgutil.iter_modules(
+            fileformats.vendor.__path__,
+            prefix=fileformats.vendor.__package__ + ".",
+        ),
     ):
-        if mod_info.name.split(".")[-1] in exclude:
+        parts = mod_info.name.split(".")
+        if parts[-1] in exclude or (
+            parts[1] == "vendor" and ".".join(parts[:2]) in exclude
+        ):
             continue
         yield importlib.import_module(mod_info.name)
 
@@ -245,7 +264,7 @@ def get_optional_type(
     bool
         whether the type is an Optional type or not
     """
-    if ty.get_origin(type_) is None:
+    if not is_union(type_):
         return type_  # type: ignore[return-value]
     if not allowed:
         raise FormatDefinitionError(
@@ -259,3 +278,25 @@ def get_optional_type(
             f"not {type_}"
         )
     return args[0] if args[0] is not None else args[1]  # type: ignore[no-any-return]
+
+
+def is_union(type_: type, args: ty.Optional[ty.List[type]] = None) -> bool:
+    """Checks whether a type is a Union, in either ty.Union[T, U] or T | U form
+
+    Parameters
+    ----------
+    type_ : type
+        the type to check
+    args : list[type], optional
+        required arguments of the union to check, by default (None) any args will match
+
+    Returns
+    -------
+    is_union : bool
+        whether the type is a Union type
+    """
+    if ty.get_origin(type_) in UNION_TYPES:
+        if args is not None:
+            return list(ty.get_args(type_)) == args
+        return True
+    return False

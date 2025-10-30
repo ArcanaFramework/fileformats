@@ -37,7 +37,6 @@ test = [
     "pytest-env>=0.6.2",
     "pytest-cov>=2.12.1",
     "codecov",
-    "medimages4tests",
 ]
 application = [
     "PyYAML>=6.0",

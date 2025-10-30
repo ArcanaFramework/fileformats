@@ -272,7 +272,18 @@ class WithClassifiers:
     allowed_classifiers : tuple[type,...], optional
         the allowable types (+ subclasses) for the content types. If None all types
         are allowed
-    genericly_classified : bool, optional
+    multiple_classifiers: bool, optional
+        whether multiple classifiers can be provided (true) or just a single classifier (false)
+    allow_optional_classifiers: bool, optional
+        whether Optional classifiers are allowed in the classifier set. Optional classifiers are
+        classifiers that are wrapped in typing.Optional[], indicating that the classifier
+        may or may not be present in the format
+    exclusive_classifiers: tuple[ty.Type[Classifier], ...], optional
+        a set of classifiers that are exclusive, i.e. only one classifier from each
+        by default empty.
+    ordered_classifiers: bool, optional
+        whether the order of the classifiers matters (true) or not (false). If false,
+    genericly_classified: bool, optional
         whether the class can be classified by classifiers in any namespace (true) or just the
         namespace it belongs to (false). If true, then the namespace of the genericly
         classified class is omitted from the "mime-like" string. Note that the
@@ -380,7 +391,9 @@ class WithClassifiers:
                     }
                     for classifier in classifiers_to_check:
                         for exc_classifier in repetitions:
-                            if issubclass(classifier, exc_classifier):
+                            if issubclass(
+                                origin_type(classifier), origin_type(exc_classifier)
+                            ):
                                 repetitions[exc_classifier].append(classifier)
                     repeated = [t for t in repetitions.items() if len(t[1]) > 1]
                     if repeated:
@@ -758,3 +771,11 @@ class WithClassifier(WithClassifiers):
 class WithOrderedClassifiers(WithClassifiers):
 
     ordered_classifiers = True
+
+
+def origin_type(tp: type) -> type:
+    """Get the origin type of a possibly generic type"""
+    origin: ty.Optional[type] = ty.get_origin(tp)
+    if origin is None:
+        return tp
+    return origin  # type: ignore[no-any-return]

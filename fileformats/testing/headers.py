@@ -1,3 +1,4 @@
+from fileformats.core import extra
 from fileformats.application import Json
 from fileformats.core.mixin import WithMagicNumber, WithSeparateHeader, WithSideCars
 from fileformats.generic import BinaryFile, UnicodeFile
@@ -20,6 +21,10 @@ class Xyz(WithSideCars, UnicodeFile):
 class MyFormat(UnicodeFile):
 
     ext = ".my"
+
+    @extra
+    def dummy_extra(self) -> int:  # type: ignore[empty-body]
+        ...  # type: ignore[empty-body]
 
 
 class MyFormatGz(MyFormat):
