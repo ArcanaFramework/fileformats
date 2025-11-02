@@ -262,6 +262,10 @@ class FileSet(DataType):
         return Path(os.path.commonpath([p.parent for p in self.fspaths]))
 
     @property
+    def parents(self) -> ty.Sequence[Path]:
+        return [self.parent] + list(self.parent.parents)
+
+    @property
     def relative_fspaths(self) -> ty.Iterator[Path]:
         "Paths for all top-level paths in the file-set relative to the common parent directory"
         return (p.relative_to(self.parent) for p in self.fspaths)

@@ -82,14 +82,6 @@ class FsObject(FileSet, os.PathLike):  # type: ignore
         return self.fspath.owner()
 
     @property
-    def parent(self) -> Path:
-        return self.fspath.parent
-
-    @property
-    def parents(self) -> ty.Sequence[Path]:
-        return self.fspath.parents
-
-    @property
     def parts(self) -> ty.Tuple[str, ...]:
         return self.fspath.parts
 
