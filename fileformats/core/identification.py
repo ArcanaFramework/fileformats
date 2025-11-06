@@ -235,7 +235,7 @@ def from_paths(
         for candidate in candidates:
             unwrap(candidate)
         candidates = tuple(unwrapped)
-        candidates_str = ", ".join(to_mime(c) for c in candidates)
+        candidates_str = ", ".join(to_mime(c, official=False) for c in candidates)
     else:
         # Use all installed file-set classes if no candidates are provided, sorted
         # alphabetically to ensure behaviour is consistent between runs
