@@ -225,7 +225,7 @@ def from_paths(
         unwrapped = []
 
         def unwrap(candidate: ty.Type["fileformats.core.FileSet"]) -> None:
-            if ty.get_origin(candidate) is ty.Union:
+            if is_union(candidate):
                 arg: ty.Type["fileformats.core.FileSet"]
                 for arg in ty.get_args(candidate):
                     unwrap(arg)
