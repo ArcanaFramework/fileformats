@@ -23,8 +23,8 @@ if sys.version_info >= (3, 10):
 else:
     from typing_extensions import TypeAlias
 
-from fileformats.core.typing import Self
 from fileformats.core.converter_helpers import SubtypeVar
+from fileformats.core.typing import Self
 from fileformats.core.utils import _excluded_subpackages
 
 from .classifier import Classifier
@@ -119,8 +119,6 @@ class FileSet(DataType):
         metadata: ty.Optional[ty.Dict[str, ty.Any]] = None,
         **load_kwargs: ty.Any,
     ):
-        if not fspaths:
-            raise ValueError("No file-system paths provided to FileSet")
         self._explicit_metadata = metadata
         self._load_kwargs = load_kwargs
         self._validate_class()
@@ -137,7 +135,7 @@ class FileSet(DataType):
 
     def _validate_fspaths(self) -> None:
         if not self.fspaths:
-            raise ValueError(f"No file-system paths provided to {self}")
+            raise ValueError(f"No file-system paths provided to {type(self)}")
         missing = [p for p in self.fspaths if not p or not p.exists()]
         if missing:
             missing_str = "\n".join(str(p) for p in missing)

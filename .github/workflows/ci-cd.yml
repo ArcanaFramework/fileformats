@@ -48,7 +48,7 @@ jobs:
     - name: Install Extras Package
       run: python3 -m pip install -e ./extras[test,application,image,vendor_openxmlformats_officedocument]
     - name: MyPy
-      run: mypy --install-types --non-interactive --no-warn-unused-ignores .
+      run: mypy --install-types --non-interactive --no-warn-unused-ignores --python-version "${{ matrix.python-version }}" .
     - name: Pytest
       run: pytest -vvs --cov fileformats --cov-config .coveragerc --cov-report xml .
     - name: Upload coverage to Codecov
