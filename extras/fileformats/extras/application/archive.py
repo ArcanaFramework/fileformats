@@ -1,17 +1,17 @@
 import os.path
-import sys
-import typing as ty
-import tempfile
 import tarfile
+import tempfile
+import typing as ty
 import zipfile
 from pathlib import Path
-from pydra.compose import python
-from fileformats.generic import FsObject
-from fileformats.core.utils import set_cwd
-from fileformats.core.typing import PathType
-from fileformats.core import converter, FileSet
-from fileformats.application import Zip, Tar, TarGzip
 
+from pydra.compose import python
+
+from fileformats.application import Tar, TarGzip, Zip
+from fileformats.core import FileSet, converter
+from fileformats.core.typing import PathType
+from fileformats.core.utils import set_cwd
+from fileformats.generic import FsObject
 
 TAR_COMPRESSION_TYPES = ["", "gz", "bz2", "xz"]
 
@@ -162,23 +162,13 @@ def create_zip(
 
     out_file = out_file.absolute()
 
-    zip_kwargs = {}
-    if not strict_timestamps:  # Truthy is the default in earlier versions
-        if sys.version_info.major <= 3 and sys.version_info.minor < 8:
-            raise Exception(
-                "Must be using Python >= 3.8 to pass "
-                f"strict_timestamps={strict_timestamps!r}"
-            )
-
-        zip_kwargs["strict_timestamps"] = strict_timestamps
-
     with zipfile.ZipFile(
         out_file,
         mode="w",
         compression=compression,
         allowZip64=allowZip64,
         compresslevel=compresslevel,
-        **zip_kwargs,
+        strict_timestamps=strict_timestamps,
     ) as zfile, set_cwd(base_dir):
         for fspath in in_file.fspaths:
             fspath = Path(fspath)
