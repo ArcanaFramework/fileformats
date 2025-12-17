@@ -35,21 +35,27 @@ def test_to_from_mime_roundtrip() -> None:
 
 
 def test_to_from_list_mime_roundtrip() -> None:
-    mime_str = to_mime(ty.List[Foo], official=False)
+    mime_str = to_mime(list[Foo], official=False)
     assert isinstance(mime_str, str)
-    assert from_mime(mime_str) == ty.List[Foo]
+    assert from_mime(mime_str) == list[Foo]
+
+
+def test_to_from_tuple_mime_roundtrip() -> None:
+    mime_str = to_mime(tuple[Foo], official=False)
+    assert isinstance(mime_str, str)
+    assert from_mime(mime_str) == tuple[Foo]
 
 
 def test_to_from_union_mime_roundtrip() -> None:
-    mime_str = to_mime(ty.Union[Foo, Bar], official=False)
+    mime_str = to_mime(Foo | Bar, official=False)
     assert isinstance(mime_str, str)
-    assert from_mime(mime_str) == ty.Union[Foo, Bar]
+    assert from_mime(mime_str) == Foo | Bar
 
 
 def test_to_from_list_union_mime_roundtrip() -> None:
-    mime_str = to_mime(ty.List[ty.Union[Foo, Bar]], official=False)
+    mime_str = to_mime(list[Foo | Bar], official=False)
     assert isinstance(mime_str, str)
-    assert from_mime(mime_str) == ty.List[ty.Union[Foo, Bar]]
+    assert from_mime(mime_str) == list[Foo | Bar]
 
 
 def test_official_mime_fail() -> None:
