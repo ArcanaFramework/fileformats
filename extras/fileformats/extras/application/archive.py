@@ -54,9 +54,9 @@ FilterMethodType = ty.Any
 
 @converter(source_format=FsObject, target_format=Tar)  # type: ignore[untyped-decorator]
 @converter(source_format=FsObject, target_format=TarGzip, compression="gz")  # type: ignore[untyped-decorator]
-@converter(source_format=Compressed, target_format=Tar[Compressed])  # type: ignore[untyped-decorator]
+@converter(source_format=Compressed, target_format=Tar[Compressed])  # type: ignore[untyped-decorator,misc]
 @converter(
-    source_format=Compressed, target_format=TarGzip[Compressed], compression="gz"  # type: ignore[misc]
+    source_format=Compressed, target_format=TarGzip[Compressed], compression="gz"  # type: ignore[untyped-decorator,misc]
 )
 @python.define(outputs={"out_file": Path})  # type: ignore[untyped-decorator]
 def create_tar(
@@ -105,8 +105,8 @@ def create_tar(
 
 @converter(source_format=Tar, target_format=FsObject)  # type: ignore[untyped-decorator]
 @converter(source_format=TarGzip, target_format=FsObject)  # type: ignore[untyped-decorator]
-@converter(source_format=Tar[Compressed], target_format=Compressed)  # type: ignore[untyped-decorator]
-@converter(source_format=TarGzip[Compressed], target_format=Compressed)  # type: ignore[untyped-decorator]
+@converter(source_format=Tar[Compressed], target_format=Compressed)  # type: ignore[untyped-decorator,misc]
+@converter(source_format=TarGzip[Compressed], target_format=Compressed)  # type: ignore[untyped-decorator,misc]
 @python.define(outputs={"out_file": Path})  # type: ignore[untyped-decorator]
 def extract_tar(
     in_file: FsObject,
@@ -137,7 +137,7 @@ def extract_tar(
 
 
 @converter(source_format=FsObject, target_format=Zip)  # type: ignore[untyped-decorator]
-@converter(source_format=Compressed, target_format=Zip[Compressed])  # type: ignore[untyped-decorator]
+@converter(source_format=Compressed, target_format=Zip[Compressed])  # type: ignore[untyped-decorator,misc]
 @python.define(outputs={"out_file": Zip})  # type: ignore[untyped-decorator]
 def create_zip(
     in_file: FsObject,
@@ -184,7 +184,7 @@ def create_zip(
 
 
 @converter(source_format=Zip, target_format=FsObject)  # type: ignore[untyped-decorator]
-@converter(source_format=Zip[Compressed], target_format=Compressed)  # type: ignore[untyped-decorator]
+@converter(source_format=Zip[Compressed], target_format=Compressed)  # type: ignore[untyped-decorator,misc]
 @python.define(outputs={"out_file": Path})  # type: ignore[untyped-decorator]
 def extract_zip(in_file: Zip, extract_dir: ty.Optional[Path] = None) -> Path:
 
