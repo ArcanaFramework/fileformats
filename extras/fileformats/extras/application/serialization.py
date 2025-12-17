@@ -1,16 +1,18 @@
-from pathlib import Path
-import typing as ty
 import tempfile
+import typing as ty
+from pathlib import Path
+
 import yaml
 from pydra.compose import python
-from fileformats.core import FileSet, converter, extra_implementation
-from fileformats.application import TextSerialization, Json, Yaml
+
+from fileformats.application import Json, TextSerialization, Yaml
 from fileformats.application.serialization import SerializationType
+from fileformats.core import FileSet, converter, extra_implementation
 
 
-@converter(target_format=Json, output_format=Json)  # type: ignore[misc]
-@converter(target_format=Yaml, output_format=Yaml)  # type: ignore[misc]
-@python.define(outputs={"out_file": TextSerialization})  # type: ignore[misc]
+@converter(target_format=Json, output_format=Json)  # type: ignore[untyped-decorator]
+@converter(target_format=Yaml, output_format=Yaml)  # type: ignore[untyped-decorator]
+@python.define(outputs={"out_file": TextSerialization})  # type: ignore[untyped-decorator]
 def convert_data_serialization(
     in_file: TextSerialization,
     output_format: ty.Type[TextSerialization],

@@ -20,13 +20,13 @@ from fileformats.testing import (
 
 
 @converter
-@python.define(outputs={"out_file": Bar})  # type: ignore[misc]
+@python.define(outputs={"out_file": Bar})  # type: ignore[untyped-decorator]
 def FooBarConverter(in_file: Foo):
     return Bar(write_test_file(Path.cwd() / "bar.bar", in_file.raw_contents))
 
 
 @converter(out_file="out")
-@python.define(outputs={"out": Bar})  # type: ignore[misc]
+@python.define(outputs={"out": Bar})  # type: ignore[untyped-decorator]
 def BazBarConverter(in_file: Baz):
     assert in_file
     return Bar(write_test_file(Path.cwd() / "bar.bar", in_file.raw_contents))
