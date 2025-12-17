@@ -26,7 +26,7 @@ class SubtypeVar:
     AnyFileFormat = FileSet.type_var("AnyFileFormat")
 
     @converter
-    @python.define  # type: ignore[misc]
+    @python.define  # type: ignore[untyped-decorator]
     def unzip(in_file: Zip[AnyFileFormat], out_file: AnyFileFormat):
         ...
     """

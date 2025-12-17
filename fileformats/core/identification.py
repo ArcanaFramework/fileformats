@@ -11,6 +11,7 @@ from fileformats.core.exceptions import FormatDefinitionError, FormatRecognition
 from .utils import add_exc_note, fspaths_converter, is_union
 
 LIST_MIME = "+list-of"
+TUPLE_MIME = "+tuple-of"
 IANA_MIME_TYPE_REGISTRIES = [
     "application",
     "audio",
@@ -101,13 +102,18 @@ def from_mime(
     FormatRecognitionError
         if the MIME string does not correspond to a valid file format class
     """
-    if mime_str.endswith(LIST_MIME):
-        item_mime = mime_str[: -len(LIST_MIME)]
+    if match := re.match(
+        r".*(" + re.escape(LIST_MIME) + "|" + re.escape(TUPLE_MIME) + r")$", mime_str
+    ):
+        item_mime = mime_str[: -len(match.group(1))]
         if item_mime.startswith("[") and item_mime.endswith("]"):
             item_mime = item_mime[1:-1]
-        return ty.List[from_mime(item_mime)]  # type: ignore
-    if "," in mime_str:
-        return functools.reduce(operator.or_, (from_mime(t) for t in mime_str.split(",")))  # type: ignore
+        if match.group(1) == LIST_MIME:
+            return list[from_mime(item_mime)]  # type: ignore
+        else:
+            return tuple[from_mime(item_mime)]  # type: ignore
+    if "|" in mime_str:
+        return functools.reduce(operator.or_, (from_mime(t) for t in mime_str.split("|")))  # type: ignore
     return fileformats.core.DataType.from_mime(mime_str)
 
 
@@ -149,14 +155,14 @@ def to_mime(
             f"Cannot convert {datatype} to official mime-type as it is not a proper "
             'file-type, please use official=False to convert to "mime-like" string instead'
         )
-    if origin is list:
+    if origin in (list, tuple):
         item_mime = to_mime(ty.get_args(datatype)[0], official=official)
         if "," in item_mime:
             item_mime = "[" + item_mime + "]"
-        item_mime += LIST_MIME
+        item_mime += LIST_MIME if origin is list else TUPLE_MIME
         return item_mime
     if is_union(datatype):
-        return ",".join(to_mime(t, official=official) for t in ty.get_args(datatype))
+        return "|".join(to_mime(t, official=official) for t in ty.get_args(datatype))
     if (
         isinstance(datatype, str)
         and datatype.startswith("fileformats.")
