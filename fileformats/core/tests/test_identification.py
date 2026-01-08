@@ -58,6 +58,13 @@ def test_to_from_list_union_mime_roundtrip() -> None:
     assert from_mime(mime_str) == list[Foo | Bar]
 
 
+def test_to_from_mime_optional_roundtrip() -> None:
+    mime_str = to_mime(Foo | None, official=False)
+    assert isinstance(mime_str, str)
+    assert mime_str.endswith("?")
+    assert from_mime(mime_str) == Foo | None
+
+
 def test_official_mime_fail() -> None:
     with pytest.raises(TypeError, match="as it is not a proper file-type"):
         to_mime(ty.List[Foo], official=True)

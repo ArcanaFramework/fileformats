@@ -8,7 +8,13 @@ from pathlib import Path
 import fileformats.core
 from fileformats.core.exceptions import FormatDefinitionError, FormatRecognitionError
 
-from .utils import add_exc_note, fspaths_converter, is_union
+from .utils import (
+    add_exc_note,
+    fspaths_converter,
+    get_optional_type,
+    is_optional,
+    is_union,
+)
 
 LIST_MIME = "+list-of"
 TUPLE_MIME = "+tuple-of"
@@ -102,6 +108,8 @@ def from_mime(
     FormatRecognitionError
         if the MIME string does not correspond to a valid file format class
     """
+    if mime_str.endswith("?"):
+        return from_mime(mime_str[:-1]) | None  # type: ignore[operator,no-any-return,return-value]
     if match := re.match(
         r".*(" + re.escape(LIST_MIME) + "|" + re.escape(TUPLE_MIME) + r")$", mime_str
     ):
@@ -138,6 +146,8 @@ def to_mime(
         namespace scheme instead of putting all non-standard types into the 'application'
         registry if not
     """
+    if is_optional(datatype):
+        return to_mime(get_optional_type(datatype)) + "?"
     # Handle forward references
     if isinstance(datatype, ty.ForwardRef):
         datatype = datatype.__forward_arg__
