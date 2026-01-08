@@ -3,9 +3,9 @@ import inspect
 import itertools
 import logging
 import os
+import pkgutil
 import sys
 import types
-import pkgutil
 import typing as ty
 import urllib.error
 import urllib.request
@@ -53,7 +53,6 @@ def include_testing_package(flag: bool = True) -> None:
     flag : bool
         whether to include the testing package or not
     """
-    global _excluded_subpackages
     if flag:
         _excluded_subpackages.remove("testing")
     else:
@@ -247,6 +246,24 @@ def import_extras_module(klass: ty.Type["fileformats.core.DataType"]) -> ExtrasM
 TypeType = ty.TypeVar("TypeType", bound=ty.Type[ty.Any])
 
 
+def is_optional(type_: ty.Union[TypeType, ty.Type[ty.Optional[TypeType]]]) -> bool:
+    """Checks if a type is an Optional type
+
+    Parameters
+    ----------
+    type_ : ty.Type
+        the type to check
+    allowed : bool
+        whether Optional types are allowed or not
+
+    Returns
+    -------
+    bool
+        whether the type is an Optional type or not
+    """
+    return is_union(type_) and type(None) in ty.get_args(type_)
+
+
 def get_optional_type(
     type_: ty.Union[TypeType, ty.Type[ty.Optional[TypeType]]], allowed: bool = True
 ) -> TypeType:
@@ -272,7 +289,7 @@ def get_optional_type(
             "in this context"
         )
     args = ty.get_args(type_)
-    if len(args) != 2 and None in ty.get_args(type_):
+    if len(args) != 2 and None in args:
         raise FormatDefinitionError(
             "Only Optional types are allowed in content_type definitions, "
             f"not {type_}"
