@@ -109,7 +109,7 @@ def from_mime(
         if the MIME string does not correspond to a valid file format class
     """
     if mime_str.endswith("?"):
-        return from_mime(mime_str[:-1]) | None  # type: ignore[operator,no-any-return]
+        return from_mime(mime_str[:-1]) | None  # type: ignore[operator,no-any-return,return-value]
     if match := re.match(
         r".*(" + re.escape(LIST_MIME) + "|" + re.escape(TUPLE_MIME) + r")$", mime_str
     ):
