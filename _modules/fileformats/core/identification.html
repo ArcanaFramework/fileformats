@@ -6,7 +6,7 @@
         <link rel="prefetch" href="../../../_static/logo_small.png" as="image">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>fileformats.core.identification - FileFormats v0.17.1</title>
+        <title>fileformats.core.identification - FileFormats v0.17.2</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=beddf052" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">FileFormats v0.17.1</div></a>
+      <a href="../../../index.html"><div class="brand">FileFormats v0.17.2</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -191,7 +191,7 @@
     <img class="sidebar-logo" src="../../../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.17.1</span>
+  <span class="sidebar-brand-text">FileFormats v0.17.2</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -266,7 +266,13 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">fileformats.core</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.core.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">FormatDefinitionError</span><span class="p">,</span> <span class="n">FormatRecognitionError</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_exc_note</span><span class="p">,</span> <span class="n">fspaths_converter</span><span class="p">,</span> <span class="n">is_union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">add_exc_note</span><span class="p">,</span>
+    <span class="n">fspaths_converter</span><span class="p">,</span>
+    <span class="n">get_optional_type</span><span class="p">,</span>
+    <span class="n">is_optional</span><span class="p">,</span>
+    <span class="n">is_union</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="n">LIST_MIME</span> <span class="o">=</span> <span class="s2">&quot;+list-of&quot;</span>
 <span class="n">TUPLE_MIME</span> <span class="o">=</span> <span class="s2">&quot;+tuple-of&quot;</span>
@@ -365,6 +371,8 @@
 <span class="sd">    FormatRecognitionError</span>
 <span class="sd">        if the MIME string does not correspond to a valid file format class</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">mime_str</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;?&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">from_mime</span><span class="p">(</span><span class="n">mime_str</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">|</span> <span class="kc">None</span>  <span class="c1"># type: ignore[operator,no-any-return,return-value]</span>
     <span class="k">if</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span>
         <span class="sa">r</span><span class="s2">&quot;.*(&quot;</span> <span class="o">+</span> <span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">LIST_MIME</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;|&quot;</span> <span class="o">+</span> <span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">TUPLE_MIME</span><span class="p">)</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;)$&quot;</span><span class="p">,</span> <span class="n">mime_str</span>
     <span class="p">):</span>
@@ -404,6 +412,8 @@
 <span class="sd">        namespace scheme instead of putting all non-standard types into the &#39;application&#39;</span>
 <span class="sd">        registry if not</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">is_optional</span><span class="p">(</span><span class="n">datatype</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">to_mime</span><span class="p">(</span><span class="n">get_optional_type</span><span class="p">(</span><span class="n">datatype</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;?&quot;</span>
     <span class="c1"># Handle forward references</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">datatype</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">ForwardRef</span><span class="p">):</span>
         <span class="n">datatype</span> <span class="o">=</span> <span class="n">datatype</span><span class="o">.</span><span class="n">__forward_arg__</span>
@@ -604,7 +614,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=65792432"></script>
+</div><script src="../../../_static/documentation_options.js?v=1fcf9fdd"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>
