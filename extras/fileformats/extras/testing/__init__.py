@@ -1,8 +1,16 @@
+import typing as ty
+
 from fileformats.extras.core import check_optional_dependency
 from pydra.compose import python
 
 from fileformats.core import converter, extra_implementation
-from fileformats.testing import AbstractFile, ConvertibleToFile, EncodedText, MyFormat
+from fileformats.testing import (
+    AbstractFile,
+    ConvertibleToFile,
+    EncodedText,
+    MyFormat,
+    MyFormatX,
+)
 from fileformats.text import TextFile
 
 dummy_import = None

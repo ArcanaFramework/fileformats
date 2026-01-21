@@ -57,7 +57,7 @@ def extra(method: ExtraMethod) -> "ExtraMethod":
                             '. Was not able to check whether an "extras" package '
                             f"({xtra.pypi}) exists on PyPI or not"
                         )
-            raise FileFormatsExtrasError(msg)
+            raise FileFormatsExtrasError(msg) from None
 
     # Store single dispatch method on the decorated function so we can register
     # implementations to it later

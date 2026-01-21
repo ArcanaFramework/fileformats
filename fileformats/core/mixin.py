@@ -10,6 +10,7 @@ from .converter_helpers import Converter, SubtypeVar
 from .datatype import DataType
 from .decorators import classproperty, validated_property
 from .exceptions import (
+    FileFormatsExtrasError,
     FormatDefinitionError,
     FormatMismatchError,
     FormatRecognitionError,
@@ -220,7 +221,10 @@ class WithSideCars(WithAdjacentFiles):
         return tuple(tp(self.select_by_ext(tp)) for tp in self.side_car_types)  # type: ignore[attr-defined]
 
     def read_metadata(self, **kwargs: ty.Any) -> ty.Mapping[str, ty.Any]:
-        metadata: ty.Dict[str, ty.Any] = dict(self.primary_type.read_metadata(self, **kwargs))  # type: ignore[arg-type]
+        try:
+            metadata: ty.Dict[str, ty.Any] = dict(self.primary_type.read_metadata(self, **kwargs))  # type: ignore[arg-type]
+        except FileFormatsExtrasError:
+            metadata = {}
         for side_car in self.side_cars:
             try:
                 side_car_metadata: ty.Dict[str, ty.Any] = side_car.load()
