@@ -60,10 +60,13 @@ class FsMountIdentifier:
         fstype : str
             the type of the file-system (e.g. ext4 or cifs)"""
         strpath = str(Path(path).absolute())
-        if platform.system() == "Windows" and strpath.startswith("\\\\?\\"):
-            # Remove Windows long path prefix for matching
-            strpath = strpath[4:]
         mount_table = cls.get_mount_table()
+        if platform.system() == "Windows":
+            if strpath.startswith("\\\\?\\"):
+                # Remove Windows long path prefix for matching
+                strpath = strpath[4:]
+            strpath = strpath.lower()
+            mount_table = {k.lower(): v for k, v in mount_table.items()}
         matches = sorted(
             ((Path(p), t) for p, t in mount_table if strpath.startswith(p)),
             key=lambda m: len(str(m[0])),
