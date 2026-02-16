@@ -65,8 +65,9 @@ class FsMountIdentifier:
             if strpath.startswith("\\\\?\\"):
                 # Remove Windows long path prefix for matching
                 strpath = strpath[4:]
+            # convert paths to lower case to avoid case-sensitivity
             strpath = strpath.lower()
-            mount_table = {k.lower(): v for k, v in mount_table.items()}
+            mount_table = [(k.lower(), v) for k, v in mount_table]
         matches = sorted(
             ((Path(p), t) for p, t in mount_table if strpath.startswith(p)),
             key=lambda m: len(str(m[0])),
