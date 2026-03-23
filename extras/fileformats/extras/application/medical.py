@@ -1,10 +1,10 @@
 import sys
 import typing as ty
 from pathlib import Path
-from fileformats.core import FileSet, extra_implementation
-from fileformats.extras.core import check_optional_dependency
+
 from fileformats.application import Dicom
-from fileformats.core import SampleFileGenerator
+from fileformats.core import FileSet, SampleFileGenerator, extra_implementation
+from fileformats.extras.core import check_optional_dependency
 
 try:
     import pydicom.tag
@@ -72,4 +72,5 @@ def dicom_save(
     **kwargs: ty.Any,
 ) -> None:
     check_optional_dependency(pydicom)
+    pydicom.dcmwrite(dicom.fspath, data, write_like_original=write_like_original)
     pydicom.dcmwrite(dicom.fspath, data, write_like_original=write_like_original)

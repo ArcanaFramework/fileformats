@@ -61,6 +61,13 @@ class FsMountIdentifier:
             the type of the file-system (e.g. ext4 or cifs)"""
         strpath = str(Path(path).absolute())
         mount_table = cls.get_mount_table()
+        if platform.system() == "Windows":
+            if strpath.startswith("\\\\?\\"):
+                # Remove Windows long path prefix for matching
+                strpath = strpath[4:]
+            # convert paths to lower case to avoid case-sensitivity
+            strpath = strpath.lower()
+            mount_table = [(k.lower(), v) for k, v in mount_table]
         matches = sorted(
             ((Path(p), t) for p, t in mount_table if strpath.startswith(p)),
             key=lambda m: len(str(m[0])),
@@ -167,11 +174,9 @@ class FsMountIdentifier:
 
         Returns
         -------
-        mount_point: os.PathLike
-            the root of the mount the path sits on
         fstype : str
             the type of the file-system (e.g. ext4 or cifs)"""
-        mount_point, fstype = cls.get_mount(path)
+        _, fstype = cls.get_mount(path)
         try:
             resolution = cls.FS_MAX_MTIME_NS_RESOLUTION[fstype]
         except KeyError:
