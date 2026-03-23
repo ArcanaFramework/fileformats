@@ -6,7 +6,7 @@
         <link rel="prefetch" href="../../../_static/logo_small.png" as="image">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>fileformats.application.medical - FileFormats v0.17.3</title>
+        <title>fileformats.application.medical - FileFormats v0.17.4</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=beddf052" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">FileFormats v0.17.3</div></a>
+      <a href="../../../index.html"><div class="brand">FileFormats v0.17.4</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -191,7 +191,7 @@
     <img class="sidebar-logo" src="../../../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.17.3</span>
+  <span class="sidebar-brand-text">FileFormats v0.17.4</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -294,39 +294,42 @@
 <span class="sd">        Dict[str, Any]</span>
 <span class="sd">            The dictionary representation of the pydicom Dataset</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">pydicom.datadict</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">pydicom.dataelem</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">pydicom.dataset</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">pydicom.multival</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">pydicom.uid</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">pydicom.valuerep</span>
 
-        <span class="c1"># Ensure that all keys are loaded before creating dictionary otherwise the keywords</span>
-        <span class="c1"># will not be set in the elem</span>
-        <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="n">dcm</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">dcm</span><span class="p">)]</span>
         <span class="n">dct</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">dcm</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">key</span> <span class="o">=</span> <span class="n">elem</span><span class="o">.</span><span class="n">keyword</span>  <span class="c1"># type: ignore[union-attr, attr-defined]</span>
-            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-                <span class="n">key</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="c1"># RawDataElement objects are not yet decoded; zero-length ones have value=None.</span>
+            <span class="c1"># Force conversion to DataElement by fetching via __getitem__.</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="n">pydicom</span><span class="o">.</span><span class="n">dataelem</span><span class="o">.</span><span class="n">RawDataElement</span><span class="p">):</span>
+                <span class="n">elem</span> <span class="o">=</span> <span class="n">dcm</span><span class="p">[</span><span class="n">elem</span><span class="o">.</span><span class="n">tag</span><span class="p">]</span>  <span class="c1"># type: ignore[attr-defined]</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">pydicom</span><span class="o">.</span><span class="n">datadict</span><span class="o">.</span><span class="n">keyword_for_tag</span><span class="p">(</span><span class="n">elem</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>  <span class="c1"># type: ignore[attr-defined]</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">key</span><span class="p">:</span>
                 <span class="n">key</span> <span class="o">=</span> <span class="n">elem</span><span class="o">.</span><span class="n">tag</span><span class="o">.</span><span class="n">json_key</span>  <span class="c1"># type: ignore[attr-defined]</span>
             <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">omit</span><span class="p">:</span>
                 <span class="n">value</span> <span class="o">=</span> <span class="n">elem</span><span class="o">.</span><span class="n">value</span>  <span class="c1"># type: ignore[attr-defined]</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">pydicom</span><span class="o">.</span><span class="n">multival</span><span class="o">.</span><span class="n">MultiValue</span><span class="p">):</span>
-                    <span class="n">value</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">]</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">]</span>
                 <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">pydicom</span><span class="o">.</span><span class="n">uid</span><span class="o">.</span><span class="n">UID</span><span class="p">):</span>
                     <span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
                 <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
-                    <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
                 <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">pydicom</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">Dataset</span><span class="p">):</span>
                     <span class="n">value</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">pydicom_to_dict</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">omit</span><span class="p">)</span>
                 <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">pydicom</span><span class="o">.</span><span class="n">valuerep</span><span class="o">.</span><span class="n">IS</span><span class="p">):</span>
                     <span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
                 <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">pydicom</span><span class="o">.</span><span class="n">valuerep</span><span class="o">.</span><span class="n">DSfloat</span><span class="p">):</span>
                     <span class="n">value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-                <span class="c1"># Can be handy to be able to access family_name and given_name separately</span>
-                <span class="c1"># elif isinstance(value, pydicom.valuerep.PersonName):</span>
-                <span class="c1">#     value = str(value)</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+                <span class="c1"># Reconstruct stripped to remove DICOM even-length space padding,</span>
+                <span class="c1"># while preserving component access (family_name, given_name, etc.)</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">pydicom</span><span class="o">.</span><span class="n">valuerep</span><span class="o">.</span><span class="n">PersonName</span><span class="p">):</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">pydicom</span><span class="o">.</span><span class="n">valuerep</span><span class="o">.</span><span class="n">PersonName</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span>
                 <span class="n">dct</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
         <span class="k">return</span> <span class="n">dct</span></div>
 
@@ -362,7 +365,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=808d0b47"></script>
+</div><script src="../../../_static/documentation_options.js?v=eaa2e803"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>
