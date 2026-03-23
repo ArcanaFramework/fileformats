@@ -53,13 +53,11 @@ if ty.TYPE_CHECKING:
 
 
 class SupportsDunderLT(ty.Protocol):
-    def __lt__(self, other: ty.Any) -> bool:
-        ...
+    def __lt__(self, other: ty.Any) -> bool: ...
 
 
 class SupportsDunderGT(ty.Protocol):
-    def __gt__(self, other: ty.Any) -> bool:
-        ...
+    def __gt__(self, other: ty.Any) -> bool: ...
 
 
 FileSetPrimitive: TypeAlias = ty.Union[os.PathLike[str], ty.Sequence[os.PathLike[str]]]
@@ -1066,7 +1064,8 @@ class FileSet(DataType):
             except AttributeError:
                 continue
             for t in nested:
-                types.update(t.referenced_types())
+                if issubclass(t, FileSet):
+                    types.update(t.referenced_types())
         return types
 
     @classmethod
