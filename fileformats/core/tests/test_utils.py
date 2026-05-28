@@ -1,15 +1,18 @@
-from pathlib import Path
 import os.path
 import random
 import shutil
 import time
 import typing as ty
+from pathlib import Path
+
 import pytest
-from fileformats.core import FileSet, validated_property
-from fileformats.generic import File, BinaryFile, Directory, FsObject
-from fileformats.core.mixin import WithSeparateHeader
-from fileformats.core.exceptions import UnsatisfiableCopyModeError
+
 from conftest import write_test_file
+from fileformats.core import FileSet, validated_property
+from fileformats.core.exceptions import UnsatisfiableCopyModeError
+from fileformats.core.mixin import WithSeparateHeader
+from fileformats.core.utils import collate_metadata_series
+from fileformats.generic import BinaryFile, Directory, File, FsObject
 
 
 class Mario(BinaryFile):
@@ -523,3 +526,23 @@ def test_hash_files(fsobject: FsObject, work_dir: Path, dest_dir: Path):
     )
     cpy = fsobject.copy(dest_dir)
     assert cpy.hash_files() == fsobject.hash_files()
+
+
+def test_metadata_collation1():
+    metadata_series = [
+        {"a": 1, "b": 2},
+        {"a": 1, "b": 3},
+        {"a": 1, "b": 2},
+    ]
+    collated = collate_metadata_series(metadata_series)
+    assert collated == {"a": 1, "b": [2, 3, 2]}
+
+
+def test_metadata_collation2():
+    metadata_series = [
+        {"a": 1, "b": 2, "c": "foo"},
+        {"a": 1, "b": 2, "c": "foo"},
+        {"a": 1, "b": 3, "c": "foo"},
+    ]
+    collated = collate_metadata_series(metadata_series)
+    assert collated == {"a": 1, "b": [2, 2, 3], "c": "foo"}
