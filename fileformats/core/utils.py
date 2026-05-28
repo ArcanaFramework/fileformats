@@ -9,6 +9,7 @@ import types
 import typing as ty
 import urllib.error
 import urllib.request
+from collections import Counter
 from contextlib import contextmanager
 from pathlib import Path
 from types import ModuleType
@@ -378,3 +379,50 @@ def is_union(type_: type, args: ty.Optional[ty.List[type]] = None) -> bool:
             return list(ty.get_args(type_)) == args
         return True
     return False
+
+
+def collate_metadata_series(
+    metadata_series: list[ty.Mapping[str, ty.Any]],
+) -> ty.Mapping[str, ty.Any]:
+    """Collates metadata across a series, returning a dictionary where each key is a
+    metadata field and the value is either a single value (if the field is the same
+    across all items in the series) or a list of values (if the field varies across
+    items in the series). This can be used to identify which fields are consistent
+    across the series and which fields vary, which can be useful for selecting
+    appropriate metadata fields for deidentification.
+
+    Parameters
+    ----------
+    metadata_series : list[dict[str, Any]]
+        A list of metadata dictionaries to collate
+
+    Returns
+    -------
+    dict[str, Any]
+        A dictionary where each key is a metadata field and the value is either a single
+        value (if the field is the same across all items in the series) or a list of
+        values (if the field varies across items in the series)
+    """
+    collated: dict[str, ty.Any] = {}
+    key_repeats: ty.Counter[str] = Counter()
+    varying_keys = set()
+    for metadata in metadata_series:
+        for key, val in metadata.items():
+            try:
+                prev_val = collated[key]
+            except KeyError:
+                collated[key] = (
+                    val  # Insert initial value (should only happen on first iter)
+                )
+                key_repeats.update([key])
+            else:
+                if key in varying_keys:
+                    collated[key].append(val)
+                # Check whether the value is the same as the values in the previous
+                # images in the series
+                elif val != prev_val:
+                    collated[key] = [prev_val] * key_repeats[key] + [val]
+                    varying_keys.add(key)
+                else:
+                    key_repeats.update([key])
+    return collated
