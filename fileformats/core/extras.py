@@ -103,9 +103,25 @@ def extra_implementation(
             if isinstance(mtype, str) and not isinstance(ftype, str):
                 mtype = eval(mtype, implementation.__globals__)
 
+            if morigin := ty.get_origin(mtype):
+                if forigin := ty.get_origin(ftype):
+                    if morigin != forigin:
+                        return False
+                    return all(
+                        type_match(mt, ft)
+                        for mt, ft in zip_longest(
+                            ty.get_args(mtype), ty.get_args(ftype)
+                        )
+                    )
+                else:
+                    return False
+
             return (
                 mtype is ty.Any  # type: ignore[comparison-overlap]
                 or mtype == ftype
+                or (
+                    mtype is Self and issubclass(ftype, dispatched_type)  # type: ignore[comparison-overlap, arg-type]
+                )
                 or inspect.isclass(ftype)
                 and (
                     (inspect.isclass(mtype) and issubclass(ftype, mtype))
