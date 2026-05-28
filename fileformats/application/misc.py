@@ -1240,14 +1240,6 @@ class Gml___Xml(Xml):
     ext = ".gml"
 
 
-class Gzip(WithMagicNumber, BinaryFile):
-    """anywhere data size is an issue"""
-
-    iana_mime = "application/gzip"
-    ext = ".gz"
-    magic_number = "1f8b"
-
-
 class H224(File):
     """Video conferencing applications."""
 

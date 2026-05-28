@@ -117,7 +117,68 @@ def fspaths_converter(fspaths: FspathsInputType) -> ty.FrozenSet[Path]:
         fspaths = fspaths.fspaths
     elif isinstance(fspaths, (str, os.PathLike)):
         fspaths = [Path(fspaths)]
-    return frozenset(Path(p).absolute() for p in fspaths)
+    return frozenset(_resolve_windows_path(Path(p).absolute()) for p in fspaths)
+
+
+# Cache of drive-letter → UNC root (None if not a mapped network drive)
+_windows_drive_unc_cache: ty.Dict[str, ty.Optional[str]] = {}
+
+
+def _resolve_windows_path(path: Path) -> Path:
+    """On Windows, resolve mapped-drive paths to their ``\\\\?\\UNC\\`` form.
+
+    Python 3.11+ can prefix absolute paths with ``\\\\?\\`` (the extended-length
+    path prefix).  For local drives this is harmless, but for mapped network
+    drives ``\\\\?\\DRIVE:\\...`` bypasses the Windows drive-substitution table
+    so ``stat`` / ``is_file`` fail.  Converting to ``\\\\?\\UNC\\server\\share\\...``
+    preserves long-path support while keeping the path stat-able.
+
+    For paths that are already UNC (``\\\\server\\...`` or ``\\\\?\\UNC\\...``),
+    non-drive paths, and non-Windows platforms the path is returned unchanged.
+    """
+    import platform
+    import subprocess as sp
+
+    if platform.system() != "Windows":
+        return path
+
+    path_str = str(path)
+
+    # Determine drive letter and remainder, noting whether \\?\ prefix is present
+    if path_str.startswith("\\\\?\\") and not path_str.startswith("\\\\?\\UNC\\"):
+        # e.g. \\?\T:\Clinical Scans\foo.dcm
+        drive = path_str[4:6].upper()  # "T:"
+        remainder = path_str[6:]  # \Clinical Scans\foo.dcm
+        has_long_prefix = True
+    elif len(path_str) >= 2 and path_str[1] == ":" and path_str[0].isalpha():
+        # e.g. T:\Clinical Scans\foo.dcm
+        drive = path_str[:2].upper()
+        remainder = path_str[2:]
+        has_long_prefix = False
+    else:
+        return path
+
+    if drive not in _windows_drive_unc_cache:
+        result = sp.run(["net", "use", drive], capture_output=True, text=True)
+        unc: ty.Optional[str] = None
+        if result.returncode == 0:
+            for line in result.stdout.splitlines():
+                parts = line.strip().split(None, 2)
+                # "net use" output has a "Remote name" line with the UNC path
+                if len(parts) == 3 and parts[2].startswith("\\\\"):
+                    unc = parts[2].strip()
+                    break
+        _windows_drive_unc_cache[drive] = unc
+
+    unc_root = _windows_drive_unc_cache[drive]
+    if unc_root is None:
+        return path
+
+    # Convert \\server\share to \\?\UNC\server\share to preserve long-path support,
+    # then append the remainder (e.g. \Clinical Scans\foo.dcm)
+    if has_long_prefix:
+        return Path("\\\\?\\UNC\\" + unc_root.lstrip("\\") + remainder)
+    return Path(unc_root + remainder)
 
 
 def add_exc_note(e: Exception, note: str) -> Exception:
