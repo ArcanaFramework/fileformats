@@ -6,7 +6,7 @@ import pytest
 from docx import Document
 
 from fileformats.core import FileSet, MockMixin, extra, extra_implementation
-from fileformats.testing import Foo
+from fileformats.testing import Foo, WithExtra
 from fileformats.vendor.openxmlformats_officedocument.application import (
     Wordprocessingml_Document,
 )
@@ -107,3 +107,16 @@ def documents_equal(doc1: Document, doc2: Document) -> bool:
     xml2 = doc2.part.element.xml
 
     return xml1 == xml2
+
+
+@extra_implementation(WithExtra.foo)
+def with_extra_foo_override(wextra: WithExtra, an_arg: int) -> int:
+    return an_arg * 3
+
+
+def test_extra_override():
+    """
+    Test that extra implementations can be overridden by functions
+    outside of the extras module."""
+    wextra = WithExtra.sample()
+    assert wextra.foo(2) == 6

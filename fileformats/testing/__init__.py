@@ -28,6 +28,7 @@ from .headers import (
     ZFile,
 )
 from .magic import Magic, MagicVersion
+from .with_extras import WithExtra
 
 __all__ = [
     "__version__",
@@ -81,4 +82,5 @@ __all__ = [
     "ConcreteClass",
     "AnotherConcreteClass",
     "ConvertibleToFile",
+    "WithExtra",
 ]

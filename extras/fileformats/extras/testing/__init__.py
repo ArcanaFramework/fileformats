@@ -1,15 +1,15 @@
-import typing as ty
+from pathlib import Path
 
 from fileformats.extras.core import check_optional_dependency
 from pydra.compose import python
 
-from fileformats.core import converter, extra_implementation
+from fileformats.core import SampleFileGenerator, converter, extra_implementation
 from fileformats.testing import (
     AbstractFile,
     ConvertibleToFile,
     EncodedText,
     MyFormat,
-    MyFormatX,
+    WithExtra,
 )
 from fileformats.text import TextFile
 
@@ -48,3 +48,17 @@ def EncodedToTextConverter(in_file: EncodedText, shift: int = 1) -> TextFile:
 def my_format_dummy_extra(my_format: MyFormat) -> int:
     check_optional_dependency(dummy_import)
     return 42
+
+
+@extra_implementation(WithExtra.foo)
+def with_extra_foo(wextra: WithExtra, an_arg: int) -> int:
+    return an_arg * 2
+
+
+@extra_implementation(WithExtra.generate_sample_data)
+def with_extra_generate_sample_data(
+    wextra: WithExtra,
+    generator: SampleFileGenerator,
+) -> list[Path]:
+    # Generate sample data by writing some text to the file
+    return [generator.generate(WithExtra, fill=10)]

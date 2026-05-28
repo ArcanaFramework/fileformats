@@ -1,6 +1,7 @@
 import functools
 import importlib
 import inspect
+import logging
 import sys
 import typing as ty
 import urllib.error
@@ -11,13 +12,19 @@ from fileformats.core.typing import TypeAlias
 
 from .converter_helpers import Converter, SubtypeVar
 from .datatype import DataType
-from .exceptions import FileFormatsExtrasError, FormatConversionError
+from .exceptions import (
+    FileFormatsClashingExtrasImplementationError,
+    FileFormatsExtrasNotImplementedError,
+    FormatConversionError,
+)
 from .utils import add_exc_note, check_package_exists_on_pypi, import_extras_module
 
 if sys.version_info < (3, 11):
     from typing_extensions import Self
 else:
     from typing import Self
+
+logger = logging.getLogger("fileformats")
 
 if ty.TYPE_CHECKING:
     from pydra.compose.base import Task
@@ -57,7 +64,7 @@ def extra(method: ExtraMethod) -> "ExtraMethod":
                             '. Was not able to check whether an "extras" package '
                             f"({xtra.pypi}) exists on PyPI or not"
                         )
-            raise FileFormatsExtrasError(msg) from None
+            raise FileFormatsExtrasNotImplementedError(msg) from None
 
     # Store single dispatch method on the decorated function so we can register
     # implementations to it later
@@ -203,6 +210,54 @@ def extra_implementation(
                 f"{method} and the implementing function {implementation}:\n"
                 + "\n".join(differences)
             )
+        if len(dispatch_method.registry) > 1:
+            # If there is already an implementation registered, warn that it is being
+            # overridden
+            import warnings
+
+            warnings.warn(
+                f"An implementation for {method} extra for {dispatched_type} already "
+                f"exists, overriding it with {implementation}",
+                UserWarning,
+            )
+        # If there is already an implementation registered determine whether to override or
+        # not based on whether the implementation is from an extras module.
+        if already_registered := dispatch_method.registry.get(dispatched_type):
+            already_in_extras = already_registered.__module__.startswith(
+                "fileformats.extras"
+            )
+            if implementation.__module__.startswith("fileformats.extras"):
+                if already_in_extras:
+                    raise FileFormatsClashingExtrasImplementationError(
+                        f"An implementation for {method} extra for {dispatched_type} already "
+                        f"exists from an extras module {already_registered.__module__}, "
+                        f"overriding it with {implementation} from an extras module, "
+                        "this should not be happening, please report "
+                        "this to the developers"
+                    )
+                else:
+                    logger.debug(
+                        "Silently ignoring internal implementation of %s extra for %s in favor of "
+                        "externally defined %s",
+                        method,
+                        dispatched_type,
+                        implementation,
+                    )
+                return implementation
+            else:
+                if already_in_extras:
+                    logger.debug(
+                        "Silently ignoring implementation of %s extra for %s from extras module in favor of "
+                        "externally defined %s",
+                        method,
+                        dispatched_type,
+                        implementation,
+                    )
+                else:
+                    raise FileFormatsClashingExtrasImplementationError(
+                        f"An external implementation for {method} extra for {dispatched_type} already "
+                        f"exists, overriding it with {implementation}: {dispatch_method.registry}"
+                    )
         dispatch_method.register(implementation)
         return implementation
 
