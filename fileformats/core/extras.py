@@ -210,16 +210,6 @@ def extra_implementation(
                 f"{method} and the implementing function {implementation}:\n"
                 + "\n".join(differences)
             )
-        if len(dispatch_method.registry) > 1:
-            # If there is already an implementation registered, warn that it is being
-            # overridden
-            import warnings
-
-            warnings.warn(
-                f"An implementation for {method} extra for {dispatched_type} already "
-                f"exists, overriding it with {implementation}",
-                UserWarning,
-            )
         # If there is already an implementation registered determine whether to override or
         # not based on whether the implementation is from an extras module.
         if already_registered := dispatch_method.registry.get(dispatched_type):
