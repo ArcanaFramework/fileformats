@@ -6,7 +6,7 @@
         <link rel="prefetch" href="../../../_static/logo_small.png" as="image">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>fileformats.core.fileset - FileFormats v0.17.6</title>
+        <title>fileformats.core.fileset - FileFormats v0.17.7</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=beddf052" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">FileFormats v0.17.6</div></a>
+      <a href="../../../index.html"><div class="brand">FileFormats v0.17.7</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -191,7 +191,7 @@
     <img class="sidebar-logo" src="../../../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.17.6</span>
+  <span class="sidebar-brand-text">FileFormats v0.17.7</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -292,6 +292,7 @@
     <span class="n">FileFormatsExtrasError</span><span class="p">,</span>
     <span class="n">FileFormatsExtrasPkgNotCheckedError</span><span class="p">,</span>
     <span class="n">FileFormatsExtrasPkgUninstalledError</span><span class="p">,</span>
+    <span class="n">FileFormatsNotRelativePathError</span><span class="p">,</span>
     <span class="n">FormatConversionError</span><span class="p">,</span>
     <span class="n">FormatDefinitionError</span><span class="p">,</span>
     <span class="n">FormatMismatchError</span><span class="p">,</span>
@@ -1125,7 +1126,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">mtime</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">chunk_len</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">FILE_CHUNK_LEN_DEFAULT</span><span class="p">,</span>
-        <span class="n">relative_to</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">relative_to</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">ignore_hidden_files</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">ignore_hidden_dirs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Generator</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Iterator</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]],</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
@@ -1139,9 +1140,11 @@
 <span class="sd">            a bytes repr of the last modification time.</span>
 <span class="sd">        chunk_len : int, optional</span>
 <span class="sd">            the chunk length to break up the file and calculate the hash over, by default 8192</span>
-<span class="sd">        relative_to : Path, optional</span>
+<span class="sd">        relative_to : Path | str, optional</span>
 <span class="sd">            the base path by which to record the file system paths in the dictionary keys</span>
-<span class="sd">            to, by default None</span>
+<span class="sd">            to. Can be a common parent or a parent + file-stem such that only the extensions</span>
+<span class="sd">            are used in the file keys (allowing transportability of the hashes to different stems),</span>
+<span class="sd">            by default the common prefix + stem of all files in the fileset is used.</span>
 <span class="sd">        ignore_hidden_files : bool</span>
 <span class="sd">            whether to ignore hidden files within nested directories (i.e. those</span>
 <span class="sd">            starting with &#39;.&#39;)</span>
@@ -1158,21 +1161,44 @@
 <span class="sd">            an iterator over the bytes contents of the file, chunked into &#39;chunk_len&#39;</span>
 <span class="sd">            chunks</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Ensure relative is a Path object</span>
+
         <span class="c1"># If &quot;relative_to&quot; is not provided, get the common path between</span>
         <span class="k">if</span> <span class="n">relative_to</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">relative_to</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">commonpath</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fspaths</span><span class="p">)))</span>
-            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span> <span class="ow">and</span> <span class="n">p</span><span class="o">.</span><span class="n">parent</span> <span class="o">==</span> <span class="n">relative_to</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fspaths</span><span class="p">):</span>
-                <span class="n">relative_to</span> <span class="o">/=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">commonprefix</span><span class="p">(</span>
+            <span class="n">relative_to_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">commonpath</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fspaths</span><span class="p">)))</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span>
+            <span class="c1"># Add the common stem prefix to the relative_to parent directory</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span> <span class="ow">and</span> <span class="n">p</span><span class="o">.</span><span class="n">parent</span> <span class="o">==</span> <span class="n">relative_to_dir</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fspaths</span><span class="p">):</span>
+                <span class="n">relative_to_stem</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">commonprefix</span><span class="p">(</span>
                     <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fspaths</span><span class="p">]</span>
                 <span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">relative_to_stem</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">relative_to</span> <span class="o">=</span> <span class="n">relative_to_dir</span> <span class="o">/</span> <span class="n">relative_to_stem</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">relative_to</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">relative_to</span><span class="p">)</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">relative_to</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
+                <span class="n">relative_to_dir</span> <span class="o">=</span> <span class="n">relative_to</span>
+                <span class="n">relative_to_stem</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">relative_to_dir</span> <span class="o">=</span> <span class="n">relative_to</span><span class="o">.</span><span class="n">parent</span>
+                <span class="n">relative_to_stem</span> <span class="o">=</span> <span class="n">relative_to</span><span class="o">.</span><span class="n">name</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">relative_path_str</span><span class="p">(</span><span class="n">p</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="n">relative_to_dir</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">relative_to_stem</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">&quot;.&quot;</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">p</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">relative_to_stem</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">FileFormatsNotRelativePathError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Path </span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="bp">self</span><span class="si">}</span><span class="s2"> is not relative to the value provided to &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;&#39;relative_to&#39; (</span><span class="si">{</span><span class="n">relative_to</span><span class="si">}</span><span class="s2">)&quot;</span>
+                    <span class="p">)</span>
+                <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">relative_to_stem</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="s2">&quot;.&quot;</span>
+                <span class="k">return</span> <span class="n">p</span><span class="o">.</span><span class="n">name</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">relative_to_stem</span><span class="p">)</span> <span class="p">:]</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
         <span class="c1"># yield the absolute base path if using mtimes instead of contents</span>
         <span class="k">if</span> <span class="n">mtime</span><span class="p">:</span>
-            <span class="k">yield</span> <span class="p">(</span><span class="s2">&quot;&lt;base-path&gt;&quot;</span><span class="p">,</span> <span class="nb">iter</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">relative_to</span><span class="o">.</span><span class="n">absolute</span><span class="p">())</span><span class="o">.</span><span class="n">encode</span><span class="p">()]))</span>
-        <span class="n">relative_to_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">relative_to</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">relative_to</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">relative_to_str</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="p">):</span>
-            <span class="n">relative_to_str</span> <span class="o">+=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span>
-
-        <span class="k">if</span> <span class="n">mtime</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="p">(</span><span class="s2">&quot;&lt;base-path&gt;&quot;</span><span class="p">,</span> <span class="nb">iter</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">relative_to</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">()]))</span>
 
             <span class="k">def</span><span class="w"> </span><span class="nf">chunk_file</span><span class="p">(</span><span class="n">fspath</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Iterator</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
 <span class="w">                </span><span class="sd">&quot;&quot;&quot;Yields a byte representation of the last modified time for the file&quot;&quot;&quot;</span>
@@ -1206,12 +1232,12 @@
                     <span class="k">if</span> <span class="n">ignore_hidden_files</span> <span class="ow">and</span> <span class="n">filename</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
                         <span class="k">continue</span>
                     <span class="k">yield</span> <span class="p">(</span>
-                        <span class="nb">str</span><span class="p">((</span><span class="n">dpath</span> <span class="o">/</span> <span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="n">relative_to_str</span><span class="p">)),</span>
+                        <span class="n">relative_path_str</span><span class="p">(</span><span class="n">dpath</span> <span class="o">/</span> <span class="n">filename</span><span class="p">),</span>
                         <span class="n">chunk_file</span><span class="p">(</span><span class="n">dpath</span> <span class="o">/</span> <span class="n">filename</span><span class="p">),</span>
                     <span class="p">)</span>
 
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">fspath</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span>
-            <span class="p">((</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">)[</span><span class="nb">len</span><span class="p">(</span><span class="n">relative_to_str</span><span class="p">)</span> <span class="p">:],</span> <span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fspaths</span><span class="p">),</span>
+            <span class="p">((</span><span class="n">relative_path_str</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fspaths</span><span class="p">),</span>
             <span class="n">key</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
         <span class="p">):</span>
             <span class="k">if</span> <span class="n">fspath</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
@@ -2350,7 +2376,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=0f56c776"></script>
+</div><script src="../../../_static/documentation_options.js?v=901453ec"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>
