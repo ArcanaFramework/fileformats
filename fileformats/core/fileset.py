@@ -892,7 +892,7 @@ class FileSet(DataType):
         if relative_to is None:
             relative_to_dir = Path(os.path.commonpath(list(self.fspaths))).absolute()
             # Add the common stem prefix to the relative_to parent directory
-            if all(p.is_file() and p.parent == relative_to for p in self.fspaths):
+            if all(p.is_file() and p.parent == relative_to_dir for p in self.fspaths):
                 relative_to_stem = os.path.commonprefix(
                     [p.name for p in self.fspaths]
                 ).rstrip(".")
@@ -911,7 +911,7 @@ class FileSet(DataType):
         def relative_path_str(p: Path) -> str:
             r = p.relative_to(relative_to_dir)
             if relative_to_stem:
-                if str(r) != "." or not p.name.startswith(relative_to_stem):
+                if str(r.parent) != "." or not p.name.startswith(relative_to_stem):
                     raise FileFormatsNotRelativePathError(
                         f"Path {p} in {self} is not relative to the value provided to "
                         f"'relative_to' ({relative_to})"
