@@ -34,6 +34,7 @@ from .exceptions import (
     FileFormatsExtrasError,
     FileFormatsExtrasPkgNotCheckedError,
     FileFormatsExtrasPkgUninstalledError,
+    FileFormatsNotRelativePathError,
     FormatConversionError,
     FormatDefinitionError,
     FormatMismatchError,
@@ -850,7 +851,7 @@ class FileSet(DataType):
         self,
         mtime: bool = False,
         chunk_len: int = FILE_CHUNK_LEN_DEFAULT,
-        relative_to: ty.Optional[Path] = None,
+        relative_to: ty.Union[Path, str, None] = None,
         ignore_hidden_files: bool = False,
         ignore_hidden_dirs: bool = False,
     ) -> ty.Generator[ty.Tuple[str, ty.Iterator[bytes]], None, None]:
@@ -864,9 +865,11 @@ class FileSet(DataType):
             a bytes repr of the last modification time.
         chunk_len : int, optional
             the chunk length to break up the file and calculate the hash over, by default 8192
-        relative_to : Path, optional
+        relative_to : Path | str, optional
             the base path by which to record the file system paths in the dictionary keys
-            to, by default None
+            to. Can be a common parent or a parent + file-stem such that only the extensions
+            are used in the file keys (allowing transportability of the hashes to different stems),
+            by default the common prefix + stem of all files in the fileset is used.
         ignore_hidden_files : bool
             whether to ignore hidden files within nested directories (i.e. those
             starting with '.')
@@ -883,18 +886,44 @@ class FileSet(DataType):
             an iterator over the bytes contents of the file, chunked into 'chunk_len'
             chunks
         """
+        # Ensure relative is a Path object
+
         # If "relative_to" is not provided, get the common path between
         if relative_to is None:
-            relative_to = Path(os.path.commonpath(list(self.fspaths)))
+            relative_to_dir = Path(os.path.commonpath(list(self.fspaths))).absolute()
+            # Add the common stem prefix to the relative_to parent directory
             if all(p.is_file() and p.parent == relative_to for p in self.fspaths):
-                relative_to /= os.path.commonprefix(
+                relative_to_stem = os.path.commonprefix(
                     [p.name for p in self.fspaths]
                 ).rstrip(".")
+            else:
+                relative_to_stem = ""
+            relative_to = relative_to_dir / relative_to_stem
+        else:
+            relative_to = Path(relative_to).absolute()
+            if relative_to.is_dir():
+                relative_to_dir = relative_to
+                relative_to_stem = ""
+            else:
+                relative_to_dir = relative_to.parent
+                relative_to_stem = relative_to.name
+
+        def relative_path_str(p: Path) -> str:
+            r = p.relative_to(relative_to_dir)
+            if relative_to_stem:
+                if str(r) != "." or not p.name.startswith(relative_to_stem):
+                    raise FileFormatsNotRelativePathError(
+                        f"Path {p} in {self} is not relative to the value provided to "
+                        f"'relative_to' ({relative_to})"
+                    )
+                if p.name == relative_to_stem:
+                    return "."
+                return p.name[len(relative_to_stem) :]
+            return str(r)
+
         # yield the absolute base path if using mtimes instead of contents
         if mtime:
-            yield ("<base-path>", iter([str(relative_to.absolute()).encode()]))
-
-        if mtime:
+            yield ("<base-path>", iter([str(relative_to).encode()]))
 
             def chunk_file(fspath: Path) -> ty.Iterator[bytes]:
                 """Yields a byte representation of the last modified time for the file"""
@@ -928,12 +957,12 @@ class FileSet(DataType):
                     if ignore_hidden_files and filename.startswith("."):
                         continue
                     yield (
-                        str((dpath / filename).relative_to(relative_to)),
+                        relative_path_str(dpath / filename),
                         chunk_file(dpath / filename),
                     )
 
         for key, fspath in sorted(
-            ((str(p.relative_to(relative_to)), p) for p in self.fspaths),
+            ((relative_path_str(p), p) for p in self.fspaths),
             key=itemgetter(0),
         ):
             if fspath.is_dir():
