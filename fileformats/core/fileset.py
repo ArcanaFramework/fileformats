@@ -893,9 +893,6 @@ class FileSet(DataType):
         # yield the absolute base path if using mtimes instead of contents
         if mtime:
             yield ("<base-path>", iter([str(relative_to.absolute()).encode()]))
-        relative_to_str = str(relative_to)
-        if relative_to.is_dir() and not relative_to_str.endswith(os.path.sep):
-            relative_to_str += os.path.sep
 
         if mtime:
 
@@ -931,12 +928,12 @@ class FileSet(DataType):
                     if ignore_hidden_files and filename.startswith("."):
                         continue
                     yield (
-                        str((dpath / filename).relative_to(relative_to_str)),
+                        str((dpath / filename).relative_to(relative_to)),
                         chunk_file(dpath / filename),
                     )
 
         for key, fspath in sorted(
-            ((str(p)[len(relative_to_str) :], p) for p in self.fspaths),
+            ((str(p.relative_to(relative_to)), p) for p in self.fspaths),
             key=itemgetter(0),
         ):
             if fspath.is_dir():
