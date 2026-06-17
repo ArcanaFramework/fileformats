@@ -9,10 +9,14 @@ import pytest
 
 from conftest import write_test_file
 from fileformats.core import FileSet, validated_property
-from fileformats.core.exceptions import UnsatisfiableCopyModeError
+from fileformats.core.exceptions import (
+    FileFormatsNotRelativePathError,
+    UnsatisfiableCopyModeError,
+)
 from fileformats.core.mixin import WithSeparateHeader
 from fileformats.core.utils import collate_metadata_series
 from fileformats.generic import BinaryFile, Directory, File, FsObject
+from fileformats.testing import Foo
 
 
 class Mario(BinaryFile):
@@ -526,6 +530,22 @@ def test_hash_files(fsobject: FsObject, work_dir: Path, dest_dir: Path):
     )
     cpy = fsobject.copy(dest_dir)
     assert cpy.hash_files() == fsobject.hash_files()
+
+
+def test_hash_files_keys(tmp_path: Path):
+    one = Foo.sample(tmp_path, stem="foo-one")
+    two = Foo.sample(tmp_path, stem="foo-two")
+    three = Foo.sample(tmp_path, stem="foo-three")
+    fset = FileSet([one, two, three])
+    assert set(fset.hash_files()) == {"one.foo", "two.foo", "three.foo"}
+    assert set(fset.hash_files(relative_to=tmp_path / "fo")) == {  # codespell:ignore
+        "o-one.foo",
+        "o-two.foo",
+        "o-three.foo",
+    }
+    assert set(one.hash_files(relative_to=one.fspath)) == {"."}
+    with pytest.raises(FileFormatsNotRelativePathError):
+        fset.hash_files(relative_to=tmp_path / "bar")
 
 
 def test_metadata_collation1():

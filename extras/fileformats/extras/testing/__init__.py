@@ -8,6 +8,7 @@ from fileformats.testing import (
     AbstractFile,
     ConvertibleToFile,
     EncodedText,
+    Foo,
     MyFormat,
     WithExtra,
 )
@@ -62,3 +63,12 @@ def with_extra_generate_sample_data(
 ) -> list[Path]:
     # Generate sample data by writing some text to the file
     return [generator.generate(WithExtra, fill=10)]
+
+
+@extra_implementation(Foo.generate_sample_data)
+def foo_generate_sample_data(
+    foo: Foo,
+    generator: SampleFileGenerator,
+) -> list[Path]:
+    # Generate sample data by writing some text to the file
+    return [generator.generate(Foo, fill=10)]
