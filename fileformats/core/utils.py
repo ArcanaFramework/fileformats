@@ -79,17 +79,22 @@ def subpackages(
         pkgutil.iter_modules(
             fileformats.__path__, prefix=fileformats.__package__ + "."
         ),
-        pkgutil.iter_modules(
-            fileformats.vendor.__path__,
-            prefix=fileformats.vendor.__package__ + ".",
-        ),
     ):
-        parts = mod_info.name.split(".")
-        if parts[-1] in exclude or (
-            parts[1] == "vendor" and ".".join(parts[:2]) in exclude
-        ):
+        if mod_info.name.split(".")[-1] in exclude:
             continue
         yield importlib.import_module(mod_info.name)
+    for vnd_info in pkgutil.iter_modules(
+        fileformats.vendor.__path__,
+        prefix=fileformats.vendor.__package__ + ".",
+    ):
+        vnd_pkg = importlib.import_module(vnd_info.name)
+        for mod_info in pkgutil.iter_modules(
+            vnd_pkg.__path__,
+            prefix=vnd_info.name + ".",
+        ):
+            if ".".join(mod_info.name.split(".")[-3:-1]) in exclude:
+                continue
+            yield importlib.import_module(mod_info.name)
 
 
 @contextmanager
