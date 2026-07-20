@@ -188,9 +188,9 @@ class DataType(Classifier, metaclass=ABCMeta):
             # treats it). Therefore, we loop through all subclasses across the different
             # namespaces to find one that matches the name.
             format_name = format_name[2:]  # remove "x-" prefix
-            matching_name: ty.Collection[
-                ty.Type[FileSet]
-            ] = FileSet.formats_by_name.get(format_name, ())
+            matching_name: ty.Collection[ty.Type[FileSet]] = (
+                FileSet.formats_by_name.get(format_name, ())
+            )
             matching_name = [
                 m
                 for m in matching_name
@@ -313,9 +313,9 @@ class DataType(Classifier, metaclass=ABCMeta):
         return cls._generically_classifiable_by_name
 
     # Register all generically classified types
-    _generically_classifiable_by_name: ty.Optional[
-        ty.Dict[str, ty.Type[DataType]]
-    ] = None
+    _generically_classifiable_by_name: ty.Optional[ty.Dict[str, ty.Type[DataType]]] = (
+        None
+    )
 
     REQUIRED_ANNOTATION = "__fileformats_required__"
     CHECK_ANNOTATION = "__fileformats_check__"
