@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html">
         <link rel="prefetch" href="../../../_static/logo_small.png" as="image">
 
-    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>fileformats.core.datatype - FileFormats v0.17.7</title>
+    <link rel="shortcut icon" href="../../../_static/favicon.png"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
+        <title>fileformats.core.datatype - FileFormats v0.17.8</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=beddf052" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">FileFormats v0.17.7</div></a>
+      <a href="../../../index.html"><div class="brand">FileFormats v0.17.8</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -191,7 +191,7 @@
     <img class="sidebar-logo" src="../../../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.17.7</span>
+  <span class="sidebar-brand-text">FileFormats v0.17.8</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -457,9 +457,9 @@
             <span class="c1"># treats it). Therefore, we loop through all subclasses across the different</span>
             <span class="c1"># namespaces to find one that matches the name.</span>
             <span class="n">format_name</span> <span class="o">=</span> <span class="n">format_name</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>  <span class="c1"># remove &quot;x-&quot; prefix</span>
-            <span class="n">matching_name</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Collection</span><span class="p">[</span>
-                <span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">FileSet</span><span class="p">]</span>
-            <span class="p">]</span> <span class="o">=</span> <span class="n">FileSet</span><span class="o">.</span><span class="n">formats_by_name</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">format_name</span><span class="p">,</span> <span class="p">())</span>
+            <span class="n">matching_name</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Collection</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">FileSet</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">FileSet</span><span class="o">.</span><span class="n">formats_by_name</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">format_name</span><span class="p">,</span> <span class="p">())</span>
+            <span class="p">)</span>
             <span class="n">matching_name</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="n">m</span>
                 <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">matching_name</span>
@@ -582,9 +582,9 @@
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_generically_classifiable_by_name</span>
 
     <span class="c1"># Register all generically classified types</span>
-    <span class="n">_generically_classifiable_by_name</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span>
-        <span class="n">ty</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">DataType</span><span class="p">]]</span>
-    <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_generically_classifiable_by_name</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">DataType</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="kc">None</span>
+    <span class="p">)</span>
 
     <span class="n">REQUIRED_ANNOTATION</span> <span class="o">=</span> <span class="s2">&quot;__fileformats_required__&quot;</span>
     <span class="n">CHECK_ANNOTATION</span> <span class="o">=</span> <span class="s2">&quot;__fileformats_check__&quot;</span></div>
@@ -627,7 +627,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=901453ec"></script>
+</div><script src="../../../_static/documentation_options.js?v=db0901fe"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>
