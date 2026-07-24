@@ -44,13 +44,14 @@ from .notclassifiedyet import (
     Webp,
     Wmf,
 )
-from .raster import Bitmap, Gif, Jpeg, Png, RasterImage, Tiff
+from .raster import Bitmap, Cr2, Gif, Jpeg, Png, RasterImage, Tiff
 from .vector import Svg, VectorImage
 
 __all__ = [
     "__version__",
     "RasterImage",
     "Bitmap",
+    "Cr2",
     "Gif",
     "Jpeg",
     "Png",
