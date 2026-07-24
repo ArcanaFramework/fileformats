@@ -17,9 +17,9 @@ FileFormats
    :target: https://github.com/ArcanaFramework/fileformats
 
 
-*Fileformats* is a library of Python classes that correspond to different file formats
-for file-type detection/validation, MIME-type lookup and file handling. The format classes also
-provide hooks for methods to read and manipulate the data contained in the files to
+*Fileformats* is a Python library for file-type detection/validation, MIME-type lookup and file handling.
+It contains a collection format classes that each correspond to a different file formats.
+The format classes also provide hooks for methods to read and manipulate the data contained in the files to
 facilitate the writing of duck-typed code. Unlike other Python packages, multi-file data
 formats, e.g. with separate header/data files or directories containing specific files,
 are supported, and can be handled just like single file types.

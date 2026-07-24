@@ -88,7 +88,7 @@ class DataType(Classifier, metaclass=ABCMeta):
         """
         try:
             cls(values)  # type: ignore
-        except FormatMismatchError:
+        except (FormatMismatchError, FileNotFoundError):
             return False
         else:
             return True
