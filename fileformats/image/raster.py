@@ -73,3 +73,11 @@ class Tiff(RasterImage):
                 f"'{self.magic_number_be}'"
             )
         return endianness
+
+
+class Cr2(RasterImage):
+    """Canon RAW image format (a TIFF-based container used by Canon cameras)."""
+
+    ext = ".CR2"
+    iana_mime = "image/x-canon-cr2"  # not an official IANA type, but the de facto
+    # identifier used by shared-mime-info, ExifTool, etc.
