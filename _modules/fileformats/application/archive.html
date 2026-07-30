@@ -6,7 +6,7 @@
         <link rel="prefetch" href="../../../_static/logo_small.png" as="image">
 
     <link rel="shortcut icon" href="../../../_static/favicon.png"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>fileformats.application.archive - FileFormats v0.17.9</title>
+        <title>fileformats.application.archive - FileFormats v0.17.10</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=beddf052" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">FileFormats v0.17.9</div></a>
+      <a href="../../../index.html"><div class="brand">FileFormats v0.17.10</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -191,7 +191,7 @@
     <img class="sidebar-logo" src="../../../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.17.9</span>
+  <span class="sidebar-brand-text">FileFormats v0.17.10</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -284,26 +284,22 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">BaseZip</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Archive</span><span class="p">):</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.zip&quot;</span>
     <span class="n">magic_number</span> <span class="o">=</span> <span class="s2">&quot;504B0304&quot;</span>
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;application/zip&quot;</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">BaseBzip</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Archive</span><span class="p">):</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.bzip&quot;</span>
     <span class="n">magic_number</span> <span class="o">=</span> <span class="s2">&quot;425a&quot;</span>
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;application/bzip&quot;</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">BaseGzip</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Archive</span><span class="p">):</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.gz&quot;</span>
     <span class="n">magic_number</span> <span class="o">=</span> <span class="s2">&quot;1F8B08&quot;</span>
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;application/gzip&quot;</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">BaseTar</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Archive</span><span class="p">):</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.tar&quot;</span>
     <span class="n">magic_number</span> <span class="o">=</span> <span class="s2">&quot;7573746172&quot;</span>
     <span class="n">magic_number_offset</span> <span class="o">=</span> <span class="mi">257</span>
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;application/x-tar&quot;</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">BaseTarGzip</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Archive</span><span class="p">):</span>
@@ -312,41 +308,40 @@
     <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.tar.gz&quot;</span>
     <span class="n">magic_number</span> <span class="o">=</span> <span class="s2">&quot;1F8B08&quot;</span>
     <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.tgz&quot;</span><span class="p">,)</span>
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;application/x-tar+gzip&quot;</span>
 
 
 <div class="viewcode-block" id="Zip">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Zip">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Zip</span><span class="p">(</span><span class="n">WithArchiveClassifiers</span><span class="p">,</span> <span class="n">BaseZip</span><span class="p">):</span>
-    <span class="k">pass</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;application/zip&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="Bzip">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Bzip">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Bzip</span><span class="p">(</span><span class="n">WithArchiveClassifiers</span><span class="p">,</span> <span class="n">BaseBzip</span><span class="p">):</span>
-    <span class="k">pass</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;application/bzip&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="Gzip">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Gzip">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Gzip</span><span class="p">(</span><span class="n">WithArchiveClassifiers</span><span class="p">,</span> <span class="n">BaseGzip</span><span class="p">):</span>
-    <span class="k">pass</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;application/gzip&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="Tar">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Tar">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Tar</span><span class="p">(</span><span class="n">WithArchiveClassifiers</span><span class="p">,</span> <span class="n">BaseTar</span><span class="p">):</span>
-    <span class="k">pass</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;application/x-tar&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="TarGzip">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.TarGzip">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TarGzip</span><span class="p">(</span><span class="n">WithArchiveClassifiers</span><span class="p">,</span> <span class="n">BaseTarGzip</span><span class="p">):</span>
-    <span class="k">pass</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;application/x-tar+gzip&quot;</span></div>
 
 </pre></div>
         </article>
@@ -380,7 +375,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=444b9564"></script>
+</div><script src="../../../_static/documentation_options.js?v=2325ffcc"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>
