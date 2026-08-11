@@ -38,6 +38,7 @@ class Dicom(WithMagicNumber, BinaryFile):
         import pydicom.dataelem
         import pydicom.dataset
         import pydicom.multival
+        import pydicom.sequence
         import pydicom.uid
         import pydicom.valuerep
 
@@ -52,7 +53,12 @@ class Dicom(WithMagicNumber, BinaryFile):
                 key = elem.tag.json_key  # type: ignore[attr-defined]
             if key not in omit:
                 value = elem.value  # type: ignore[attr-defined]
-                if isinstance(value, pydicom.multival.MultiValue):
+                # Sequence (SQ) elements hold a list of nested Datasets. Checked before
+                # MultiValue since in some pydicom versions Sequence subclasses it, and
+                # we want the per-item dict conversion below rather than the str() one.
+                if isinstance(value, pydicom.sequence.Sequence):
+                    value = [cls.pydicom_to_dict(item, omit) for item in value]
+                elif isinstance(value, pydicom.multival.MultiValue):
                     value = [str(v).rstrip() for v in value]
                 elif isinstance(value, pydicom.uid.UID):
                     value = str(value)
