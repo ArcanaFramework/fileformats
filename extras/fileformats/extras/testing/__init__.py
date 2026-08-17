@@ -4,6 +4,7 @@ from fileformats.extras.core import check_optional_dependency
 from pydra.compose import python
 
 from fileformats.core import SampleFileGenerator, converter, extra_implementation
+from fileformats.core.fileset import FileSet
 from fileformats.testing import (
     AbstractFile,
     ConvertibleToFile,
@@ -12,6 +13,7 @@ from fileformats.testing import (
     MyFormat,
     WithExtra,
 )
+from fileformats.testing.headers import YourFormat
 from fileformats.text import TextFile
 
 dummy_import = None
@@ -72,3 +74,30 @@ def foo_generate_sample_data(
 ) -> list[Path]:
     # Generate sample data by writing some text to the file
     return [generator.generate(Foo, fill=10)]
+
+
+@extra_implementation(FileSet.generate_sample_data)
+def encoded_text_generate_sample_data_with_extra(
+    encoded_text: EncodedText,
+    generator: SampleFileGenerator,
+) -> list[Path]:
+    # Generate sample data by writing some text to the file
+    return [generator.generate(EncodedText, fill=10)]
+
+
+@extra_implementation(FileSet.generate_sample_data)
+def my_format_generate_sample_data_with_extra(
+    my_format: MyFormat,
+    generator: SampleFileGenerator,
+) -> list[Path]:
+    # Generate sample data by writing some text to the file
+    return [generator.generate(MyFormat, fill=10)]
+
+
+@extra_implementation(FileSet.generate_sample_data)
+def your_format_generate_sample_data_with_extra(
+    your_format: YourFormat,
+    generator: SampleFileGenerator,
+) -> list[Path]:
+    # Generate sample data by writing some text to the file
+    return [generator.generate(YourFormat, fill=10)]

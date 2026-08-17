@@ -1,5 +1,6 @@
 import typing as ty
-from fileformats.core import extra_implementation, FileSet
+
+from fileformats.core import FileSet, extra_implementation
 from fileformats.text import Plain  # , Csv, Tsv
 
 # import pandas as pd
