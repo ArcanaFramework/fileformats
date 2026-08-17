@@ -90,13 +90,16 @@ def create_tar(
 
     out_file = out_file.absolute()
 
-    with tarfile.open(  # type: ignore[call-overload]
-        name=out_file,
-        mode=f"w:{compression}",
-        format=format,
-        ignore_zeros=ignore_zeros,
-        encoding=encoding,
-    ) as tfile, set_cwd(base_dir):
+    with (
+        tarfile.open(  # type: ignore[call-overload]
+            name=out_file,
+            mode=f"w:{compression}",
+            format=format,
+            ignore_zeros=ignore_zeros,
+            encoding=encoding,
+        ) as tfile,
+        set_cwd(base_dir),
+    ):
         for fspath in in_file.fspaths:
             tfile.add(relative_path(fspath, base_dir), filter=filter)
 
@@ -162,14 +165,17 @@ def create_zip(
 
     out_file = out_file.absolute()
 
-    with zipfile.ZipFile(
-        out_file,
-        mode="w",
-        compression=compression,
-        allowZip64=allowZip64,
-        compresslevel=compresslevel,
-        strict_timestamps=strict_timestamps,
-    ) as zfile, set_cwd(base_dir):
+    with (
+        zipfile.ZipFile(
+            out_file,
+            mode="w",
+            compression=compression,
+            allowZip64=allowZip64,
+            compresslevel=compresslevel,
+            strict_timestamps=strict_timestamps,
+        ) as zfile,
+        set_cwd(base_dir),
+    ):
         for fspath in in_file.fspaths:
             fspath = Path(fspath)
             if fspath.is_dir():

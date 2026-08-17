@@ -254,12 +254,10 @@ class Array(
         return len(self.value)
 
     @ty.overload
-    def __getitem__(self, index: int) -> ItemType:
-        ...  # noqa: E704
+    def __getitem__(self, index: int) -> ItemType: ...  # noqa: E704
 
     @ty.overload
-    def __getitem__(self, slice: slice) -> ty.Sequence[ItemType]:
-        ...  # noqa: E704
+    def __getitem__(self, slice: slice) -> ty.Sequence[ItemType]: ...  # noqa: E704
 
     def __getitem__(self, key: ty.Any) -> ty.Any:
         return self.value[key]
