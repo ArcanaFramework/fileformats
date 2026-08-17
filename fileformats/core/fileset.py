@@ -1529,13 +1529,12 @@ class FileSet(DataType):
             whether to overwrite existing files/directories if present, ignored if
             avoid_clashes is set to True, by default False
         avoid_clashes : bool or set[Path], optional
-            whether to avoid name clashes between files in the file-set and existing files.
-            In this case the clash_template is used to generate a new name for the file
-            that doesn't clash with any existing files. If a set of paths is provided, then
             Can either be a boolean to avoid clashes with any existing files (i.e. the
             overwrite flag is irrelevant), or a set of paths to avoid clashes with.
             If a set is provided, then the copied files will be added to that set as they
-            are copied to allow a series of copies to guarantee to have unique paths.
+            are copied to allow a series of copies to guarantee to have unique paths
+            (useful when copying multiple filesets to the same destination directory).
+            By default False
         clash_template: str
             The template used to generate a new file name if there is a clash with an
             existing file. It should be a string template containing "stem", "counter"
