@@ -3,7 +3,9 @@ from pathlib import Path
 from fileformats.extras.core import check_optional_dependency
 from pydra.compose import python
 
+from fileformats.application.serialization import Json
 from fileformats.core import SampleFileGenerator, converter, extra_implementation
+from fileformats.core.fileset import FileSet
 from fileformats.testing import (
     AbstractFile,
     ConvertibleToFile,
@@ -12,6 +14,7 @@ from fileformats.testing import (
     MyFormat,
     WithExtra,
 )
+from fileformats.testing.headers import MyFormatGz, MyFormatGzX, MyFormatX, YourFormat
 from fileformats.text import TextFile
 
 dummy_import = None
@@ -72,3 +75,61 @@ def foo_generate_sample_data(
 ) -> list[Path]:
     # Generate sample data by writing some text to the file
     return [generator.generate(Foo, fill=10)]
+
+
+@extra_implementation(FileSet.generate_sample_data)
+def encoded_text_generate_sample_data_with_extra(
+    encoded_text: EncodedText,
+    generator: SampleFileGenerator,
+) -> list[Path]:
+    # Generate sample data by writing some text to the file
+    return [generator.generate(EncodedText, fill=10)]
+
+
+@extra_implementation(FileSet.generate_sample_data)
+def my_format_generate_sample_data_with_extra(
+    my_format: MyFormat,
+    generator: SampleFileGenerator,
+) -> list[Path]:
+    # Generate sample data by writing some text to the file
+    return [generator.generate(MyFormat, fill=10)]
+
+
+@extra_implementation(FileSet.generate_sample_data)
+def my_format_x_generate_sample_data_with_extra(
+    my_format: MyFormatX,
+    generator: SampleFileGenerator,
+) -> list[Path]:
+    # Generate sample data by writing some text to the file
+    return [generator.generate(MyFormatX, fill=10)] + list(
+        Json.sample_data(generator=generator)
+    )
+
+
+@extra_implementation(FileSet.generate_sample_data)
+def my_format_gz_generate_sample_data_with_extra(
+    my_format: MyFormatGz,
+    generator: SampleFileGenerator,
+) -> list[Path]:
+    # Generate sample data by writing some text to the file
+    return [generator.generate(MyFormatGz, fill=10)]
+
+
+@extra_implementation(FileSet.generate_sample_data)
+def my_format_gz_x_generate_sample_data_with_extra(
+    my_format: MyFormatGzX,
+    generator: SampleFileGenerator,
+) -> list[Path]:
+    # Generate sample data by writing some text to the file
+    return [generator.generate(MyFormatGzX, fill=10)] + list(
+        Json.sample_data(generator=generator)
+    )
+
+
+@extra_implementation(FileSet.generate_sample_data)
+def your_format_generate_sample_data_with_extra(
+    your_format: YourFormat,
+    generator: SampleFileGenerator,
+) -> list[Path]:
+    # Generate sample data by writing some text to the file
+    return [generator.generate(YourFormat, fill=10)]
