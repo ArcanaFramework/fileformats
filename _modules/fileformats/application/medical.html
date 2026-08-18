@@ -6,7 +6,7 @@
         <link rel="prefetch" href="../../../_static/logo_small.png" as="image">
 
     <link rel="shortcut icon" href="../../../_static/favicon.png"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>fileformats.application.medical - FileFormats v0.17.11</title>
+        <title>fileformats.application.medical - FileFormats v0.17.12</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=beddf052" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">FileFormats v0.17.11</div></a>
+      <a href="../../../index.html"><div class="brand">FileFormats v0.17.12</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -191,7 +191,7 @@
     <img class="sidebar-logo" src="../../../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.17.11</span>
+  <span class="sidebar-brand-text">FileFormats v0.17.12</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -269,31 +269,31 @@
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Dicom">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Dicom</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">BinaryFile</span><span class="p">):</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;application/dicom&quot;</span>
-    <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;DICM&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"application/dicom"</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"DICM"</span>
     <span class="n">magic_number_offset</span> <span class="o">=</span> <span class="mi">128</span>
     <span class="n">binary</span> <span class="o">=</span> <span class="kc">True</span>
 
-    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.dcm&quot;</span><span class="p">,)</span>  <span class="c1"># dcm is recommended not required</span>
+    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">".dcm"</span><span class="p">,)</span>  <span class="c1"># dcm is recommended not required</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">pydicom_to_dict</span><span class="p">(</span>
-        <span class="bp">cls</span><span class="p">,</span> <span class="n">dcm</span><span class="p">:</span> <span class="s2">&quot;pydicom.Dataset&quot;</span><span class="p">,</span> <span class="n">omit</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;PixelData&quot;</span><span class="p">,)</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">dcm</span><span class="p">:</span> <span class="s2">"pydicom.Dataset"</span><span class="p">,</span> <span class="n">omit</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"PixelData"</span><span class="p">,)</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ty</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert a pydicom Dataset to a dictionary.</span>
+<span class="w">        </span><span class="sd">"""Convert a pydicom Dataset to a dictionary.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        dcm : pydicom.Dataset</span>
 <span class="sd">            The pydicom Dataset to convert.</span>
 <span class="sd">        omit : Collection[str], optional</span>
-<span class="sd">            A collection of keys to omit from the dictionary, by default (&quot;PixelData&quot;,)</span>
+<span class="sd">            A collection of keys to omit from the dictionary, by default ("PixelData",)</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        Dict[str, Any]</span>
 <span class="sd">            The dictionary representation of the pydicom Dataset</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">pydicom.datadict</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">pydicom.dataelem</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">pydicom.dataset</span>
@@ -323,7 +323,7 @@
                 <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">pydicom</span><span class="o">.</span><span class="n">uid</span><span class="o">.</span><span class="n">UID</span><span class="p">):</span>
                     <span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
                 <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
-                    <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">errors</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
                 <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">pydicom</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">Dataset</span><span class="p">):</span>
                     <span class="n">value</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">pydicom_to_dict</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">omit</span><span class="p">)</span>
                 <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">pydicom</span><span class="o">.</span><span class="n">valuerep</span><span class="o">.</span><span class="n">IS</span><span class="p">):</span>
@@ -371,7 +371,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=bc676b56"></script>
+</div><script src="../../../_static/documentation_options.js?v=c6d1d0b9"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>

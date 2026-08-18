@@ -7,7 +7,7 @@
         <link rel="prefetch" href="_static/logo_small.png" as="image">
 
     <link rel="shortcut icon" href="_static/favicon.png"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>File handling - FileFormats v0.17.11</title>
+        <title>File handling - FileFormats v0.17.12</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=beddf052" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -168,7 +168,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">FileFormats v0.17.11</div></a>
+      <a href="index.html"><div class="brand">FileFormats v0.17.12</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -192,7 +192,7 @@
     <img class="sidebar-logo" src="_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.17.11</span>
+  <span class="sidebar-brand-text">FileFormats v0.17.12</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -272,11 +272,11 @@ hash them and move them around the file-system as single object.</p>
 format class, which for single file formats is typically just the file-system path,
 <code class="docutils literal notranslate"><span class="pre">fspath</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.image</span><span class="w"> </span><span class="kn">import</span> <span class="n">Jpeg</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">jpeg_file</span> <span class="o">=</span> <span class="n">Jpeg</span><span class="p">(</span><span class="s2">&quot;/path/to/image.jpg&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">jpeg_file</span> <span class="o">=</span> <span class="n">Jpeg</span><span class="p">(</span><span class="s2">"/path/to/image.jpg"</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">jpeg_file</span><span class="o">.</span><span class="n">fspath</span>
-<span class="go">&quot;/path/to/image.jpg&quot;</span>
+<span class="go">"/path/to/image.jpg"</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">jpeg_file</span><span class="p">)</span>  <span class="c1"># returns the path file</span>
-<span class="go">&quot;/path/to/image.jpg&quot;</span>
+<span class="go">"/path/to/image.jpg"</span>
 </pre></div>
 </div>
 <p>However, file-formats that consist of multiple files (common in scientific
@@ -284,19 +284,19 @@ data) will typically define separate required properties for each file. For exam
 <a class="reference external" href="https://en.wikipedia.org/wiki/Analyze_(imaging_software)">Analyze</a> neuroimaging format, which stores the image in a file with the extension
 &quot;.img&quot; and metadata in a separate header file with the extension &quot;.hdr&quot;.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.medimage</span><span class="w"> </span><span class="kn">import</span> <span class="n">Analyze</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">analyze_file</span> <span class="o">=</span> <span class="n">Analyze</span><span class="p">([</span><span class="s2">&quot;/path/to/neuroimage.hdr&quot;</span><span class="p">,</span> <span class="s2">&quot;/path/to/neuroimage.img&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">analyze_file</span> <span class="o">=</span> <span class="n">Analyze</span><span class="p">([</span><span class="s2">"/path/to/neuroimage.hdr"</span><span class="p">,</span> <span class="s2">"/path/to/neuroimage.img"</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">analyze_file</span><span class="o">.</span><span class="n">fspath</span>
-<span class="go">&quot;/path/to/neuroimage.img&quot;</span>
+<span class="go">"/path/to/neuroimage.img"</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">analyze_file</span><span class="o">.</span><span class="n">header</span>
-<span class="go">&quot;/path/to/neuroimage.hdr&quot;</span>
+<span class="go">"/path/to/neuroimage.hdr"</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">analyze_file</span><span class="p">)</span>  <span class="c1"># returns the path to the primary file</span>
-<span class="go">&quot;/path/to/neuroimage.img&quot;</span>
+<span class="go">"/path/to/neuroimage.img"</span>
 </pre></div>
 </div>
 <p>To access all file-system paths in a format object you can access the <code class="docutils literal notranslate"><span class="pre">fspaths</span></code>
 attribute from the base class of all file formats <code class="docutils literal notranslate"><span class="pre">fileformats.core.base.FileSet</span></code></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">analyze_file</span><span class="o">.</span><span class="n">fspaths</span>
-<span class="go">{&quot;/path/to/neuroimage.hdr&quot;, &quot;/path/to/neuroimage.img&quot;}</span>
+<span class="go">{"/path/to/neuroimage.hdr", "/path/to/neuroimage.img"}</span>
 </pre></div>
 </div>
 <p>In the case of file formats with &quot;adjacent&quot; files that share the same file-name stem,
@@ -304,8 +304,8 @@ i.e. same file path and name minus the file extension (such as <a class="referen
 to provide one the primary path and the header will be automatically detected and added
 to the file-set</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.medimage</span><span class="w"> </span><span class="kn">import</span> <span class="n">Analyze</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">analyze_file</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">Analyze</span><span class="p">(</span><span class="s2">&quot;/path/to/neuroimage.img&quot;</span><span class="p">))</span>
-<span class="go">Analyze(&quot;/path/to/neuroimage.hdr&quot;, &quot;/path/to/neuroimage.img&quot;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">analyze_file</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">Analyze</span><span class="p">(</span><span class="s2">"/path/to/neuroimage.img"</span><span class="p">))</span>
+<span class="go">Analyze("/path/to/neuroimage.hdr", "/path/to/neuroimage.img")</span>
 </pre></div>
 </div>
 <p>This is very useful when reading the output path of a workflow where only primary path
@@ -316,12 +316,12 @@ implementation of the <code class="docutils literal notranslate"><span class="pr
 that format objects can be used in place of the path objects themselves, e.g.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.text</span><span class="w"> </span><span class="kn">import</span> <span class="n">Plain</span>
-<span class="n">text_file</span> <span class="o">=</span> <span class="n">Plain</span><span class="p">(</span><span class="s2">&quot;/path/to/text-file.txt&quot;</span><span class="p">)</span>
+<span class="n">text_file</span> <span class="o">=</span> <span class="n">Plain</span><span class="p">(</span><span class="s2">"/path/to/text-file.txt"</span><span class="p">)</span>
 
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">text_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">contents</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 
-<span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cp </span><span class="si">{</span><span class="n">text_file</span><span class="si">}</span><span class="s2"> /path/to/destination&quot;</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="sa">f</span><span class="s2">"cp </span><span class="si">{</span><span class="n">text_file</span><span class="si">}</span><span class="s2"> /path/to/destination"</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Noting that it is only the &quot;primary&quot; path as returned by the <code class="docutils literal notranslate"><span class="pre">fspath</span></code> property that
@@ -330,23 +330,23 @@ is rendered.</p>
 <section id="copy">
 <h2>Copy<a class="headerlink" href="#copy" title="Link to this heading">¶</a></h2>
 <p>To copy all files/directories in a format you can use the <code class="docutils literal notranslate"><span class="pre">FileSet.copy()</span></code> method</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">repr</span><span class="p">(</span><span class="n">analyze_file</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">dest_dir</span><span class="o">=</span><span class="s2">&quot;/path/to/destination&quot;</span><span class="p">))</span>
-<span class="go">Analyze(&quot;/path/to/destination/mprage.hdr&quot;, &quot;/path/to/destination/mprage.img&quot;)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">repr</span><span class="p">(</span><span class="n">analyze_file</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">dest_dir</span><span class="o">=</span><span class="s2">"/path/to/destination"</span><span class="p">))</span>
+<span class="go">Analyze("/path/to/destination/mprage.hdr", "/path/to/destination/mprage.img")</span>
 </pre></div>
 </div>
 <p>By default, the source filenames will be used in the destination directory. To specify a
 new file stem, pass the <code class="docutils literal notranslate"><span class="pre">new_stem</span></code> argument</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">repr</span><span class="p">(</span><span class="n">analyze_file</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">dest_dir</span><span class="o">=</span><span class="s2">&quot;/path/to/destination&quot;</span><span class="p">,</span> <span class="n">new_stem</span><span class="o">=</span><span class="s2">&quot;t1w&quot;</span><span class="p">))</span>
-<span class="go">Analyze(&quot;/path/to/destination/t1w.hdr&quot;, &quot;/path/to/destination/t1w.img&quot;)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">repr</span><span class="p">(</span><span class="n">analyze_file</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">dest_dir</span><span class="o">=</span><span class="s2">"/path/to/destination"</span><span class="p">,</span> <span class="n">new_stem</span><span class="o">=</span><span class="s2">"t1w"</span><span class="p">))</span>
+<span class="go">Analyze("/path/to/destination/t1w.hdr", "/path/to/destination/t1w.img")</span>
 </pre></div>
 </div>
 <p>For formats that define a file extension, this will be used to determine which part of
 the filename is considered stem, and which is extension. This is useful when dealing
 with double-barrel extensions such as &quot;.nii.gz&quot;</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.medimage</span><span class="w"> </span><span class="kn">import</span> <span class="n">NiftiGz</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">niftigz</span> <span class="o">=</span> <span class="n">NiftiGzX</span><span class="p">([</span><span class="s2">&quot;/path/to/image.nii.gz&quot;</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">repr</span><span class="p">(</span><span class="n">niftigzx</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">dest_dir</span><span class="o">=</span><span class="s2">&quot;/path/to/destination&quot;</span><span class="p">,</span> <span class="n">new_stem</span><span class="o">=</span><span class="s2">&quot;t1w&quot;</span><span class="p">))</span>
-<span class="go">NiftiGz(&quot;/path/to/destination/t1w.nii.gz&quot;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">niftigz</span> <span class="o">=</span> <span class="n">NiftiGzX</span><span class="p">([</span><span class="s2">"/path/to/image.nii.gz"</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">repr</span><span class="p">(</span><span class="n">niftigzx</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">dest_dir</span><span class="o">=</span><span class="s2">"/path/to/destination"</span><span class="p">,</span> <span class="n">new_stem</span><span class="o">=</span><span class="s2">"t1w"</span><span class="p">))</span>
+<span class="go">NiftiGz("/path/to/destination/t1w.nii.gz")</span>
 </pre></div>
 </div>
 <p>However, if you are working with generic base classes such as <a class="reference internal" href="api.html#fileformats.core.FileSet" title="fileformats.core.FileSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileSet</span></code></a>,
@@ -354,25 +354,25 @@ with double-barrel extensions such as &quot;.nii.gz&quot;</p>
 and needs to be specified by a <code class="xref py py-class docutils literal notranslate"><span class="pre">FileSet.ExtensionDecomposition</span></code> enum passed to
 the <code class="docutils literal notranslate"><span class="pre">extension_decomposition</span></code> argument</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.generic</span><span class="w"> </span><span class="kn">import</span> <span class="n">File</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">a_file</span> <span class="o">=</span> <span class="n">File</span><span class="p">([</span><span class="s2">&quot;/path/to/image.nii.gz&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a_file</span> <span class="o">=</span> <span class="n">File</span><span class="p">([</span><span class="s2">"/path/to/image.nii.gz"</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">repr</span><span class="p">(</span><span class="n">a_file</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="n">dest_dir</span><span class="o">=</span><span class="s2">&quot;/path/to/destination&quot;</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">new_stem</span><span class="o">=</span><span class="s2">&quot;t1w&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">dest_dir</span><span class="o">=</span><span class="s2">"/path/to/destination"</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">new_stem</span><span class="o">=</span><span class="s2">"t1w"</span><span class="p">,</span>
 <span class="gp">... </span>    <span class="n">extension_decomposition</span><span class="o">=</span><span class="n">FileSet</span><span class="o">.</span><span class="n">ExtensionDecomposition</span><span class="o">.</span><span class="n">single</span><span class="p">)</span>
 <span class="gp">... </span><span class="p">)</span>
-<span class="go">File(&quot;/path/to/destination/t1w.gz&quot;)</span>
+<span class="go">File("/path/to/destination/t1w.gz")</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">repr</span><span class="p">(</span><span class="n">a_file</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="n">dest_dir</span><span class="o">=</span><span class="s2">&quot;/path/to/destination&quot;</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">new_stem</span><span class="o">=</span><span class="s2">&quot;t1w&quot;</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">extension_decomposition</span><span class="o">=</span><span class="s2">&quot;multiple&quot;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">dest_dir</span><span class="o">=</span><span class="s2">"/path/to/destination"</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">new_stem</span><span class="o">=</span><span class="s2">"t1w"</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">extension_decomposition</span><span class="o">=</span><span class="s2">"multiple"</span><span class="p">)</span>
 <span class="gp">... </span><span class="p">)</span>
-<span class="go">File(&quot;/path/to/destination/t1w.nii.gz&quot;)</span>
+<span class="go">File("/path/to/destination/t1w.nii.gz")</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">repr</span><span class="p">(</span><span class="n">a_file</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="n">dest_dir</span><span class="o">=</span><span class="s2">&quot;/path/to/destination&quot;</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">new_stem</span><span class="o">=</span><span class="s2">&quot;t1w&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">dest_dir</span><span class="o">=</span><span class="s2">"/path/to/destination"</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">new_stem</span><span class="o">=</span><span class="s2">"t1w"</span><span class="p">,</span>
 <span class="gp">... </span>    <span class="n">extension_decomposition</span><span class="o">=</span><span class="n">FileSet</span><span class="o">.</span><span class="n">ExtensionDecomposition</span><span class="o">.</span><span class="n">none</span><span class="p">)</span>
 <span class="gp">... </span><span class="p">)</span>
-<span class="go">File(&quot;/path/to/destination/t1w&quot;)</span>
+<span class="go">File("/path/to/destination/t1w")</span>
 </pre></div>
 </div>
 <div class="admonition warning">
@@ -383,12 +383,12 @@ be.</p>
 </div>
 <p>Additional files within a fileset that aren't required for the format can be trimmed
 using the <code class="docutils literal notranslate"><span class="pre">trim</span></code> argument</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">niftigz</span> <span class="o">=</span> <span class="n">NiftiGz</span><span class="p">([</span><span class="s2">&quot;/path/to/t1w.nii.gz&quot;</span><span class="p">,</span> <span class="s2">&quot;/path/to/t1w.json&quot;</span><span class="p">])</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">niftigz</span> <span class="o">=</span> <span class="n">NiftiGz</span><span class="p">([</span><span class="s2">"/path/to/t1w.nii.gz"</span><span class="p">,</span> <span class="s2">"/path/to/t1w.json"</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">repr</span><span class="p">(</span><span class="n">niftigz</span><span class="p">)</span>
-<span class="go">NiftiGz(&quot;/path/to/t1w.nii.gz&quot;, &quot;/path/to/t1w.json&quot;)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">trimmed_niftigz</span> <span class="o">=</span> <span class="n">niftigz</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="s2">&quot;/new/destination&quot;</span><span class="p">,</span> <span class="n">trim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">NiftiGz("/path/to/t1w.nii.gz", "/path/to/t1w.json")</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">trimmed_niftigz</span> <span class="o">=</span> <span class="n">niftigz</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="s2">"/new/destination"</span><span class="p">,</span> <span class="n">trim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">repr</span><span class="p">(</span><span class="n">trimmed_niftigz</span><span class="p">)</span>
-<span class="go">NiftiGz(&quot;/new/destination/t1w.nii.gz&quot;)</span>
+<span class="go">NiftiGz("/new/destination/t1w.nii.gz")</span>
 </pre></div>
 </div>
 <p>The other (self-explanatory) arguments that can be provided to copy are <code class="docutils literal notranslate"><span class="pre">make_dirs</span></code> and
@@ -399,10 +399,10 @@ using the <code class="docutils literal notranslate"><span class="pre">trim</spa
 file by passing a value from the <code class="xref py py-class docutils literal notranslate"><span class="pre">FileSet.CopyMode</span></code> enum to the <code class="docutils literal notranslate"><span class="pre">mode</span></code> argument.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileSet</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">new_analyze</span> <span class="o">=</span> <span class="n">analyze_file</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span>
-<span class="gp">... </span>   <span class="n">dest_dir</span><span class="o">=</span><span class="s2">&quot;/path/to/destination&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">FileSet</span><span class="o">.</span><span class="n">CopyMode</span><span class="o">.</span><span class="n">hardlink</span>
+<span class="gp">... </span>   <span class="n">dest_dir</span><span class="o">=</span><span class="s2">"/path/to/destination"</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">FileSet</span><span class="o">.</span><span class="n">CopyMode</span><span class="o">.</span><span class="n">hardlink</span>
 <span class="gp">... </span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">new_analyze</span><span class="o">.</span><span class="n">fspaths</span>
-<span class="go">{&quot;/path/to/destination/t1w.hdr&quot;, &quot;/path/to/destination/t1w.img&quot;}</span>
+<span class="go">{"/path/to/destination/t1w.hdr", "/path/to/destination/t1w.img"}</span>
 </pre></div>
 </div>
 <p>For some applications you might prefer to create a link instead of creating a duplicate
@@ -411,7 +411,7 @@ destination directories sit on this might not be possible due to limitations of 
 file-system, or the source and destination locations being different physical drives
 (and therefore can't hardlink). To handle these cases the <code class="docutils literal notranslate"><span class="pre">mode</span></code> flag can be set to a
 combination of link and copy modes,</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_analyze</span> <span class="o">=</span> <span class="n">analyze_file</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">dest_dir</span><span class="o">=</span><span class="s2">&quot;/path/to/destination&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;link_or_copy&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_analyze</span> <span class="o">=</span> <span class="n">analyze_file</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">dest_dir</span><span class="o">=</span><span class="s2">"/path/to/destination"</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"link_or_copy"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>in which case the copy method will attempt to create a symlink, then if that fails, a
@@ -420,7 +420,7 @@ manually by passing a <code class="xref py py-class docutils literal notranslate
 argument, which will be used to mask the requested <code class="docutils literal notranslate"><span class="pre">mode</span></code>. Note that automatically detected
 unsupported modes will be masked out of the <code class="docutils literal notranslate"><span class="pre">supported_modes</span></code> before it is applied.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_analyze</span> <span class="o">=</span> <span class="n">analyze_file</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span>
-    <span class="n">dest_dir</span><span class="o">=</span><span class="s2">&quot;/path/to/destination&quot;</span><span class="p">,</span>
+    <span class="n">dest_dir</span><span class="o">=</span><span class="s2">"/path/to/destination"</span><span class="p">,</span>
     <span class="n">mode</span><span class="o">=</span><span class="n">user_requested</span><span class="p">,</span>
     <span class="n">supported_modes</span><span class="o">=</span><span class="n">FileSet</span><span class="o">.</span><span class="n">CopyMode</span><span class="o">.</span><span class="n">hardlink_or_copy</span>
 <span class="p">)</span>
@@ -432,7 +432,7 @@ unsupported modes will be masked out of the <code class="docutils literal notran
 <p>There is not requirement that file formats consisting of multiple files (e.g. with a separate
 header) are &quot;adjacent&quot; to each other, i.e. in the same directory with the same file-stem</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.medimage</span><span class="w"> </span><span class="kn">import</span> <span class="n">NiftiX</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">niftix</span> <span class="o">=</span> <span class="n">NiftiX</span><span class="p">([</span><span class="s2">&quot;/a/path/to/a/t1w.nii&quot;</span><span class="p">,</span> <span class="s2">&quot;/an/unrelated/path/t1-weighted.json&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">niftix</span> <span class="o">=</span> <span class="n">NiftiX</span><span class="p">([</span><span class="s2">"/a/path/to/a/t1w.nii"</span><span class="p">,</span> <span class="s2">"/an/unrelated/path/t1-weighted.json"</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>However, some commands expect side-car and header files to be &quot;adjacent&quot; to the primary
@@ -440,31 +440,31 @@ file, i.e. in the same directory as the primary with the same file stem. To supp
 use case, the <a class="reference internal" href="api.html#fileformats.core.FileSet.copy" title="fileformats.core.FileSet.copy"><code class="xref py py-meth docutils literal notranslate"><span class="pre">FileSet.copy()</span></code></a> can be passed a <code class="docutils literal notranslate"><span class="pre">collation</span></code> argument, which takes a
 <code class="xref py py-class docutils literal notranslate"><span class="pre">FileSet.Collation</span></code> enum value.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">new_niftix</span> <span class="o">=</span> <span class="n">niftix</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span>
-<span class="gp">... </span>   <span class="n">dest_dir</span><span class="o">=</span><span class="s2">&quot;/path/to/destination&quot;</span><span class="p">,</span> <span class="n">collation</span><span class="o">=</span><span class="n">FileSet</span><span class="o">.</span><span class="n">Collation</span><span class="o">.</span><span class="n">adjacent</span>
+<span class="gp">... </span>   <span class="n">dest_dir</span><span class="o">=</span><span class="s2">"/path/to/destination"</span><span class="p">,</span> <span class="n">collation</span><span class="o">=</span><span class="n">FileSet</span><span class="o">.</span><span class="n">Collation</span><span class="o">.</span><span class="n">adjacent</span>
 <span class="gp">... </span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">new_niftix</span><span class="o">.</span><span class="n">fspaths</span>
-<span class="go">{&quot;/path/to/destination/t1w.nii&quot;, &quot;/path/to/destination/t1w.json&quot;}</span>
+<span class="go">{"/path/to/destination/t1w.nii", "/path/to/destination/t1w.json"}</span>
 </pre></div>
 </div>
 <p>To control what the files are collated as, the <code class="docutils literal notranslate"><span class="pre">new_stem</span></code> argument can be passed to
 the <code class="docutils literal notranslate"><span class="pre">copy()</span></code> method.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">new_niftix</span> <span class="o">=</span> <span class="n">niftix</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span>
-<span class="gp">... </span>   <span class="n">dest_dir</span><span class="o">=</span><span class="s2">&quot;/path/to/destination&quot;</span><span class="p">,</span> <span class="n">new_stem</span><span class="o">=</span><span class="s2">&quot;t1-weighted&quot;</span>
+<span class="gp">... </span>   <span class="n">dest_dir</span><span class="o">=</span><span class="s2">"/path/to/destination"</span><span class="p">,</span> <span class="n">new_stem</span><span class="o">=</span><span class="s2">"t1-weighted"</span>
 <span class="gp">... </span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">new_niftix</span><span class="o">.</span><span class="n">fspaths</span>
-<span class="go">{&quot;/path/to/destination/t1-weighted.nii&quot;, &quot;/path/to/destination/t1-weighted.json&quot;}</span>
+<span class="go">{"/path/to/destination/t1-weighted.nii", "/path/to/destination/t1-weighted.json"}</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">new_analyze</span> <span class="o">=</span> <span class="n">analyze_file</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">dest_dir</span><span class="o">=</span><span class="s2">&quot;/path/to/destination&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">new_analyze</span> <span class="o">=</span> <span class="n">analyze_file</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">dest_dir</span><span class="o">=</span><span class="s2">"/path/to/destination"</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">new_analyze</span><span class="o">.</span><span class="n">fspaths</span>
-<span class="go">{&quot;/path/to/destination/t1w.hdr&quot;, &quot;/path/to/destination/t1w.img&quot;}</span>
+<span class="go">{"/path/to/destination/t1w.hdr", "/path/to/destination/t1w.img"}</span>
 </pre></div>
 </div>
 <p>If the files just need to be in the same directory, but not necessarily adjacent, the
 <code class="docutils literal notranslate"><span class="pre">collation</span></code> argument can be set to <code class="docutils literal notranslate"><span class="pre">FileSet.Collation.siblings</span></code></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">new_niftix</span> <span class="o">=</span> <span class="n">niftix</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">dest_dir</span><span class="o">=</span><span class="s2">&quot;/path/to/destination&quot;</span><span class="p">,</span> <span class="n">collation</span><span class="o">=</span><span class="s2">&quot;siblings&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">new_niftix</span> <span class="o">=</span> <span class="n">niftix</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">dest_dir</span><span class="o">=</span><span class="s2">"/path/to/destination"</span><span class="p">,</span> <span class="n">collation</span><span class="o">=</span><span class="s2">"siblings"</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">new_niftix</span><span class="o">.</span><span class="n">fspaths</span>
-<span class="go">{&quot;/path/to/destination/t1w.nii&quot;, &quot;/path/to/destination/t1-weighted.json&quot;}</span>
+<span class="go">{"/path/to/destination/t1w.nii", "/path/to/destination/t1-weighted.json"}</span>
 </pre></div>
 </div>
 <p>The collation setting will also be used to decide whether files need to be copied or linked
@@ -472,7 +472,7 @@ to a new location. For example, if the files are already adjacent, then they can
 left where they are by setting the mode to <code class="docutils literal notranslate"><span class="pre">FileSet.CopyMode.any</span></code> flag, which encompasses the
 <code class="docutils literal notranslate"><span class="pre">FileSet.CopyMode.leave</span></code> mode.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">new_niftix</span> <span class="o">=</span> <span class="n">niftix</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span>
-<span class="gp">... </span>   <span class="n">dest_dir</span><span class="o">=</span><span class="s2">&quot;/path/to/destination&quot;</span><span class="p">,</span>
+<span class="gp">... </span>   <span class="n">dest_dir</span><span class="o">=</span><span class="s2">"/path/to/destination"</span><span class="p">,</span>
 <span class="gp">... </span>   <span class="n">collation</span><span class="o">=</span><span class="n">FileSet</span><span class="o">.</span><span class="n">Collation</span><span class="o">.</span><span class="n">adjacent</span><span class="p">,</span>
 <span class="gp">... </span>   <span class="n">mode</span><span class="o">=</span><span class="n">FileSet</span><span class="o">.</span><span class="n">CopyMode</span><span class="o">.</span><span class="n">any</span>
 <span class="gp">... </span><span class="p">)</span>
@@ -493,10 +493,10 @@ is on a different physical drive, in which case the copy method will fallback to
 signature as <code class="docutils literal notranslate"><span class="pre">FileSet.move()</span></code> with the exception of the <code class="docutils literal notranslate"><span class="pre">mode</span></code> and <code class="docutils literal notranslate"><span class="pre">supported_modes</span></code>
 arguments, which are not relevant for moving files.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">new_analyze</span> <span class="o">=</span> <span class="n">analyze_file</span><span class="o">.</span><span class="n">move</span><span class="p">(</span>
-<span class="gp">... </span>   <span class="n">dest_dir</span><span class="o">=</span><span class="s2">&quot;/path/to/destination&quot;</span><span class="p">,</span> <span class="n">new_stem</span><span class="o">=</span><span class="s2">&quot;t1-weighted&quot;</span>
+<span class="gp">... </span>   <span class="n">dest_dir</span><span class="o">=</span><span class="s2">"/path/to/destination"</span><span class="p">,</span> <span class="n">new_stem</span><span class="o">=</span><span class="s2">"t1-weighted"</span>
 <span class="go">...)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">new_analyze</span><span class="o">.</span><span class="n">fspaths</span>
-<span class="go">{&quot;/path/to/destination/t1-weighted.hdr&quot;, &quot;/path/to/destination/t1-weighted.img&quot;}</span>
+<span class="go">{"/path/to/destination/t1-weighted.hdr", "/path/to/destination/t1-weighted.img"}</span>
 </pre></div>
 </div>
 </section>
@@ -589,7 +589,7 @@ return a dictionary of hashes keyed by the file path.</p></li>
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=bc676b56"></script>
+</div><script src="_static/documentation_options.js?v=c6d1d0b9"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/scripts/furo.js?v=46bd48cc"></script>

@@ -7,7 +7,7 @@
         <link rel="prefetch" href="_static/logo_small.png" as="image">
 
     <link rel="shortcut icon" href="_static/favicon.png"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>Typing - FileFormats v0.17.11</title>
+        <title>Typing - FileFormats v0.17.12</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=beddf052" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -168,7 +168,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">FileFormats v0.17.11</div></a>
+      <a href="index.html"><div class="brand">FileFormats v0.17.12</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -192,7 +192,7 @@
     <img class="sidebar-logo" src="_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.17.11</span>
+  <span class="sidebar-brand-text">FileFormats v0.17.12</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -278,7 +278,7 @@ be classified as containing a PNG image</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.application</span><span class="w"> </span><span class="kn">import</span> <span class="n">Zip</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.image</span><span class="w"> </span><span class="kn">import</span> <span class="n">Png</span><span class="p">,</span> <span class="n">Jpeg</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">zipped_png_fspath</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Zip</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">Png</span><span class="p">(</span><span class="s2">&quot;/path/to/an-image.png&quot;</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">zipped_png_fspath</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Zip</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">Png</span><span class="p">(</span><span class="s2">"/path/to/an-image.png"</span><span class="p">)))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Zip</span><span class="p">[</span><span class="n">Png</span><span class="p">]</span><span class="o">.</span><span class="n">matches</span><span class="p">(</span><span class="n">zipped_png_fspath</span><span class="p">)</span>
 <span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Zip</span><span class="p">[</span><span class="n">Jpeg</span><span class="p">]</span><span class="o">.</span><span class="n">matches</span><span class="p">(</span><span class="n">zipped_png_fspath</span><span class="p">)</span>
@@ -313,12 +313,12 @@ It is being expanded as needed.</p>
 </div>
 <p>When classifiable types are converted into MIME-like strings, the classifiers are prepended to
 the type name with a '+' separator, e.g.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">to_mime</span><span class="p">(</span><span class="n">Zip</span><span class="p">[</span><span class="n">Png</span><span class="p">])</span> <span class="o">==</span> <span class="s2">&quot;image/png+zip&quot;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">to_mime</span><span class="p">(</span><span class="n">Zip</span><span class="p">[</span><span class="n">Png</span><span class="p">])</span> <span class="o">==</span> <span class="s2">"image/png+zip"</span>
 </pre></div>
 </div>
 <p>If there are multiple classifiers, then they are arranged in alphabetic order (unless
 they are ordered) and separated by a '.' preceding the '+' separator</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">to_mime</span><span class="p">(</span><span class="n">NiftiGz</span><span class="p">[</span><span class="n">T1Weighted</span><span class="p">,</span> <span class="n">Brain</span><span class="p">])</span> <span class="o">==</span> <span class="s2">&quot;medimage/brain.t1-weighted+nifti-gz&quot;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">to_mime</span><span class="p">(</span><span class="n">NiftiGz</span><span class="p">[</span><span class="n">T1Weighted</span><span class="p">,</span> <span class="n">Brain</span><span class="p">])</span> <span class="o">==</span> <span class="s2">"medimage/brain.t1-weighted+nifti-gz"</span>
 </pre></div>
 </div>
 <p>Typically the classifier types need to belong to the same subpackage/registry as the
@@ -394,7 +394,7 @@ classifiable type.</p>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.image</span><span class="w"> </span><span class="kn">import</span> <span class="n">Png</span>
 
 <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">Zip</span><span class="p">[</span><span class="n">Png</span><span class="p">],</span> <span class="n">Zip</span><span class="p">)</span>
-<span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">Zip</span><span class="p">[</span><span class="n">Png</span><span class="p">](</span><span class="s2">&quot;/path/to/zip.zip&quot;</span><span class="p">),</span> <span class="n">Zip</span><span class="p">)</span>
+<span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">Zip</span><span class="p">[</span><span class="n">Png</span><span class="p">](</span><span class="s2">"/path/to/zip.zip"</span><span class="p">),</span> <span class="n">Zip</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Similarly, for types with multiple unordered classifiers, a type with a superset of the
@@ -500,7 +500,7 @@ a subclass</p>
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=bc676b56"></script>
+</div><script src="_static/documentation_options.js?v=c6d1d0b9"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/scripts/furo.js?v=46bd48cc"></script>

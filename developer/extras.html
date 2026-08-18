@@ -7,7 +7,7 @@
         <link rel="prefetch" href="../_static/logo_small.png" as="image">
 
     <link rel="shortcut icon" href="../_static/favicon.png"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>Extras - FileFormats v0.17.11</title>
+        <title>Extras - FileFormats v0.17.12</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=beddf052" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -168,7 +168,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">FileFormats v0.17.11</div></a>
+      <a href="../index.html"><div class="brand">FileFormats v0.17.12</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -192,7 +192,7 @@
     <img class="sidebar-logo" src="../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.17.11</span>
+  <span class="sidebar-brand-text">FileFormats v0.17.12</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -289,7 +289,7 @@ when a hooked method is accessed.</p>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">MyFormat</span><span class="p">(</span><span class="n">File</span><span class="p">):</span>
 
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.my&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".my"</span>
 
     <span class="nd">@extra</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">my_extra_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">save_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
@@ -320,7 +320,7 @@ the hook. Like <cite>functools.singledispacth</cite> (which is used under the ho
 the first argument (not the type of the class the method is referenced from in the decorated)
 determines which of the overloaded methods is called</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MyFormatX</span><span class="p">(</span><span class="n">MyFormat</span><span class="p">):</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.myx&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".myx"</span>
 
 <span class="nd">@extra_implementation</span><span class="p">(</span><span class="n">MyFormat</span><span class="o">.</span><span class="n">my_extra_method</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">my_extra_method</span><span class="p">(</span>
@@ -361,7 +361,7 @@ automatically. For example,</p>
 <span class="nd">@pydra</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">task</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">convert_my_format</span><span class="p">(</span><span class="n">in_file</span><span class="p">:</span> <span class="n">MyFormat</span><span class="p">,</span> <span class="n">conversion_argument</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MyOtherFormat</span><span class="p">:</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">in_file</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
-    <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span><span class="s2">&quot;out&quot;</span> <span class="o">+</span> <span class="n">MyOtherFormat</span><span class="o">.</span><span class="n">ext</span><span class="p">)</span>
+    <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span><span class="s2">"out"</span> <span class="o">+</span> <span class="n">MyOtherFormat</span><span class="o">.</span><span class="n">ext</span><span class="p">)</span>
     <span class="o">...</span> <span class="n">do</span> <span class="n">conversion</span> <span class="o">...</span>
     <span class="k">return</span> <span class="n">MyOtherFormat</span><span class="o">.</span><span class="n">save_new</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
 </pre></div>
@@ -388,7 +388,7 @@ to do a generic conversion between all image types,</p>
 <span class="nd">@converter</span><span class="p">(</span><span class="n">target_format</span><span class="o">=</span><span class="n">Jpeg</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="n">Jpeg</span><span class="p">)</span>
 <span class="nd">@converter</span><span class="p">(</span><span class="n">target_format</span><span class="o">=</span><span class="n">Png</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="n">Png</span><span class="p">)</span>
 <span class="nd">@converter</span><span class="p">(</span><span class="n">target_format</span><span class="o">=</span><span class="n">Tiff</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="n">Tiff</span><span class="p">)</span>
-<span class="nd">@python</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="n">outputs</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;out_file&quot;</span><span class="p">])</span>
+<span class="nd">@python</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="n">outputs</span><span class="o">=</span><span class="p">[</span><span class="s2">"out_file"</span><span class="p">])</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">convert_image</span><span class="p">(</span><span class="n">in_file</span><span class="p">:</span> <span class="n">RasterImage</span><span class="p">,</span> <span class="n">output_format</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RasterImage</span><span class="p">:</span>
     <span class="n">data_array</span> <span class="o">=</span> <span class="n">in_file</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">out_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -423,7 +423,7 @@ input fields</p>
     <span class="n">target_format</span><span class="o">=</span><span class="n">YourOtherFormat</span><span class="p">,</span>
     <span class="n">in_file</span><span class="o">=</span><span class="n">your_file</span><span class="p">,</span>
     <span class="n">out_file</span><span class="o">=</span><span class="n">other_file</span><span class="p">,</span>
-    <span class="n">compression</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span>
+    <span class="n">compression</span><span class="o">=</span><span class="s2">"y"</span><span class="p">,</span>
 <span class="p">)(</span><span class="n">ThirdPartyShellCmd</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -440,7 +440,7 @@ such as in the <code class="docutils literal notranslate"><span class="pre">mrco
     <span class="n">out_ext</span><span class="o">=</span><span class="n">MrtrixImageHeader</span><span class="o">.</span><span class="n">ext</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">mrconvert</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">out_ext</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Initiate an MRConvert task with the output file extension set</span>
+<span class="w">    </span><span class="sd">"""Initiate an MRConvert task with the output file extension set</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -453,8 +453,8 @@ such as in the <code class="docutils literal notranslate"><span class="pre">mrco
 <span class="sd">    -------</span>
 <span class="sd">    pydra.ShellCommandTask</span>
 <span class="sd">        the converter task</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">pydra_mrtrix3_utils</span><span class="o">.</span><span class="n">MRConvert</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">out_file</span><span class="o">=</span><span class="s2">&quot;out&quot;</span> <span class="o">+</span> <span class="n">out_ext</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">pydra_mrtrix3_utils</span><span class="o">.</span><span class="n">MRConvert</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">out_file</span><span class="o">=</span><span class="s2">"out"</span> <span class="o">+</span> <span class="n">out_ext</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Since converter tasks rely on <a class="reference external" href="https://pydra.readthedocs.io">Pydra</a>, which should be added as an &quot;extended&quot; dependency,
@@ -532,7 +532,7 @@ FormatB.</p>
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=bc676b56"></script>
+</div><script src="../_static/documentation_options.js?v=c6d1d0b9"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

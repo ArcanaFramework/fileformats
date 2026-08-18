@@ -6,7 +6,7 @@
         <link rel="prefetch" href="../../_static/logo_small.png" as="image">
 
     <link rel="shortcut icon" href="../../_static/favicon.png"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>fileformats.audio - FileFormats v0.17.11</title>
+        <title>fileformats.audio - FileFormats v0.17.12</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=beddf052" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">FileFormats v0.17.11</div></a>
+      <a href="../../index.html"><div class="brand">FileFormats v0.17.12</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -191,7 +191,7 @@
     <img class="sidebar-logo" src="../../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.17.11</span>
+  <span class="sidebar-brand-text">FileFormats v0.17.12</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -265,7 +265,7 @@
 <div class="viewcode-block" id="Audio">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Audio">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Audio</span><span class="p">(</span><span class="n">BinaryFile</span><span class="p">):</span>
-    <span class="s2">&quot;Base class for audio file formats&quot;</span></div>
+    <span class="s2">"Base class for audio file formats"</span></div>
 
 
 
@@ -273,59 +273,59 @@
 <div class="viewcode-block" id="Mpeg">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Mpeg">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Mpeg</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.mp3&quot;</span>
-    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.mp1&quot;</span><span class="p">,</span> <span class="s2">&quot;.mp2&quot;</span><span class="p">)</span>
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/mpeg&quot;</span></div>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".mp3"</span>
+    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">".mp1"</span><span class="p">,</span> <span class="s2">".mp2"</span><span class="p">)</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/mpeg"</span></div>
 
 
 
 <div class="viewcode-block" id="Mp4">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Mp4">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Mp4</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Audio</span><span class="p">):</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.mp4&quot;</span>
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/mp4&quot;</span>
-    <span class="n">magic_number</span> <span class="o">=</span> <span class="s2">&quot;6674797069736F6D&quot;</span></div>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".mp4"</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/mp4"</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="s2">"6674797069736F6D"</span></div>
 
 
 
 <div class="viewcode-block" id="Aac">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Aac">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Aac</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.aac&quot;</span>
-    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.adts&quot;</span><span class="p">,</span> <span class="s2">&quot;.loas&quot;</span><span class="p">,</span> <span class="s2">&quot;.ass&quot;</span><span class="p">)</span>
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/aac&quot;</span></div>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".aac"</span>
+    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">".adts"</span><span class="p">,</span> <span class="s2">".loas"</span><span class="p">,</span> <span class="s2">".ass"</span><span class="p">)</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/aac"</span></div>
 
 
 
 <div class="viewcode-block" id="Wav">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Wav">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Wav</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.wav&quot;</span>
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/wav&quot;</span></div>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".wav"</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/wav"</span></div>
 
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">_1dInterleavedParityfec</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/1d-interleaved-parityfec&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/1d-interleaved-parityfec"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span>
 
 
 <div class="viewcode-block" id="_32kadpcm">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio._32kadpcm">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">_32kadpcm</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/32kadpcm&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.726&quot;</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/32kadpcm"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".726"</span></div>
 
 
 
 <div class="viewcode-block" id="_3gpp">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio._3gpp">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">_3gpp</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The type &quot;audio/3gpp&quot; MAY be used for</span>
+<span class="w">    </span><span class="sd">"""The type "audio/3gpp" MAY be used for</span>
 <span class="sd">    files containing audio but no visual</span>
 <span class="sd">    presentation.  Files served under</span>
 <span class="sd">    this type MUST NOT contain any</span>
@@ -337,28 +337,28 @@
 <span class="sd">    TODO: None.  However, the file-type box</span>
 <span class="sd">    must occur first in the file, and</span>
 <span class="sd">    MUST contain a 3GPP brand in its</span>
-<span class="sd">    compatible brands list.&quot;&quot;&quot;</span>
+<span class="sd">    compatible brands list."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/3gpp&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.3gp&quot;</span>
-    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.3gpp&quot;</span><span class="p">,)</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/3gpp"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".3gp"</span>
+    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">".3gpp"</span><span class="p">,)</span></div>
 
 
 
 <div class="viewcode-block" id="_3gpp2">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio._3gpp2">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">_3gpp2</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Multi-media</span>
+<span class="w">    </span><span class="sd">"""Multi-media</span>
 
-<span class="sd">    The type &quot;audio/3gpp2&quot; MAY be used for files containing audio but</span>
+<span class="sd">    The type "audio/3gpp2" MAY be used for files containing audio but</span>
 <span class="sd">        no visual presentation.  Files served under this type MUST NOT</span>
 <span class="sd">        contain any visual material.  (Note that 3GPP timed text is</span>
 <span class="sd">        visually presented and is considered visual material).</span>
 
 <span class="sd">        TODO: None.  However, the file-type box must occur first in the file,</span>
-<span class="sd">        and MUST contain a 3GPP2 brand in its compatible brands list.&quot;&quot;&quot;</span>
+<span class="sd">        and MUST contain a 3GPP2 brand in its compatible brands list."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/3gpp2&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/3gpp2"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -366,59 +366,59 @@
 <div class="viewcode-block" id="Ac3">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Ac3">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Ac3</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Multichannel audio compression of audio and audio for video.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Multichannel audio compression of audio and audio for video."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/ac3&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/ac3"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">magic_number</span> <span class="o">=</span> <span class="s2">&quot;0B77&quot;</span></div>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="s2">"0B77"</span></div>
 
 
 
 <div class="viewcode-block" id="Amr">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Amr">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Amr</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;This media type is used in numerous applications needing 	transport or storage of encoded voice.  Some examples include; 	Voice over IP, streaming media, voice messaging, and voice 	recording on digital cameras.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""This media type is used in numerous applications needing 	transport or storage of encoded voice.  Some examples include; 	Voice over IP, streaming media, voice messaging, and voice 	recording on digital cameras."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/AMR&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.amr&quot;</span>
-    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.AMR&quot;</span><span class="p">,)</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/AMR"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".amr"</span>
+    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">".AMR"</span><span class="p">,)</span></div>
 
 
 
 <div class="viewcode-block" id="AmrWb">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.AmrWb">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">AmrWb</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/AMR-WB&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.awb&quot;</span>
-    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.AWB&quot;</span><span class="p">,)</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/AMR-WB"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".awb"</span>
+    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">".AWB"</span><span class="p">,)</span></div>
 
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">AmrWb___</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;This MIME type is not applicable for file storage.</span>
+<span class="w">    </span><span class="sd">"""This MIME type is not applicable for file storage.</span>
 <span class="sd">    Instead, file storage of AMR-WB+ encoded audio is</span>
 <span class="sd">    specified within the 3GPP-defined ISO-based multimedia</span>
 <span class="sd">    file format defined in 3GPP TS 26.244; see reference</span>
 <span class="sd">    [14] of RFC 4352.  This file format has the MIME types</span>
-<span class="sd">    &quot;audio/3GPP&quot; or &quot;video/3GPP&quot; as defined by RFC 3839</span>
+<span class="sd">    "audio/3GPP" or "video/3GPP" as defined by RFC 3839</span>
 <span class="sd">    [15].</span>
 
 <span class="sd">    This media type is used in numerous applications needing 	transport or storage of</span>
 <span class="sd">    encoded voice.  Some examples include; 	Voice over IP, streaming media, voice</span>
-<span class="sd">    messaging, and voice 	recording on digital cameras.&quot;&quot;&quot;</span>
+<span class="sd">    messaging, and voice 	recording on digital cameras."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/amr-wb+&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/amr-wb+"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span>
 
 
 <div class="viewcode-block" id="Aptx">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Aptx">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Aptx</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/aptx&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/aptx"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -426,10 +426,10 @@
 <div class="viewcode-block" id="Asc">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Asc">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Asc</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;MPEG 4 Audio servers and terminals that support</span>
-<span class="sd">    audio/mpeg4-generic RTP streams for mode rtp-midi.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""MPEG 4 Audio servers and terminals that support</span>
+<span class="sd">    audio/mpeg4-generic RTP streams for mode rtp-midi."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/asc&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/asc"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -437,42 +437,42 @@
 <div class="viewcode-block" id="AtracAdvancedLossless">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.AtracAdvancedLossless">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">AtracAdvancedLossless</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Audio and video streaming and conferencing tools.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Audio and video streaming and conferencing tools."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/ATRAC-ADVANCED-LOSSLESS&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.aal&quot;</span>
-    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.aa3&quot;</span><span class="p">,</span> <span class="s2">&quot;.omg&quot;</span><span class="p">)</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/ATRAC-ADVANCED-LOSSLESS"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".aal"</span>
+    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">".aa3"</span><span class="p">,</span> <span class="s2">".omg"</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="AtracX">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.AtracX">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">AtracX</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Audio and video streaming and conferencing tools.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Audio and video streaming and conferencing tools."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/ATRAC-X&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.atx&quot;</span>
-    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.aa3&quot;</span><span class="p">,</span> <span class="s2">&quot;.omg&quot;</span><span class="p">)</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/ATRAC-X"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".atx"</span>
+    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">".aa3"</span><span class="p">,</span> <span class="s2">".omg"</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="Atrac3">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Atrac3">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Atrac3</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Audio and video streaming and conferencing tools.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Audio and video streaming and conferencing tools."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/ATRAC3&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.at3&quot;</span>
-    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.aa3&quot;</span><span class="p">,</span> <span class="s2">&quot;.omg&quot;</span><span class="p">)</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/ATRAC3"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".at3"</span>
+    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">".aa3"</span><span class="p">,</span> <span class="s2">".omg"</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="Basic">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Basic">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Basic</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/basic&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/basic"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -480,9 +480,9 @@
 <div class="viewcode-block" id="Bv16">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Bv16">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Bv16</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/BV16&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/BV16"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -490,9 +490,9 @@
 <div class="viewcode-block" id="Bv32">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Bv32">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Bv32</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/BV32&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/BV32"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -500,9 +500,9 @@
 <div class="viewcode-block" id="Clearmode">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Clearmode">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Clearmode</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/clearmode&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/clearmode"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -510,9 +510,9 @@
 <div class="viewcode-block" id="Cn">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Cn">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Cn</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/CN&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/CN"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -520,9 +520,9 @@
 <div class="viewcode-block" id="Dat12">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Dat12">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Dat12</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/DAT12&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/DAT12"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -530,11 +530,11 @@
 <div class="viewcode-block" id="Dls">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Dls">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Dls</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Multi-media&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Multi-media"""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/dls&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.dls&quot;</span>
-    <span class="n">magic_number</span> <span class="o">=</span> <span class="s2">&quot;444c5320&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/dls"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".dls"</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="s2">"444c5320"</span>
     <span class="n">magic_number_offset</span> <span class="o">=</span> <span class="mi">8</span></div>
 
 
@@ -542,9 +542,9 @@
 <div class="viewcode-block" id="DsrEs201108">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.DsrEs201108">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DsrEs201108</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/dsr-es201108&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/dsr-es201108"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -552,9 +552,9 @@
 <div class="viewcode-block" id="DsrEs202050">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.DsrEs202050">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DsrEs202050</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/dsr-es202050&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/dsr-es202050"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -562,9 +562,9 @@
 <div class="viewcode-block" id="DsrEs202211">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.DsrEs202211">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DsrEs202211</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/dsr-es202211&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/dsr-es202211"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -572,9 +572,9 @@
 <div class="viewcode-block" id="DsrEs202212">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.DsrEs202212">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DsrEs202212</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/dsr-es202212&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/dsr-es202212"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -582,10 +582,10 @@
 <div class="viewcode-block" id="Dv">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Dv">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Dv</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Audio and video streaming and</span>
-<span class="sd">    conferencing tools.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Audio and video streaming and</span>
+<span class="sd">    conferencing tools."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/DV&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/DV"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -593,9 +593,9 @@
 <div class="viewcode-block" id="Dvi4">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Dvi4">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Dvi4</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Audio and video streaming and conferencing tools.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Audio and video streaming and conferencing tools."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/DVI4&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/DVI4"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -603,20 +603,20 @@
 <div class="viewcode-block" id="Eac3">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Eac3">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Eac3</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Multichannel audio compression of audio, and audio for video.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Multichannel audio compression of audio, and audio for video."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/eac3&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/eac3"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">magic_number</span> <span class="o">=</span> <span class="s2">&quot;0b77&quot;</span></div>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="s2">"0b77"</span></div>
 
 
 
 <div class="viewcode-block" id="Encaprtp">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Encaprtp">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Encaprtp</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/encaprtp&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/encaprtp"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -624,37 +624,37 @@
 <div class="viewcode-block" id="Evrc">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Evrc">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Evrc</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;It is expected that many VoIP applications (as well as mobile</span>
+<span class="w">    </span><span class="sd">"""It is expected that many VoIP applications (as well as mobile</span>
 <span class="sd">        applications) will use this type.</span>
 
-<span class="sd">    The following information applies for storage format only.&quot;&quot;&quot;</span>
+<span class="sd">    The following information applies for storage format only."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/EVRC&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.evc&quot;</span>
-    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;EVC&quot;</span><span class="p">,)</span>
-    <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;#!EVRC</span><span class="se">\n</span><span class="s2">&quot;</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/EVRC"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".evc"</span>
+    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"EVC"</span><span class="p">,)</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"#!EVRC</span><span class="se">\n</span><span class="s2">"</span></div>
 
 
 
 <div class="viewcode-block" id="EvrcQcp">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.EvrcQcp">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">EvrcQcp</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;no&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""no"""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/EVRC-QCP&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.qcp&quot;</span>
-    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.QCP&quot;</span><span class="p">,)</span>
-    <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;RIFF&quot;</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/EVRC-QCP"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".qcp"</span>
+    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">".QCP"</span><span class="p">,)</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"RIFF"</span></div>
 
 
 
 <div class="viewcode-block" id="Evrc0">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Evrc0">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Evrc0</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;It is expected that many VoIP applications (as well as mobile</span>
-<span class="sd">    applications) will use this type.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""It is expected that many VoIP applications (as well as mobile</span>
+<span class="sd">    applications) will use this type."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/EVRC0&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/EVRC0"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -662,10 +662,10 @@
 <div class="viewcode-block" id="Evrc1">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Evrc1">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Evrc1</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;It is expected that many VoIP applications (as well as mobile</span>
-<span class="sd">    applications) will use this type.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""It is expected that many VoIP applications (as well as mobile</span>
+<span class="sd">    applications) will use this type."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/EVRC1&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/EVRC1"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -673,23 +673,23 @@
 <div class="viewcode-block" id="Evrcb">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Evrcb">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Evrcb</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;It is expected that many VoIP applications (as well as mobile applications) will use this type.</span>
+<span class="w">    </span><span class="sd">"""It is expected that many VoIP applications (as well as mobile applications) will use this type.</span>
 
-<span class="sd">    The following information applies for the storage format only.&quot;&quot;&quot;</span>
+<span class="sd">    The following information applies for the storage format only."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/EVRCB&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.evb&quot;</span>
-    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.EVB&quot;</span><span class="p">,)</span>
-    <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;#!EVRC-B</span><span class="se">\n</span><span class="s2">&quot;</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/EVRCB"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".evb"</span>
+    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">".EVB"</span><span class="p">,)</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"#!EVRC-B</span><span class="se">\n</span><span class="s2">"</span></div>
 
 
 
 <div class="viewcode-block" id="Evrcb0">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Evrcb0">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Evrcb0</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;It is expected that many VoIP applications (as well as mobile applications) will use this type.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""It is expected that many VoIP applications (as well as mobile applications) will use this type."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/EVRCB0&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/EVRCB0"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -697,10 +697,10 @@
 <div class="viewcode-block" id="Evrcb1">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Evrcb1">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Evrcb1</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;It is expected that many VoIP applications (as well as mobile</span>
-<span class="sd">    applications) will use this type.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""It is expected that many VoIP applications (as well as mobile</span>
+<span class="sd">    applications) will use this type."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/EVRCB1&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/EVRCB1"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -708,23 +708,23 @@
 <div class="viewcode-block" id="Evrcnw">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Evrcnw">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Evrcnw</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;It is expected that many VoIP applications (as well as mobile</span>
-<span class="sd">    applications) will use this type.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""It is expected that many VoIP applications (as well as mobile</span>
+<span class="sd">    applications) will use this type."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/EVRCNW&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.enw&quot;</span>
-    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.ENW&quot;</span><span class="p">,)</span>
-    <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;#!EVRCNW</span><span class="se">\n</span><span class="s2">&quot;</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/EVRCNW"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".enw"</span>
+    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">".ENW"</span><span class="p">,)</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"#!EVRCNW</span><span class="se">\n</span><span class="s2">"</span></div>
 
 
 
 <div class="viewcode-block" id="Evrcnw0">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Evrcnw0">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Evrcnw0</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;It is expected that many VoIP applications (as well as mobile</span>
-<span class="sd">    applications) will use this type.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""It is expected that many VoIP applications (as well as mobile</span>
+<span class="sd">    applications) will use this type."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/EVRCNW0&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/EVRCNW0"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -732,10 +732,10 @@
 <div class="viewcode-block" id="Evrcnw1">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Evrcnw1">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Evrcnw1</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;It is expected that many VoIP applications (as well as mobile</span>
-<span class="sd">    applications) will use this type.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""It is expected that many VoIP applications (as well as mobile</span>
+<span class="sd">    applications) will use this type."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/EVRCNW1&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/EVRCNW1"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -743,21 +743,21 @@
 <div class="viewcode-block" id="Evrcwb">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Evrcwb">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Evrcwb</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;It is expected that many VoIP applications (as well as mobile applications) will use this type.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""It is expected that many VoIP applications (as well as mobile applications) will use this type."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/EVRCWB&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.evw&quot;</span>
-    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.EVW&quot;</span><span class="p">,)</span>
-    <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;#!EVCWB</span><span class="se">\n</span><span class="s2">&quot;</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/EVRCWB"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".evw"</span>
+    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">".EVW"</span><span class="p">,)</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"#!EVCWB</span><span class="se">\n</span><span class="s2">"</span></div>
 
 
 
 <div class="viewcode-block" id="Evrcwb0">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Evrcwb0">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Evrcwb0</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;It is expected that many VoIP applications (as well as mobile applications) will use this type.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""It is expected that many VoIP applications (as well as mobile applications) will use this type."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/EVRCWB0&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/EVRCWB0"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -765,9 +765,9 @@
 <div class="viewcode-block" id="Evrcwb1">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Evrcwb1">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Evrcwb1</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;It is expected that many VoIP applications (as well as mobile applications) will use this type.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""It is expected that many VoIP applications (as well as mobile applications) will use this type."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/EVRCWB1&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/EVRCWB1"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -775,20 +775,20 @@
 <div class="viewcode-block" id="Evs">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Evs">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Evs</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/EVS&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.3gp&quot;</span>
-    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.3gpp&quot;</span><span class="p">,)</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/EVS"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".3gp"</span>
+    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">".3gpp"</span><span class="p">,)</span></div>
 
 
 
 <div class="viewcode-block" id="Flexfec">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Flexfec">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Flexfec</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Multimedia applications that want to improve resiliency against packet loss by sending redundant data in addition to the source media.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Multimedia applications that want to improve resiliency against packet loss by sending redundant data in addition to the source media."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/flexfec&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/flexfec"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -796,12 +796,12 @@
 <div class="viewcode-block" id="Fwdred">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Fwdred">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Fwdred</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;It is expected that real-time audio/video, text streaming, and</span>
+<span class="w">    </span><span class="sd">"""It is expected that real-time audio/video, text streaming, and</span>
 <span class="sd">    conferencing tools/applications that want protection against</span>
 <span class="sd">    losses of a large number of consecutive frames will be interested</span>
-<span class="sd">    in using this type.&quot;&quot;&quot;</span>
+<span class="sd">    in using this type."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/fwdred&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/fwdred"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -809,23 +809,23 @@
 <div class="viewcode-block" id="G711_0">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.G711_0">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">G711_0</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    TODO: #!G7110A\\n or #!G7110M\\n (for A-law or MU-law</span>
-<span class="sd">    encodings respectively, see Section 6).&quot;&quot;&quot;</span>
+<span class="sd">    encodings respectively, see Section 6)."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/G711-0&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/G711-0"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;#!G7110A</span><span class="se">\n</span><span class="s2">&quot;</span></div>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"#!G7110A</span><span class="se">\n</span><span class="s2">"</span></div>
 
 
 
 <div class="viewcode-block" id="G719">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.G719">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">G719</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Real-time audio applications</span>
-<span class="sd">    like Voice over IP and teleconference, and multi-media streaming.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Real-time audio applications</span>
+<span class="sd">    like Voice over IP and teleconference, and multi-media streaming."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/G719&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/G719"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -833,9 +833,9 @@
 <div class="viewcode-block" id="G7221">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.G7221">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">G7221</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Audio and Video streaming and conferencing applications.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Audio and Video streaming and conferencing applications."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/G7221&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/G7221"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -843,9 +843,9 @@
 <div class="viewcode-block" id="G722">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.G722">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">G722</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Audio and video streaming and conferencing tools.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Audio and video streaming and conferencing tools."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/G722&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/G722"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -853,9 +853,9 @@
 <div class="viewcode-block" id="G723">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.G723">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">G723</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Audio and video streaming and conferencing tools.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Audio and video streaming and conferencing tools."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/G723&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/G723"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -863,9 +863,9 @@
 <div class="viewcode-block" id="G726_16">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.G726_16">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">G726_16</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/G726-16&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/G726-16"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -873,9 +873,9 @@
 <div class="viewcode-block" id="G726_24">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.G726_24">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">G726_24</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/G726-24&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/G726-24"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -883,9 +883,9 @@
 <div class="viewcode-block" id="G726_32">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.G726_32">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">G726_32</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/G726-32&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/G726-32"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -893,9 +893,9 @@
 <div class="viewcode-block" id="G726_40">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.G726_40">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">G726_40</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/G726-40&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/G726-40"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -903,9 +903,9 @@
 <div class="viewcode-block" id="G728">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.G728">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">G728</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Audio and video streaming and conferencing tools.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Audio and video streaming and conferencing tools."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/G728&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/G728"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -913,9 +913,9 @@
 <div class="viewcode-block" id="G729">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.G729">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">G729</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Audio and video streaming and conferencing tools.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Audio and video streaming and conferencing tools."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/G729&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/G729"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -923,9 +923,9 @@
 <div class="viewcode-block" id="G7291">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.G7291">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">G7291</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/G7291&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/G7291"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -933,9 +933,9 @@
 <div class="viewcode-block" id="G729d">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.G729d">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">G729d</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Audio and video streaming and conferencing tools.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Audio and video streaming and conferencing tools."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/G729D&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/G729D"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -943,9 +943,9 @@
 <div class="viewcode-block" id="G729e">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.G729e">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">G729e</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Audio and video streaming and conferencing tools.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Audio and video streaming and conferencing tools."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/G729E&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/G729E"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -953,9 +953,9 @@
 <div class="viewcode-block" id="Gsm">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Gsm">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Gsm</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Audio and video streaming and conferencing tools.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Audio and video streaming and conferencing tools."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/GSM&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/GSM"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -963,9 +963,9 @@
 <div class="viewcode-block" id="GsmEfr">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.GsmEfr">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">GsmEfr</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Audio and video streaming and conferencing tools.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Audio and video streaming and conferencing tools."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/GSM-EFR&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/GSM-EFR"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -973,9 +973,9 @@
 <div class="viewcode-block" id="GsmHr_08">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.GsmHr_08">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">GsmHr_08</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/GSM-HR-08&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/GSM-HR-08"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -983,20 +983,20 @@
 <div class="viewcode-block" id="Ilbc">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Ilbc">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Ilbc</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/iLBC&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.lbc&quot;</span>
-    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.LBC&quot;</span><span class="p">,)</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/iLBC"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".lbc"</span>
+    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">".LBC"</span><span class="p">,)</span></div>
 
 
 
 <div class="viewcode-block" id="IpMrV2_5">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.IpMrV2_5">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">IpMrV2_5</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/ip-mr_v2.5&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/ip-mr_v2.5"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -1004,9 +1004,9 @@
 <div class="viewcode-block" id="L8">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.L8">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">L8</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Audio and video streaming and conferencing tools.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Audio and video streaming and conferencing tools."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/L8&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/L8"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -1014,20 +1014,20 @@
 <div class="viewcode-block" id="L16">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.L16">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">L16</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The public domain &quot;sox&quot; and &quot;rateconv&quot; programs accept this 	type.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""The public domain "sox" and "rateconv" programs accept this 	type."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/L16&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.WAV&quot;</span>
-    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.L16&quot;</span><span class="p">,)</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/L16"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".WAV"</span>
+    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">".L16"</span><span class="p">,)</span></div>
 
 
 
 <div class="viewcode-block" id="L20">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.L20">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">L20</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/L20&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/L20"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -1035,9 +1035,9 @@
 <div class="viewcode-block" id="L24">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.L24">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">L24</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/L24&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/L24"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -1045,9 +1045,9 @@
 <div class="viewcode-block" id="Lpc">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Lpc">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Lpc</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Audio and video streaming and conferencing tools.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Audio and video streaming and conferencing tools."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/LPC&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/LPC"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -1055,9 +1055,9 @@
 <div class="viewcode-block" id="Melp">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Melp">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Melp</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/MELP&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/MELP"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -1065,9 +1065,9 @@
 <div class="viewcode-block" id="Melp600">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Melp600">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Melp600</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/MELP600&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/MELP600"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -1075,9 +1075,9 @@
 <div class="viewcode-block" id="Melp1200">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Melp1200">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Melp1200</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/MELP1200&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/MELP1200"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -1085,9 +1085,9 @@
 <div class="viewcode-block" id="Melp2400">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Melp2400">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Melp2400</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/MELP2400&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/MELP2400"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -1095,81 +1095,81 @@
 <div class="viewcode-block" id="Mhas">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Mhas">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Mhas</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 
 <span class="sd">    TODO: Receivers can search for the following syncword within the binary data stream: mpeghAudioStreamPacket() 0xC001A5 (24bit sequence).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/mhas&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.mhas&quot;</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/mhas"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".mhas"</span></div>
 
 
 
 <div class="viewcode-block" id="MobileXmf">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.MobileXmf">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">MobileXmf</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/mobile-xmf&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.mxmf&quot;</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/mobile-xmf"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".mxmf"</span></div>
 
 
 
 <div class="viewcode-block" id="Mpa">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Mpa">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Mpa</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/MPA&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/MPA"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">Mp4aLatm</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/MP4A-LATM&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/MP4A-LATM"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span>
 
 
 <div class="viewcode-block" id="MpaRobust">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.MpaRobust">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">MpaRobust</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Audio streaming tools (transmitting and receiving)&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Audio streaming tools (transmitting and receiving)"""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/mpa-robust&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/mpa-robust"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">Mpeg4Generic</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/mpeg4-generic&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/mpeg4-generic"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span>
 
 
 <div class="viewcode-block" id="Ogg">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Ogg">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Ogg</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/ogg&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.oga&quot;</span>
-    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.ogg&quot;</span><span class="p">,</span> <span class="s2">&quot;.spx&quot;</span><span class="p">,</span> <span class="s2">&quot;.opus&quot;</span><span class="p">)</span>
-    <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;OggS&quot;</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/ogg"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".oga"</span>
+    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">".ogg"</span><span class="p">,</span> <span class="s2">".spx"</span><span class="p">,</span> <span class="s2">".opus"</span><span class="p">)</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"OggS"</span></div>
 
 
 
 <div class="viewcode-block" id="Opus">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Opus">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Opus</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Any application that requires the transport of speech or audio</span>
+<span class="w">    </span><span class="sd">"""Any application that requires the transport of speech or audio</span>
 <span class="sd">    data can use this media type.  Some examples are, but not limited</span>
 <span class="sd">    to, audio and video conferencing, Voice over IP, and media</span>
-<span class="sd">    streaming.&quot;&quot;&quot;</span>
+<span class="sd">    streaming."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/opus&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/opus"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -1177,9 +1177,9 @@
 <div class="viewcode-block" id="Parityfec">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Parityfec">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Parityfec</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/parityfec&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/parityfec"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -1187,9 +1187,9 @@
 <div class="viewcode-block" id="Pcma">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Pcma">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Pcma</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Audio and video streaming and conferencing tools.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Audio and video streaming and conferencing tools."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/PCMA&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/PCMA"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -1197,10 +1197,10 @@
 <div class="viewcode-block" id="PcmaWb">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.PcmaWb">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PcmaWb</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Audio and video conferencing</span>
-<span class="sd">    tools.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Audio and video conferencing</span>
+<span class="sd">    tools."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/PCMA-WB&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/PCMA-WB"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -1208,9 +1208,9 @@
 <div class="viewcode-block" id="Pcmu">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Pcmu">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Pcmu</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Audio and video streaming and conferencing tools.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Audio and video streaming and conferencing tools."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/PCMU&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/PCMU"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -1218,10 +1218,10 @@
 <div class="viewcode-block" id="PcmuWb">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.PcmuWb">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PcmuWb</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Audio and video conferencing</span>
-<span class="sd">    tools.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Audio and video conferencing</span>
+<span class="sd">    tools."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/PCMU-WB&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/PCMU-WB"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -1229,27 +1229,27 @@
 <div class="viewcode-block" id="Prs_Sid">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Prs_Sid">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Prs_Sid</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The data is a binary memory chunk from a Commodore 64 with an attached</span>
+<span class="w">    </span><span class="sd">"""The data is a binary memory chunk from a Commodore 64 with an attached</span>
 <span class="sd">    header. The header contains metadata such as composer, year of</span>
 <span class="sd">    publication</span>
 <span class="sd">    etc. The binary chunk is being interpreted as CSG 6510 microprocessor</span>
 <span class="sd">    instruction bytecodes attached to a Commodore 64 chipset.</span>
 
-<span class="sd">       TODO: first 4 bytes are 0x50534944 - &quot;PSID&quot; or 0x52534944 - &quot;RSID\&quot; &quot;&quot;&quot;</span>
+<span class="sd">       TODO: first 4 bytes are 0x50534944 - "PSID" or 0x52534944 - "RSID\" """</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/prs.sid&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.sid&quot;</span>
-    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.psid&quot;</span><span class="p">,)</span>
-    <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;PSID&quot;</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/prs.sid"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".sid"</span>
+    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">".psid"</span><span class="p">,)</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"PSID"</span></div>
 
 
 
 <div class="viewcode-block" id="Qcelp">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Qcelp">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Qcelp</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/QCELP&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/QCELP"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -1257,9 +1257,9 @@
 <div class="viewcode-block" id="Raptorfec">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Raptorfec">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Raptorfec</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Real-time multimedia applications like video streaming, audio streaming, and video conferencing.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Real-time multimedia applications like video streaming, audio streaming, and video conferencing."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/raptorfec&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/raptorfec"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -1267,9 +1267,9 @@
 <div class="viewcode-block" id="Red">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Red">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Red</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/RED&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/RED"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -1277,9 +1277,9 @@
 <div class="viewcode-block" id="RtpEncAescm128">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.RtpEncAescm128">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RtpEncAescm128</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/rtp-enc-aescm128&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/rtp-enc-aescm128"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -1287,9 +1287,9 @@
 <div class="viewcode-block" id="Rtploopback">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Rtploopback">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Rtploopback</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/rtploopback&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/rtploopback"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -1297,15 +1297,15 @@
 <div class="viewcode-block" id="RtpMidi">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.RtpMidi">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RtpMidi</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Audio content-creation hardware, such as MIDI controller piano</span>
+<span class="w">    </span><span class="sd">"""Audio content-creation hardware, such as MIDI controller piano</span>
 <span class="sd">    keyboards and MIDI audio synthesizers.  Audio content-creation</span>
 <span class="sd">    software, such as music sequencers, digital audio workstations,</span>
 <span class="sd">    and soft synthesizers.  Computer operating systems, for network</span>
 <span class="sd">    support of MIDI Application Programmer Interfaces.  Content</span>
 <span class="sd">    distribution servers and terminals may use this media type for</span>
-<span class="sd">    low bitrate music coding.&quot;&quot;&quot;</span>
+<span class="sd">    low bitrate music coding."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/rtp-midi&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/rtp-midi"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -1313,9 +1313,9 @@
 <div class="viewcode-block" id="Rtx">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Rtx">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Rtx</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/rtx&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/rtx"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -1323,9 +1323,9 @@
 <div class="viewcode-block" id="Scip">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Scip">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Scip</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/scip&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/scip"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -1333,21 +1333,21 @@
 <div class="viewcode-block" id="Smv">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Smv">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Smv</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The following information applies to storage format only.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""The following information applies to storage format only."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/SMV&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.smv&quot;</span>
-    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.SMV&quot;</span><span class="p">,)</span>
-    <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;#!SMV</span><span class="se">\n</span><span class="s2">&quot;</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/SMV"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".smv"</span>
+    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">".SMV"</span><span class="p">,)</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"#!SMV</span><span class="se">\n</span><span class="s2">"</span></div>
 
 
 
 <div class="viewcode-block" id="Smv0">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Smv0">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Smv0</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/SMV0&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/SMV0"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -1355,44 +1355,44 @@
 <div class="viewcode-block" id="SmvQcp">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.SmvQcp">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SmvQcp</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;no&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""no"""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/SMV-QCP&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.qcp&quot;</span>
-    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.QCP&quot;</span><span class="p">,)</span>
-    <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;RIFF&quot;</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/SMV-QCP"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".qcp"</span>
+    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">".QCP"</span><span class="p">,)</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"RIFF"</span></div>
 
 
 
 <div class="viewcode-block" id="Sofa">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Sofa">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Sofa</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 
-<span class="sd">    TODO: as with HDF5&quot;&quot;&quot;</span>
+<span class="sd">    TODO: as with HDF5"""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/sofa&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.sofa&quot;</span>
-    <span class="n">magic_number</span> <span class="o">=</span> <span class="s2">&quot;894844460d0a1a0a&quot;</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/sofa"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".sofa"</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="s2">"894844460d0a1a0a"</span></div>
 
 
 
 <div class="viewcode-block" id="SpMidi">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.SpMidi">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SpMidi</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/sp-midi&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.mid&quot;</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/sp-midi"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".mid"</span></div>
 
 
 
 <div class="viewcode-block" id="Speex">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Speex">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Speex</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Audio streaming and conferencing applications.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Audio streaming and conferencing applications."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/speex&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/speex"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -1400,10 +1400,10 @@
 <div class="viewcode-block" id="T140c">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.T140c">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">T140c</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;This type is only defined for transfer</span>
-<span class="sd">    via RTP.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""This type is only defined for transfer</span>
+<span class="sd">    via RTP."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/t140c&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/t140c"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -1411,9 +1411,9 @@
 <div class="viewcode-block" id="T38">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.T38">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">T38</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/t38&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/t38"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -1421,33 +1421,33 @@
 <div class="viewcode-block" id="TelephoneEvent">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.TelephoneEvent">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TelephoneEvent</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/telephone-event&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/telephone-event"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">Tetra_acelp</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/TETRA_ACELP&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/TETRA_ACELP"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">Tetra_acelp_bb</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/TETRA_ACELP_BB&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/TETRA_ACELP_BB"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span>
 
 
 <div class="viewcode-block" id="Tone">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Tone">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Tone</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/tone&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/tone"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -1455,9 +1455,9 @@
 <div class="viewcode-block" id="Tsvcis">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Tsvcis">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Tsvcis</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/TSVCIS&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/TSVCIS"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -1465,10 +1465,10 @@
 <div class="viewcode-block" id="Uemclip">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Uemclip">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Uemclip</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Audio and video streaming and</span>
-<span class="sd">    conferencing tools.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Audio and video streaming and</span>
+<span class="sd">    conferencing tools."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/UEMCLIP&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/UEMCLIP"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -1476,9 +1476,9 @@
 <div class="viewcode-block" id="Ulpfec">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Ulpfec">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Ulpfec</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Multimedia applications that seek to improve resiliency to loss by sending additional data with the media stream.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Multimedia applications that seek to improve resiliency to loss by sending additional data with the media stream."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/ulpfec&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/ulpfec"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -1486,20 +1486,20 @@
 <div class="viewcode-block" id="Usac">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Usac">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Usac</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Unified Speech and Audio Coding (USAC) audio is device, platform, and vendor neutral and is supported by a wide range of encoders and decoders/players, for example for Multimedia, HLS Audio-Only Streams - IETF HTTP Live Streaming, SHOUTcast/Icecast2 Audio Streams.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Unified Speech and Audio Coding (USAC) audio is device, platform, and vendor neutral and is supported by a wide range of encoders and decoders/players, for example for Multimedia, HLS Audio-Only Streams - IETF HTTP Live Streaming, SHOUTcast/Icecast2 Audio Streams."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/usac&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.loas&quot;</span>
-    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.xhe&quot;</span><span class="p">,)</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/usac"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".loas"</span>
+    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">".xhe"</span><span class="p">,)</span></div>
 
 
 
 <div class="viewcode-block" id="Vdvi">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Vdvi">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Vdvi</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Audio and video streaming and conferencing tools.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Audio and video streaming and conferencing tools."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/VDVI&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/VDVI"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -1507,9 +1507,9 @@
 <div class="viewcode-block" id="VmrWb">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.VmrWb">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">VmrWb</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/VMR-WB&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/VMR-WB"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -1517,9 +1517,9 @@
 <div class="viewcode-block" id="Vorbis">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.Vorbis">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Vorbis</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/vorbis&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/vorbis"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -1527,133 +1527,133 @@
 <div class="viewcode-block" id="VorbisConfig">
 <a class="viewcode-back" href="../../reference/audio.html#fileformats.audio.VorbisConfig">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">VorbisConfig</span><span class="p">(</span><span class="n">Audio</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;audio/vorbis-config&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"audio/vorbis-config"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;Audio&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Mpeg&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Mp4&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Aac&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Wav&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;_1dInterleavedParityfec&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;_32kadpcm&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;_3gpp&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;_3gpp2&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Ac3&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Amr&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;AmrWb&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;AmrWb___&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Aptx&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Asc&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;AtracAdvancedLossless&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;AtracX&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Atrac3&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Basic&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Bv16&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Bv32&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Clearmode&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Cn&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Dat12&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Dls&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;DsrEs201108&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;DsrEs202050&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;DsrEs202211&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;DsrEs202212&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Dv&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Dvi4&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Eac3&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Encaprtp&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Evrc&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;EvrcQcp&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Evrc0&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Evrc1&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Evrcb&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Evrcb0&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Evrcb1&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Evrcnw&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Evrcnw0&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Evrcnw1&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Evrcwb&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Evrcwb0&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Evrcwb1&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Evs&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Flexfec&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Fwdred&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;G711_0&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;G719&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;G7221&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;G722&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;G723&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;G726_16&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;G726_24&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;G726_32&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;G726_40&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;G728&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;G729&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;G7291&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;G729d&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;G729e&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Gsm&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;GsmEfr&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;GsmHr_08&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Ilbc&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;IpMrV2_5&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;L8&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;L16&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;L20&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;L24&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Lpc&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Melp&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Melp600&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Melp1200&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Melp2400&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Mhas&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;MobileXmf&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Mpa&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Mp4aLatm&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;MpaRobust&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Mpeg4Generic&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Ogg&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Opus&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Parityfec&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Pcma&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;PcmaWb&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Pcmu&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;PcmuWb&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Prs_Sid&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Qcelp&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Raptorfec&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Red&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;RtpEncAescm128&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Rtploopback&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;RtpMidi&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Rtx&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Scip&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Smv&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Smv0&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;SmvQcp&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Sofa&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;SpMidi&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Speex&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;T140c&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;T38&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;TelephoneEvent&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Tetra_acelp&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Tetra_acelp_bb&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Tone&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Tsvcis&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Uemclip&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Ulpfec&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Usac&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Vdvi&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;VmrWb&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Vorbis&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;VorbisConfig&quot;</span><span class="p">,</span>
+    <span class="s2">"Audio"</span><span class="p">,</span>
+    <span class="s2">"Mpeg"</span><span class="p">,</span>
+    <span class="s2">"Mp4"</span><span class="p">,</span>
+    <span class="s2">"Aac"</span><span class="p">,</span>
+    <span class="s2">"Wav"</span><span class="p">,</span>
+    <span class="s2">"_1dInterleavedParityfec"</span><span class="p">,</span>
+    <span class="s2">"_32kadpcm"</span><span class="p">,</span>
+    <span class="s2">"_3gpp"</span><span class="p">,</span>
+    <span class="s2">"_3gpp2"</span><span class="p">,</span>
+    <span class="s2">"Ac3"</span><span class="p">,</span>
+    <span class="s2">"Amr"</span><span class="p">,</span>
+    <span class="s2">"AmrWb"</span><span class="p">,</span>
+    <span class="s2">"AmrWb___"</span><span class="p">,</span>
+    <span class="s2">"Aptx"</span><span class="p">,</span>
+    <span class="s2">"Asc"</span><span class="p">,</span>
+    <span class="s2">"AtracAdvancedLossless"</span><span class="p">,</span>
+    <span class="s2">"AtracX"</span><span class="p">,</span>
+    <span class="s2">"Atrac3"</span><span class="p">,</span>
+    <span class="s2">"Basic"</span><span class="p">,</span>
+    <span class="s2">"Bv16"</span><span class="p">,</span>
+    <span class="s2">"Bv32"</span><span class="p">,</span>
+    <span class="s2">"Clearmode"</span><span class="p">,</span>
+    <span class="s2">"Cn"</span><span class="p">,</span>
+    <span class="s2">"Dat12"</span><span class="p">,</span>
+    <span class="s2">"Dls"</span><span class="p">,</span>
+    <span class="s2">"DsrEs201108"</span><span class="p">,</span>
+    <span class="s2">"DsrEs202050"</span><span class="p">,</span>
+    <span class="s2">"DsrEs202211"</span><span class="p">,</span>
+    <span class="s2">"DsrEs202212"</span><span class="p">,</span>
+    <span class="s2">"Dv"</span><span class="p">,</span>
+    <span class="s2">"Dvi4"</span><span class="p">,</span>
+    <span class="s2">"Eac3"</span><span class="p">,</span>
+    <span class="s2">"Encaprtp"</span><span class="p">,</span>
+    <span class="s2">"Evrc"</span><span class="p">,</span>
+    <span class="s2">"EvrcQcp"</span><span class="p">,</span>
+    <span class="s2">"Evrc0"</span><span class="p">,</span>
+    <span class="s2">"Evrc1"</span><span class="p">,</span>
+    <span class="s2">"Evrcb"</span><span class="p">,</span>
+    <span class="s2">"Evrcb0"</span><span class="p">,</span>
+    <span class="s2">"Evrcb1"</span><span class="p">,</span>
+    <span class="s2">"Evrcnw"</span><span class="p">,</span>
+    <span class="s2">"Evrcnw0"</span><span class="p">,</span>
+    <span class="s2">"Evrcnw1"</span><span class="p">,</span>
+    <span class="s2">"Evrcwb"</span><span class="p">,</span>
+    <span class="s2">"Evrcwb0"</span><span class="p">,</span>
+    <span class="s2">"Evrcwb1"</span><span class="p">,</span>
+    <span class="s2">"Evs"</span><span class="p">,</span>
+    <span class="s2">"Flexfec"</span><span class="p">,</span>
+    <span class="s2">"Fwdred"</span><span class="p">,</span>
+    <span class="s2">"G711_0"</span><span class="p">,</span>
+    <span class="s2">"G719"</span><span class="p">,</span>
+    <span class="s2">"G7221"</span><span class="p">,</span>
+    <span class="s2">"G722"</span><span class="p">,</span>
+    <span class="s2">"G723"</span><span class="p">,</span>
+    <span class="s2">"G726_16"</span><span class="p">,</span>
+    <span class="s2">"G726_24"</span><span class="p">,</span>
+    <span class="s2">"G726_32"</span><span class="p">,</span>
+    <span class="s2">"G726_40"</span><span class="p">,</span>
+    <span class="s2">"G728"</span><span class="p">,</span>
+    <span class="s2">"G729"</span><span class="p">,</span>
+    <span class="s2">"G7291"</span><span class="p">,</span>
+    <span class="s2">"G729d"</span><span class="p">,</span>
+    <span class="s2">"G729e"</span><span class="p">,</span>
+    <span class="s2">"Gsm"</span><span class="p">,</span>
+    <span class="s2">"GsmEfr"</span><span class="p">,</span>
+    <span class="s2">"GsmHr_08"</span><span class="p">,</span>
+    <span class="s2">"Ilbc"</span><span class="p">,</span>
+    <span class="s2">"IpMrV2_5"</span><span class="p">,</span>
+    <span class="s2">"L8"</span><span class="p">,</span>
+    <span class="s2">"L16"</span><span class="p">,</span>
+    <span class="s2">"L20"</span><span class="p">,</span>
+    <span class="s2">"L24"</span><span class="p">,</span>
+    <span class="s2">"Lpc"</span><span class="p">,</span>
+    <span class="s2">"Melp"</span><span class="p">,</span>
+    <span class="s2">"Melp600"</span><span class="p">,</span>
+    <span class="s2">"Melp1200"</span><span class="p">,</span>
+    <span class="s2">"Melp2400"</span><span class="p">,</span>
+    <span class="s2">"Mhas"</span><span class="p">,</span>
+    <span class="s2">"MobileXmf"</span><span class="p">,</span>
+    <span class="s2">"Mpa"</span><span class="p">,</span>
+    <span class="s2">"Mp4aLatm"</span><span class="p">,</span>
+    <span class="s2">"MpaRobust"</span><span class="p">,</span>
+    <span class="s2">"Mpeg4Generic"</span><span class="p">,</span>
+    <span class="s2">"Ogg"</span><span class="p">,</span>
+    <span class="s2">"Opus"</span><span class="p">,</span>
+    <span class="s2">"Parityfec"</span><span class="p">,</span>
+    <span class="s2">"Pcma"</span><span class="p">,</span>
+    <span class="s2">"PcmaWb"</span><span class="p">,</span>
+    <span class="s2">"Pcmu"</span><span class="p">,</span>
+    <span class="s2">"PcmuWb"</span><span class="p">,</span>
+    <span class="s2">"Prs_Sid"</span><span class="p">,</span>
+    <span class="s2">"Qcelp"</span><span class="p">,</span>
+    <span class="s2">"Raptorfec"</span><span class="p">,</span>
+    <span class="s2">"Red"</span><span class="p">,</span>
+    <span class="s2">"RtpEncAescm128"</span><span class="p">,</span>
+    <span class="s2">"Rtploopback"</span><span class="p">,</span>
+    <span class="s2">"RtpMidi"</span><span class="p">,</span>
+    <span class="s2">"Rtx"</span><span class="p">,</span>
+    <span class="s2">"Scip"</span><span class="p">,</span>
+    <span class="s2">"Smv"</span><span class="p">,</span>
+    <span class="s2">"Smv0"</span><span class="p">,</span>
+    <span class="s2">"SmvQcp"</span><span class="p">,</span>
+    <span class="s2">"Sofa"</span><span class="p">,</span>
+    <span class="s2">"SpMidi"</span><span class="p">,</span>
+    <span class="s2">"Speex"</span><span class="p">,</span>
+    <span class="s2">"T140c"</span><span class="p">,</span>
+    <span class="s2">"T38"</span><span class="p">,</span>
+    <span class="s2">"TelephoneEvent"</span><span class="p">,</span>
+    <span class="s2">"Tetra_acelp"</span><span class="p">,</span>
+    <span class="s2">"Tetra_acelp_bb"</span><span class="p">,</span>
+    <span class="s2">"Tone"</span><span class="p">,</span>
+    <span class="s2">"Tsvcis"</span><span class="p">,</span>
+    <span class="s2">"Uemclip"</span><span class="p">,</span>
+    <span class="s2">"Ulpfec"</span><span class="p">,</span>
+    <span class="s2">"Usac"</span><span class="p">,</span>
+    <span class="s2">"Vdvi"</span><span class="p">,</span>
+    <span class="s2">"VmrWb"</span><span class="p">,</span>
+    <span class="s2">"Vorbis"</span><span class="p">,</span>
+    <span class="s2">"VorbisConfig"</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
         </article>
@@ -1687,7 +1687,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=bc676b56"></script>
+</div><script src="../../_static/documentation_options.js?v=c6d1d0b9"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>

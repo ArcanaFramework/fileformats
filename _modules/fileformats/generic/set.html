@@ -6,7 +6,7 @@
         <link rel="prefetch" href="../../../_static/logo_small.png" as="image">
 
     <link rel="shortcut icon" href="../../../_static/favicon.png"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>fileformats.generic.set - FileFormats v0.17.11</title>
+        <title>fileformats.generic.set - FileFormats v0.17.12</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=beddf052" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">FileFormats v0.17.11</div></a>
+      <a href="../../../index.html"><div class="brand">FileFormats v0.17.12</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -191,7 +191,7 @@
     <img class="sidebar-logo" src="../../../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.17.11</span>
+  <span class="sidebar-brand-text">FileFormats v0.17.12</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -268,8 +268,8 @@
 <div class="viewcode-block" id="TypedSet">
 <a class="viewcode-back" href="../../../api.html#fileformats.generic.TypedSet">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TypedSet</span><span class="p">(</span><span class="n">TypedCollection</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;List of specific file types (similar to the contents of a directory but not</span>
-<span class="sd">    enclosed in one)&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""List of specific file types (similar to the contents of a directory but not</span>
+<span class="sd">    enclosed in one)"""</span>
 
     <span class="n">MAX_REPR_PATHS</span> <span class="o">=</span> <span class="mi">3</span>
 
@@ -279,13 +279,13 @@
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">paths_repr</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot;&#39;&quot;</span>
-            <span class="o">+</span> <span class="s2">&quot;&#39;, &#39;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fspaths</span><span class="p">)[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">MAX_REPR_PATHS</span><span class="p">])</span>
-            <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span>
+            <span class="s2">"'"</span>
+            <span class="o">+</span> <span class="s2">"', '"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fspaths</span><span class="p">)[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">MAX_REPR_PATHS</span><span class="p">])</span>
+            <span class="o">+</span> <span class="s2">"'"</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fspaths</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">MAX_REPR_PATHS</span><span class="p">:</span>
-            <span class="n">paths_repr</span> <span class="o">+=</span> <span class="s2">&quot;, ...&quot;</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">paths_repr</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="n">paths_repr</span> <span class="o">+=</span> <span class="s2">", ..."</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">paths_repr</span><span class="si">}</span><span class="s2">)"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">required_paths</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">FrozenSet</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
         <span class="k">return</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">required_paths</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">contents</span><span class="p">)))</span></div>
@@ -296,7 +296,7 @@
 <a class="viewcode-back" href="../../../api.html#fileformats.generic.SetOf">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SetOf</span><span class="p">(</span><span class="n">WithClassifiers</span><span class="p">,</span> <span class="n">TypedSet</span><span class="p">):</span>  <span class="c1"># type: ignore[misc]</span>
     <span class="c1"># WithClassifiers-required class attrs</span>
-    <span class="n">classifiers_attr_name</span> <span class="o">=</span> <span class="s2">&quot;content_types&quot;</span>
+    <span class="n">classifiers_attr_name</span> <span class="o">=</span> <span class="s2">"content_types"</span>
     <span class="n">allowed_classifiers</span> <span class="o">=</span> <span class="p">(</span><span class="n">FileSet</span><span class="p">,)</span>
     <span class="n">allow_optional_classifiers</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">generically_classifiable</span> <span class="o">=</span> <span class="kc">True</span></div>
@@ -333,7 +333,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=bc676b56"></script>
+</div><script src="../../../_static/documentation_options.js?v=c6d1d0b9"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>

@@ -6,7 +6,7 @@
         <link rel="prefetch" href="../../../_static/logo_small.png" as="image">
 
     <link rel="shortcut icon" href="../../../_static/favicon.png"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>fileformats.application.serialization - FileFormats v0.17.11</title>
+        <title>fileformats.application.serialization - FileFormats v0.17.12</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=beddf052" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">FileFormats v0.17.11</div></a>
+      <a href="../../../index.html"><div class="brand">FileFormats v0.17.12</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -191,7 +191,7 @@
     <img class="sidebar-logo" src="../../../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.17.11</span>
+  <span class="sidebar-brand-text">FileFormats v0.17.12</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -269,8 +269,8 @@
 <div class="viewcode-block" id="Schema">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Schema">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Schema</span><span class="p">(</span><span class="n">DataType</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for all serialization schemas (can be used for abstract schemas that</span>
-<span class="sd">    don&#39;t actually have a formal definition)&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Base class for all serialization schemas (can be used for abstract schemas that</span>
+<span class="sd">    don't actually have a formal definition)"""</span>
 
     <span class="k">pass</span></div>
 
@@ -293,17 +293,17 @@
 <div class="viewcode-block" id="InformalSchema">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.InformalSchema">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">InformalSchema</span><span class="p">(</span><span class="n">Schema</span><span class="p">):</span>
-    <span class="s2">&quot;Not actually a strict schema, just a set of conventions on how to structure the serialization&quot;</span></div>
+    <span class="s2">"Not actually a strict schema, just a set of conventions on how to structure the serialization"</span></div>
 
 
 
 <div class="viewcode-block" id="TextSerialization">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.TextSerialization">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TextSerialization</span><span class="p">(</span><span class="n">WithClassifier</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-    <span class="s2">&quot;Base class for text-based hierarchical data-serialization formats, e.g. JSON, YAML&quot;</span>
+    <span class="s2">"Base class for text-based hierarchical data-serialization formats, e.g. JSON, YAML"</span>
 
     <span class="c1"># Classifiers class attrs</span>
-    <span class="n">classifiers_attr_name</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;schema&quot;</span>
+    <span class="n">classifiers_attr_name</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"schema"</span>
     <span class="n">schema</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">Schema</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">allowed_classifiers</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">Schema</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Schema</span><span class="p">,)</span>
     <span class="n">generically_classifiable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span></div>
@@ -313,7 +313,7 @@
 <div class="viewcode-block" id="Xml">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Xml">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Xml</span><span class="p">(</span><span class="n">TextSerialization</span><span class="p">):</span>
-    <span class="n">ext</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;.xml&quot;</span>
+    <span class="n">ext</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">".xml"</span>
     <span class="n">allowed_classifiers</span> <span class="o">=</span> <span class="p">(</span><span class="n">XmlSchema</span><span class="p">,</span> <span class="n">InformalSchema</span><span class="p">)</span></div>
 
 
@@ -321,7 +321,7 @@
 <div class="viewcode-block" id="Json">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Json">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Json</span><span class="p">(</span><span class="n">TextSerialization</span><span class="p">):</span>
-    <span class="n">ext</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;.json&quot;</span>
+    <span class="n">ext</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">".json"</span>
     <span class="n">allowed_classifiers</span> <span class="o">=</span> <span class="p">(</span><span class="n">JsonSchema</span><span class="p">,</span> <span class="n">InformalSchema</span><span class="p">)</span></div>
 
 
@@ -331,15 +331,15 @@
 <div class="viewcode-block" id="Yaml">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Yaml">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Yaml</span><span class="p">(</span><span class="n">TextSerialization</span><span class="p">):</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.yaml&quot;</span>
-    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.yml&quot;</span><span class="p">,)</span></div>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".yaml"</span>
+    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">".yml"</span><span class="p">,)</span></div>
 
 
 
 <div class="viewcode-block" id="Toml">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Toml">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Toml</span><span class="p">(</span><span class="n">TextSerialization</span><span class="p">):</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.toml&quot;</span></div>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".toml"</span></div>
 
 </pre></div>
         </article>
@@ -373,7 +373,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=bc676b56"></script>
+</div><script src="../../../_static/documentation_options.js?v=c6d1d0b9"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>

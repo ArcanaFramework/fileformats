@@ -7,7 +7,7 @@
         <link rel="prefetch" href="../_static/logo_small.png" as="image">
 
     <link rel="shortcut icon" href="../_static/favicon.png"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>Extensions - FileFormats v0.17.11</title>
+        <title>Extensions - FileFormats v0.17.12</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=beddf052" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -168,7 +168,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">FileFormats v0.17.11</div></a>
+      <a href="../index.html"><div class="brand">FileFormats v0.17.12</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -192,7 +192,7 @@
     <img class="sidebar-logo" src="../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.17.11</span>
+  <span class="sidebar-brand-text">FileFormats v0.17.12</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -285,7 +285,7 @@ to inherit from the <code class="docutils literal notranslate"><span class="pre"
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.generic</span><span class="w"> </span><span class="kn">import</span> <span class="n">File</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">MyFileFormat</span><span class="p">(</span><span class="n">File</span><span class="p">):</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.my&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".my"</span>
 </pre></div>
 </div>
 <p>Likewise if the format you are defining is a directory containing one or more files of
@@ -310,15 +310,15 @@ magic numbers you will also need to set the <code class="docutils literal notran
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">MyBinaryFormat1</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.myb1&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".myb1"</span>
     <span class="n">binary</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">magic_number</span> <span class="o">=</span> <span class="s2">&quot;98E3F12200AA&quot;</span>  <span class="c1"># Unicode strings are interpreted as hex</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="s2">"98E3F12200AA"</span>  <span class="c1"># Unicode strings are interpreted as hex</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">MyBinaryFormat2</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.myb2&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".myb2"</span>
     <span class="n">binary</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;MYB2&quot;</span>  <span class="c1"># Byte strings are not converted</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"MYB2"</span>  <span class="c1"># Byte strings are not converted</span>
 </pre></div>
 </div>
 <p>Formats will contain metadata in a separate header file can be defined using
@@ -328,24 +328,24 @@ the <a class="reference internal" href="#fileformats.core.mixin.WithSeparateHead
 
 
  <span class="k">class</span><span class="w"> </span><span class="nc">MyHeaderFormat</span><span class="p">(</span><span class="n">File</span><span class="p">):</span>
-     <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.hdr&quot;</span>
+     <span class="n">ext</span> <span class="o">=</span> <span class="s2">".hdr"</span>
 
      <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-         <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">ln</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">ln</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_contents</span><span class="o">.</span><span class="n">splitlines</span><span class="p">())</span>
+         <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">ln</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">":"</span><span class="p">)</span> <span class="k">for</span> <span class="n">ln</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_contents</span><span class="o">.</span><span class="n">splitlines</span><span class="p">())</span>
 
  <span class="k">class</span><span class="w"> </span><span class="nc">MyFormatWithHeader</span><span class="p">(</span><span class="n">WithSeparateHeader</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
-     <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.myh&quot;</span>
+     <span class="n">ext</span> <span class="o">=</span> <span class="s2">".myh"</span>
      <span class="n">header_type</span> <span class="o">=</span> <span class="n">MyHeaderFormat</span>
 </pre></div>
 </div>
 <p>The header file can be accessed from an instantiated file object via the <code class="docutils literal notranslate"><span class="pre">header</span></code>
 property. If the header format implements the <code class="docutils literal notranslate"><span class="pre">load</span></code> method, then it is assumed to
 return a dictionary containing metadata for the file-set.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">my_file</span> <span class="o">=</span> <span class="n">MyFormatWithHeader</span><span class="p">(</span><span class="s2">&quot;/path/to/a/file.myh&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">my_file</span> <span class="o">=</span> <span class="n">MyFormatWithHeader</span><span class="p">(</span><span class="s2">"/path/to/a/file.myh"</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">my_file</span><span class="o">.</span><span class="n">header</span>
-<span class="go">MyHeaderFormat(fspaths={&quot;/path/to/a/file.hdr&quot;})</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">my_file</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;experiment-id&quot;</span><span class="p">]</span>  <span class="c1"># load experiment ID from header file</span>
-<span class="go">&#39;0001&#39;</span>
+<span class="go">MyHeaderFormat(fspaths={"/path/to/a/file.hdr"})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_file</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">"experiment-id"</span><span class="p">]</span>  <span class="c1"># load experiment ID from header file</span>
+<span class="go">'0001'</span>
 </pre></div>
 </div>
 <p>Similar to <a class="reference internal" href="#fileformats.core.mixin.WithSeparateHeader" title="fileformats.core.mixin.WithSeparateHeader"><code class="xref py py-class docutils literal notranslate"><span class="pre">WithSeparateHeader</span></code></a>, <a class="reference internal" href="#fileformats.core.mixin.WithSideCars" title="fileformats.core.mixin.WithSideCars"><code class="xref py py-class docutils literal notranslate"><span class="pre">WithSideCars</span></code></a> can be used to define a format that
@@ -474,40 +474,40 @@ are included when the class is instantiated with just the primary &quot;.shp&quo
 <span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">mark</span><span class="p">,</span> <span class="n">validated_property</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">GisShapeIndex</span><span class="p">(</span><span class="n">File</span><span class="p">):</span>
-    <span class="s2">&quot;the file that indexes the geometry.&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.shx&quot;</span>
+    <span class="s2">"the file that indexes the geometry."</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".shx"</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">GisShapeFeatures</span><span class="p">(</span><span class="n">File</span><span class="p">):</span>
-    <span class="s2">&quot;the file that stores feature attributes in a tabular format&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.dbf&quot;</span>
+    <span class="s2">"the file that stores feature attributes in a tabular format"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".dbf"</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">WellKnownText</span><span class="p">(</span><span class="n">File</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;the file that contains information on projection format including the</span>
+<span class="w">    </span><span class="sd">"""the file that contains information on projection format including the</span>
 <span class="sd">    coordinate system and projection information. It is a plain text file</span>
-<span class="sd">    describing the projection using well-known text (WKT) format.&quot;&quot;&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.prj&quot;</span>
+<span class="sd">    describing the projection using well-known text (WKT) format."""</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".prj"</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">GisShapeSpatialIndexN</span><span class="p">(</span><span class="n">File</span><span class="p">):</span>
-    <span class="s2">&quot;the files that are a spatial index of the features.&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.shn&quot;</span>
+    <span class="s2">"the files that are a spatial index of the features."</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".shn"</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">GisShapeSpatialIndexB</span><span class="p">(</span><span class="n">File</span><span class="p">):</span>
-    <span class="s2">&quot;the files that are a spatial index of the features.&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.shb&quot;</span>
+    <span class="s2">"the files that are a spatial index of the features."</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".shb"</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">GisShapeGeoSpatialMetadata</span><span class="p">(</span><span class="n">Xml</span><span class="p">):</span>
-    <span class="s2">&quot;the file that is the geospatial metadata in XML format&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.shp.xml&quot;</span>
+    <span class="s2">"the file that is the geospatial metadata in XML format"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".shp.xml"</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">GisShape</span><span class="p">(</span><span class="n">WithAdjacentFiles</span><span class="p">,</span> <span class="n">File</span><span class="p">):</span>
 
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.shp&quot;</span>  <span class="c1"># the main file that will be mapped to fspath</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".shp"</span>  <span class="c1"># the main file that will be mapped to fspath</span>
 
     <span class="nd">@validated_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">index_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -547,25 +547,25 @@ even when the <code class="docutils literal notranslate"><span class="pre">trim<
 decorator. Take the <a class="reference internal" href="../reference/image.html#fileformats.image.Tiff" title="fileformats.image.Tiff"><code class="xref py py-class docutils literal notranslate"><span class="pre">fileformats.image.Tiff</span></code></a> class</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Tiff</span><span class="p">(</span><span class="n">RasterImage</span><span class="p">):</span>
 
-   <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.tiff&quot;</span>
-   <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;image/tiff&quot;</span>
+   <span class="n">ext</span> <span class="o">=</span> <span class="s2">".tiff"</span>
+   <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"image/tiff"</span>
 
-   <span class="n">magic_number_le</span> <span class="o">=</span> <span class="s2">&quot;49492A00&quot;</span>
-   <span class="n">magic_number_be</span> <span class="o">=</span> <span class="s2">&quot;4D4D002A&quot;</span>
+   <span class="n">magic_number_le</span> <span class="o">=</span> <span class="s2">"49492A00"</span>
+   <span class="n">magic_number_be</span> <span class="o">=</span> <span class="s2">"4D4D002A"</span>
 
    <span class="nd">@property</span>
    <span class="k">def</span><span class="w"> </span><span class="nf">endianness</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
       <span class="n">read_magic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_contents</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">magic_number_le</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
       <span class="k">if</span> <span class="n">read_magic</span> <span class="o">==</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">magic_number_le</span><span class="p">):</span>
-            <span class="n">endianness</span> <span class="o">=</span> <span class="s2">&quot;little&quot;</span>
+            <span class="n">endianness</span> <span class="o">=</span> <span class="s2">"little"</span>
       <span class="k">elif</span> <span class="n">read_magic</span> <span class="o">==</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">magic_number_be</span><span class="p">):</span>
-            <span class="n">endianness</span> <span class="o">=</span> <span class="s2">&quot;big&quot;</span>
+            <span class="n">endianness</span> <span class="o">=</span> <span class="s2">"big"</span>
       <span class="k">else</span><span class="p">:</span>
             <span class="n">read_magic_str</span> <span class="o">=</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">hex</span><span class="p">(</span><span class="n">read_magic</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">FormatMismatchError</span><span class="p">(</span>
-               <span class="sa">f</span><span class="s2">&quot;Magic number of file &#39;</span><span class="si">{</span><span class="n">read_magic_str</span><span class="si">}</span><span class="s2">&#39; doesn&#39;t match either the &quot;</span>
-               <span class="sa">f</span><span class="s2">&quot;little-endian &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">magic_number_le</span><span class="si">}</span><span class="s2">&#39; and big-endian &quot;</span>
-               <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">magic_number_be</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+               <span class="sa">f</span><span class="s2">"Magic number of file '</span><span class="si">{</span><span class="n">read_magic_str</span><span class="si">}</span><span class="s2">' doesn't match either the "</span>
+               <span class="sa">f</span><span class="s2">"little-endian '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">magic_number_le</span><span class="si">}</span><span class="s2">' and big-endian "</span>
+               <span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">magic_number_be</span><span class="si">}</span><span class="s2">'"</span>
             <span class="p">)</span>
       <span class="k">return</span> <span class="n">endianness</span>
 </pre></div>
@@ -657,7 +657,7 @@ files and another one for little endian files. Therefore we can't just use the
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=bc676b56"></script>
+</div><script src="../_static/documentation_options.js?v=c6d1d0b9"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

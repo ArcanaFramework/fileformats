@@ -6,7 +6,7 @@
         <link rel="prefetch" href="../../../_static/logo_small.png" as="image">
 
     <link rel="shortcut icon" href="../../../_static/favicon.png"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>fileformats.core.field - FileFormats v0.17.11</title>
+        <title>fileformats.core.field - FileFormats v0.17.12</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=beddf052" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">FileFormats v0.17.11</div></a>
+      <a href="../../../index.html"><div class="brand">FileFormats v0.17.12</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -191,7 +191,7 @@
     <img class="sidebar-logo" src="../../../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.17.11</span>
+  <span class="sidebar-brand-text">FileFormats v0.17.12</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -264,14 +264,14 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">classproperty</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">FormatMismatchError</span>
 
-<span class="n">ValueType</span> <span class="o">=</span> <span class="n">ty</span><span class="o">.</span><span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;ValueType&quot;</span><span class="p">)</span>
-<span class="n">PrimitiveType</span> <span class="o">=</span> <span class="n">ty</span><span class="o">.</span><span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;PrimitiveType&quot;</span><span class="p">)</span>
+<span class="n">ValueType</span> <span class="o">=</span> <span class="n">ty</span><span class="o">.</span><span class="n">TypeVar</span><span class="p">(</span><span class="s2">"ValueType"</span><span class="p">)</span>
+<span class="n">PrimitiveType</span> <span class="o">=</span> <span class="n">ty</span><span class="o">.</span><span class="n">TypeVar</span><span class="p">(</span><span class="s2">"PrimitiveType"</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="Field">
 <a class="viewcode-back" href="../../../api.html#fileformats.core.Field">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Field</span><span class="p">(</span><span class="n">ty</span><span class="o">.</span><span class="n">Generic</span><span class="p">[</span><span class="n">ValueType</span><span class="p">,</span> <span class="n">PrimitiveType</span><span class="p">],</span> <span class="n">DataType</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for all field formats&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Base class for all field formats"""</span>
 
     <span class="n">value</span><span class="p">:</span> <span class="n">ValueType</span>
     <span class="n">primitive</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="n">PrimitiveType</span><span class="p">]</span>
@@ -298,17 +298,17 @@
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">)"</span>
 
     <span class="nd">@classproperty</span>  <span class="c1"># type: ignore[arg-type]</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">all_fields</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="s2">&quot;Field[ty.Any, ty.Any]&quot;</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate over all field formats in fileformats.* namespaces&quot;&quot;&quot;</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="s2">"Field[ty.Any, ty.Any]"</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""Iterate over all field formats in fileformats.* namespaces"""</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">fileformats.field</span>  <span class="c1"># noqa</span>
 
         <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_all_fields</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">cls</span><span class="o">.</span><span class="n">_all_fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">Field</span><span class="o">.</span><span class="n">subclasses</span><span class="p">()</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s2">&quot;primitive&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_all_fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">Field</span><span class="o">.</span><span class="n">subclasses</span><span class="p">()</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s2">"primitive"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_all_fields</span>
 
 <div class="viewcode-block" id="Field.to_primitive">
@@ -326,15 +326,15 @@
                 <span class="nb">iter</span><span class="p">(</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">all_fields</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">primitive</span> <span class="ow">is</span> <span class="n">dtype</span><span class="p">)</span>
             <span class="p">)</span>
         <span class="k">except</span> <span class="ne">StopIteration</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">field_types_str</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">all_fields</span><span class="p">)</span>
+            <span class="n">field_types_str</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">all_fields</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">FormatMismatchError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> doesn&#39;t not correspond to a valid fileformats field type &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">field_types_str</span><span class="si">}</span><span class="s2">)&quot;</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> doesn't not correspond to a valid fileformats field type "</span>
+                <span class="sa">f</span><span class="s2">"(</span><span class="si">{</span><span class="n">field_types_str</span><span class="si">}</span><span class="s2">)"</span>
             <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
         <span class="k">return</span> <span class="n">datatype</span></div>
 
 
-    <span class="n">_all_fields</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="s2">&quot;Field[ty.Any, ty.Any]&quot;</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_all_fields</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">Type</span><span class="p">[</span><span class="s2">"Field[ty.Any, ty.Any]"</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="nb">type</span><span class="p">:</span> <span class="nb">type</span>  <span class="c1"># Put this at the bottom to avoid name clash with built-in type</span></div>
 
 </pre></div>
@@ -369,7 +369,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=bc676b56"></script>
+</div><script src="../../../_static/documentation_options.js?v=c6d1d0b9"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>

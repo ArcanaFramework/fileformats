@@ -6,7 +6,7 @@
         <link rel="prefetch" href="../../../_static/logo_small.png" as="image">
 
     <link rel="shortcut icon" href="../../../_static/favicon.png"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>fileformats.text.unicode - FileFormats v0.17.11</title>
+        <title>fileformats.text.unicode - FileFormats v0.17.12</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=beddf052" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">FileFormats v0.17.11</div></a>
+      <a href="../../../index.html"><div class="brand">FileFormats v0.17.12</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -191,7 +191,7 @@
     <img class="sidebar-logo" src="../../../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.17.11</span>
+  <span class="sidebar-brand-text">FileFormats v0.17.12</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -265,104 +265,104 @@
 <div class="viewcode-block" id="Plain">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.Plain">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Plain</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/plain&quot;</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/plain"</span></div>
 
 
 
 <div class="viewcode-block" id="TextFile">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.TextFile">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TextFile</span><span class="p">(</span><span class="n">Plain</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.txt&quot;</span></div>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".txt"</span></div>
 
 
 
 <div class="viewcode-block" id="Csv">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.Csv">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Csv</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.csv&quot;</span>
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/csv&quot;</span></div>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".csv"</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/csv"</span></div>
 
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">Tsv</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.tsv&quot;</span>
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/tab-separated-values&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".tsv"</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/tab-separated-values"</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">Html</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.html&quot;</span>
-    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.htm&quot;</span><span class="p">,)</span>
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/html&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".html"</span>
+    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">".htm"</span><span class="p">,)</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/html"</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">Markdown</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/markdown&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.md&quot;</span>
-    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.markdown&quot;</span><span class="p">,)</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/markdown"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".md"</span>
+    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">".markdown"</span><span class="p">,)</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">RestructedText</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.rst&quot;</span>
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/x-rst&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".rst"</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/x-rst"</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">_1dInterleavedParityfec</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/1d-interleaved-parityfec&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/1d-interleaved-parityfec"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">Calendar</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;This media type is designed</span>
+<span class="w">    </span><span class="sd">"""This media type is designed</span>
 <span class="sd">    for widespread use by Internet calendaring and scheduling</span>
 <span class="sd">    applications.  In addition, applications in the workflow and</span>
 <span class="sd">    document management area might find this content-type applicable.</span>
 <span class="sd">    The iTIP [2446bis], iMIP [2447bis], and CalDAV [RFC4791] Internet</span>
-<span class="sd">    protocols directly use this media type also.&quot;&quot;&quot;</span>
+<span class="sd">    protocols directly use this media type also."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/calendar&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.ics&quot;</span>
-    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.ifb&quot;</span><span class="p">,)</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/calendar"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".ics"</span>
+    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">".ifb"</span><span class="p">,)</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">Cql</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/cql&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.CQL&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/cql"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".CQL"</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">CqlExpression</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/cql-expression&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/cql-expression"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">CqlIdentifier</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/cql-identifier&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/cql-identifier"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span>
 
 
 <div class="viewcode-block" id="Css">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.Css">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Css</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/css&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.css&quot;</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/css"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".css"</span></div>
 
 
 
 <div class="viewcode-block" id="CsvSchema">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.CsvSchema">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CsvSchema</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/csv-schema&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/csv-schema"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -370,20 +370,20 @@
 <div class="viewcode-block" id="Dns">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.Dns">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Dns</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;DNS-related software, including software storing and using certificates stored in DNS.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""DNS-related software, including software storing and using certificates stored in DNS."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/dns&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.soa&quot;</span>
-    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.zone&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/dns"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".soa"</span>
+    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">".zone"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="Encaprtp">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.Encaprtp">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Encaprtp</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/encaprtp&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/encaprtp"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -391,9 +391,9 @@
 <div class="viewcode-block" id="Fhirpath">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.Fhirpath">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Fhirpath</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/fhirpath&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/fhirpath"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -401,9 +401,9 @@
 <div class="viewcode-block" id="Flexfec">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.Flexfec">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Flexfec</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Multimedia applications that want to improve resiliency against packet loss by sending redundant data in addition to the source media.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Multimedia applications that want to improve resiliency against packet loss by sending redundant data in addition to the source media."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/flexfec&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/flexfec"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -411,12 +411,12 @@
 <div class="viewcode-block" id="Fwdred">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.Fwdred">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Fwdred</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;It is expected that real-time audio/video, text streaming, and</span>
+<span class="w">    </span><span class="sd">"""It is expected that real-time audio/video, text streaming, and</span>
 <span class="sd">    conferencing tools/applications that want protection against</span>
 <span class="sd">    losses of a large number of consecutive frames will be interested</span>
-<span class="sd">    in using this type.&quot;&quot;&quot;</span>
+<span class="sd">    in using this type."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/fwdred&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/fwdred"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -424,24 +424,24 @@
 <div class="viewcode-block" id="Gff3">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.Gff3">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Gff3</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 
 <span class="sd">    TODO: Although no byte sequences can be counted on</span>
 <span class="sd">    to always be present, GFF3 data in ASCII-compatible character</span>
 <span class="sd">    sets (including UTF-8) often begin with hexadecimal 23 23 67 66</span>
-<span class="sd">    66 2d 76 65 72 73 69 6f 6e 20 33 (&quot;##gff-version 3&quot;).&quot;&quot;&quot;</span>
+<span class="sd">    66 2d 76 65 72 73 69 6f 6e 20 33 ("##gff-version 3")."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/gff3&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.gff3&quot;</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/gff3"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".gff3"</span></div>
 
 
 
 <div class="viewcode-block" id="GrammarRefList">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.GrammarRefList">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">GrammarRefList</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;MRCPv2 clients and servers&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""MRCPv2 clients and servers"""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/grammar-ref-list&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/grammar-ref-list"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -449,9 +449,9 @@
 <div class="viewcode-block" id="Hl7v2">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.Hl7v2">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Hl7v2</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/hl7v2&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/hl7v2"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -459,56 +459,56 @@
 <div class="viewcode-block" id="Javascript">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.Javascript">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Javascript</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Script interpreters as</span>
-<span class="sd">    discussed in RFC 9239.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Script interpreters as</span>
+<span class="sd">    discussed in RFC 9239."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/javascript&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.js&quot;</span>
-    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.mjs&quot;</span><span class="p">,)</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/javascript"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".js"</span>
+    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">".mjs"</span><span class="p">,)</span></div>
 
 
 
 <div class="viewcode-block" id="JcrCnd">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.JcrCnd">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">JcrCnd</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Used by content repositories that implement the Content Repository For Java API (JCR)&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Used by content repositories that implement the Content Repository For Java API (JCR)"""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/jcr-cnd&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.cnd&quot;</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/jcr-cnd"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".cnd"</span></div>
 
 
 
 <div class="viewcode-block" id="Mizar">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.Mizar">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Mizar</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/mizar&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.miz&quot;</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/mizar"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".miz"</span></div>
 
 
 
 <div class="viewcode-block" id="N3">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.N3">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">N3</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 
-<span class="sd">    TODO: Notation3 documents may have the strings &#39;@prefix&#39; or &#39;@base&#39; (case dependent) near the</span>
-<span class="sd">    beginning of the document.&quot;&quot;&quot;</span>
+<span class="sd">    TODO: Notation3 documents may have the strings '@prefix' or '@base' (case dependent) near the</span>
+<span class="sd">    beginning of the document."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/n3&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.n3&quot;</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/n3"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".n3"</span></div>
 
 
 
 <div class="viewcode-block" id="Parameters">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.Parameters">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Parameters</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Applications that use RTSP</span>
+<span class="w">    </span><span class="sd">"""Applications that use RTSP</span>
 <span class="sd">    and have additional parameters they like to read and set using the</span>
-<span class="sd">    RTSP GET_PARAMETER and SET_PARAMETER methods.&quot;&quot;&quot;</span>
+<span class="sd">    RTSP GET_PARAMETER and SET_PARAMETER methods."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/parameters&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/parameters"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -516,9 +516,9 @@
 <div class="viewcode-block" id="Parityfec">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.Parityfec">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Parityfec</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/parityfec&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/parityfec"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -526,37 +526,37 @@
 <div class="viewcode-block" id="ProvenanceNotation">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.ProvenanceNotation">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ProvenanceNotation</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 
-<span class="sd">    TODO: PROV-N documents may have the strings &#39;document&#39; near the beginning of the document.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    TODO: PROV-N documents may have the strings 'document' near the beginning of the document.</span>
+<span class="sd">    """</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/provenance-notation&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.provn&quot;</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/provenance-notation"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".provn"</span></div>
 
 
 
 <div class="viewcode-block" id="Prs_Fallenstein_Rst">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.Prs_Fallenstein_Rst">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Prs_Fallenstein_Rst</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/prs.fallenstein.rst&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.txt&quot;</span>
-    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.rst&quot;</span><span class="p">,)</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/prs.fallenstein.rst"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".txt"</span>
+    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">".rst"</span><span class="p">,)</span></div>
 
 
 
 <div class="viewcode-block" id="Prs_Lines_Tag">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.Prs_Lines_Tag">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Prs_Lines_Tag</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 
 <span class="sd">    TODO: All tag data streams start Tag-xxx-version - where xxx is the particular tag type.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/prs.lines.tag&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.tag&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/prs.lines.tag"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".tag"</span>
     <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span><span class="p">,)</span></div>
 
 
@@ -564,19 +564,19 @@
 <div class="viewcode-block" id="Prs_Prop_Logic">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.Prs_Prop_Logic">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Prs_Prop_Logic</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/prs.prop.logic&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.txt&quot;</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/prs.prop.logic"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".txt"</span></div>
 
 
 
 <div class="viewcode-block" id="Raptorfec">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.Raptorfec">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Raptorfec</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Real-time multimedia applications like video streaming, audio streaming, and video conferencing.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Real-time multimedia applications like video streaming, audio streaming, and video conferencing."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/raptorfec&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/raptorfec"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -584,36 +584,36 @@
 <div class="viewcode-block" id="Red">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.Red">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Red</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/RED&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/RED"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">Rfc822Headers</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/rfc822-headers&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/rfc822-headers"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span>
 
 
 <div class="viewcode-block" id="RichText">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.RichText">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RichText</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/rtf&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.rtf&quot;</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/rtf"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".rtf"</span></div>
 
 
 
 <div class="viewcode-block" id="RtpEncAescm128">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.RtpEncAescm128">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RtpEncAescm128</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/rtp-enc-aescm128&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/rtp-enc-aescm128"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -621,9 +621,9 @@
 <div class="viewcode-block" id="Rtploopback">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.Rtploopback">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Rtploopback</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/rtploopback&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/rtploopback"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -631,9 +631,9 @@
 <div class="viewcode-block" id="Rtx">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.Rtx">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Rtx</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/rtx&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/rtx"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -641,9 +641,9 @@
 <div class="viewcode-block" id="Sgml">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.Sgml">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Sgml</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/SGML&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/SGML"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -651,48 +651,48 @@
 <div class="viewcode-block" id="Shaclc">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.Shaclc">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Shaclc</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;An implementations of SHACLC</span>
+<span class="w">    </span><span class="sd">"""An implementations of SHACLC</span>
 <span class="sd">    is part of the TopQuadrant SHACL API</span>
 
 <span class="sd">    TODO: SHACLC documents will likely have the words</span>
 <span class="sd">    PREFIX or BASE (case sensitive) near the beginning of the</span>
 <span class="sd">    document. However, the same words may appear in Turtle and</span>
-<span class="sd">    SPARQL documents.&quot;&quot;&quot;</span>
+<span class="sd">    SPARQL documents."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/shaclc&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.shaclc&quot;</span>
-    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.shc&quot;</span><span class="p">,)</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/shaclc"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".shaclc"</span>
+    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">".shc"</span><span class="p">,)</span></div>
 
 
 
 <div class="viewcode-block" id="Shex">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.Shex">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Shex</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/shex&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.shex&quot;</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/shex"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".shex"</span></div>
 
 
 
 <div class="viewcode-block" id="Spdx">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.Spdx">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Spdx</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The &quot;charset&quot; parameter is not used for the</span>
+<span class="w">    </span><span class="sd">"""The "charset" parameter is not used for the</span>
 <span class="sd">    defined subtype because the charset information is transported</span>
-<span class="sd">    inside the payload.&quot;&quot;&quot;</span>
+<span class="sd">    inside the payload."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/spdx&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.spdx&quot;</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/spdx"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".spdx"</span></div>
 
 
 
 <div class="viewcode-block" id="Strings">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.Strings">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Strings</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/strings&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/strings"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -700,10 +700,10 @@
 <div class="viewcode-block" id="T140">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.T140">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">T140</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;This type is only defined for transfer via</span>
-<span class="sd">    RTP.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""This type is only defined for transfer via</span>
+<span class="sd">    RTP."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/t140&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/t140"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -711,9 +711,9 @@
 <div class="viewcode-block" id="Troff">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.Troff">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Troff</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/troff&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/troff"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -721,22 +721,22 @@
 <div class="viewcode-block" id="Turtle">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.Turtle">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Turtle</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 
-<span class="sd">    TODO: Turtle documents may have the strings &#39;@prefix&#39; or &#39;@base&#39; (case dependent) near the</span>
-<span class="sd">    beginning of the document.&quot;&quot;&quot;</span>
+<span class="sd">    TODO: Turtle documents may have the strings '@prefix' or '@base' (case dependent) near the</span>
+<span class="sd">    beginning of the document."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/turtle&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.ttl&quot;</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/turtle"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".ttl"</span></div>
 
 
 
 <div class="viewcode-block" id="Ulpfec">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.Ulpfec">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Ulpfec</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Multimedia applications that seek to improve resiliency to loss by sending additional data with the media stream.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Multimedia applications that seek to improve resiliency to loss by sending additional data with the media stream."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/ulpfec&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/ulpfec"</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -744,61 +744,61 @@
 <div class="viewcode-block" id="UriList">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.UriList">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">UriList</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/uri-list&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.uris&quot;</span>
-    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.uri&quot;</span><span class="p">,)</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/uri-list"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".uris"</span>
+    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">".uri"</span><span class="p">,)</span></div>
 
 
 
 <div class="viewcode-block" id="Vcard">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.Vcard">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Vcard</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;They are numerous, diverse,</span>
+<span class="w">    </span><span class="sd">"""They are numerous, diverse,</span>
 <span class="sd">    and include mail user agents, instant messaging clients, address</span>
 <span class="sd">    book applications, directory servers, and customer relationship</span>
-<span class="sd">    management software.&quot;&quot;&quot;</span>
+<span class="sd">    management software."""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/vcard&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.vcf&quot;</span>
-    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.vcard&quot;</span><span class="p">,)</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/vcard"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".vcf"</span>
+    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">".vcard"</span><span class="p">,)</span></div>
 
 
 
 <div class="viewcode-block" id="Vtt">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.Vtt">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Vtt</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Web browsers and other video</span>
+<span class="w">    </span><span class="sd">"""Web browsers and other video</span>
 <span class="sd">    players.</span>
 
-<span class="sd">    TODO: WebVTT files all begin with one of the following byte sequences (where &quot;EOF&quot; means the end of the file):</span>
+<span class="sd">    TODO: WebVTT files all begin with one of the following byte sequences (where "EOF" means the end of the file):</span>
 <span class="sd">    EF BB BF 57 45 42 56 54 54 0A EF BB BF 57 45 42 56 54 54 0D EF BB BF 57 45 42 56 54 54 20 EF BB BF 57 45 42 56 54 54 09 EF BB BF 57 45 42 56 54 54 EOF 57 45 42 56 54 54 0A 57 45 42 56 54 54 0D 57 45 42 56 54 54 20 57 45 42 56 54 54 09 57 45 42 56 54 54 EOF</span>
-<span class="sd">    (An optional UTF-8 BOM, the ASCII string &quot;WEBVTT&quot;, and finally a space, tab, line break, or the end of the file.)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    (An optional UTF-8 BOM, the ASCII string "WEBVTT", and finally a space, tab, line break, or the end of the file.)</span>
+<span class="sd">    """</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/vtt&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.vtt&quot;</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/vtt"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".vtt"</span></div>
 
 
 
 <div class="viewcode-block" id="Wgsl">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.Wgsl">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Wgsl</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/wgsl&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.wgsl&quot;</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/wgsl"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".wgsl"</span></div>
 
 
 
 <div class="viewcode-block" id="XmlExternalParsedEntity">
 <a class="viewcode-back" href="../../../reference/text.html#fileformats.application.XmlExternalParsedEntity">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">XmlExternalParsedEntity</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">UnicodeFile</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""""""</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;text/xml-external-parsed-entity&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.ent&quot;</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"text/xml-external-parsed-entity"</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".ent"</span>
     <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span><span class="p">,)</span></div>
 
 </pre></div>
@@ -833,7 +833,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=bc676b56"></script>
+</div><script src="../../../_static/documentation_options.js?v=c6d1d0b9"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>

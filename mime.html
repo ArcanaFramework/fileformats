@@ -7,7 +7,7 @@
         <link rel="prefetch" href="_static/logo_small.png" as="image">
 
     <link rel="shortcut icon" href="_static/favicon.png"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>MIME types - FileFormats v0.17.11</title>
+        <title>MIME types - FileFormats v0.17.12</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=beddf052" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -168,7 +168,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">FileFormats v0.17.11</div></a>
+      <a href="index.html"><div class="brand">FileFormats v0.17.12</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -192,7 +192,7 @@
     <img class="sidebar-logo" src="_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.17.11</span>
+  <span class="sidebar-brand-text">FileFormats v0.17.12</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -279,9 +279,9 @@ by the , e.g.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">to_mime</span><span class="p">,</span> <span class="n">from_mime</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.application</span><span class="w"> </span><span class="kn">import</span> <span class="n">MswordX</span>
 
-<span class="n">Loaded</span> <span class="o">=</span> <span class="n">from_mime</span><span class="p">(</span><span class="s2">&quot;application/vnd.openxmlformats-officedocument.wordprocessingml.document&quot;</span><span class="p">)</span>
+<span class="n">Loaded</span> <span class="o">=</span> <span class="n">from_mime</span><span class="p">(</span><span class="s2">"application/vnd.openxmlformats-officedocument.wordprocessingml.document"</span><span class="p">)</span>
 <span class="k">assert</span> <span class="n">Loaded</span> <span class="ow">is</span> <span class="n">MswordX</span>
-<span class="k">assert</span> <span class="n">Loaded</span><span class="o">.</span><span class="n">mime_type</span> <span class="o">==</span> <span class="s2">&quot;application/vnd.openxmlformats-officedocument.wordprocessingml.document&quot;</span>
+<span class="k">assert</span> <span class="n">Loaded</span><span class="o">.</span><span class="n">mime_type</span> <span class="o">==</span> <span class="s2">"application/vnd.openxmlformats-officedocument.wordprocessingml.document"</span>
 </pre></div>
 </div>
 <p>Extension formats (see <a class="reference internal" href="index.html#extensions-and-extras"><span class="std std-ref">Extensions and Extras</span></a>) that don't define an
@@ -291,7 +291,7 @@ is the name of the format class converted from &quot;PascalCase&quot; to &quot;k
 single underscores in the class name converted to &quot;.&quot; and a double underscores
 converted to &quot;+&quot; (there should be only one), e.g.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Nifti__Gzip_Json</span><span class="o">.</span><span class="n">mime_type</span>
-<span class="go">&quot;application/x-nifti+gzip.json&quot;</span>
+<span class="go">"application/x-nifti+gzip.json"</span>
 </pre></div>
 </div>
 <p>Note that if there are two file-formats with the same class name in different sub-packages
@@ -316,9 +316,9 @@ readability). This is dubbed the &quot;MIME-like&quot; string, and is accessed v
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.datascience</span><span class="w"> </span><span class="kn">import</span> <span class="n">Hdf5</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.medimage</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nifti1</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Hdf5</span><span class="o">.</span><span class="n">mime_like</span>
-<span class="go">&quot;datascience/hdf5&quot;</span>
+<span class="go">"datascience/hdf5"</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Nifti1</span><span class="o">.</span><span class="n">mime_like</span>
-<span class="go">&quot;medimage/nifti1&quot;</span>
+<span class="go">"medimage/nifti1"</span>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">from_mime</span></code> function will resolve both official MIME-type and MIME-like
@@ -328,12 +328,12 @@ strings, so it is possible to roundtrip from both.</p>
 
 <span class="c1"># Using official-style MIME string</span>
 <span class="n">mime_type</span> <span class="o">=</span> <span class="n">DicomSeries</span><span class="o">.</span><span class="n">mime_type</span>
-<span class="k">assert</span> <span class="n">mime_type</span> <span class="o">==</span> <span class="s2">&quot;application/x-dicom-series&quot;</span>
+<span class="k">assert</span> <span class="n">mime_type</span> <span class="o">==</span> <span class="s2">"application/x-dicom-series"</span>
 <span class="k">assert</span> <span class="n">from_mime</span><span class="p">(</span><span class="n">mime_type</span><span class="p">)</span> <span class="ow">is</span> <span class="n">DicomSeries</span>
 
 <span class="c1"># Using MIME-like string</span>
 <span class="n">mimelike_type</span> <span class="o">=</span> <span class="n">DicomSeries</span><span class="o">.</span><span class="n">mime_like</span>
-<span class="k">assert</span> <span class="n">mimelike_type</span> <span class="o">==</span> <span class="s2">&quot;medimage/dicom-series&quot;</span>
+<span class="k">assert</span> <span class="n">mimelike_type</span> <span class="o">==</span> <span class="s2">"medimage/dicom-series"</span>
 <span class="k">assert</span> <span class="n">from_mime</span><span class="p">(</span><span class="n">mimelike_type</span><span class="p">)</span> <span class="ow">is</span> <span class="n">DicomSeries</span>
 </pre></div>
 </div>
@@ -409,7 +409,7 @@ strings, so it is possible to roundtrip from both.</p>
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=bc676b56"></script>
+</div><script src="_static/documentation_options.js?v=c6d1d0b9"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/scripts/furo.js?v=46bd48cc"></script>

@@ -6,7 +6,7 @@
         <link rel="prefetch" href="../../../_static/logo_small.png" as="image">
 
     <link rel="shortcut icon" href="../../../_static/favicon.png"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>fileformats.application.document - FileFormats v0.17.11</title>
+        <title>fileformats.application.document - FileFormats v0.17.12</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=beddf052" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">FileFormats v0.17.11</div></a>
+      <a href="../../../index.html"><div class="brand">FileFormats v0.17.12</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -191,7 +191,7 @@
     <img class="sidebar-logo" src="../../../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.17.11</span>
+  <span class="sidebar-brand-text">FileFormats v0.17.12</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -272,35 +272,35 @@
 <div class="viewcode-block" id="Pdf">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Pdf">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Pdf</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Document</span><span class="p">):</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.pdf&quot;</span>
-    <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;%PDF-&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".pdf"</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"%PDF-"</span>
     <span class="n">binary</span> <span class="o">=</span> <span class="kc">True</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;application/pdf&quot;</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"application/pdf"</span></div>
 
 
 
 <div class="viewcode-block" id="Msword">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Msword">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Msword</span><span class="p">(</span><span class="n">Document</span><span class="p">):</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.doc&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".doc"</span>
     <span class="n">binary</span> <span class="o">=</span> <span class="kc">True</span>
 
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;application/msword&quot;</span></div>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"application/msword"</span></div>
 
 
 
 <div class="viewcode-block" id="Postscript">
 <a class="viewcode-back" href="../../../reference/application.html#fileformats.application.Postscript">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Postscript</span><span class="p">(</span><span class="n">WithMagicNumber</span><span class="p">,</span> <span class="n">Document</span><span class="p">):</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.eps&quot;</span>
-    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.ps&quot;</span><span class="p">,)</span>
-    <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;%!&quot;</span>
-    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">&quot;application/postscript&quot;</span></div>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">".eps"</span>
+    <span class="n">alternate_exts</span> <span class="o">=</span> <span class="p">(</span><span class="s2">".ps"</span><span class="p">,)</span>
+    <span class="n">magic_number</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"%!"</span>
+    <span class="n">iana_mime</span> <span class="o">=</span> <span class="s2">"application/postscript"</span></div>
 
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Document&quot;</span><span class="p">,</span> <span class="s2">&quot;Pdf&quot;</span><span class="p">,</span> <span class="s2">&quot;Msword&quot;</span><span class="p">,</span> <span class="s2">&quot;Postscript&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Document"</span><span class="p">,</span> <span class="s2">"Pdf"</span><span class="p">,</span> <span class="s2">"Msword"</span><span class="p">,</span> <span class="s2">"Postscript"</span><span class="p">]</span>
 </pre></div>
         </article>
       </div>
@@ -333,7 +333,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=bc676b56"></script>
+</div><script src="../../../_static/documentation_options.js?v=c6d1d0b9"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>

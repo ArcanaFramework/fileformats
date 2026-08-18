@@ -6,7 +6,7 @@
         <link rel="prefetch" href="../../../_static/logo_small.png" as="image">
 
     <link rel="shortcut icon" href="../../../_static/favicon.png"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>fileformats.generic.fsobject - FileFormats v0.17.11</title>
+        <title>fileformats.generic.fsobject - FileFormats v0.17.12</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=beddf052" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">FileFormats v0.17.11</div></a>
+      <a href="../../../index.html"><div class="brand">FileFormats v0.17.12</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -191,7 +191,7 @@
     <img class="sidebar-logo" src="../../../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.17.11</span>
+  <span class="sidebar-brand-text">FileFormats v0.17.12</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -269,43 +269,43 @@
 <div class="viewcode-block" id="FsObject">
 <a class="viewcode-back" href="../../../api.html#fileformats.generic.FsObject">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FsObject</span><span class="p">(</span><span class="n">FileSet</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">):</span>  <span class="c1"># type: ignore</span>
-    <span class="s2">&quot;Generic file-system object, can be either a file or a directory&quot;</span>
+    <span class="s2">"Generic file-system object, can be either a file or a directory"</span>
 
     <span class="nd">@validated_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">fspath</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fspaths</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">fspaths</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fspaths</span><span class="p">]</span>
             <span class="k">raise</span> <span class="n">FormatMismatchError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;More than one fspath (</span><span class="si">{</span><span class="n">fspaths</span><span class="si">}</span><span class="s2">) provided to FsObject, &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;primary path is ambiguous&quot;</span>
+                <span class="sa">f</span><span class="s2">"More than one fspath (</span><span class="si">{</span><span class="n">fspaths</span><span class="si">}</span><span class="s2">) provided to FsObject, "</span>
+                <span class="sa">f</span><span class="s2">"primary path is ambiguous"</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fspaths</span><span class="p">))</span>
 
 <div class="viewcode-block" id="FsObject.__str__">
 <a class="viewcode-back" href="../../../api.html#fileformats.generic.FsObject.__str__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Renders the file path as a string so it can be used in templating e.g.</span>
-<span class="sd">        ``f&#39;cp {fs_object} /tmp&#39;``</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Renders the file path as a string so it can be used in templating e.g.</span>
+<span class="sd">        ``f'cp {fs_object} /tmp'``</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fspath</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="FsObject.__fspath__">
 <a class="viewcode-back" href="../../../api.html#fileformats.generic.FsObject.__fspath__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">__fspath__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Render to string, so can be treated as any other file-system path, i.e. passed</span>
-<span class="sd">        to functions like file &#39;open&#39;&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Render to string, so can be treated as any other file-system path, i.e. passed</span>
+<span class="sd">        to functions like file 'open'"""</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">stem</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fspath</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fspath</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
 
     <span class="nd">@classproperty</span>  <span class="c1"># type: ignore[arg-type]</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">unconstrained</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Whether the file-format is unconstrained by extension, magic number or another</span>
-<span class="sd">        constraint&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Whether the file-format is unconstrained by extension, magic number or another</span>
+<span class="sd">        constraint"""</span>
         <span class="c1"># We have to subtract `fspath` from required properties as we defined unconstrained</span>
         <span class="c1"># file-sets as ones that have more constraints than simply existing</span>
         <span class="k">return</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">validated_properties</span><span class="p">()))</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
@@ -339,7 +339,7 @@
 <div class="viewcode-block" id="FsObject.group">
 <a class="viewcode-back" href="../../../api.html#fileformats.generic.FsObject.group">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">group</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;win32&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">"win32"</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fspath</span><span class="o">.</span><span class="n">group</span><span class="p">()</span></div>
 
@@ -363,7 +363,7 @@
 <div class="viewcode-block" id="FsObject.owner">
 <a class="viewcode-back" href="../../../api.html#fileformats.generic.FsObject.owner">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">owner</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;win32&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">"win32"</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fspath</span><span class="o">.</span><span class="n">owner</span><span class="p">()</span></div>
 
@@ -422,7 +422,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=bc676b56"></script>
+</div><script src="../../../_static/documentation_options.js?v=c6d1d0b9"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>

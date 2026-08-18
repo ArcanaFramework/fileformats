@@ -6,7 +6,7 @@
         <link rel="prefetch" href="../../../_static/logo_small.png" as="image">
 
     <link rel="shortcut icon" href="../../../_static/favicon.png"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>fileformats.generic.file - FileFormats v0.17.11</title>
+        <title>fileformats.generic.file - FileFormats v0.17.12</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=beddf052" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">FileFormats v0.17.11</div></a>
+      <a href="../../../index.html"><div class="brand">FileFormats v0.17.12</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -191,7 +191,7 @@
     <img class="sidebar-logo" src="../../../_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.17.11</span>
+  <span class="sidebar-brand-text">FileFormats v0.17.12</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -277,28 +277,28 @@
 <div class="viewcode-block" id="File">
 <a class="viewcode-back" href="../../../api.html#fileformats.generic.File">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">File</span><span class="p">(</span><span class="n">FsObject</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generic file type&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Generic file type"""</span>
 
     <span class="nd">@validated_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">fspath</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
         <span class="n">fspath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">select_by_ext</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">fspath</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">FormatMismatchError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;No paths in </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fspaths</span><span class="p">)</span><span class="si">}</span><span class="s2">) &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;match extension </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ext</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"No paths in </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fspaths</span><span class="p">)</span><span class="si">}</span><span class="s2">) "</span>
+                <span class="sa">f</span><span class="s2">"match extension </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ext</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="n">fspath</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
             <span class="c1"># fspath is guaranteed to exist</span>
             <span class="k">raise</span> <span class="n">FormatMismatchError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;Path that matches extension of </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s1">, &quot;</span><span class="si">{</span><span class="n">fspath</span><span class="si">}</span><span class="s1">&quot;, &#39;</span>
-                <span class="sa">f</span><span class="s2">&quot;is a directory not a file&quot;</span>
+                <span class="sa">f</span><span class="s1">'Path that matches extension of </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s1">, "</span><span class="si">{</span><span class="n">fspath</span><span class="si">}</span><span class="s1">", '</span>
+                <span class="sa">f</span><span class="s2">"is a directory not a file"</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">fspath</span>
 
     <span class="nd">@classproperty</span>  <span class="c1"># type: ignore[arg-type]</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">unconstrained</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Whether the file-format is unconstrained by extension, magic number or another</span>
-<span class="sd">        constraint&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Whether the file-format is unconstrained by extension, magic number or another</span>
+<span class="sd">        constraint"""</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">unconstrained</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">ext</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="kc">None</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">alternate_exts</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">is_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -314,8 +314,8 @@
         <span class="n">new_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
         <span class="n">decomposition_mode</span><span class="p">:</span> <span class="n">FileSet</span><span class="o">.</span><span class="n">ExtensionDecomposition</span> <span class="o">=</span> <span class="n">FileSet</span><span class="o">.</span><span class="n">ExtensionDecomposition</span><span class="o">.</span><span class="n">none</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Copy extension from the old path to the new path, ensuring that all</span>
-<span class="sd">        of the extension is used (e.g. &#39;my.gz&#39; instead of &#39;gz&#39;)</span>
+<span class="w">        </span><span class="sd">"""Copy extension from the old path to the new path, ensuring that all</span>
+<span class="sd">        of the extension is used (e.g. 'my.gz' instead of 'gz')</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -324,18 +324,18 @@
 <span class="sd">        new_path: Path or str</span>
 <span class="sd">            The path to append the extension to</span>
 <span class="sd">        decomposition_mode : FileSet.ExtensionDecomposition, optional</span>
-<span class="sd">            if the file doesn&#39;t have an explicit extension, how to interpret &quot;.&quot; within</span>
+<span class="sd">            if the file doesn't have an explicit extension, how to interpret "." within</span>
 <span class="sd">            the filename</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        Path</span>
 <span class="sd">            The new path with the copied extension</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">matching_exts</span><span class="p">([</span><span class="n">old_path</span><span class="p">],</span> <span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">ext</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="n">FormatMismatchError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Extension of old path (&#39;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">old_path</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;) does not match that &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;of file, &#39;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">ext</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+                <span class="sa">f</span><span class="s2">"Extension of old path ('</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">old_path</span><span class="p">)</span><span class="si">}</span><span class="s2">') does not match that "</span>
+                <span class="sa">f</span><span class="s2">"of file, '</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">ext</span><span class="si">}</span><span class="s2">'"</span>
             <span class="p">)</span>
         <span class="n">suffix</span> <span class="o">=</span> <span class="p">(</span>
             <span class="bp">cls</span><span class="o">.</span><span class="n">ext</span>
@@ -352,13 +352,13 @@
 <a class="viewcode-back" href="../../../api.html#fileformats.generic.File.open">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">open</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span>
+        <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"r"</span><span class="p">,</span>
         <span class="n">buffering</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">encoding</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">errors</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">newline</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">ty</span><span class="o">.</span><span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">ty</span><span class="o">.</span><span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Open a I/O stream to the file&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Open a I/O stream to the file"""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fspath</span><span class="o">.</span><span class="n">open</span><span class="p">(</span>
             <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
             <span class="n">buffering</span><span class="o">=</span><span class="n">buffering</span><span class="p">,</span>
@@ -373,7 +373,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">read_contents</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">]:</span>
-        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;rb&quot;</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;binary&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">"rb"</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"binary"</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span> <span class="k">else</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">offset</span><span class="p">:</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">SEEK_SET</span> <span class="k">if</span> <span class="n">offset</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">io</span><span class="o">.</span><span class="n">SEEK_END</span><span class="p">))</span>
             <span class="n">contents</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">size</span><span class="p">)</span> <span class="k">if</span> <span class="n">size</span> <span class="k">else</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
@@ -382,16 +382,16 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">actual_ext</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="s2">&quot;The actual file extension (out of the primary  and alternate extensions possible)&quot;</span>
+        <span class="s2">"The actual file extension (out of the primary  and alternate extensions possible)"</span>
         <span class="n">constrained_exts</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">possible_exts</span> <span class="k">if</span> <span class="n">e</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="p">]</span>  <span class="c1"># strip out unconstrained</span>
         <span class="n">matching</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">constrained_exts</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fspath</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">e</span><span class="p">)]</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">matching</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">UnconstrainedExtensionException</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Cannot determine actual extension of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fspath</span><span class="si">}</span><span class="s2">, as it doesn&#39;t &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;match any of the defined extensions </span><span class="si">{</span><span class="n">constrained_exts</span><span class="si">}</span><span class="s2"> &quot;</span>
-                <span class="s2">&quot;(i.e. matches the None extension)&quot;</span>
+                <span class="sa">f</span><span class="s2">"Cannot determine actual extension of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fspath</span><span class="si">}</span><span class="s2">, as it doesn't "</span>
+                <span class="sa">f</span><span class="s2">"match any of the defined extensions </span><span class="si">{</span><span class="n">constrained_exts</span><span class="si">}</span><span class="s2"> "</span>
+                <span class="s2">"(i.e. matches the None extension)"</span>
             <span class="p">)</span>
         <span class="c1"># Return the longest matching extension, useful for optional extensions</span>
         <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">matching</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="nb">len</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># type: ignore[no-any-return]</span>
@@ -422,17 +422,17 @@
 <a class="viewcode-back" href="../../../api.html#fileformats.generic.UnicodeFile.open">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">open</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span>
+        <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"r"</span><span class="p">,</span>
         <span class="n">buffering</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">encoding</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">errors</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">newline</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Open a I/O stream to the file&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">mode</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;b&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Open a I/O stream to the file"""</span>
+        <span class="k">if</span> <span class="n">mode</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"b"</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Cannot open text file with binary mode &#39;</span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">&#39;. If you need to do this &quot;</span>
-                <span class="s2">&quot;access the underlying path directly, e.g. my_file.fspath.open(mode=&#39;rb&#39;)&quot;</span>
+                <span class="sa">f</span><span class="s2">"Cannot open text file with binary mode '</span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">'. If you need to do this "</span>
+                <span class="s2">"access the underlying path directly, e.g. my_file.fspath.open(mode='rb')"</span>
             <span class="p">)</span>
         <span class="n">io</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">open</span><span class="p">(</span>  <span class="c1"># type: ignore[assignment]</span>
             <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
@@ -476,15 +476,15 @@
 <a class="viewcode-back" href="../../../api.html#fileformats.generic.BinaryFile.open">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">open</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span>
+        <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"r"</span><span class="p">,</span>
         <span class="n">buffering</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">encoding</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">errors</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">newline</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ty</span><span class="o">.</span><span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Open a I/O stream to the file&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">mode</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;b&quot;</span><span class="p">):</span>
-            <span class="n">mode</span> <span class="o">+=</span> <span class="s2">&quot;b&quot;</span>
+<span class="w">        </span><span class="sd">"""Open a I/O stream to the file"""</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">mode</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"b"</span><span class="p">):</span>
+            <span class="n">mode</span> <span class="o">+=</span> <span class="s2">"b"</span>
         <span class="n">io</span><span class="p">:</span> <span class="n">ty</span><span class="o">.</span><span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">open</span><span class="p">(</span>  <span class="c1"># type: ignore[assignment]</span>
             <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
             <span class="n">buffering</span><span class="o">=</span><span class="n">buffering</span><span class="p">,</span>
@@ -534,7 +534,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=bc676b56"></script>
+</div><script src="../../../_static/documentation_options.js?v=c6d1d0b9"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>

@@ -7,7 +7,7 @@
         <link rel="prefetch" href="_static/logo_small.png" as="image">
 
     <link rel="shortcut icon" href="_static/favicon.png"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>Quick start - FileFormats v0.17.11</title>
+        <title>Quick start - FileFormats v0.17.12</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=beddf052" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -168,7 +168,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">FileFormats v0.17.11</div></a>
+      <a href="index.html"><div class="brand">FileFormats v0.17.12</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -192,7 +192,7 @@
     <img class="sidebar-logo" src="_static/logo_small.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">FileFormats v0.17.11</span>
+  <span class="sidebar-brand-text">FileFormats v0.17.12</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -267,9 +267,9 @@
 <p>Validate the format of a file, in this case a JPEG image, by passing the file path(s) to the
 corresponding FileFormat, <a class="reference internal" href="reference/image.html#fileformats.image.Jpeg" title="fileformats.image.Jpeg"><code class="xref py py-class docutils literal notranslate"><span class="pre">fileformats.image.Jpeg</span></code></a>,</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.image</span><span class="w"> </span><span class="kn">import</span> <span class="n">Jpeg</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">jpeg_file</span> <span class="o">=</span> <span class="n">Jpeg</span><span class="p">(</span><span class="s2">&quot;/path/to/an-image.jpeg&quot;</span><span class="p">)</span>  <span class="c1"># check exist., file ext. and magic num.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">jpeg_file</span> <span class="o">=</span> <span class="n">Jpeg</span><span class="p">(</span><span class="s2">"/path/to/an-image.jpeg"</span><span class="p">)</span>  <span class="c1"># check exist., file ext. and magic num.</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">jpeg_file</span><span class="p">)</span>  <span class="c1"># returns the file path</span>
-<span class="go">&quot;/path/to/an-image.jpeg</span>
+<span class="go">"/path/to/an-image.jpeg</span>
 </pre></div>
 </div>
 <p>For JPEG files, this validation will check the file extension and for the JPEG
@@ -277,25 +277,25 @@ corresponding FileFormat, <a class="reference internal" href="reference/image.ht
 (<code class="docutils literal notranslate"><span class="pre">0xffd8ffe0</span></code>) at the start of the file. If the file doesn't match the format, the
 init method will raise a <code class="xref py py-class docutils literal notranslate"><span class="pre">FormatMismatchError</span></code>.</p>
 <p>For a conditional check instead of validation, use the <code class="docutils literal notranslate"><span class="pre">matches</span></code> method.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="n">Jpeg</span><span class="o">.</span><span class="n">matches</span><span class="p">(</span><span class="s2">&quot;/path/to/an-image.jpeg&quot;</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;File is a JPEG image&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="n">Jpeg</span><span class="o">.</span><span class="n">matches</span><span class="p">(</span><span class="s2">"/path/to/an-image.jpeg"</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">"File is a JPEG image"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The created <code class="docutils literal notranslate"><span class="pre">FileSet</span></code> object implements <code class="docutils literal notranslate"><span class="pre">os.PathLike</span></code> so can used in place of <code class="docutils literal notranslate"><span class="pre">str</span></code>
 or <code class="docutils literal notranslate"><span class="pre">pathlib.Path</span></code>, e.g. when opening files</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fp</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">jpeg_file</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fp</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">jpeg_file</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">contents</span> <span class="o">=</span> <span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>or in string templates, e.g.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cp </span><span class="si">{</span><span class="n">jpeg_file</span><span class="si">}</span><span class="s2"> new-dest.jpeg&quot;</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="sa">f</span><span class="s2">"cp </span><span class="si">{</span><span class="n">jpeg_file</span><span class="si">}</span><span class="s2"> new-dest.jpeg"</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>You can use the <code class="docutils literal notranslate"><span class="pre">find_matching</span></code> method to detect the format that matches a given file,
 or set of files.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_matching</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">find_matching</span><span class="p">(</span><span class="s2">&quot;/path/to/an-image.jpeg&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">find_matching</span><span class="p">(</span><span class="s2">"/path/to/an-image.jpeg"</span><span class="p">)</span>
 <span class="go">[fileformats.image.raster.Jpeg]</span>
 </pre></div>
 </div>
@@ -303,31 +303,31 @@ or set of files.</p>
 MIME types.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mime</span> <span class="o">=</span> <span class="n">to_mime</span><span class="p">(</span><span class="n">Jpeg</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mime</span>
-<span class="go">&quot;image/jpeg&quot;</span>
+<span class="go">"image/jpeg"</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">from_mime</span><span class="p">(</span><span class="n">mime</span><span class="p">)</span>
 <span class="go">fileformats.image.raster.Jpeg</span>
 </pre></div>
 </div>
 <p>To copy or move the files in a <a class="reference internal" href="api.html#fileformats.core.FileSet" title="fileformats.core.FileSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileSet</span></code></a> to a new directory, use the
 <code class="docutils literal notranslate"><span class="pre">copy</span></code> or <code class="docutils literal notranslate"><span class="pre">move</span></code> methods, respectively.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">new_jpeg</span> <span class="o">=</span> <span class="n">jpeg_file</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">dest_dir</span><span class="o">=</span><span class="s2">&quot;/path/to/destination&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">new_jpeg</span> <span class="o">=</span> <span class="n">jpeg_file</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">dest_dir</span><span class="o">=</span><span class="s2">"/path/to/destination"</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">new_jpeg</span><span class="o">.</span><span class="n">fspaths</span>
-<span class="go">{&quot;/path/to/destination/an-image.jpeg&quot;}</span>
+<span class="go">{"/path/to/destination/an-image.jpeg"}</span>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">copy</span></code> method also supports creating links (both soft and hard) instead of copying the
 file (see <a class="reference internal" href="file_handling.html#copy-mode"><span class="std std-ref">Copy-mode</span></a>).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">new_jpeg</span> <span class="o">=</span> <span class="n">jpeg_file</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span>
-<span class="gp">... </span>   <span class="n">dest_dir</span><span class="o">=</span><span class="s2">&quot;/path/on/same/mount&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;hardlink_or_copy&quot;</span>
+<span class="gp">... </span>   <span class="n">dest_dir</span><span class="o">=</span><span class="s2">"/path/on/same/mount"</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"hardlink_or_copy"</span>
 <span class="go">)  # will perform a hardlink</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">new_jpeg2</span> <span class="o">=</span> <span class="n">jpeg_file</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span>
-<span class="gp">... </span>   <span class="n">dest_dir</span><span class="o">=</span><span class="s2">&quot;/path/to/different/mount&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;hardlink_or_copy&quot;</span>
+<span class="gp">... </span>   <span class="n">dest_dir</span><span class="o">=</span><span class="s2">"/path/to/different/mount"</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"hardlink_or_copy"</span>
 <span class="go">)  # will fallback to a copy</span>
 </pre></div>
 </div>
 <p>To quickly generate a hash of the file set use the <a class="reference internal" href="api.html#fileformats.core.FileSet.hash" title="fileformats.core.FileSet.hash"><code class="xref py py-meth docutils literal notranslate"><span class="pre">FileSet.hash()</span></code></a> method.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">jpeg_file</span><span class="o">.</span><span class="n">hash</span><span class="p">()</span>
-<span class="go">&quot;d41d8cd98f00b204e9800998ecf8427e&quot;</span>
+<span class="go">"d41d8cd98f00b204e9800998ecf8427e"</span>
 </pre></div>
 </div>
 <p>For selected pairs of formats converter methods have been implement that can be used to
@@ -335,15 +335,15 @@ convert between equivalent formats, e.g. to convert a JPEG image to a PNG format
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.image</span><span class="w"> </span><span class="kn">import</span> <span class="n">Png</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">png_file</span> <span class="o">=</span> <span class="n">Png</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">jpeg_file</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">repr</span><span class="p">(</span><span class="n">png_file</span><span class="p">)</span>
-<span class="go">Png(&quot;/path/to/an-image.png&quot;)</span>
+<span class="go">Png("/path/to/an-image.png")</span>
 </pre></div>
 </div>
 <p>For some select formats there are also methods to read metadata, in which case
 the metadata can be accessed as a dictionary attribute.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">fileformats.application</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dicom</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">dcm</span> <span class="o">=</span> <span class="n">Dicom</span><span class="p">(</span><span class="s2">&quot;/path/to/dicom-file.dcm&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">dcm</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;SeriesDescription&quot;</span><span class="p">]</span>
-<span class="go">&quot;t1_mprage_sag_p2_iso_1&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dcm</span> <span class="o">=</span> <span class="n">Dicom</span><span class="p">(</span><span class="s2">"/path/to/dicom-file.dcm"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dcm</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">"SeriesDescription"</span><span class="p">]</span>
+<span class="go">"t1_mprage_sag_p2_iso_1"</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -403,7 +403,7 @@ for information on how to implement new file formats, converters and extra funct
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=bc676b56"></script>
+</div><script src="_static/documentation_options.js?v=c6d1d0b9"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/scripts/furo.js?v=46bd48cc"></script>
